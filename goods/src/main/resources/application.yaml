@@ -26,11 +26,11 @@ spring:
       max-request-size: 10MB
 
   datasource:
-    url: jdbc:mysql://192.168.31.241：3306/oomall??serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/oomall?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-    username: dbuser
-    password: 12345678
+    username: root
+    password: Ty123456789
     druid:
       #初始化时建立物理连接的个数
       initial-size: 3
@@ -85,7 +85,6 @@ mybatis:
 #pagehelper分页插件配置
 pagehelper:
   helper-dialect: mysql
-
 
 
 
