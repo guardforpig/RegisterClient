@@ -3,15 +3,15 @@ package cn.edu.xmu.oomall.goods.model.bo;
 import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-@Setter
-@Getter
+
+@Data
 @AllArgsConstructor
-@ToString
-public class Goods implements VoObject{
+public class Goods implements Serializable {
     private GoodsPo goodsPo;
     private List<Product> productList;
     public Goods()
@@ -34,11 +34,11 @@ public class Goods implements VoObject{
     }
     public void setName(String name)
     {
-        goodsPo.setName(name);
+        this.goodsPo.setName(name);
     }
     public void setShopId(Long shopId)
     {
-        goodsPo.setShopId(shopId);
+        this.goodsPo.setShopId(shopId);
     }
     public String getName()
     {
@@ -58,21 +58,5 @@ public class Goods implements VoObject{
         this.productList=productList;
     }
 
-    @Override
-    public Object createVo()
-    {
-        ArrayList<HashMap<String,Object>> productInfos=new ArrayList<>();
-        for(Product product:this.productList)
-            productInfos.add(product.createVo());
-        HashMap<String,Object> retGoodsInfo=new HashMap<>();
-        retGoodsInfo.put("id",goodsPo.getId());
-        retGoodsInfo.put("name",goodsPo.getName());
-        retGoodsInfo.put("products",productInfos);
-        retGoodsInfo.put("createdBy",goodsPo.getCreatedBy());
-        retGoodsInfo.put("gmtCreate",goodsPo.getGmtCreate());
-        retGoodsInfo.put("gmtModified",goodsPo.getGmtModified());
-        retGoodsInfo.put("modifiedBy",goodsPo.getModifiedBy());
-        retGoodsInfo.put("shop_id",goodsPo.getShopId());
-        return retGoodsInfo;
-    }
+
 }

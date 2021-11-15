@@ -1,13 +1,11 @@
 package cn.edu.xmu.oomall.goods.controller;
 
-import cn.edu.xmu.oomall.goods.model.bo.VoObject;
+import cn.edu.xmu.oomall.core.util.Common;
+import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.oomall.goods.service.GoodsService;
 import cn.edu.xmu.oomall.goods.service.ProductService;
-import cn.edu.xmu.oomall.goods.util.Common;
-import cn.edu.xmu.oomall.goods.util.ResponseCode;
-import cn.edu.xmu.oomall.goods.util.ResponseUtil;
-import cn.edu.xmu.oomall.goods.util.ReturnObject;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -32,9 +30,10 @@ public class GoodsController {
     @ResponseBody
     public Object insertGoods(@PathVariable("id") Long shopId, @RequestBody GoodsVo goodsVo)
     {
-        //System.out.println("Yes!");
         goodsVo.setShopId(shopId);
-        return Common.decorateReturnObject(goodsService.insertGoods(goodsVo));
+        ReturnObject returnObject = goodsService.insertGoods(goodsVo);
+
+        return Common.decorateReturnObject(returnObject);
 
     }
 
@@ -65,7 +64,8 @@ public class GoodsController {
     @ResponseBody
     public Object publishProduct(@PathVariable("id") Long id)
     {
-        return Common.decorateReturnObject(productService.pulishProduct(id));
+        ReturnObject returnObject = productService.pulishProduct(id);
+        return Common.decorateReturnObject(returnObject);
     }
 
     @PutMapping(value="/shops/{shopId}/products/{id}/onshelves")

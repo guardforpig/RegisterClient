@@ -86,7 +86,10 @@ mybatis:
 pagehelper:
   helper-dialect: mysql
 
-
+goodsdemo:
+  goods:
+    # Goods对象在Redis中失效秒数
+    expiretime: 600
 
 
 

@@ -2,12 +2,15 @@ package cn.edu.xmu.oomall.goods.model.bo;
 
 import cn.edu.xmu.oomall.goods.model.po.ProductDraftPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPo;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.HashMap;
-
-public class Product implements VoObject{
+@Data
+@NoArgsConstructor
+public class Product implements Serializable {
     private ProductPo productPo;
-    public Product(){this.productPo=new ProductPo();}
     public Product(ProductPo productPo){
         this.productPo=productPo;
     }
@@ -29,14 +32,5 @@ public class Product implements VoObject{
         this.productPo.setBarcode(productDraftPo.getBarcode());
         this.productPo.setUnit(productDraftPo.getUnit());
         this.productPo.setOriginPlace(productDraftPo.getOriginPlace());
-    }
-    @Override
-    public HashMap<String,Object> createVo()
-    {
-        HashMap<String,Object> productInfo=new HashMap<>();
-        productInfo.put("id",this.getId());
-        productInfo.put("name",this.getName());
-        productInfo.put("imageUrl",this.getImageUrl());
-        return productInfo;
     }
 }
