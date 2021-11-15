@@ -8,7 +8,10 @@ import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+/**
+ * @author Huang Tianyue
+ * 2021.11.15
+ **/
 @Service
 public class GoodsService {
     @Autowired
@@ -28,7 +31,9 @@ public class GoodsService {
     {
         Goods goods=goodsDao.findGoodsById(id).getData();
         if(goods==null)
+        {
             return new ReturnObject(goodsDao.findGoodsById(id));
+        }
         goods.setGoods(goodsVo.createGoods());
         return new ReturnObject(goodsDao.updateGoods(goods));
     }

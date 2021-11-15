@@ -8,7 +8,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+/**
+ * @author Huang Tianyue
+ * 2021.11.15
+ **/
 @Data
 @AllArgsConstructor
 public class Goods implements Serializable {

@@ -5,7 +5,10 @@ import cn.edu.xmu.oomall.goods.dao.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+/**
+ * @author Huang Tianyue
+ * 2021.11.15
+ **/
 @Service
 public class ProductService {
     @Autowired

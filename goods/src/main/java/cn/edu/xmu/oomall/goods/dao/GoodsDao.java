@@ -17,7 +17,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * @author Huang Tianyue
+ * 2021.11.15
+ **/
 @Repository
 public class GoodsDao {
     @Autowired
@@ -67,9 +70,13 @@ public class GoodsDao {
             {
                 goodsPo=goodsPoMapper.selectByPrimaryKey(id);
                 if(goodsPo!=null)
+                {
                     redisUtils.set(id.toString(),new Goods(goodsPo),goodsTimeout);
+                }
                 else
+                {
                     return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+                }
 
             }
         }catch (Exception e)
@@ -100,7 +107,9 @@ public class GoodsDao {
             List<ProductPo> products=productPoMapper.selectProductByGoodsId(id);
             productList=new ArrayList<>(products.size());
             for(ProductPo productPo:products)
+            {
                 productList.add(new Product(productPo));
+            }
         returnGoods.setProductList(productList);
         return new ReturnObject<Goods>(returnGoods);
     }

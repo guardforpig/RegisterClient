@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.HashMap;
+/**
+ * @author Huang Tianyue
+ * 2021.11.15
+ **/
 @Data
 @NoArgsConstructor
 public class Product implements Serializable {

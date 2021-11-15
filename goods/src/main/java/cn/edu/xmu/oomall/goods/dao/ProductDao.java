@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+/**
+ * @author Huang Tianyue
+ * 2021.11.15
+ **/
 @Repository
 public class ProductDao {
     @Autowired
@@ -25,6 +28,11 @@ public class ProductDao {
     @Autowired
     private OnSalePoMapper onSalePoMapper;
 
+    private Byte draft=0;
+    private Byte offshelves=1;
+    private Byte onshelves=2;
+    private Byte prohibit=3;
+
 
     public ReturnObject publishById(Long id)
     {
@@ -33,15 +41,17 @@ public class ProductDao {
         {
             productPo=productPoMapper.selectByPrimaryKey(id);
             if(productPo==null)
+            {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
         }
         catch (Exception e)
         {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        if(productPo.getState().equals((byte)0))
+        if(productPo.getState().equals(draft))
         {
-            productPoMapper.updateState(id,(byte)1);
+            productPoMapper.updateState(id,offshelves);
             ProductDraftPo productDraftPo;
             try
             {
@@ -61,7 +71,9 @@ public class ProductDao {
                 return new ReturnObject(ReturnNo.OK);
         }
         else
+        {
             return new ReturnObject(ReturnNo.STATENOTALLOW);
+        }
 
     }
 
@@ -72,16 +84,18 @@ public class ProductDao {
         {
             productPo=productPoMapper.selectByPrimaryKey(id);
             if(productPo==null)
+            {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
         }catch(Exception e)
         {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        if(productPo.getState().equals((byte)1))
+        if(productPo.getState().equals(offshelves))
         {
             try
             {
-                productPoMapper.updateState(id,(byte)2);
+                productPoMapper.updateState(id,onshelves);
             }
             catch (Exception e)
             {
@@ -115,7 +129,9 @@ public class ProductDao {
             }
         }
         else
+        {
             return new ReturnObject(ReturnNo.STATENOTALLOW);
+        }
     }
 
     public ReturnObject offshelvesById(Long id)
@@ -125,16 +141,18 @@ public class ProductDao {
         {
             productPo=productPoMapper.selectByPrimaryKey(id);
             if(productPo==null)
+            {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
         }catch (Exception e)
         {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        if(productPo.getState().equals((byte)2))
+        if(productPo.getState().equals(onshelves))
         {
             try
             {
-                productPoMapper.updateState(id,(byte)1);
+                productPoMapper.updateState(id,offshelves);
             }catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
@@ -149,7 +167,7 @@ public class ProductDao {
             }
             try
             {
-                onSalePoMapper.updateState(onSalePo.getId(),(byte)1);
+                onSalePoMapper.updateState(onSalePo.getId(),offshelves);
             }catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
@@ -159,7 +177,9 @@ public class ProductDao {
 
         }
         else
+        {
             return new ReturnObject(ReturnNo.STATENOTALLOW);
+        }
     }
 
     public ReturnObject allowProductById(Long id)
@@ -169,16 +189,18 @@ public class ProductDao {
         {
             productPo=productPoMapper.selectByPrimaryKey(id);
             if(productPo==null)
+            {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
         }catch (Exception e)
         {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        if(productPo.getState().equals((byte)3))
+        if(productPo.getState().equals(prohibit))
         {
             try
             {
-                productPoMapper.updateState(id,(byte)1);
+                productPoMapper.updateState(id,offshelves);
             }catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
@@ -191,11 +213,11 @@ public class ProductDao {
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
             }
-            if(onSalePo.getState().equals((byte)3))
+            if(onSalePo.getState().equals(prohibit))
             {
                 try
                 {
-                    onSalePoMapper.updateState(onSalePo.getId(),(byte)1);
+                    onSalePoMapper.updateState(onSalePo.getId(),offshelves);
                 }catch (Exception e)
                 {
                     return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
@@ -203,10 +225,14 @@ public class ProductDao {
                 return new ReturnObject(ReturnNo.OK);
             }
             else
+            {
                 return new ReturnObject(ReturnNo.STATENOTALLOW);
+            }
         }
         else
+        {
             return new ReturnObject(ReturnNo.STATENOTALLOW);
+        }
     }
 
     public ReturnObject prohibitProductById(Long id)
@@ -216,16 +242,18 @@ public class ProductDao {
         {
             productPo=productPoMapper.selectByPrimaryKey(id);
             if(productPo==null)
+            {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
         }catch (Exception e)
         {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        if(productPo.getState().equals((byte)2))
+        if(productPo.getState().equals(onshelves))
         {
             try
             {
-                productPoMapper.updateState(id,(byte)3);
+                productPoMapper.updateState(id,prohibit);
             }catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
@@ -238,11 +266,11 @@ public class ProductDao {
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
             }
-            if(onSalePo.getState().equals((byte)2))
+            if(onSalePo.getState().equals(onshelves))
             {
                 try
                 {
-                    onSalePoMapper.updateState(onSalePo.getId(),(byte)3);
+                    onSalePoMapper.updateState(onSalePo.getId(),prohibit);
                 }catch (Exception e)
                 {
                     return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
@@ -250,10 +278,14 @@ public class ProductDao {
                 return new ReturnObject(ReturnNo.OK);
             }
             else
+            {
                 return new ReturnObject(ReturnNo.STATENOTALLOW);
+            }
         }
         else
+        {
             return new ReturnObject(ReturnNo.STATENOTALLOW);
+        }
     }
 
 
