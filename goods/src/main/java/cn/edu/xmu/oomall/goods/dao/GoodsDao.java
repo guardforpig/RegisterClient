@@ -8,8 +8,9 @@ import cn.edu.xmu.oomall.goods.model.bo.Goods;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPo;
-import cn.edu.xmu.oomall.goods.util.RedisUtils;
+import cn.edu.xmu.oomall.goods.model.po.ProductPoExample;
 
+import cn.edu.xmu.oomall.goods.util.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -60,32 +61,7 @@ public class GoodsDao {
         }
         return new ReturnObject<>(ReturnNo.OK);
     }
-    public ReturnObject<Goods> findGoodsById(Long id)
-    {
-        GoodsPo goodsPo;
-        try
-        {
-            goodsPo=(GoodsPo) redisUtils.get(id.toString());
-            if(goodsPo==null)
-            {
-                goodsPo=goodsPoMapper.selectByPrimaryKey(id);
-                if(goodsPo!=null)
-                {
-                    redisUtils.set(id.toString(),new Goods(goodsPo),goodsTimeout);
-                }
-                else
-                {
-                    return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-                }
 
-            }
-        }catch (Exception e)
-        {
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
-        Goods returnGoods=new Goods(goodsPo);
-        return new ReturnObject<>(returnGoods);
-    }
     public ReturnObject<Goods> searchGoodsById(Long id)
     {
         GoodsPo goodsPo;
@@ -104,7 +80,10 @@ public class GoodsDao {
         }
         Goods returnGoods=new Goods(goodsPo);
         List<Product> productList=null;
-            List<ProductPo> products=productPoMapper.selectProductByGoodsId(id);
+        ProductPoExample productPoExample=new ProductPoExample();
+        ProductPoExample.Criteria cr=productPoExample.createCriteria();
+        cr.andGoodsIdEqualTo(id);
+        List<ProductPo> products=productPoMapper.selectByExample(productPoExample);
             productList=new ArrayList<>(products.size());
             for(ProductPo productPo:products)
             {
@@ -130,12 +109,16 @@ public class GoodsDao {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
 
-            List<ProductPo> productPoList=productPoMapper.selectProductByGoodsId(id);
+        ProductPoExample productPoExample=new ProductPoExample();
+        ProductPoExample.Criteria cr=productPoExample.createCriteria();
+        cr.andGoodsIdEqualTo(id);
+            List<ProductPo> productPoList=productPoMapper.selectByExample(productPoExample);
             for(ProductPo productPo:productPoList)
             {
                 try
                 {
-                    productPoMapper.updateGoodsId(productPo.getId(),Long.valueOf(0));
+                    productPo.setGoodsId(Long.valueOf(0));
+                    productPoMapper.updateByPrimaryKey(productPo);
                 }
                 catch (Exception e)
                 {

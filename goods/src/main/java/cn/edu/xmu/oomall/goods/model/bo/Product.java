@@ -22,6 +22,10 @@ public class Product implements Serializable {
     public Long getId(){return productPo.getId();}
     public String getName(){return productPo.getName();}
     public String getImageUrl(){return productPo.getImageUrl();}
+    public void setState(Byte state)
+    {
+        this.productPo.setState(state);
+    }
     public Product(ProductDraftPo productDraftPo)
     {
         this.productPo.setShopId(productDraftPo.getShopId());

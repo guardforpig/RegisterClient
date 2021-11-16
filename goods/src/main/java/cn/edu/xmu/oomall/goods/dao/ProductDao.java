@@ -6,10 +6,10 @@ import cn.edu.xmu.oomall.goods.mapper.OnSalePoMapper;
 import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
-import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
-import cn.edu.xmu.oomall.goods.model.po.ProductDraftPo;
-import cn.edu.xmu.oomall.goods.model.po.ProductPo;
+import cn.edu.xmu.oomall.goods.model.bo.Product;
+import cn.edu.xmu.oomall.goods.model.po.*;
 import cn.edu.xmu.oomall.goods.util.RedisUtils;
+import com.alibaba.druid.sql.ast.statement.SQLForeignKeyImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -36,43 +36,33 @@ public class ProductDao {
 
     public ReturnObject publishById(Long id)
     {
-        ProductPo productPo;
-        try
+        ProductDraftPo productDraftPo;
+        productDraftPo=productDraftPoMapper.selectByPrimaryKey(id);
+        if(productDraftPo!=null)
         {
-            productPo=productPoMapper.selectByPrimaryKey(id);
-            if(productPo==null)
-            {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }
-        }
-        catch (Exception e)
-        {
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
-        if(productPo.getState().equals(draft))
-        {
-            productPoMapper.updateState(id,offshelves);
-            ProductDraftPo productDraftPo;
+            Product product=new Product(productDraftPo);
+            product.setState(offshelves);
             try
             {
-                productDraftPo=productDraftPoMapper.selectByProductId(id);
+                productPoMapper.insert(product.getProductPo());
+            }catch(Exception e)
+            {
+                return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            }
+            OnSale onSale=new OnSale(product.getProductPo());
+            onSale.setState(offshelves);
+            try
+            {
+                onSalePoMapper.insert(onSale.getOnSalePo());
             }
             catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
             }
-            try
-            {
-                productDraftPoMapper.deleteByPrimaryKey(productDraftPo.getId());
-            }catch (Exception e)
-            {
-                return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-            }
-                return new ReturnObject(ReturnNo.OK);
-        }
-        else
+            return new ReturnObject(ReturnNo.OK);
+        }else
         {
-            return new ReturnObject(ReturnNo.STATENOTALLOW);
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
 
     }
@@ -95,38 +85,36 @@ public class ProductDao {
         {
             try
             {
-                productPoMapper.updateState(id,onshelves);
+                productPo.setState(onshelves);
+                productPoMapper.updateByPrimaryKey(productPo);
             }
             catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
             }
-            OnSalePo onSalePo=onSalePoMapper.selectByProductId(id);
-            if(onSalePo==null)
+            List<OnSalePo> onSalePoList;
+            OnSalePoExample onSalePoExample=new OnSalePoExample();
+            OnSalePoExample.Criteria cr=onSalePoExample.createCriteria();
+            cr.andProductIdEqualTo(id);
+            onSalePoList=onSalePoMapper.selectByExample(onSalePoExample);
+            if(onSalePoList==null)
             {
-                OnSale onSale=new OnSale(productPo);
-                try
-                {
-                    onSalePoMapper.insert(onSale.getOnSalePo());
-                }
-                catch (Exception e)
-                {
-                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-                }
-                return new ReturnObject(ReturnNo.OK);
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            else
+            for(OnSalePo onSalePo:onSalePoList)
             {
-                try
-                {
-                    onSalePoMapper.updateState(onSalePo.getId(),(byte)2);
-                }
-                catch (Exception e)
-                {
-                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-                }
-                return new ReturnObject(ReturnNo.OK);
+                    try
+                    {
+                        onSalePo.setState(onshelves);
+                        onSalePoMapper.updateByPrimaryKey(onSalePo);
+                    }
+                    catch (Exception e)
+                    {
+                        return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+                    }
+
             }
+            return new ReturnObject(ReturnNo.OK);
         }
         else
         {
@@ -152,29 +140,39 @@ public class ProductDao {
         {
             try
             {
-                productPoMapper.updateState(id,offshelves);
+                productPo.setState(offshelves);
+                productPoMapper.updateByPrimaryKey(productPo);
             }catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
             }
-            OnSalePo onSalePo;
+            List<OnSalePo> onSalePoList;
             try
             {
-                onSalePo=onSalePoMapper.selectByProductId(id);
+                OnSalePoExample onSalePoExample=new OnSalePoExample();
+                OnSalePoExample.Criteria cr=onSalePoExample.createCriteria();
+                cr.andProductIdEqualTo(id);
+                onSalePoList=onSalePoMapper.selectByExample(onSalePoExample);
             }catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
             }
-            try
+            if(onSalePoList==null)
             {
-                onSalePoMapper.updateState(onSalePo.getId(),offshelves);
-            }catch (Exception e)
-            {
-                return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-                return new ReturnObject(ReturnNo.OK);
-
-
+            for(OnSalePo onSalePo:onSalePoList)
+            {
+                try
+                {
+                    onSalePo.setState(offshelves);
+                    onSalePoMapper.updateByPrimaryKey(onSalePo);
+                }catch (Exception e)
+                {
+                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+                }
+            }
+            return new ReturnObject(ReturnNo.OK);
         }
         else
         {
@@ -200,34 +198,46 @@ public class ProductDao {
         {
             try
             {
-                productPoMapper.updateState(id,offshelves);
+                productPo.setState(offshelves);
+                productPoMapper.updateByPrimaryKey(productPo);
             }catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
             }
-            OnSalePo onSalePo;
+            List<OnSalePo> onSalePoList;
             try
             {
-                onSalePo=onSalePoMapper.selectByProductId(id);
+                OnSalePoExample onSalePoExample=new OnSalePoExample();
+                OnSalePoExample.Criteria cr=onSalePoExample.createCriteria();
+                cr.andProductIdEqualTo(id);
+                onSalePoList=onSalePoMapper.selectByExample(onSalePoExample);
             }catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
             }
-            if(onSalePo.getState().equals(prohibit))
+            if(onSalePoList==null)
             {
-                try
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            for(OnSalePo onSalePo:onSalePoList)
+            {
+                if(onSalePo.getState().equals(prohibit))
                 {
-                    onSalePoMapper.updateState(onSalePo.getId(),offshelves);
-                }catch (Exception e)
-                {
-                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+                    try
+                    {
+                        onSalePo.setState(offshelves);
+                        onSalePoMapper.updateByPrimaryKey(onSalePo);
+                    }catch (Exception e)
+                    {
+                        return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+                    }
                 }
-                return new ReturnObject(ReturnNo.OK);
+                else
+                {
+                    return new ReturnObject(ReturnNo.STATENOTALLOW);
+                }
             }
-            else
-            {
-                return new ReturnObject(ReturnNo.STATENOTALLOW);
-            }
+            return new ReturnObject(ReturnNo.OK);
         }
         else
         {
@@ -249,38 +259,46 @@ public class ProductDao {
         {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        if(productPo.getState().equals(onshelves))
+        if(productPo.getState().equals(onshelves)||productPo.getState().equals(offshelves))
         {
             try
             {
-                productPoMapper.updateState(id,prohibit);
+                productPo.setState(prohibit);
+                productPoMapper.updateByPrimaryKey(productPo);
             }catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
             }
-            OnSalePo onSalePo;
+            List<OnSalePo> onSalePoList;
             try
             {
-                onSalePo=onSalePoMapper.selectByProductId(id);
+                OnSalePoExample onSalePoExample=new OnSalePoExample();
+                OnSalePoExample.Criteria cr=onSalePoExample.createCriteria();
+                cr.andProductIdEqualTo(id);
+                onSalePoList=onSalePoMapper.selectByExample(onSalePoExample);
             }catch (Exception e)
             {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
             }
-            if(onSalePo.getState().equals(onshelves))
+            for(OnSalePo onSalePo:onSalePoList)
             {
-                try
+                if(onSalePo.getState().equals(onshelves)||onSalePo.getState().equals(offshelves))
                 {
-                    onSalePoMapper.updateState(onSalePo.getId(),prohibit);
-                }catch (Exception e)
-                {
-                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+                    try
+                    {
+                        onSalePo.setState(prohibit);
+                        onSalePoMapper.updateByPrimaryKey(onSalePo);
+                    }catch (Exception e)
+                    {
+                        return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+                    }
                 }
-                return new ReturnObject(ReturnNo.OK);
+                else
+                {
+                    return new ReturnObject(ReturnNo.STATENOTALLOW);
+                }
             }
-            else
-            {
-                return new ReturnObject(ReturnNo.STATENOTALLOW);
-            }
+            return new ReturnObject(ReturnNo.OK);
         }
         else
         {

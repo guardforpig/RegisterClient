@@ -29,10 +29,10 @@ public class GoodsService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject updateGoods(Long id,GoodsVo goodsVo)
     {
-        Goods goods=goodsDao.findGoodsById(id).getData();
+        Goods goods=goodsDao.searchGoodsById(id).getData();
         if(goods==null)
         {
-            return new ReturnObject(goodsDao.findGoodsById(id));
+            return new ReturnObject(goodsDao.searchGoodsById(id));
         }
         goods.setGoods(goodsVo.createGoods());
         return new ReturnObject(goodsDao.updateGoods(goods));

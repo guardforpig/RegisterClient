@@ -19,8 +19,9 @@ import org.springframework.web.bind.annotation.*;
  * @author Huang Tianyue
  * 2021.11.15
  **/
+@Api(value = "商品", tags = "goods")
 @RestController
-@RequestMapping(value = "",produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class GoodsController {
 
     @Autowired
@@ -31,7 +32,7 @@ public class GoodsController {
 
     //@PostMapping("{id}/goods")
 
-    @PostMapping("/shops/{id}/goods")
+    @PostMapping("shops/{id}/goods")
     @ResponseBody
     public Object insertGoods(@PathVariable("id") Long shopId, @RequestBody GoodsVo goodsVo)
     {
@@ -42,7 +43,7 @@ public class GoodsController {
 
     }
 
-    @PutMapping("/shops/{shopId}/goods/{id}")
+    @PutMapping("shops/{shopId}/goods/{id}")
     @ResponseBody
     public Object updateGoods(@PathVariable("id") Long id,@RequestBody GoodsVo goodsVo)
     {
@@ -57,7 +58,7 @@ public class GoodsController {
         return Common.decorateReturnObject(goodsService.searchById(id));
     }
 
-    @DeleteMapping("/shops/{shopId}/goods/{id}")
+    @DeleteMapping(value="shops/{shopId}/goods/{id}")
     @ResponseBody
     public Object deleteGoods(@PathVariable("id") Long id)
     {
@@ -65,7 +66,7 @@ public class GoodsController {
     }
 
 
-    @PutMapping(value="/shops/{shopId}/products/{id}/publish")
+    @PutMapping(value="shops/{shopId}/products/{id}/publish")
     @ResponseBody
     public Object publishProduct(@PathVariable("id") Long id)
     {
@@ -73,28 +74,28 @@ public class GoodsController {
         return Common.decorateReturnObject(returnObject);
     }
 
-    @PutMapping(value="/shops/{shopId}/products/{id}/onshelves")
+    @PutMapping(value="shops/{shopId}/products/{id}/onshelves")
     @ResponseBody
     public Object onshelvesProduct(@PathVariable("id") Long id)
     {
         return Common.decorateReturnObject(productService.onshelvesProduct(id));
     }
 
-    @PutMapping(value="/shops/{shopId}/products/{id}/offshelves")
+    @PutMapping(value="shops/{shopId}/products/{id}/offshelves")
     @ResponseBody
     public Object offshelvesProduct(@PathVariable("id") Long id)
     {
         return Common.decorateReturnObject(productService.offshelvesProduct(id));
     }
 
-    @PutMapping(value="/shops/{shopId}/products/{id}/allow")
+    @PutMapping(value="shops/{shopId}/products/{id}/allow")
     @ResponseBody
     public Object allowProduct(@PathVariable("id") Long id)
     {
         return Common.decorateReturnObject(productService.allowProduct(id));
     }
 
-    @PutMapping(value="/shops/{shopId}/products/{id}/prohibit")
+    @PutMapping(value="shops/{shopId}/products/{id}/prohibit")
     @ResponseBody
     public Object prohibitProduct(@PathVariable("id") Long id)
     {
