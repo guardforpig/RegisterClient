@@ -3,7 +3,6 @@ import cn.edu.xmu.oomall.comment.model.vo.CommentConclusionVo;
 import cn.edu.xmu.oomall.comment.model.vo.CommentRetVo;
 import cn.edu.xmu.oomall.comment.model.vo.CommentVo;
 import cn.edu.xmu.oomall.comment.service.CommentService;
-import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -148,6 +147,9 @@ public class CommentController {
             Long uid,
             @RequestParam(required = false,defaultValue = "1") Integer page,
             @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+        //todo:
+        uid=Long.valueOf(1);
+
         ReturnObject<PageInfo<Object>> ret=commentService.selectAllCommentsOfUser(uid,page,pageSize);
         return Common.getPageRetVo(ret, CommentRetVo.class);
     }
@@ -174,11 +176,10 @@ public class CommentController {
         return Common.getPageRetVo(ret,CommentRetVo.class);
     }
     @GetMapping("/shops/{id}/comments")
-    public Object showShopCommentsByAdmin(@PathVariable("id") Long id, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize){
+    public Object showShopCommentsByAdmin(@PathVariable("id") Long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
 
-//        if(id!=0){
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
-//        }
-//        return Common.getPageRetObject(commentService.showAllNotAuditComments(page,pageSize));
+        ReturnObject ret=commentService.selectAllPassCommentByShopId(id,page,pageSize);
+        return Common.getPageRetVo(ret,CommentRetVo.class);
     }
-}
+    }
+

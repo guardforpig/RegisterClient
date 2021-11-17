@@ -111,7 +111,24 @@ public class CommentDao {
         }
         return new ReturnObject<>(commentPos);
     }
-    
+    /**
+     * 分页查询店铺评论
+     * @return ReturnObject<>
+     */
+    public ReturnObject selectCommentByShopId(Long shopId,Integer pageNum,Integer pageSize){
+        CommentPoExample example=new CommentPoExample();
+        CommentPoExample.Criteria criteria=example.createCriteria();
+        List<CommentPo> commentPos=new ArrayList<>();
+        PageHelper.startPage(pageNum,pageSize);
+        try{
+//            criteria.andShopIdEqualTo(shopId);
+            commentPos=commentPoMapper.selectByExample(example);
+
+        }catch (DataAccessException e){
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
+        return new ReturnObject<>(commentPos);
+    }
 
     /**
      * 修改评论状态

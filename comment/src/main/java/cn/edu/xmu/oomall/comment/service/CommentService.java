@@ -85,8 +85,28 @@ public class CommentService {
         for (CommentPo po : commentPos) {
             commentRetVos.add(po);
         }
+        PageInfo<Object> commentRetVoPageInfo = PageInfo.of(commentRetVos);
+        CommentSelectRetVo commentSelectRetVo = new CommentSelectRetVo();
+        commentSelectRetVo.setPage(pageNum.longValue());
+        commentSelectRetVo.setPageSize(pageSize.longValue());
+        commentSelectRetVo.setPages((long) commentRetVoPageInfo.getPages());
+        commentSelectRetVo.setTotal(commentSelectRetVo.getTotal());
+        commentSelectRetVo.setList(commentRetVos);
 
+        return new ReturnObject<>(commentRetVoPageInfo);
+    }
 
+    /**
+     * 查询商铺评论
+     * @return
+     */
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public ReturnObject<PageInfo<Object>> selectAllPassCommentByShopId(Long shopId, Integer pageNum, Integer pageSize) {
+        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllPassCommentByProductId(shopId, pageNum, pageSize).getData();
+        List<Object> commentRetVos = new ArrayList<>();
+        for (CommentPo po : commentPos) {
+            commentRetVos.add(po);
+        }
         PageInfo<Object> commentRetVoPageInfo = PageInfo.of(commentRetVos);
         CommentSelectRetVo commentSelectRetVo = new CommentSelectRetVo();
         commentSelectRetVo.setPage(pageNum.longValue());
