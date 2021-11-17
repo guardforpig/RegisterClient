@@ -1,21 +1,21 @@
-package cn.edu.xmu.oomall.goods.service;
+package cn.edu.xmu.oomall.comment.service;
 
 
+import cn.edu.xmu.oomall.comment.dao.CommentDao;
+import cn.edu.xmu.oomall.comment.model.bo.Comment;
+import cn.edu.xmu.oomall.comment.model.po.CommentPo;
+import cn.edu.xmu.oomall.comment.model.vo.CommentConclusionVo;
+import cn.edu.xmu.oomall.comment.model.vo.CommentRetVo;
+import cn.edu.xmu.oomall.comment.model.vo.CommentSelectRetVo;
+import cn.edu.xmu.oomall.comment.model.vo.CommentVo;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.oomall.goods.dao.CommentDao;
-import cn.edu.xmu.oomall.goods.microservice.CustomerService;
-import cn.edu.xmu.oomall.goods.microservice.OrderService;
-import cn.edu.xmu.oomall.goods.model.bo.Comment;
-import cn.edu.xmu.oomall.goods.model.po.CommentPo;
-import cn.edu.xmu.oomall.goods.model.vo.CommentConclusionVo;
-import cn.edu.xmu.oomall.goods.model.vo.CommentRetVo;
-import cn.edu.xmu.oomall.goods.model.vo.CommentVo;
-import com.alibaba.nacos.api.common.ResponseCode;
+import cn.edu.xmu.oomall.comment.microservice.OrderService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +26,6 @@ public class CommentService {
     @Autowired
     private CommentDao commentDao;
 
-    //    @DubboReference(version = "0.0.1-SNAPSHOT",check = false)
-//    private ICustomerService customerService;
-//
-//    @DubboReference(version = "0.0.1-SNAPSHOT",check = false)
-//    private IDubboOrderService orderService;
-//
-    @Autowired
-    private CustomerService customerService;
-
     @Autowired
     private OrderService orderService;
 
@@ -43,6 +34,7 @@ public class CommentService {
      *
      * @return
      */
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject getCommentStates() {
         return commentDao.getCommentStates();
     }
@@ -50,23 +42,18 @@ public class CommentService {
     /**
      * 买家新增评论
      *
-     * @param orderItemId
-     * @param commentVo
-     * @param userId
      * @return
      */
-    public ReturnObject newComment(Long orderItemId, CommentVo commentVo, Long loginUser,String loginUsername) {
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject newComment(Long orderItemId, CommentVo commentVo, Long loginUser, String loginUsername) {
         ReturnObject ret = orderService.isCustomerOwnOrderItem(loginUser, orderItemId);
-        if (!ret.getCode().equals(0)) {
-            return ret;
-        }
         Boolean result = (Boolean) ret.getData();
         if (!result) {
             //用户没有购买此商品
             return new ReturnObject(ReturnNo.COMMENT_USER_NOORDER);
         }
 
-        if (!commentDao.judgeComment(orderItemId)) {
+        if (!(Boolean) commentDao.judgeComment(orderItemId).getData()) {
             return new ReturnObject(ReturnNo.COMMENT_EXISTED, "该订单条目已评论");
         }
         CommentPo commentPo = new CommentPo();
@@ -74,7 +61,6 @@ public class CommentService {
         commentPo.setContent(commentVo.getContent());
         commentPo.setType(commentVo.getType().byteValue());
         commentPo.setState(Comment.State.NOT_AUDIT.getCode());
-        commentPo.setCustomerId(loginUser);
         Common.setPoCreatedFields(commentPo, loginUser, loginUsername);
         ReturnObject ret_insert = commentDao.insertComment(commentPo);
         if (ret_insert.getCode().equals(0)) {
@@ -87,26 +73,21 @@ public class CommentService {
     /**
      * 分页查询sku下所有已通过审核的评论
      *
-     * @param skuId
+     * @param productId
      * @param pageNum
      * @param pageSize
      * @return
      */
-    public ReturnObject<PageInfo<Object>> selectAllPassCommentBySkuId(Long skuId, Integer pageNum, Integer pageSize) {
-        ReturnObject<List<CommentPo>> ret = commentDao.selectAllPassCommentBySkuId(skuId, pageNum, pageSize);
-        if (ret.getCode() != ResponseCode.OK) {
-            return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST, "该商品不存在");
-        }
-        List<VoObject> commentRetVos = new ArrayList<>();
-        for (CommentPo po : ret.getData()) {
-            var customer = customerService.getCustomer(po.getCustomerId());
-
-            //var customer=customerServiceMock.getCustomer(po.getCustomerId());
-            CommentRetVo vo = new CommentRetVo(po, customer.getUserName(), customer.getRealName());
-            commentRetVos.add(vo);
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public ReturnObject<PageInfo<Object>> selectAllPassCommentByProductId(Long productId, Integer pageNum, Integer pageSize) {
+        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllPassCommentByProductId(productId, pageNum, pageSize).getData();
+        List<Object> commentRetVos = new ArrayList<>();
+        for (CommentPo po : commentPos) {
+            commentRetVos.add(po);
         }
 
-        PageInfo<VoObject> commentRetVoPageInfo = PageInfo.of(commentRetVos);
+
+        PageInfo<Object> commentRetVoPageInfo = PageInfo.of(commentRetVos);
         CommentSelectRetVo commentSelectRetVo = new CommentSelectRetVo();
         commentSelectRetVo.setPage(pageNum.longValue());
         commentSelectRetVo.setPageSize(pageSize.longValue());
@@ -124,13 +105,15 @@ public class CommentService {
      * @param conclusion
      * @return
      */
-    public ReturnObject confirmCommnets(Long did, Long id, CommentConclusionVo conclusion) {
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject confirmCommnets(Long did, Long id, CommentConclusionVo conclusion,Long loginUser,String loginUserName) {
         if (did != 0) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
         Comment comment = new Comment();
         comment.setId(id);
         comment.setState(conclusion.getConclusion() == true ? Comment.State.PASS.getCode() : Comment.State.FORBID.getCode());
+        Common.setPoModifiedFields(comment, loginUser, loginUserName);
         ReturnObject ret = commentDao.updateCommentState(comment);
         return ret;
     }
@@ -142,18 +125,15 @@ public class CommentService {
      * @param pageSize
      * @return
      */
-    public ReturnObject<PageInfo<VoObject>> selectAllCommentsOfUser(Long userId, Integer pageNum, Integer pageSize) {
-        List<CommentPo> commentPos = commentDao.selectAllCommentsOfUser(userId, pageNum, pageSize);
-        List<VoObject> commentRetVos = new ArrayList<>();
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public ReturnObject<PageInfo<Object>> selectAllCommentsOfUser(Long userId, Integer pageNum, Integer pageSize) {
+        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllCommentsOfUser(userId, pageNum, pageSize).getData();
+        List<Object> commentRetVos = new ArrayList<>();
         for (CommentPo po : commentPos) {
-            var customer = customerService.getCustomer(po.getCustomerId());
-            //var customer=customerServiceMock.getCustomer(po.getCustomerId());
-            CommentRetVo vo = new CommentRetVo(po, customer.getUserName(), customer.getRealName());
-            commentRetVos.add(vo);
+            commentRetVos.add(po);
         }
-
         //分页查询
-        PageInfo<VoObject> commentRetVoPageInfo = PageInfo.of(commentRetVos);
+        PageInfo<Object> commentRetVoPageInfo = PageInfo.of(commentRetVos);
         CommentSelectRetVo commentSelectRetVo = new CommentSelectRetVo();
         commentSelectRetVo.setPage(pageNum.longValue());
         commentSelectRetVo.setPageSize(pageSize.longValue());
@@ -165,28 +145,27 @@ public class CommentService {
     }
 
     /**
-     * 管理员查看未审核/已审核评论列表(有疑问)
+     * 管理员查看未审核评论列表
      *
      * @param state
      * @param pageNum
      * @param pageSize
      * @return
      */
-    public ReturnObject<PageInfo<VoObject>> selectCommentsOfState(Long did, Integer state, Integer pageNum, Integer pageSize) {
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public ReturnObject<PageInfo<Object>> selectCommentsOfState(Long did, Integer state, Integer pageNum, Integer pageSize) {
         if (did != 0) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
 
-        List<CommentPo> commentPos = commentDao.selelctCommentsOfState(state.byteValue(), pageNum, pageSize);
-        List<VoObject> commentRetVos = new ArrayList<>();
+        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selelctCommentsOfState(state.byteValue(), pageNum, pageSize).getData();
+
+        List<Object> commentRetVos = new ArrayList<>();
         for (CommentPo po : commentPos) {
-            var customer = customerService.getCustomer(po.getCustomerId());
-            //var customer=customerServiceMock.getCustomer(po.getCustomerId());
-            CommentRetVo vo = new CommentRetVo(po, customer.getUserName(), customer.getRealName());
-            commentRetVos.add(vo);
+            commentRetVos.add(po);
         }
 
-        PageInfo<VoObject> commentRetVoPageInfo = PageInfo.of(commentRetVos);
+        PageInfo<Object> commentRetVoPageInfo = PageInfo.of(commentRetVos);
         CommentSelectRetVo commentSelectRetVo = new CommentSelectRetVo();
         commentSelectRetVo.setPage(pageNum.longValue());
         commentSelectRetVo.setPageSize(pageSize.longValue());

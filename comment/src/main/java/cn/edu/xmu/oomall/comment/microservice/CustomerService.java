@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.goods.microservice;
+package cn.edu.xmu.oomall.comment.microservice;
 
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;

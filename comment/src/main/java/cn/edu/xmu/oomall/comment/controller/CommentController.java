@@ -1,12 +1,13 @@
-package cn.edu.xmu.oomall.goods.controller;
+package cn.edu.xmu.oomall.comment.controller;
+import cn.edu.xmu.oomall.comment.model.vo.CommentConclusionVo;
+import cn.edu.xmu.oomall.comment.model.vo.CommentRetVo;
+import cn.edu.xmu.oomall.comment.model.vo.CommentVo;
+import cn.edu.xmu.oomall.comment.service.CommentService;
 import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.oomall.goods.model.vo.CommentConclusionVo;
-import cn.edu.xmu.oomall.goods.model.vo.CommentVo;
-import cn.edu.xmu.oomall.goods.service.CommentService;
-import com.alibaba.nacos.api.common.ResponseCode;
+
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +50,9 @@ public class CommentController {
     }
 
     /**
-     * 买家新增SKU的评论
+     * 买家新增product的评论
      */
-    @ApiOperation(value = "买家新增SKU的评论")
+    @ApiOperation(value = "买家新增product的评论")
     @ApiImplicitParams({
             @ApiImplicitParam(name="authorization", value="Token", required = true, dataType="String", paramType="header"),
             @ApiImplicitParam(name="id", required = true, dataType="Integer", paramType="path"),
@@ -62,13 +63,14 @@ public class CommentController {
             @ApiResponse(code = 903, message = "用户没有购买此商品")
     })
     @PostMapping("orderitems/{id}/comments")
-    public Object addCommentOnSku(
+    public Object addCommentOnProduct(
             @PathVariable Long id,
             @Validated @RequestBody CommentVo commentVo,
             BindingResult bindingResult, Long loginUser,String loginUserName){
         //todo:
-        loginUser=Long.valueOf(111);
+        loginUser=Long.valueOf(1);
         loginUserName="hhhhh";
+
 
         //校验前端数据
         Object returnObject = Common.processFieldErrors(bindingResult, httpServletResponse);
@@ -77,7 +79,7 @@ public class CommentController {
         }
 
         var ret = commentService.newComment(id,commentVo, loginUser,loginUserName);
-        if(ret.getCode().equals(ResponseCode.OK))httpServletResponse.setStatus(HttpStatus.CREATED.value());
+        if(ret.getCode().equals(ReturnNo.OK))httpServletResponse.setStatus(HttpStatus.CREATED.value());
         return Common.decorateReturnObject(ret);
     }
 
@@ -95,8 +97,9 @@ public class CommentController {
             @ApiResponse(code = 0, message = "成功"),
     })
     @GetMapping("/products/{id}/comments")
-    public Object selectSkuComments(@PathVariable long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
-        ReturnObject ret=commentService.selectAllPassCommentBySkuId(id,page,pageSize);
+    public Object selectSkuComments(@PathVariable Long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+
+        ReturnObject ret=commentService.selectAllPassCommentByProductId(id,page,pageSize);
         return Common.decorateReturnObject(ret);
     }
 
@@ -115,12 +118,16 @@ public class CommentController {
     @PutMapping("/shops/{did}/comments/{id}/confirm")
     public Object confirmComment(@PathVariable long did,@PathVariable long id,
                                  @Valid @RequestBody CommentConclusionVo commentConclusionVo,
-                                 BindingResult bindingResult){
+                                 BindingResult bindingResult,Long loginUser,String loginUserName){
+        //todo:
+        loginUser=Long.valueOf(111);
+        loginUserName="hhhhh";
+
         var res =  Common.processFieldErrors(bindingResult, httpServletResponse);
         if(res != null){
             return null;
         }
-        ReturnObject ret=commentService.confirmCommnets(did,id,commentConclusionVo);
+        ReturnObject ret=commentService.confirmCommnets(did,id,commentConclusionVo,loginUser,loginUserName);
         return Common.decorateReturnObject(ret);
     }
 
@@ -141,15 +148,15 @@ public class CommentController {
             Long uid,
             @RequestParam(required = false,defaultValue = "1") Integer page,
             @RequestParam(required = false,defaultValue = "10") Integer pageSize){
-        ReturnObject<PageInfo<VoObject>> ret=commentService.selectAllCommentsOfUser(uid,page,pageSize);
-        return Common.getPageRetObject(ret);
+        ReturnObject<PageInfo<Object>> ret=commentService.selectAllCommentsOfUser(uid,page,pageSize);
+        return Common.getPageRetVo(ret, CommentRetVo.class);
     }
 
     /**
      * 管理员查看未核审的评论列表
      *
      */
-    @ApiOperation(value = "管理员查看未核审/已核审的评论列表")
+    @ApiOperation(value = "管理员查看未核审的评论列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name="authorization", value="Token", required = true, dataType="String", paramType="header"),
             @ApiImplicitParam(name="id", required = true, dataType="Integer", paramType="path")
@@ -157,16 +164,21 @@ public class CommentController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
     })
-    @GetMapping("/shops/{id}/comments/all")
-    @Audit
+    @GetMapping("/shops/{id}/newcomments")
     public Object getAllComments(
             @PathVariable Long id,
-            @RequestParam(required = false) Integer state,
             @RequestParam(required = false,defaultValue = "1") Integer page,
             @RequestParam(required = false,defaultValue = "10") Integer pageSize){
-        logger.debug("getAllComments: page = "+ page +"  pageSize ="+pageSize);
+        Integer state=0;
         ReturnObject ret=commentService.selectCommentsOfState(id,state,page,pageSize);
-        return Common.getPageRetObject(ret);
+        return Common.getPageRetVo(ret,CommentRetVo.class);
     }
+    @GetMapping("/shops/{id}/comments")
+    public Object showShopCommentsByAdmin(@PathVariable("id") Long id, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize){
 
+//        if(id!=0){
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
+//        }
+//        return Common.getPageRetObject(commentService.showAllNotAuditComments(page,pageSize));
+    }
 }
