@@ -40,7 +40,16 @@ class GoodsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
-//        JSONAssert.assertEquals(expect, res,true);
+    }
+    @Test
+    public void insertGoodsTest2()throws Exception {
+        String json="{\"name\": \"小米\"}";
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/10/goods")
+                .contentType("application/json;charset=UTF-8").content(json))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
     }
 
     @Test
@@ -54,9 +63,28 @@ class GoodsControllerTest {
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
     }
     @Test
+    public void searchGoodsTest2()throws Exception {
+        Mockito.when(redisUtil.get("g_"+1L)).thenReturn(null);
+        Mockito.when(redisUtil.get("g_"+5L)).thenReturn(null);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/10/goods/1")
+                .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+    }
+    @Test
     public void updateGoodsTest() throws Exception {
         String json="{\"name\": \"小米\"}";
         this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/goods/1")
+                .contentType("application/json;charset=UTF-8").content(json))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+    }
+    @Test
+    public void updateGoodsTest2() throws Exception {
+        String json="{\"name\": \"小米\"}";
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/5/goods/2")
                 .contentType("application/json;charset=UTF-8").content(json))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -73,10 +101,29 @@ class GoodsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
     }
+    @Test
+    public void deleteGoodsTest2() throws Exception {
+        Mockito.when(redisUtil.get("g_"+1L)).thenReturn(null);
+        Mockito.when(redisUtil.get("g_"+5L)).thenReturn(null);
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/shops/10/goods/1")
+                .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+    }
 
     @Test
     public void publishProductTest() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/5/publish")
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/9/products/5/publish")
+                .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+    }
+
+    @Test
+    public void publishProductTest2() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/1550/publish")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -91,10 +138,26 @@ class GoodsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
     }
+    @Test
+    public void onshelvesProductTest2() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/2/onshelves")
+                .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+    }
 
     @Test
     public void offshelvesProductTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/10/offshelves")
+                .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+    }
+    @Test
+    public void offshelvesProductTest2() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/4/products/1552/offshelves")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -109,10 +172,26 @@ class GoodsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
     }
+    @Test
+    public void allowProductTest2() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/1/allow")
+                .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+    }
 
     @Test
     public void prohibitProductTest() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/5/prohibit")
+                .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+    }
+    @Test
+    public void prohibitProductTest2() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/1550/prohibit")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))

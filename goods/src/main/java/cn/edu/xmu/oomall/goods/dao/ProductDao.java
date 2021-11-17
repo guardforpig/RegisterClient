@@ -64,7 +64,7 @@ public class ProductDao {
                 {
                     return new ReturnObject(ReturnNo.FIELD_NOTVALID);
                 }
-            return new ReturnObject((Product)cloneVo(productPo,Product.class));
+            return new ReturnObject<Product>((Product)cloneVo(productPo,Product.class));
         }catch(Exception e)
         {
             logger.error(e.getMessage());

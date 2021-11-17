@@ -1,5 +1,8 @@
 package cn.edu.xmu.oomall.goods.model.bo;
 
+import cn.edu.xmu.oomall.core.model.VoObject;
+import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
+import cn.edu.xmu.oomall.goods.model.vo.ProductVo;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
+
 /**
  * @author YuJie 22920192204242
  * @date 2021/11/14
@@ -18,7 +23,7 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Product implements Serializable {
+public class Product implements VoObject,Serializable {
     private Long id;
 
 
@@ -71,6 +76,15 @@ public class Product implements Serializable {
 
 
     private Byte state;
+    @Override
+    public ProductVo createVo() {
+        return (ProductVo) cloneVo(this,ProductVo.class);
+    }
+
+    @Override
+    public Object createSimpleVo() {
+        return null;
+    }
     public void setState(Product.State state) {
         Integer code=state.getCode();
         Byte b=code.byteValue();

@@ -55,8 +55,7 @@ public class GoodsController {
     @PutMapping(value="shops/{shopId}/products/{id}/publish")
     public Object publishProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id)
     {
-        ReturnObject returnObject = productService.pulishProduct(shopId,id);
-        return Common.getRetObject(returnObject);
+        return Common.getRetObject(productService.pulishProduct(shopId,id));
     }
 
     @PutMapping(value="shops/{shopId}/products/{id}/onshelves")
