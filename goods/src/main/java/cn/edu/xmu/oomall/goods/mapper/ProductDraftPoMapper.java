@@ -2,7 +2,6 @@ package cn.edu.xmu.oomall.goods.mapper;
 
 import cn.edu.xmu.oomall.goods.model.po.ProductDraftPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductDraftPoExample;
-
 import java.util.List;
 
 public interface ProductDraftPoMapper {

@@ -2,7 +2,6 @@ package cn.edu.xmu.oomall.goods.mapper;
 
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
-
 import java.util.List;
 
 public interface OnSalePoMapper {
