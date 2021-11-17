@@ -1,6 +1,9 @@
 package cn.edu.xmu.oomall.goods.model.bo;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -10,6 +13,9 @@ import java.time.LocalDateTime;
  * @date 2021/11/14
  */
 @Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Product implements Serializable {
     private Long id;
 
