@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.goods.GoodsApplication;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,7 +16,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.result.StatusResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,12 +39,14 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+//        JSONAssert.assertEquals(expect, res,true);
     }
 
     @Test
     public void searchGoodsTest()throws Exception {
-        Mockito.when(redisUtil.get(Long.toString(1))).thenReturn(null);
-        Mockito.when(redisUtil.get(Long.toString(5))).thenReturn(null);
+        Mockito.when(redisUtil.get("g_"+1L)).thenReturn(null);
+        Mockito.when(redisUtil.get("g_"+5L)).thenReturn(null);
         this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/1/goods/1")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
@@ -63,8 +65,8 @@ class GoodsControllerTest {
 
     @Test
     public void deleteGoodsTest() throws Exception {
-        Mockito.when(redisUtil.get(Long.toString(1))).thenReturn(null);
-        Mockito.when(redisUtil.get(Long.toString(5))).thenReturn(null);
+        Mockito.when(redisUtil.get("g_"+1L)).thenReturn(null);
+        Mockito.when(redisUtil.get("g_"+5L)).thenReturn(null);
         this.mockMvc.perform(MockMvcRequestBuilders.delete("/shops/1/goods/1")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())

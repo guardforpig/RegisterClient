@@ -10,6 +10,9 @@ import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPoExample;
+import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -25,6 +28,8 @@ import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
  **/
 @Repository
 public class GoodsDao {
+    private static final Logger logger = LoggerFactory.getLogger(GoodsDao.class);
+
     @Autowired
     private GoodsPoMapper goodsPoMapper;
 
@@ -41,53 +46,67 @@ public class GoodsDao {
     {
         try
         {
+            if(goods.getName()==null)
+            {
+                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+            }
             GoodsPo goodsPo=(GoodsPo)cloneVo(goods,GoodsPo.class);
-            goodsPoMapper.insert(goodsPo);
+            int flag=goodsPoMapper.insert(goodsPo);
+            if(flag==0)
+            {
+                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+            }
             return new ReturnObject((Goods) cloneVo(goodsPo,Goods.class));
         }
         catch (Exception e)
         {
+            logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
     }
 
-    public ReturnObject updateGoods(Goods goods)
+    public ReturnObject updateGoods(Goods goods, GoodsVo goodsVo)
     {
         try
         {
+            goods.setName(goodsVo.getName());
             GoodsPo goodsPo=(GoodsPo)cloneVo(goods,GoodsPo.class);
-            goodsPoMapper.updateByPrimaryKeySelective(goodsPo);
+            int f1=goodsPoMapper.updateByPrimaryKeySelective(goodsPo);
+            if(f1==0)
+            {
+                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+            }
         }
         catch (Exception e)
         {
+            logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
         return new ReturnObject<>(ReturnNo.OK);
     }
 
-    public ReturnObject<Goods> searchGoodsById(Long id)
+    public ReturnObject<Goods> searchGoodsById(Long shopId,Long id)
     {
         GoodsPo goodsPo;
         try
         {
-            goodsPo=(GoodsPo) redisUtils.get(id.toString());
+            goodsPo=(GoodsPo) redisUtils.get("g_"+id);
             if(goodsPo==null)
             {
                 goodsPo=goodsPoMapper.selectByPrimaryKey(id);
                 if(goodsPo!=null)
                 {
-                    redisUtils.set(id.toString(),(Goods)cloneVo(goodsPo,Goods.class),goodsTimeout);
+                    redisUtils.set("g_"+id,(Goods)cloneVo(goodsPo,Goods.class),goodsTimeout);
                 }
                 else
                 {
                     return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
                 }
             }
-        }
-        catch (Exception e)
-        {
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
+            if(!goodsPo.getShopId().equals(shopId))
+            {
+                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+            }
         Goods returnGoods=(Goods) cloneVo(goodsPo,Goods.class);
         List<Product> productList=null;
         ProductPoExample productPoExample=new ProductPoExample();
@@ -101,26 +120,35 @@ public class GoodsDao {
             }
         returnGoods.setProductList(productList);
         return new ReturnObject<Goods>(returnGoods);
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
     }
-    public ReturnObject<Object> deleteGoodsById(Long id)
+    public ReturnObject<Object> deleteGoodsById(Long shopId,Long id)
     {
         GoodsPo goodsPo;
         try
         {
-            goodsPo=(GoodsPo) redisUtils.get(id.toString());
+            goodsPo=(GoodsPo) redisUtils.get("g_"+id);
             if(goodsPo==null)
             {
                 goodsPo=goodsPoMapper.selectByPrimaryKey(id);
-                if(goodsPo!=null)
+                if(goodsPo==null)
                 {
-                    Goods goods=(Goods)cloneVo(goodsPo,Goods.class);
-                    redisUtils.set(id.toString(),goods,goodsTimeout);
-                }
-                else {
                     return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
                 }
             }
-
+            else
+            {
+                redisUtils.del("g_"+id);
+            }
+            if(!goodsPo.getShopId().equals(shopId))
+            {
+                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+            }
         ProductPoExample productPoExample=new ProductPoExample();
         ProductPoExample.Criteria cr=productPoExample.createCriteria();
         cr.andGoodsIdEqualTo(id);
@@ -135,6 +163,7 @@ public class GoodsDao {
         }
         catch (Exception e)
         {
+            logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
         return new ReturnObject(ReturnNo.OK);

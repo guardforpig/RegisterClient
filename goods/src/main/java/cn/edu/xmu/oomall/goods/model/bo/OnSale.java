@@ -5,6 +5,9 @@ import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
 import com.alibaba.druid.support.spring.stat.annotation.Stat;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -14,6 +17,9 @@ import java.util.Map;
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 
 @Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class OnSale  implements  VoObject, Serializable {
 
     private Long id;
@@ -50,7 +56,6 @@ public class OnSale  implements  VoObject, Serializable {
     public State getState() {
         return State.getStatusByCode(Integer.valueOf(state));
     }
-
 
     public void setState(State state) {
         Integer code=state.getCode();
@@ -111,7 +116,8 @@ public class OnSale  implements  VoObject, Serializable {
     public enum State {
         DRAFT(0, "草稿"),
         ONLINE(1, "上线"),
-        OFFLINE(2, "下线");
+        OFFLINE(2, "下线"),
+        PROHIBIT(3,"禁售");
 
 
         private static final Map<Integer, State> STATE_MAP;

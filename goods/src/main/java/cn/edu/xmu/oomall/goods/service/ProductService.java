@@ -16,29 +16,29 @@ public class ProductService {
     private ProductDao productDao;
 
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject pulishProduct(Long productId)
+    public ReturnObject pulishProduct(Long shopId,Long productId)
     {
-        return productDao.publishById(productId);
+        return productDao.publishById(shopId,productId);
     }
 
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject onshelvesProduct(Long productId)
+    public ReturnObject onshelvesProduct(Long shopId,Long productId)
     {
-        return new ReturnObject(productDao.onshelvesById(productId));
+        return new ReturnObject(productDao.onshelvesById(shopId,productId));
     }
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject offshelvesProduct(Long productId)
+    public ReturnObject offshelvesProduct(Long shopId,Long productId)
     {
-        return new ReturnObject(productDao.offshelvesById(productId));
+        return new ReturnObject(productDao.offshelvesById(shopId,productId));
     }
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject allowProduct(Long productId)
+    public ReturnObject allowProduct(Long shopId,Long productId)
     {
-        return new ReturnObject(productDao.allowProductById(productId));
+        return new ReturnObject(productDao.allowProductById(shopId,productId));
     }
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject prohibitProduct(Long productId)
+    public ReturnObject prohibitProduct(Long shopId,Long productId)
     {
-        return new ReturnObject(productDao.prohibitProductById(productId));
+        return new ReturnObject(productDao.prohibitProductById(shopId,productId));
     }
 }

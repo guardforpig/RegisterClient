@@ -24,25 +24,25 @@ public class GoodsService {
         return goodsDao.createNewGoods((Goods) cloneVo(goodsVo,Goods.class));
     }
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject deleteGoods(Long id)
+    public ReturnObject deleteGoods(Long shopId,Long id)
     {
-        return new ReturnObject(goodsDao.deleteGoodsById(id));
+        return new ReturnObject(goodsDao.deleteGoodsById(shopId,id));
     }
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject updateGoods(Long id,GoodsVo goodsVo)
+    public ReturnObject updateGoods(Long shopId,Long id,GoodsVo goodsVo)
     {
-        Goods goods=goodsDao.searchGoodsById(id).getData();
+        Goods goods=goodsDao.searchGoodsById(shopId,id).getData();
         if(goods==null)
         {
-            return new ReturnObject(goodsDao.searchGoodsById(id));
+            return new ReturnObject(goodsDao.searchGoodsById(shopId,id));
         }
-        return new ReturnObject(goodsDao.updateGoods(goods));
+        return new ReturnObject(goodsDao.updateGoods(goods,goodsVo));
     }
 
     @Transactional(readOnly = true,rollbackFor=Exception.class)
-    public ReturnObject searchById(Long id)
+    public ReturnObject searchById(Long shopId,Long id)
     {
-        return goodsDao.searchGoodsById(id);
+        return goodsDao.searchGoodsById(shopId,id);
     }
 
 }

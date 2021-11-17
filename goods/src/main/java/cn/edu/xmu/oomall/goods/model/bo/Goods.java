@@ -21,6 +21,7 @@ import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 public class Goods implements VoObject,Serializable {
     private Long id;
     private String name;
+    private Long shopId;
     private List<Product> productList;
     private Long createdBy;
     private LocalDateTime gmtCreate;

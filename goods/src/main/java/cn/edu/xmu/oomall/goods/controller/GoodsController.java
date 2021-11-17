@@ -23,75 +23,63 @@ public class GoodsController {
     @Autowired
     ProductService productService;
 
-
-
     @PostMapping("shops/{id}/goods")
-    @ResponseBody
     public Object insertGoods(@PathVariable("id") Long shopId, @RequestBody GoodsVo goodsVo)
     {
         goodsVo.setShopId(shopId);
         ReturnObject returnObject = goodsService.insertGoods(goodsVo);
-
         return Common.getRetObject(returnObject);
 
     }
 
     @PutMapping("shops/{shopId}/goods/{id}")
-    @ResponseBody
-    public Object updateGoods(@PathVariable("id") Long id,@RequestBody GoodsVo goodsVo)
+    public Object updateGoods(@PathVariable("shopId") Long shopId,@PathVariable("id") Long id,@RequestBody GoodsVo goodsVo)
     {
-        return Common.decorateReturnObject(goodsService.updateGoods(id,goodsVo));
+        return Common.decorateReturnObject(goodsService.updateGoods(shopId,id,goodsVo));
 
     }
 
     @GetMapping(value="/shops/{shopId}/goods/{id}" )
-    @ResponseBody
-    public Object searchGoods(@PathVariable("id") Long id)
+    public Object searchGoods(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id)
     {
-        return Common.getRetObject(goodsService.searchById(id));
+        return Common.getRetObject(goodsService.searchById(shopId,id));
     }
 
     @DeleteMapping(value="shops/{shopId}/goods/{id}")
-    @ResponseBody
-    public Object deleteGoods(@PathVariable("id") Long id)
+    public Object deleteGoods(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id)
     {
-        return Common.decorateReturnObject(goodsService.deleteGoods(id));
+        return Common.decorateReturnObject(goodsService.deleteGoods(shopId,id));
     }
 
 
     @PutMapping(value="shops/{shopId}/products/{id}/publish")
-    @ResponseBody
-    public Object publishProduct(@PathVariable("id") Long id)
+    public Object publishProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id)
     {
-        ReturnObject returnObject = productService.pulishProduct(id);
+        ReturnObject returnObject = productService.pulishProduct(shopId,id);
         return Common.getRetObject(returnObject);
     }
 
     @PutMapping(value="shops/{shopId}/products/{id}/onshelves")
-    @ResponseBody
-    public Object onshelvesProduct(@PathVariable("id") Long id)
+    public Object onshelvesProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id)
     {
-        return Common.decorateReturnObject(productService.onshelvesProduct(id));
+        return Common.decorateReturnObject(productService.onshelvesProduct(shopId,id));
     }
 
     @PutMapping(value="shops/{shopId}/products/{id}/offshelves")
-    @ResponseBody
-    public Object offshelvesProduct(@PathVariable("id") Long id)
+    public Object offshelvesProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id)
     {
-        return Common.decorateReturnObject(productService.offshelvesProduct(id));
+        return Common.decorateReturnObject(productService.offshelvesProduct(shopId,id));
     }
 
     @PutMapping(value="shops/{shopId}/products/{id}/allow")
-    @ResponseBody
-    public Object allowProduct(@PathVariable("id") Long id)
+    public Object allowProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id)
     {
-        return Common.decorateReturnObject(productService.allowProduct(id));
+        return Common.decorateReturnObject(productService.allowProduct(shopId,id));
     }
 
     @PutMapping(value="shops/{shopId}/products/{id}/prohibit")
-    @ResponseBody
-    public Object prohibitProduct(@PathVariable("id") Long id)
+    public Object prohibitProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id)
     {
-        return Common.decorateReturnObject(productService.prohibitProduct(id));
+        return Common.decorateReturnObject(productService.prohibitProduct(shopId,id));
     }
 }
