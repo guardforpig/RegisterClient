@@ -56,7 +56,14 @@ public class CommentService {
         if (!(Boolean) commentDao.judgeComment(orderItemId).getData()) {
             return new ReturnObject(ReturnNo.COMMENT_EXISTED, "该订单条目已评论");
         }
+
+        ret = orderService.getShopIdByOrderItemId(orderItemId);
+        Long shopId=(Long) ret.getData();
         CommentPo commentPo = new CommentPo();
+        //todo:
+        // commentPo.set评论者id(loginUser);
+        // commentPo.setShopId()
+
         commentPo.setOrderitemId(orderItemId);
         commentPo.setContent(commentVo.getContent());
         commentPo.setType(commentVo.getType().byteValue());
@@ -102,6 +109,8 @@ public class CommentService {
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject<PageInfo<Object>> selectAllPassCommentByShopId(Long shopId, Integer pageNum, Integer pageSize) {
+       //todo:
+//        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllPassCommentByShopId(shopId, pageNum, pageSize).getData();
         List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllPassCommentByProductId(shopId, pageNum, pageSize).getData();
         List<Object> commentRetVos = new ArrayList<>();
         for (CommentPo po : commentPos) {

@@ -11,6 +11,6 @@ public interface OrderService {
     @GetMapping("/internal/{userId}/orders/{orderitemId}")
     ReturnObject isCustomerOwnOrderItem(@RequestParam("userId") Long userId, @RequestParam("orderitemId") Long orderitemId);
 
-//    @GetMapping("/internal/orders/orderitem/{orderitemId}")
-//    ReturnObject getOrderItem(Long orderItemId);
+    @GetMapping("/internal/orders/orderitem/shop/{orderitemId}")
+    ReturnObject getShopIdByOrderItemId(@RequestParam("orderitemId")Long orderItemId);
 }
