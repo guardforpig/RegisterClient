@@ -20,7 +20,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8
     username: root
-    password: 6585
+    password: zrjwq2714#
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       #初始化时建立物理连接的个数
