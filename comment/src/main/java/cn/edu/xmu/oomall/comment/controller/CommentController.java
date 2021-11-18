@@ -171,13 +171,15 @@ public class CommentController {
             @RequestParam(required = false,defaultValue = "1") Integer page,
             @RequestParam(required = false,defaultValue = "10") Integer pageSize){
         Integer state=0;
+        if (id != 0) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
+        }
         ReturnObject ret=commentService.selectCommentsOfState(id,state,page,pageSize);
         return Common.getPageRetVo(ret,CommentRetVo.class);
     }
 
     /**
      * 商铺管理员查看评论列表
-     *
      */
     @ApiOperation(value = "商铺管理员查看评论列表")
     @GetMapping("/shops/{id}/comments")

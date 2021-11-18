@@ -6,9 +6,7 @@ import cn.edu.xmu.oomall.comment.model.bo.Comment;
 import cn.edu.xmu.oomall.comment.model.po.CommentPo;
 import cn.edu.xmu.oomall.comment.model.vo.*;
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.oomall.comment.microservice.OrderService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +20,6 @@ public class CommentService {
 
     @Autowired
     private CommentDao commentDao;
-
-    @Autowired
-    private OrderService orderService;
 
 
     /**
@@ -46,14 +41,10 @@ public class CommentService {
     public ReturnObject newComment(Long productId, CommentVo commentVo, Long loginUser, String loginUsername) {
 
 
-
-       ReturnObject ret = orderService.getShopIdByProductId(productId);
-        Long shopId=(Long) ret.getData();
-        Long orderitemId=(Long) orderService.getOrderitemIdByProductId(productId).getData();
+        Long shopId = commentVo.getShopId();
         CommentPo commentPo = new CommentPo();
 
         commentPo.setProductId(productId);
-        commentPo.setOrderitemId(orderitemId);
         commentPo.setContent(commentVo.getContent());
         commentPo.setPostBy(loginUser);
         commentPo.setPostName(loginUsername);
@@ -64,14 +55,14 @@ public class CommentService {
         ReturnObject ret_insert = commentDao.insertComment(commentPo);
         if (ret_insert.getCode().equals(0)) {
             CommentRetVo commentRetVo = (CommentRetVo) Common.cloneVo(commentPo, CommentRetVo.class);
-            commentRetVo.setAuthor(new SimpleUserRetVo(loginUser,loginUsername));//手动set返回格式中不匹配的部分
+            commentRetVo.setPostBy(new SimpleUserRetVo(loginUser, loginUsername));//手动set返回格式中不匹配的部分
             return new ReturnObject(commentRetVo);
         }
         return ret_insert;
     }
 
     /**
-     * 分页查询sku下所有已通过审核的评论
+     * 分页查询商品下所有已通过审核的评论
      *
      * @param productId
      * @param pageNum
@@ -98,6 +89,7 @@ public class CommentService {
 
     /**
      * 查询商铺评论
+     *
      * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
@@ -127,14 +119,11 @@ public class CommentService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public ReturnObject confirmCommnets(Long did, Long id, CommentConclusionVo conclusion,Long loginUser,String loginUserName) {
-        if (did != 0) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
-        }
+    public ReturnObject confirmCommnets(Long did, Long id, CommentConclusionVo conclusion, Long loginUser, String loginUserName) {
         Comment comment = new Comment();
         comment.setId(id);
         comment.setState(conclusion.getConclusion() == true ? Comment.State.PASS.getCode() : Comment.State.FORBID.getCode());
-        comment.setAuditedBy(new SimpleUserRetVo(loginUser,loginUserName));
+        comment.setAuditedBy(new SimpleUserRetVo(loginUser, loginUserName));
         Common.setPoModifiedFields(comment, loginUser, loginUserName);
         ReturnObject ret = commentDao.updateCommentState(comment);
         return ret;
@@ -176,9 +165,6 @@ public class CommentService {
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject<PageInfo<Object>> selectCommentsOfState(Long did, Integer state, Integer pageNum, Integer pageSize) {
-        if (did != 0) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
-        }
 
         List<CommentPo> commentPos = (List<CommentPo>) commentDao.selelctCommentsOfState(state.byteValue(), pageNum, pageSize).getData();
 

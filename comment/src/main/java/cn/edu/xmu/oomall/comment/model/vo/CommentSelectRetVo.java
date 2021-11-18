@@ -4,7 +4,11 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 评论
+ * @author Xinyu Jiang
+ * @sn 22920192204219
+ **/
 @Data
 public class CommentSelectRetVo {
     private Long page;

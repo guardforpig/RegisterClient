@@ -4,12 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-/**
- * SimpleUserRetVo
- *
- * @author Zhiliang Li 22920192204235
- * @date 2021/11/12
- */
 @Data
 @AllArgsConstructor
 public class SimpleUserRetVo {

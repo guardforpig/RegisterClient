@@ -19,5 +19,6 @@ public class CommentVo {
     @NotBlank(message = "评论不能为空")
     @ApiModelProperty(value = "评论内容")
     String content;
-
+    @ApiModelProperty(value = "商铺id")
+    Long shopId;
 }

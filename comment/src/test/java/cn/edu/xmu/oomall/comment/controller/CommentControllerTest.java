@@ -1,16 +1,12 @@
 package cn.edu.xmu.oomall.comment.controller;
 
-import cn.edu.xmu.oomall.comment.microservice.OrderService;
 import cn.edu.xmu.oomall.comment.model.vo.CommentConclusionVo;
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +22,6 @@ public class CommentControllerTest {
     private static String userToken = "0";
     @Autowired
     private MockMvc mvc;
-    @MockBean
-    private OrderService orderService;
 
 
     /**
@@ -67,10 +61,9 @@ public class CommentControllerTest {
     @Test
     @Transactional
     public void addGoodCommentGoodType() throws Exception {
-        Mockito.when(orderService.getShopIdByProductId(Long.valueOf(5))).thenReturn(new ReturnObject(Long.valueOf(1)));
-        Mockito.when(orderService.getOrderitemIdByProductId(Long.valueOf(5))).thenReturn(new ReturnObject(Long.valueOf(1)));
+
         //评论为空
-        String requestJSON = "{\"type\":0 ,\"content\":\"\"}";
+        String requestJSON = "{\"type\":0 ,\"content\":\"\",\"shopId\":\"1\"}";
         String responseString = this.mvc.perform(post("/internal/products/5/comments").contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken).content(requestJSON))
                 .andExpect(status().isBadRequest())
@@ -81,13 +74,13 @@ public class CommentControllerTest {
 
 
         //成功评论
-        requestJSON = "{\"type\":0 ,\"content\":\"这个真不错\"}";
+        requestJSON = "{\"type\":0 ,\"content\":\"这个真不错\",\"shopId\":\"1\"}";
         responseString = this.mvc.perform(post("/internal/products/5/comments").contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken).content(requestJSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":0,\"data\":{\"productId\":5,\"orderitemId\":1,\"type\":0,\"content\":\"这个真不错\",\"state\":0},\"errmsg\":\"成功\"}";
+        expected = "{\"errno\":0,\"data\":{\"type\":0,\"content\":\"这个真不错\",\"state\":0},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, false);
 
 
@@ -144,7 +137,7 @@ public class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"productId\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"auditedBy\":null,\"modifiedBy\":{}},{\"id\":2,\"productId\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}}]}}";
+        String expected = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"auditedBy\":null,\"modifiedBy\":{}},{\"id\":2,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}}]}}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
 
@@ -170,7 +163,7 @@ public class CommentControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        expected = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":1,\"pages\":1,\"pageSize\":1,\"page\":1,\"list\":[{\"id\":1,\"productId\":1,\"type\":0,\"content\":\"真不错\",\"state\":1,\"modifiedBy\":{}}]}}";
+        expected = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":1,\"pages\":1,\"pageSize\":1,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":1,\"modifiedBy\":{}}]}}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
 
@@ -185,7 +178,7 @@ public class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String excepted = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"productId\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}},{\"id\":2,\"productId\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}}]}}";
+        String excepted = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}},{\"id\":2,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}}]}}";
         JSONAssert.assertEquals(excepted, responseString, false);
 
     }
@@ -200,7 +193,7 @@ public class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String excepted = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"productId\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}},{\"id\":2,\"productId\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}}]}}";
+        String excepted = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}},{\"id\":2,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}}]}}";
         JSONAssert.assertEquals(excepted, responseString, false);
 
     }

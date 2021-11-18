@@ -15,15 +15,14 @@ public class CommentRetVo{
     @ApiModelProperty(value = "评论id")
     private Long id;
 
-    private Long productId;
-
     private Byte type;
 
     private String content;
 
     private Byte state;
-    private SimpleUserRetVo author;
+    private SimpleUserRetVo postBy;
     private SimpleUserRetVo auditedBy;
+    private SimpleUserRetVo createdBy;
     private SimpleUserRetVo modifiedBy;
     private LocalDateTime postTime;
     private LocalDateTime auditTime;
