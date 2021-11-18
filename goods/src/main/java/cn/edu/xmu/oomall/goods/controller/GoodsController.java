@@ -11,11 +11,14 @@ import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
+import static cn.edu.xmu.oomall.core.util.Common.processFieldErrors;
 
 /**
  * @author Huang Tianyue
@@ -36,10 +39,14 @@ public class GoodsController {
 
     @PostMapping("shops/{id}/goods")
     @Audit
-    public Object insertGoods(@PathVariable("id") Long shopId, @RequestBody GoodsVo goodsVo, @LoginUser Long loginUserId,@LoginName String loginUserName)
+    public Object insertGoods(@PathVariable("id") Long shopId, @Validated @RequestBody GoodsVo goodsVo, BindingResult bindingResult, @LoginUser Long loginUserId, @LoginName String loginUserName)
     {
-        ReturnObject returnObject = goodsService.insertGoods(shopId,goodsVo);
-        return Common.getRetObject(returnObject);
+        Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
+        if (null != returnObject){
+            return returnObject;
+        }
+        ReturnObject ro = goodsService.insertGoods(shopId,goodsVo);
+        return Common.getRetObject(ro);
 
     }
 
