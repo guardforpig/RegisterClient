@@ -61,7 +61,7 @@ public class CommentController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 903, message = "用户没有购买此商品")
     })
-    @PostMapping("orderitems/{id}/comments")
+    @PostMapping("/internal/products/{id}/comments")
     public Object addCommentOnProduct(
             @PathVariable Long id,
             @Validated @RequestBody CommentVo commentVo,
@@ -70,8 +70,7 @@ public class CommentController {
         loginUser=Long.valueOf(1);
         loginUserName="hhhhh";
 
-
-        //校验前端数据
+        //校验前端数据评论不能为空
         Object returnObject = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (null != returnObject) {
             return returnObject;
@@ -96,10 +95,10 @@ public class CommentController {
             @ApiResponse(code = 0, message = "成功"),
     })
     @GetMapping("/products/{id}/comments")
-    public Object selectSkuComments(@PathVariable Long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+    public Object selectProductComments(@PathVariable Long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
 
         ReturnObject ret=commentService.selectAllPassCommentByProductId(id,page,pageSize);
-        return Common.decorateReturnObject(ret);
+        return Common.getPageRetVo(ret,CommentRetVo.class);
     }
 
     /**
@@ -122,9 +121,9 @@ public class CommentController {
         loginUser=Long.valueOf(111);
         loginUserName="hhhhh";
 
-        var res =  Common.processFieldErrors(bindingResult, httpServletResponse);
-        if(res != null){
-            return null;
+        Object obj = Common.processFieldErrors(bindingResult,httpServletResponse);
+        if (null != obj) {
+            return obj;
         }
         ReturnObject ret=commentService.confirmCommnets(did,id,commentConclusionVo,loginUser,loginUserName);
         return Common.decorateReturnObject(ret);
@@ -175,8 +174,14 @@ public class CommentController {
         ReturnObject ret=commentService.selectCommentsOfState(id,state,page,pageSize);
         return Common.getPageRetVo(ret,CommentRetVo.class);
     }
+
+    /**
+     * 商铺管理员查看评论列表
+     *
+     */
+    @ApiOperation(value = "商铺管理员查看评论列表")
     @GetMapping("/shops/{id}/comments")
-    public Object showShopCommentsByAdmin(@PathVariable("id") Long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+    public Object showShopCommentsByShopId(@PathVariable("id") Long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
 
         ReturnObject ret=commentService.selectAllPassCommentByShopId(id,page,pageSize);
         return Common.getPageRetVo(ret,CommentRetVo.class);

@@ -22,8 +22,11 @@ public class CommentRetVo{
     private String content;
 
     private Byte state;
-    private SimpleUserRetVo createdBy;
+    private SimpleUserRetVo author;
+    private SimpleUserRetVo auditedBy;
     private SimpleUserRetVo modifiedBy;
+    private LocalDateTime postTime;
+    private LocalDateTime auditTime;
     private LocalDateTime gmtCreated;
     private LocalDateTime gmtModified;
 

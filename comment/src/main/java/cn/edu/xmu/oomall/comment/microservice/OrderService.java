@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "Order")
 public interface OrderService {
 
-    @GetMapping("/internal/{userId}/orders/{orderitemId}")
-    ReturnObject isCustomerOwnOrderItem(@RequestParam("userId") Long userId, @RequestParam("orderitemId") Long orderitemId);
+    @GetMapping("/internal/orders/orderitem/{productId}")
+    ReturnObject getOrderitemIdByProductId(@RequestParam("ProductId") Long productId);
 
-    @GetMapping("/internal/orders/orderitem/shop/{orderitemId}")
-    ReturnObject getShopIdByOrderItemId(@RequestParam("orderitemId")Long orderItemId);
+    @GetMapping("/internal/shop/{productId}")
+    ReturnObject getShopIdByProductId(@RequestParam("productId") Long productId);
+
+
 }

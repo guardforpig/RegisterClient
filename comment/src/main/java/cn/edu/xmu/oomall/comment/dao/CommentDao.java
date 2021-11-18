@@ -24,8 +24,6 @@ public class CommentDao {
     @Autowired
     CommentPoMapper commentPoMapper;
 
-//    @Autowired
-//    SKUPoMapper skuPoMapper;
     /**
      * 获取评论所有状态
      * @param[]
@@ -51,7 +49,8 @@ public class CommentDao {
     public ReturnObject insertComment(CommentPo commentPo){
         try{
             commentPo.setGmtCreate(LocalDateTime.now());
-            commentPo.setGmtModified(commentPo.getGmtModified());
+            commentPo.setGmtModified(LocalDateTime.now());
+            commentPo.setPostTime(LocalDateTime.now());
             int ret=commentPoMapper.insertSelective(commentPo);
             if(ret==0){
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
@@ -62,28 +61,6 @@ public class CommentDao {
         }
     }
 
-    /**
-     * 判断某个订单明细是否已被评论
-     */
-    public ReturnObject judgeComment(Long orderItemId){
-        CommentPoExample example=new CommentPoExample();
-        CommentPoExample.Criteria criteria=example.createCriteria();
-        criteria.andOrderitemIdEqualTo(orderItemId);
-        List<CommentPo> commentPos;
-        try {
-           commentPos = commentPoMapper.selectByExample(example);
-        }
-        catch (Exception e)
-        {
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
-        }
-        for(CommentPo commentPo:commentPos){
-            if(commentPo.getState()==Comment.State.NOT_AUDIT.getCode()||commentPo.getState()==Comment.State.PASS.getCode()){
-                return new ReturnObject<>(false);
-            }
-        }
-        return new ReturnObject<>(true);
-    }
 
 
     /**
@@ -119,7 +96,7 @@ public class CommentDao {
         List<CommentPo> commentPos=new ArrayList<>();
         PageHelper.startPage(pageNum,pageSize);
         try{
-//            criteria.andShopIdEqualTo(shopId);
+            criteria.andShopIdEqualTo(shopId);
             commentPos=commentPoMapper.selectByExample(example);
 
         }catch (DataAccessException e){
@@ -132,8 +109,8 @@ public class CommentDao {
      * 修改评论状态
      */
     public ReturnObject updateCommentState(Comment comment){
-//        CommentPo commentPo=comment.createPo();
         CommentPo commentPo = (CommentPo) Common.cloneVo(comment, CommentPo.class);
+        commentPo.setGmtModified(LocalDateTime.now());
         int ret;
         try{
             ret=commentPoMapper.updateByPrimaryKeySelective(commentPo);
@@ -154,12 +131,10 @@ public class CommentDao {
     public ReturnObject selectAllCommentsOfUser(Long userId,Integer pageNum, Integer pageSize){
         CommentPoExample example=new CommentPoExample();
         CommentPoExample.Criteria criteria=example.createCriteria();
-        criteria.andCreatedByEqualTo(userId);
         List<CommentPo> commentPos=new ArrayList<>();
         PageHelper.startPage(pageNum,pageSize);
         try{
-            criteria.andProductIdEqualTo(userId);
-            criteria.andStateEqualTo(Comment.State.PASS.getCode());
+            criteria.andPostByEqualTo(userId);
             commentPos=commentPoMapper.selectByExample(example);
 
         }catch (DataAccessException e){

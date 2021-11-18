@@ -4,10 +4,7 @@ package cn.edu.xmu.oomall.comment.service;
 import cn.edu.xmu.oomall.comment.dao.CommentDao;
 import cn.edu.xmu.oomall.comment.model.bo.Comment;
 import cn.edu.xmu.oomall.comment.model.po.CommentPo;
-import cn.edu.xmu.oomall.comment.model.vo.CommentConclusionVo;
-import cn.edu.xmu.oomall.comment.model.vo.CommentRetVo;
-import cn.edu.xmu.oomall.comment.model.vo.CommentSelectRetVo;
-import cn.edu.xmu.oomall.comment.model.vo.CommentVo;
+import cn.edu.xmu.oomall.comment.model.vo.*;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -29,6 +26,7 @@ public class CommentService {
     @Autowired
     private OrderService orderService;
 
+
     /**
      * 获取评论所有状态
      *
@@ -45,33 +43,28 @@ public class CommentService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public ReturnObject newComment(Long orderItemId, CommentVo commentVo, Long loginUser, String loginUsername) {
-        ReturnObject ret = orderService.isCustomerOwnOrderItem(loginUser, orderItemId);
-        Boolean result = (Boolean) ret.getData();
-        if (!result) {
-            //用户没有购买此商品
-            return new ReturnObject(ReturnNo.COMMENT_USER_NOORDER);
-        }
+    public ReturnObject newComment(Long productId, CommentVo commentVo, Long loginUser, String loginUsername) {
 
-        if (!(Boolean) commentDao.judgeComment(orderItemId).getData()) {
-            return new ReturnObject(ReturnNo.COMMENT_EXISTED, "该订单条目已评论");
-        }
 
-        ret = orderService.getShopIdByOrderItemId(orderItemId);
+
+       ReturnObject ret = orderService.getShopIdByProductId(productId);
         Long shopId=(Long) ret.getData();
+        Long orderitemId=(Long) orderService.getOrderitemIdByProductId(productId).getData();
         CommentPo commentPo = new CommentPo();
-        //todo:
-        // commentPo.set评论者id(loginUser);
-        // commentPo.setShopId()
 
-        commentPo.setOrderitemId(orderItemId);
+        commentPo.setProductId(productId);
+        commentPo.setOrderitemId(orderitemId);
         commentPo.setContent(commentVo.getContent());
+        commentPo.setPostBy(loginUser);
+        commentPo.setPostName(loginUsername);
+        commentPo.setShopId(shopId);
         commentPo.setType(commentVo.getType().byteValue());
         commentPo.setState(Comment.State.NOT_AUDIT.getCode());
         Common.setPoCreatedFields(commentPo, loginUser, loginUsername);
         ReturnObject ret_insert = commentDao.insertComment(commentPo);
         if (ret_insert.getCode().equals(0)) {
             CommentRetVo commentRetVo = (CommentRetVo) Common.cloneVo(commentPo, CommentRetVo.class);
+            commentRetVo.setAuthor(new SimpleUserRetVo(loginUser,loginUsername));//手动set返回格式中不匹配的部分
             return new ReturnObject(commentRetVo);
         }
         return ret_insert;
@@ -109,9 +102,8 @@ public class CommentService {
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject<PageInfo<Object>> selectAllPassCommentByShopId(Long shopId, Integer pageNum, Integer pageSize) {
-       //todo:
-//        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllPassCommentByShopId(shopId, pageNum, pageSize).getData();
-        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllPassCommentByProductId(shopId, pageNum, pageSize).getData();
+
+        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectCommentByShopId(shopId, pageNum, pageSize).getData();
         List<Object> commentRetVos = new ArrayList<>();
         for (CommentPo po : commentPos) {
             commentRetVos.add(po);
@@ -142,6 +134,7 @@ public class CommentService {
         Comment comment = new Comment();
         comment.setId(id);
         comment.setState(conclusion.getConclusion() == true ? Comment.State.PASS.getCode() : Comment.State.FORBID.getCode());
+        comment.setAuditedBy(new SimpleUserRetVo(loginUser,loginUserName));
         Common.setPoModifiedFields(comment, loginUser, loginUserName);
         ReturnObject ret = commentDao.updateCommentState(comment);
         return ret;
