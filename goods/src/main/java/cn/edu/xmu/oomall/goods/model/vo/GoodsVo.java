@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,12 +21,8 @@ import java.util.List;
 @ApiModel(description="商品视图对象")
 public class GoodsVo {
     private Long id;
+    @NotBlank(message="商品名称不能为空")
     private String name;
-    private Long shopId;
     private List<Product> productList;
-    private Long createdBy;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
-    private Long modifiedBy;
 
 }

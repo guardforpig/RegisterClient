@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.goods.service;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.GoodsDao;
 import cn.edu.xmu.oomall.goods.model.bo.Goods;
+import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,12 @@ public class GoodsService {
     @Autowired
     private GoodsDao goodsDao;
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject insertGoods(GoodsVo goodsVo)
+    public ReturnObject insertGoods(Long shopId,GoodsVo goodsVo)
     {
-        return goodsDao.createNewGoods((Goods) cloneVo(goodsVo,Goods.class));
+        Goods goods=(Goods)cloneVo(goodsVo,Goods.class);
+        goods.setShopId(shopId);
+        GoodsPo goodsPo=(GoodsPo) cloneVo(goods,GoodsPo.class);
+        return goodsDao.createNewGoods(goodsPo);
     }
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject deleteGoods(Long shopId,Long id)
@@ -36,7 +40,9 @@ public class GoodsService {
         {
             return new ReturnObject(goodsDao.searchGoodsById(shopId,id));
         }
-        return new ReturnObject(goodsDao.updateGoods(goods,goodsVo));
+        goods.setName(goodsVo.getName());
+        GoodsPo goodsPo=(GoodsPo) cloneVo(goods,GoodsPo.class);
+        return new ReturnObject(goodsDao.updateGoods(goodsPo));
     }
 
     @Transactional(readOnly = true,rollbackFor=Exception.class)

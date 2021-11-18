@@ -19,6 +19,11 @@
             <artifactId>core</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>cn.edu.xmu.privilegegateway</groupId>
+            <artifactId>annotation</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -2,6 +2,8 @@ package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.core.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.GoodsApplication;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
+import com.auth0.jwt.JWTCreator;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -26,6 +28,8 @@ import java.nio.charset.StandardCharsets;
 @Transactional      //防止脏数据
 @AutoConfigureMockMvc
 class GoodsControllerTest {
+    private static String adminToken;
+    private static JwtHelper jwtHelper = new JwtHelper();
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -33,8 +37,9 @@ class GoodsControllerTest {
 
     @Test
     public void insertGoodsTest()throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
         String json="{\"name\": \"小米\"}";
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/1/goods")
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/1/goods").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8").content(json))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -43,8 +48,9 @@ class GoodsControllerTest {
     }
     @Test
     public void insertGoodsTest2()throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
         String json="{\"name\": \"小米\"}";
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/10/goods")
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/10/goods").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8").content(json))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -54,9 +60,10 @@ class GoodsControllerTest {
 
     @Test
     public void searchGoodsTest()throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
         Mockito.when(redisUtil.get("g_"+1L)).thenReturn(null);
         Mockito.when(redisUtil.get("g_"+5L)).thenReturn(null);
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/1/goods/1")
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/1/goods/1").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -64,9 +71,10 @@ class GoodsControllerTest {
     }
     @Test
     public void searchGoodsTest2()throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
         Mockito.when(redisUtil.get("g_"+1L)).thenReturn(null);
         Mockito.when(redisUtil.get("g_"+5L)).thenReturn(null);
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/10/goods/1")
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/10/goods/1").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -74,8 +82,9 @@ class GoodsControllerTest {
     }
     @Test
     public void updateGoodsTest() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
         String json="{\"name\": \"小米\"}";
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/goods/1")
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/goods/1").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8").content(json))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -83,8 +92,9 @@ class GoodsControllerTest {
     }
     @Test
     public void updateGoodsTest2() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
         String json="{\"name\": \"小米\"}";
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/5/goods/2")
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/5/goods/2").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8").content(json))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -93,9 +103,10 @@ class GoodsControllerTest {
 
     @Test
     public void deleteGoodsTest() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
         Mockito.when(redisUtil.get("g_"+1L)).thenReturn(null);
         Mockito.when(redisUtil.get("g_"+5L)).thenReturn(null);
-        this.mockMvc.perform(MockMvcRequestBuilders.delete("/shops/1/goods/1")
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/shops/1/goods/1").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -103,9 +114,10 @@ class GoodsControllerTest {
     }
     @Test
     public void deleteGoodsTest2() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
         Mockito.when(redisUtil.get("g_"+1L)).thenReturn(null);
         Mockito.when(redisUtil.get("g_"+5L)).thenReturn(null);
-        this.mockMvc.perform(MockMvcRequestBuilders.delete("/shops/10/goods/1")
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/shops/10/goods/1").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -114,7 +126,8 @@ class GoodsControllerTest {
 
     @Test
     public void publishProductTest() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/9/products/5/publish")
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/9/products/5/publish").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -123,7 +136,8 @@ class GoodsControllerTest {
 
     @Test
     public void publishProductTest2() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/1550/publish")
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/1550/publish").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -132,7 +146,8 @@ class GoodsControllerTest {
 
     @Test
     public void onshelvesProductTest() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/5/onshelves")
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/5/onshelves").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -140,7 +155,8 @@ class GoodsControllerTest {
     }
     @Test
     public void onshelvesProductTest2() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/2/onshelves")
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/2/onshelves").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -149,7 +165,8 @@ class GoodsControllerTest {
 
     @Test
     public void offshelvesProductTest() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/10/offshelves")
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/10/offshelves").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -157,7 +174,8 @@ class GoodsControllerTest {
     }
     @Test
     public void offshelvesProductTest2() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/4/products/1552/offshelves")
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/4/products/1552/offshelves").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -166,7 +184,8 @@ class GoodsControllerTest {
 
     @Test
     public void allowProductTest() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/10/allow")
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/10/allow").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -174,7 +193,8 @@ class GoodsControllerTest {
     }
     @Test
     public void allowProductTest2() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/1/allow")
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/1/allow").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -183,7 +203,8 @@ class GoodsControllerTest {
 
     @Test
     public void prohibitProductTest() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/5/prohibit")
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/1/products/5/prohibit").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -191,7 +212,8 @@ class GoodsControllerTest {
     }
     @Test
     public void prohibitProductTest2() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/1550/prohibit")
+        adminToken =jwtHelper.createToken(1L,"admin",1L, 3600);
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/10/products/1550/prohibit").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
