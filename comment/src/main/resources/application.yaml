@@ -11,21 +11,21 @@ server:
       max: 500
 
 spring:
-#  application:
-#    name: ShopService
-#  cloud:
-#    loadbalancer:
-#      ribbon:
-#        enable: true
-#    nacos:
-#      discovery:
-#        server-addr: 192.168.31.241:8848
+ application:
+   name: ShopService
+ cloud:
+   loadbalancer:
+     ribbon:
+       enable: true
+   nacos:
+     discovery:
+       server-addr: 192.168.31.241:8848
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://81.68.173.165:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
     username: dbdata
-    password: jxydsb
+    password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       #初始化时建立物理连接的个数
@@ -80,7 +80,7 @@ spring:
 
 mybatis:
   #po对象的包
-  type-aliases-package: cn.edu.xmu.oomall.shop.model
+  type-aliases-package: cn.edu.xmu.oomall.comment.model
   #mapper.xml所在的位置
   mapper-locations: classpath*:cn.edu.xmu.oomall.comment.mapper/*.xml
   #自动将SQL中查出来的带下划线的字段，转换为驼峰标志，再去匹配类中的属性
