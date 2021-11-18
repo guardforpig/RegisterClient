@@ -34,12 +34,12 @@ public class CouponDao {
     @Autowired
     private CouponOnsalePoMapper couponOnsalePoMapper;
 
-    private Map<Class, Map<String, Object>> BoMap;
+    private Map<Class, Map<String, Object>> boMap;
 
     private static final Logger logger = LoggerFactory.getLogger(CouponDao.class);
 
     private void initBoMap() {
-        BoMap = new HashMap<>() {
+        boMap = new HashMap<>() {
             final Map<String, Object> CouponActivityMap = new HashMap<>() {{
                 put("PoClass", CouponActivityPo.class);
                 put("Mapper", couponActivityPoMapper);
@@ -57,10 +57,11 @@ public class CouponDao {
     public ReturnObject getBoByPrimaryKey(Long id, Class boClass) {
         initBoMap();
         try {
-            Method selectMethod = BoMap.get(boClass).get("Mapper").getClass().getMethod("selectByPrimaryKey", Long.class);
-            Object po = selectMethod.invoke(BoMap.get(boClass).get("Mapper"), id);
-            if (po == null)
+            Method selectMethod = boMap.get(boClass).get("Mapper").getClass().getMethod("selectByPrimaryKey", Long.class);
+            Object po = selectMethod.invoke(boMap.get(boClass).get("Mapper"), id);
+            if (po == null) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
+            }
 
             return new ReturnObject<>(Common.cloneVo(po, boClass));
         } catch (Exception e) {
@@ -70,18 +71,20 @@ public class CouponDao {
     }
 
 
-    public ReturnObject listBoByExample(Object example, Class BoClass, Integer pageNumber, Integer pageSize) {
+    public ReturnObject listBoByExample(Object example, Class boClass, Integer pageNumber, Integer pageSize) {
         initBoMap();
         try {
             PageHelper.startPage(pageNumber, pageSize, true, null, true);
-            Method selectMethod = BoMap.get(BoClass).get("Mapper").getClass().getMethod("selectByExample", example.getClass());
-            List<Object> poList = (List<Object>) selectMethod.invoke(BoMap.get(BoClass).get("Mapper"), example);
-            if (poList.size() == 0)
+            Method selectMethod = boMap.get(boClass).get("Mapper").getClass().getMethod("selectByExample", example.getClass());
+            List<Object> poList = (List<Object>) selectMethod.invoke(boMap.get(boClass).get("Mapper"), example);
+            if (poList.size() == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
+            }
 
             List<Object> boList = new ArrayList<>();
-            for (Object po : poList)
-                boList.add(Common.cloneVo(po, BoClass));
+            for (Object po : poList) {
+                boList.add(Common.cloneVo(po, boClass));
+            }
 
             return new ReturnObject<>(new PageInfo<>(boList));
         } catch (Exception e) {
@@ -94,8 +97,8 @@ public class CouponDao {
         initBoMap();
         try {
             Object po = Common.cloneVo(bo, poClass);
-            Method insertMethod = BoMap.get(bo.getClass()).get("Mapper").getClass().getMethod("insert", poClass);
-            insertMethod.invoke(BoMap.get(bo.getClass()).get("Mapper"), po);
+            Method insertMethod = boMap.get(bo.getClass()).get("Mapper").getClass().getMethod("insert", poClass);
+            insertMethod.invoke(boMap.get(bo.getClass()).get("Mapper"), po);
             return new ReturnObject<>(ReturnNo.OK, ReturnNo.OK.getMessage());
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -103,17 +106,17 @@ public class CouponDao {
         }
     }
 
-
     public ReturnObject updateBo(Object bo, Class poClass) {
         initBoMap();
         try {
             Object po = Common.cloneVo(bo, poClass);
-            Method updateMethod = BoMap.get(bo.getClass()).get("Mapper").getClass().getMethod("updateByPrimaryKeySelective", poClass);
-            int flag = (int) updateMethod.invoke(BoMap.get(bo.getClass()).get("Mapper"), po);
-            if (flag == 0)
+            Method updateMethod = boMap.get(bo.getClass()).get("Mapper").getClass().getMethod("updateByPrimaryKeySelective", poClass);
+            int flag = (int) updateMethod.invoke(boMap.get(bo.getClass()).get("Mapper"), po);
+            if (flag == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
-            else
+            } else {
                 return new ReturnObject<>(ReturnNo.OK, ReturnNo.OK.getMessage());
+            }
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -123,12 +126,13 @@ public class CouponDao {
     public ReturnObject deleteBoByPrimaryKey(Long id, Class boClass) {
         initBoMap();
         try {
-            Method deleteMethod = BoMap.get(boClass).get("Mapper").getClass().getMethod("deleteByPrimaryKey", Long.class);
-            int flag = (int) deleteMethod.invoke(BoMap.get(boClass).get("Mapper"), id);
-            if (flag == 0)
+            Method deleteMethod = boMap.get(boClass).get("Mapper").getClass().getMethod("deleteByPrimaryKey", Long.class);
+            int flag = (int) deleteMethod.invoke(boMap.get(boClass).get("Mapper"), id);
+            if (flag == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
-            else
+            } else {
                 return new ReturnObject<>(ReturnNo.OK, ReturnNo.OK.getMessage());
+            }
         } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, ReturnNo.INTERNAL_SERVER_ERR.getMessage());
         }
