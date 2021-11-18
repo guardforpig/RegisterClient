@@ -62,7 +62,6 @@ public class CommentController {
     })
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
-            @ApiResponse(code = 903, message = "用户没有购买此商品")
     })
     @Audit
     @PostMapping("/internal/products/{id}/comments")
