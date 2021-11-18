@@ -135,7 +135,7 @@ public class CommentDao {
         List<CommentPo> commentPos=new ArrayList<>();
         PageHelper.startPage(pageNum,pageSize);
         try{
-            criteria.andPostByEqualTo(userId);
+            criteria.andPostIdEqualTo(userId);
             commentPos=commentPoMapper.selectByExample(example);
 
         }catch (DataAccessException e){

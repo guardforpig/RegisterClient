@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.comment.controller;
 
 import cn.edu.xmu.oomall.comment.model.vo.CommentConclusionVo;
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 public class CommentControllerTest {
-    private static String adminToken = "0";
-    private static String shopToken = "0";
-    private static String userToken = "0";
+    private static String adminToken ;
+    private static JwtHelper jwtHelper = new JwtHelper();
     @Autowired
     private MockMvc mvc;
 
@@ -61,7 +61,7 @@ public class CommentControllerTest {
     @Test
     @Transactional
     public void addGoodCommentGoodType() throws Exception {
-
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600);
         //评论为空
         String requestJSON = "{\"type\":0 ,\"content\":\"\",\"shopId\":\"1\"}";
         String responseString = this.mvc.perform(post("/internal/products/5/comments").contentType("application/json;charset=UTF-8")
@@ -91,6 +91,7 @@ public class CommentControllerTest {
     @Test
     @Transactional
     public void allowComment() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600);
         CommentConclusionVo conclusion = new CommentConclusionVo();
         conclusion.setConclusion(true);
         String requestJSON = JacksonUtil.toJson(conclusion);
@@ -110,6 +111,7 @@ public class CommentControllerTest {
     @Test
     @Transactional
     public void passComment() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600);
         CommentConclusionVo conclusion = new CommentConclusionVo();
         conclusion.setConclusion(false);
         String requestJSON = JacksonUtil.toJson(conclusion);
@@ -128,6 +130,7 @@ public class CommentControllerTest {
     @Test
     @Transactional
     public void getAllCommnetOfUser() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600);
         CommentConclusionVo conclusion = new CommentConclusionVo();
         conclusion.setConclusion(true);
         String requestJSON = JacksonUtil.toJson(conclusion);
@@ -146,6 +149,7 @@ public class CommentControllerTest {
     @Test
     @Transactional
     public void getAllCommnetOfProduct() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600);
         CommentConclusionVo conclusion = new CommentConclusionVo();
         conclusion.setConclusion(true);
         String requestJSON = JacksonUtil.toJson(conclusion);
@@ -173,6 +177,7 @@ public class CommentControllerTest {
     @Test
     @Transactional
     public void getAllUnauditedComment() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600);
         String responseString = this.mvc.perform(get("/shops/0/newcomments").contentType("application/json;charset=UTF-8").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -188,6 +193,7 @@ public class CommentControllerTest {
     @Test
     @Transactional
     public void getAllCommentByShopId() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600);
         String responseString = this.mvc.perform(get("/shops/1/comments/").contentType("application/json;charset=UTF-8").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))

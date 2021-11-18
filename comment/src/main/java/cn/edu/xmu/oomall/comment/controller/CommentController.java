@@ -7,6 +7,9 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 
+import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
+import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,14 +64,12 @@ public class CommentController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 903, message = "用户没有购买此商品")
     })
+    @Audit
     @PostMapping("/internal/products/{id}/comments")
     public Object addCommentOnProduct(
             @PathVariable Long id,
             @Validated @RequestBody CommentVo commentVo,
-            BindingResult bindingResult, Long loginUser,String loginUserName){
-        //todo:
-        loginUser=Long.valueOf(1);
-        loginUserName="hhhhh";
+            BindingResult bindingResult, @LoginUser Long loginUser,@LoginName String loginUserName){
 
         //校验前端数据评论不能为空
         Object returnObject = Common.processFieldErrors(bindingResult, httpServletResponse);
@@ -113,13 +114,11 @@ public class CommentController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
     })
+    @Audit(departName = "shops")
     @PutMapping("/shops/{did}/comments/{id}/confirm")
-    public Object confirmComment(@PathVariable long did,@PathVariable long id,
+    public Object confirmComment(@PathVariable Long did, @PathVariable long id,
                                  @Valid @RequestBody CommentConclusionVo commentConclusionVo,
-                                 BindingResult bindingResult,Long loginUser,String loginUserName){
-        //todo:
-        loginUser=Long.valueOf(111);
-        loginUserName="hhhhh";
+                                 BindingResult bindingResult, @LoginUser Long loginUser, @LoginName String loginUserName){
 
         Object obj = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != obj) {
@@ -141,15 +140,14 @@ public class CommentController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
     })
+    @Audit
     @GetMapping("/comments")
     public Object getOwnComments(
-            Long uid,
+            @LoginUser Long loginUser,
             @RequestParam(required = false,defaultValue = "1") Integer page,
             @RequestParam(required = false,defaultValue = "10") Integer pageSize){
-        //todo:
-        uid=Long.valueOf(1);
 
-        ReturnObject<PageInfo<Object>> ret=commentService.selectAllCommentsOfUser(uid,page,pageSize);
+        ReturnObject<PageInfo<Object>> ret=commentService.selectAllCommentsOfUser(loginUser,page,pageSize);
         return Common.getPageRetVo(ret, CommentRetVo.class);
     }
 
@@ -165,6 +163,7 @@ public class CommentController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
     })
+    @Audit(departName = "shops")
     @GetMapping("/shops/{id}/newcomments")
     public Object getAllComments(
             @PathVariable Long id,
@@ -182,8 +181,9 @@ public class CommentController {
      * 商铺管理员查看评论列表
      */
     @ApiOperation(value = "商铺管理员查看评论列表")
+    @Audit(departName = "shops")
     @GetMapping("/shops/{id}/comments")
-    public Object showShopCommentsByShopId(@PathVariable("id") Long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+    public Object showShopCommentsByShopId( @PathVariable Long id,@RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
 
         ReturnObject ret=commentService.selectAllPassCommentByShopId(id,page,pageSize);
         return Common.getPageRetVo(ret,CommentRetVo.class);
