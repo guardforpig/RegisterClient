@@ -138,7 +138,6 @@ public class CommentService {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject<PageInfo<Object>> selectAllCommentsOfUser(Long userId, Integer pageNum, Integer pageSize) {
         List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllCommentsOfUser(userId, pageNum, pageSize).getData();
-        System.out.println(commentPos);
         List<Object> commentRetVos = new ArrayList<>();
         for (CommentPo po : commentPos) {
             commentRetVos.add(po);
