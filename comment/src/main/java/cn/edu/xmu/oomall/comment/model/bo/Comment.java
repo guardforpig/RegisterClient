@@ -66,10 +66,6 @@ public class Comment{
     private SimpleUserRetVo author;
     private SimpleUserRetVo auditedBy;
     private LocalDateTime postTime;
-//    private Long postBy;
-//    private String postName;
-//    private Long auditBy;
-//    private String auditName;
     private LocalDateTime gmtCreated;
     private LocalDateTime gmtModified;
 }

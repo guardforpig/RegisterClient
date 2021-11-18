@@ -83,7 +83,6 @@ public class CommentControllerTest {
         expected = "{\"errno\":0,\"data\":{\"type\":0,\"content\":\"这个真不错\",\"state\":0},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, false);
 
-
     }
 
     /**
@@ -137,7 +136,7 @@ public class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"auditedBy\":null,\"modifiedBy\":{}},{\"id\":2,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}}]}}";
+        String expected = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":0},{\"id\":2,\"type\":0,\"content\":\"真不错\",\"state\":0}]}}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
 
@@ -163,7 +162,7 @@ public class CommentControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        expected = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":1,\"pages\":1,\"pageSize\":1,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":1,\"modifiedBy\":{}}]}}";
+        expected = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":1,\"pages\":1,\"pageSize\":1,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":1}]}}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
 
@@ -178,7 +177,7 @@ public class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String excepted = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}},{\"id\":2,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}}]}}";
+        String excepted = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":0},{\"id\":2,\"type\":0,\"content\":\"真不错\",\"state\":0}]}}";
         JSONAssert.assertEquals(excepted, responseString, false);
 
     }
@@ -193,7 +192,7 @@ public class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String excepted = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}},{\"id\":2,\"type\":0,\"content\":\"真不错\",\"state\":0,\"modifiedBy\":{}}]}}";
+        String excepted = "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"type\":0,\"content\":\"真不错\",\"state\":0},{\"id\":2,\"type\":0,\"content\":\"真不错\",\"state\":0}]}}";
         JSONAssert.assertEquals(excepted, responseString, false);
 
     }

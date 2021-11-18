@@ -55,7 +55,7 @@ public class CommentService {
         ReturnObject ret_insert = commentDao.insertComment(commentPo);
         if (ret_insert.getCode().equals(0)) {
             CommentRetVo commentRetVo = (CommentRetVo) Common.cloneVo(commentPo, CommentRetVo.class);
-            commentRetVo.setPostBy(new SimpleUserRetVo(loginUser, loginUsername));//手动set返回格式中不匹配的部分
+            commentRetVo.setAuthor(new SimpleUserRetVo(loginUser, loginUsername));//手动set返回格式中不匹配的部分
             return new ReturnObject(commentRetVo);
         }
         return ret_insert;
@@ -139,6 +139,7 @@ public class CommentService {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject<PageInfo<Object>> selectAllCommentsOfUser(Long userId, Integer pageNum, Integer pageSize) {
         List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllCommentsOfUser(userId, pageNum, pageSize).getData();
+        System.out.println(commentPos);
         List<Object> commentRetVos = new ArrayList<>();
         for (CommentPo po : commentPos) {
             commentRetVos.add(po);

@@ -13,7 +13,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core.*", "cn.edu.xmu.oomall.comment.*"})
 @EnableConfigurationProperties
 @MapperScan("cn.edu.xmu.oomall.comment.mapper")
-@EnableFeignClients(basePackages = "cn.edu.xmu.oomall.comment.microservice")
 //@EnableDiscoveryClient
 public class CommentApplication {
 

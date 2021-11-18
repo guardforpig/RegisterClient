@@ -111,6 +111,7 @@ public class CommentDao {
     public ReturnObject updateCommentState(Comment comment){
         CommentPo commentPo = (CommentPo) Common.cloneVo(comment, CommentPo.class);
         commentPo.setGmtModified(LocalDateTime.now());
+        commentPo.setAuditTime(LocalDateTime.now());
         int ret;
         try{
             ret=commentPoMapper.updateByPrimaryKeySelective(commentPo);
