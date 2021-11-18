@@ -66,7 +66,7 @@ public class CommentController {
     @Audit
     @PostMapping("/internal/products/{id}/comments")
     public Object addCommentOnProduct(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @Validated @RequestBody CommentVo commentVo,
             BindingResult bindingResult, @LoginUser Long loginUser,@LoginName String loginUserName){
 
@@ -95,7 +95,7 @@ public class CommentController {
             @ApiResponse(code = 0, message = "成功"),
     })
     @GetMapping("/products/{id}/comments")
-    public Object selectProductComments(@PathVariable Long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+    public Object selectProductComments(@PathVariable("id") Long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
 
         ReturnObject ret=commentService.selectAllPassCommentByProductId(id,page,pageSize);
         return Common.getPageRetVo(ret,CommentRetVo.class);
@@ -115,7 +115,7 @@ public class CommentController {
     })
     @Audit(departName = "shops")
     @PutMapping("/shops/{did}/comments/{id}/confirm")
-    public Object confirmComment(@PathVariable Long did, @PathVariable long id,
+    public Object confirmComment(@PathVariable("did") Long did, @PathVariable("id") long id,
                                  @Valid @RequestBody CommentConclusionVo commentConclusionVo,
                                  BindingResult bindingResult, @LoginUser Long loginUser, @LoginName String loginUserName){
 
@@ -165,7 +165,7 @@ public class CommentController {
     @Audit(departName = "shops")
     @GetMapping("/shops/{id}/newcomments")
     public Object getAllComments(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestParam(required = false,defaultValue = "1") Integer page,
             @RequestParam(required = false,defaultValue = "10") Integer pageSize){
         Integer state=0;
@@ -182,7 +182,7 @@ public class CommentController {
     @ApiOperation(value = "商铺管理员查看评论列表")
     @Audit(departName = "shops")
     @GetMapping("/shops/{id}/comments")
-    public Object showShopCommentsByShopId( @PathVariable Long id,@RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+    public Object showShopCommentsByShopId( @PathVariable("id") Long id,@RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
 
         ReturnObject ret=commentService.selectAllPassCommentByShopId(id,page,pageSize);
         return Common.getPageRetVo(ret,CommentRetVo.class);
