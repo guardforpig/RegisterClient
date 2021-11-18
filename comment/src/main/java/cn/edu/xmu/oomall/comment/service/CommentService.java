@@ -40,7 +40,6 @@ public class CommentService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject newComment(Long productId, CommentVo commentVo, Long loginUser, String loginUsername) {
 
-
         Long shopId = commentVo.getShopId();
         CommentPo commentPo = new CommentPo();
 
