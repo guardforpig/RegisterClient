@@ -54,8 +54,8 @@ public class WeightFreightRetVo {
     private LocalDateTime gmtModified;
 
     @ApiModelProperty(value = "创建者")
-    private SimpleUserRetVo createdBy;
+    private SimpleUserRetVo creator;
 
     @ApiModelProperty(value = "修改者")
-    private SimpleUserRetVo modifiedBy;
+    private SimpleUserRetVo modifier;
 }

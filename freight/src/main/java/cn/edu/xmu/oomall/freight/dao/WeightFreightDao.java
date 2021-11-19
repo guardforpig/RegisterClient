@@ -26,7 +26,7 @@ public class WeightFreightDao {
     private WeightFreightPoMapper weightFreightPoMapper;
 
     /**
-     * 创建地区
+     * 管理员新增重量模板明细
      * @param weightFreightPo,userId,userName
      * @return ReturnObject
      */

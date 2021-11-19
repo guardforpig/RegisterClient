@@ -3,6 +3,8 @@ package cn.edu.xmu.oomall.freight.controller;
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
 import cn.edu.xmu.oomall.freight.FreightApplication;
 import cn.edu.xmu.oomall.freight.model.vo.WeightFreightVo;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class WeightFreightControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    private static JwtHelper jwtHelper = new JwtHelper();
+    private static String adminToken = jwtHelper.createToken(1L,"admin",0L,3600);
+
     @Test
     @Transactional
     public void addWeightItemsTest1() throws Exception {
@@ -40,11 +45,11 @@ public class WeightFreightControllerTest {
         vo.setAbovePrice(0L);
         vo.setRegionId(14L);
 
-        String responseString = this.mvc.perform(post("/freight/shops/0/freightmodels/1/weightItems").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
+        String responseString = this.mvc.perform(post("/freight/shops/0/freightmodels/1/weightItems").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errno\":0,\"data\":{\"freightModelId\":1,\"firstWeight\":500,\"firstWeightFreight\":1000,\"tenPrice\":100,\"fiftyPrice\":50,\"hundredPrice\":10,\"trihunPrice\":5,\"abovePrice\":0,\"regionId\":14,\"gmtModified\":null,\"createdBy\":{\"id\":1,\"name\":\"admin\"},\"modifiedBy\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
+        String expectedResponse = "{\"errno\":0,\"data\":{\"freightModelId\":1,\"firstWeight\":500,\"firstWeightFreight\":1000,\"tenPrice\":100,\"fiftyPrice\":50,\"hundredPrice\":10,\"trihunPrice\":5,\"abovePrice\":0,\"regionId\":14,\"gmtModified\":null,\"creator\":{\"id\":1,\"name\":\"admin\"},\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, false);
     }
 
@@ -61,7 +66,7 @@ public class WeightFreightControllerTest {
         vo.setAbovePrice(0L);
         vo.setRegionId(151L);
 
-        String responseString = this.mvc.perform(post("/freight/shops/0/freightmodels/1/weightItems").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
+        String responseString = this.mvc.perform(post("/freight/shops/0/freightmodels/1/weightItems").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -82,7 +87,7 @@ public class WeightFreightControllerTest {
         vo.setAbovePrice(0L);
         vo.setRegionId(14L);
 
-        String responseString = this.mvc.perform(post("/freight/shops/0/freightmodels/0/weightItems").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
+        String responseString = this.mvc.perform(post("/freight/shops/0/freightmodels/0/weightItems").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -103,7 +108,7 @@ public class WeightFreightControllerTest {
         vo.setAbovePrice(0L);
         vo.setRegionId(14L);
 
-        String responseString = this.mvc.perform(post("/freight/shops/0/freightmodels/2/weightItems").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
+        String responseString = this.mvc.perform(post("/freight/shops/0/freightmodels/2/weightItems").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -125,7 +130,7 @@ public class WeightFreightControllerTest {
         vo.setAbovePrice(0L);
         vo.setRegionId(14L);
 
-        String responseString = this.mvc.perform(post("/freight/shops/1/freightmodels/2/weightItems").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
+        String responseString = this.mvc.perform(post("/freight/shops/1/freightmodels/2/weightItems").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -137,22 +142,33 @@ public class WeightFreightControllerTest {
     @Test
     @Transactional
     public void getWeightItemsTest1() throws Exception {
-        String responseString = this.mvc.perform(get("/freight/shops/0/freightmodels/1/weightItems"))
+        String responseString = this.mvc.perform(get("/freight/shops/0/freightmodels/1/weightItems").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"freightModelId\":1,\"firstWeight\":500,\"firstWeightFreight\":1000,\"tenPrice\":100,\"fiftyPrice\":50,\"hundredPrice\":10,\"trihunPrice\":5,\"abovePrice\":0,\"regionId\":151,\"gmtCreate\":\"2021-11-11 14:18:26.000\",\"gmtModified\":null,\"createdBy\":{\"id\":1,\"name\":\"admin\"},\"modifiedBy\":{\"id\":null,\"name\":null}},{\"id\":2,\"freightModelId\":1,\"firstWeight\":500,\"firstWeightFreight\":1000,\"tenPrice\":100,\"fiftyPrice\":50,\"hundredPrice\":10,\"trihunPrice\":5,\"abovePrice\":0,\"regionId\":152,\"gmtCreate\":\"2021-11-17 09:18:26.000\",\"gmtModified\":null,\"createdBy\":{\"id\":1,\"name\":\"admin\"},\"modifiedBy\":{\"id\":null,\"name\":null}}]},\"errmsg\":\"成功\"}" ;
+        String expectedResponse = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"freightModelId\":1,\"firstWeight\":500,\"firstWeightFreight\":1000,\"tenPrice\":100,\"fiftyPrice\":50,\"hundredPrice\":10,\"trihunPrice\":5,\"abovePrice\":0,\"regionId\":151,\"gmtCreate\":\"2021-11-11 14:18:26.000\",\"gmtModified\":null,\"creator\":{\"id\":1,\"name\":\"admin\"},\"modifier\":{\"id\":null,\"name\":null}},{\"id\":2,\"freightModelId\":1,\"firstWeight\":500,\"firstWeightFreight\":1000,\"tenPrice\":100,\"fiftyPrice\":50,\"hundredPrice\":10,\"trihunPrice\":5,\"abovePrice\":0,\"regionId\":152,\"gmtCreate\":\"2021-11-17 09:18:26.000\",\"gmtModified\":null,\"creator\":{\"id\":1,\"name\":\"admin\"},\"modifier\":{\"id\":null,\"name\":null}}]},\"errmsg\":\"成功\"}" ;
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
     @Test
     @Transactional
     public void getWeightItemsTest2() throws Exception {
-        String responseString = this.mvc.perform(get("/freight/shops/0/freightmodels/0/weightItems"))
+        String responseString = this.mvc.perform(get("/freight/shops/0/freightmodels/0/weightItems").header("authorization", adminToken))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expectedResponse = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
+        JSONAssert.assertEquals(expectedResponse, responseString, true);
+    }
+
+    @Test
+    @Transactional
+    public void getWeightItemsTest3() throws Exception {
+        String responseString = this.mvc.perform(get("/freight/shops/1/freightmodels/0/weightItems").header("authorization", adminToken))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectedResponse = "{\"errno\":505,\"errmsg\":\"非管理员无权操作\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
@@ -169,7 +185,7 @@ public class WeightFreightControllerTest {
         vo.setAbovePrice(0L);
         vo.setRegionId(151L);
 
-        String responseString = this.mvc.perform(put("/freight/shops/0/weightItems/1").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
+        String responseString = this.mvc.perform(put("/freight/shops/0/weightItems/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -190,7 +206,7 @@ public class WeightFreightControllerTest {
         vo.setAbovePrice(0L);
         vo.setRegionId(151L);
 
-        String responseString = this.mvc.perform(put("/freight/shops/0/weightItems/0").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
+        String responseString = this.mvc.perform(put("/freight/shops/0/weightItems/0").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -211,7 +227,7 @@ public class WeightFreightControllerTest {
         vo.setAbovePrice(0L);
         vo.setRegionId(152L);
 
-        String responseString = this.mvc.perform(put("/freight/shops/0/weightItems/1").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
+        String responseString = this.mvc.perform(put("/freight/shops/0/weightItems/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -232,7 +248,7 @@ public class WeightFreightControllerTest {
         vo.setAbovePrice(0L);
         vo.setRegionId(152L);
 
-        String responseString = this.mvc.perform(put("/freight/shops/1/weightItems/1").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
+        String responseString = this.mvc.perform(put("/freight/shops/1/weightItems/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -243,7 +259,7 @@ public class WeightFreightControllerTest {
     @Test
     @Transactional
     public void deleteWeightItemsTest1() throws Exception {
-        String responseString = this.mvc.perform(delete("/freight/shops/0/weightItems/1"))
+        String responseString = this.mvc.perform(delete("/freight/shops/0/weightItems/1").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -254,7 +270,7 @@ public class WeightFreightControllerTest {
     @Test
     @Transactional
     public void deleteWeightItemsTest2() throws Exception {
-        String responseString = this.mvc.perform(delete("/freight/shops/0/weightItems/0"))
+        String responseString = this.mvc.perform(delete("/freight/shops/0/weightItems/0").header("authorization", adminToken))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -265,7 +281,7 @@ public class WeightFreightControllerTest {
     @Test
     @Transactional
     public void deleteWeightItemsTest3() throws Exception {
-        String responseString = this.mvc.perform(delete("/freight/shops/1/weightItems/0"))
+        String responseString = this.mvc.perform(delete("/freight/shops/1/weightItems/0").header("authorization", adminToken))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();

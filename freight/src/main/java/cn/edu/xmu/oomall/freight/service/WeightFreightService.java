@@ -8,7 +8,6 @@ import cn.edu.xmu.oomall.freight.dao.WeightFreightDao;
 import cn.edu.xmu.oomall.freight.model.bo.FreightModel;
 import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
 import cn.edu.xmu.oomall.freight.model.po.WeightFreightPo;
-import cn.edu.xmu.oomall.freight.model.vo.WeightFreightVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,16 +30,13 @@ public class WeightFreightService {
 
     /**
      * 管理员新增重量模板明细
-     * @param weightFreightVo,freightModelId,userId,userName
+     * @param weightFreight,freightModelId,userId,userName
      * @return ReturnObject
      */
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject addWeightItems(WeightFreightVo weightFreightVo, Long freightModelId, Long userId, String userName) {
+    public ReturnObject addWeightItems(WeightFreight weightFreight, Long userId, String userName) {
 
-        WeightFreight weightFreight = (WeightFreight) Common.cloneVo(weightFreightVo,WeightFreight.class);
-        weightFreight.setFreightModelId(freightModelId);
-
-        FreightModel freightModel = (FreightModel) freightModelDao.selectFreightModelById(freightModelId).getData();
+        FreightModel freightModel = (FreightModel) freightModelDao.selectFreightModelById(weightFreight.getFreightModelId()).getData();
         if (freightModel==null) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
@@ -49,7 +45,6 @@ public class WeightFreightService {
         }
 
         ReturnObject returnObject = weightFreightDao.addWeightItems( (WeightFreightPo) Common.cloneVo(weightFreight, WeightFreightPo.class), userId, userName);
-
         return returnObject;
     }
 
@@ -67,20 +62,16 @@ public class WeightFreightService {
         }
 
         ReturnObject returnObject = weightFreightDao.getWeightItems(freightModelId, page, pageSize);
-
         return returnObject;
     }
 
     /**
      * 店家或管理员修改重量运费模板明细
-     * @param weightFreightVo,id,userId,userName
+     * @param weightFreight,id,userId,userName
      * @return ReturnObject
      */
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject updateWeightItems(WeightFreightVo weightFreightVo, Long id, Long userId, String userName) {
-
-        WeightFreight weightFreight = (WeightFreight) Common.cloneVo(weightFreightVo, WeightFreight.class);
-        weightFreight.setId(id);
+    public ReturnObject updateWeightItems(WeightFreight weightFreight, Long userId, String userName) {
 
         return weightFreightDao.updateWeightItems((WeightFreightPo) Common.cloneVo(weightFreight, WeightFreightPo.class),userId,userName);
     }
@@ -94,7 +85,6 @@ public class WeightFreightService {
     public ReturnObject deleteWeightItems(Long id) {
 
         ReturnObject returnObject = weightFreightDao.deleteWeightItems(id);
-
         return returnObject;
     }
 }
