@@ -24,10 +24,41 @@ public class CreateObject {
         List<VoObject> onSaleVoList = new ArrayList<>();
         OnsaleVo onsaleVo1 = new OnsaleVo();
         onsaleVo1.setId(1L);
+        onSaleVoList.add(onsaleVo1);
         OnsaleVo onsaleVo2 = new OnsaleVo();
         onsaleVo2.setId(2L);
-        onSaleVoList.add(onsaleVo1);
         onSaleVoList.add(onsaleVo2);
+        OnsaleVo onsaleVo3 = new OnsaleVo();
+        onsaleVo3.setId(3L);
+        onSaleVoList.add(onsaleVo3);
+        OnsaleVo onsaleVo4 = new OnsaleVo();
+        onsaleVo4.setId(4L);
+        onSaleVoList.add(onsaleVo4);
+        OnsaleVo onsaleVo5 = new OnsaleVo();
+        onsaleVo5.setId(5L);
+        onSaleVoList.add(onsaleVo5);
+        OnsaleVo onsaleVo6 = new OnsaleVo();
+        onsaleVo6.setId(6L);
+        onSaleVoList.add(onsaleVo6);
+        OnsaleVo onsaleVo7 = new OnsaleVo();
+        onsaleVo7.setId(7L);
+        onSaleVoList.add(onsaleVo7);
+        OnsaleVo onsaleVo8 = new OnsaleVo();
+        onsaleVo8.setId(8L);
+        onSaleVoList.add(onsaleVo8);
+        OnsaleVo onsaleVo9 = new OnsaleVo();
+        onsaleVo9.setId(9L);
+        onSaleVoList.add(onsaleVo9);
+        OnsaleVo onsaleVo10 = new OnsaleVo();
+        onsaleVo10.setId(10L);
+        onSaleVoList.add(onsaleVo10);
+        OnsaleVo onsaleVo11 = new OnsaleVo();
+        onsaleVo11.setId(11L);
+        onSaleVoList.add(onsaleVo11);
+        OnsaleVo onsaleVo12 = new OnsaleVo();
+        onsaleVo12.setId(12L);
+        onSaleVoList.add(onsaleVo12);
+
         return new ReturnObject<>(onSaleVoList);
     }
 

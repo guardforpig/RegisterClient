@@ -50,12 +50,11 @@ public class CouponController {
     public Object listProductsByCouponActivityId(@ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                                  @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
                                                  @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        if (couponActivityId < 0) {
+        if (couponActivityId <= 0) {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
         }
-        pageNumber = pageNumber >= 1 ? pageNumber : 1;
         pageSize = pageSize >= 1 ? pageSize : 10;
-        
+
         ReturnObject<PageInfo<VoObject>> retVoObject =
                 couponService.listProductsByCouponActivityId(couponActivityId, pageNumber, pageSize);
         return Common.decorateReturnObject(Common.getPageRetObject(retVoObject));
@@ -78,10 +77,9 @@ public class CouponController {
     public Object listCouponActivitiesByProductId(@ApiParam(value = "货品ID", required = true) @PathVariable("id") Long productId,
                                                   @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
                                                   @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        if (productId < 0) {
+        if (productId <= 0) {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
         }
-        pageNumber = pageNumber >= 1 ? pageNumber : 1;
         pageSize = pageSize >= 1 ? pageSize : 10;
 
         ReturnObject<PageInfo<VoObject>> retVoObject =
@@ -114,7 +112,7 @@ public class CouponController {
                                        @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                        @ApiParam(value = "可修改的优惠活动信息", required = true) @Validated @RequestBody CouponActivityVo couponActivityVo,
                                        @LoginUser Long userId, @LoginName String userName, BindingResult bindingResult) {
-        if (shopId < 0 || couponActivityId < 0) {
+        if (shopId <= 0 || couponActivityId <= 0) {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
         }
 
@@ -151,7 +149,7 @@ public class CouponController {
     public Object deleteCouponActivity(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                        @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                        @LoginUser Long userId, @LoginName String userName) {
-        if (shopId < 0 || couponActivityId < 0) {
+        if (shopId <= 0 || couponActivityId <= 0) {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
         }
 
@@ -176,7 +174,7 @@ public class CouponController {
                                      @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                      @ApiParam(value = "销售活动ID", required = true) @PathVariable("sid") Long onsaleId,
                                      @LoginUser Long userId, @LoginName String userName) {
-        if (shopId < 0 || couponActivityId < 0 || onsaleId < 0) {
+        if (shopId <= 0 || couponActivityId <= 0 || onsaleId <= 0) {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
         }
 
@@ -200,7 +198,7 @@ public class CouponController {
     public Object deleteCouponOnsale(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                      @ApiParam(value = "couponOnsaleId", required = true) @PathVariable("id") Long couponOnsaleId,
                                      @LoginUser Long userId, @LoginName String userName) {
-        if (shopId < 0 || couponOnsaleId < 0) {
+        if (shopId <= 0 || couponOnsaleId <= 0) {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
         }
 
@@ -224,7 +222,7 @@ public class CouponController {
     public Object updateCouponActivityToOnline(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                                @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                                @LoginUser Long userId, @LoginName String userName) {
-        if (shopId < 0 || couponActivityId < 0) {
+        if (shopId <= 0 || couponActivityId <= 0) {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
         }
 
@@ -248,7 +246,7 @@ public class CouponController {
     public Object updateCouponActivityToOffline(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                                 @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                                 @LoginUser Long userId, @LoginName String userName) {
-        if (shopId < 0 || couponActivityId < 0) {
+        if (shopId <= 0 || couponActivityId <= 0) {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
         }
 

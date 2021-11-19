@@ -53,25 +53,25 @@ public class CouponService {
         // 根据活动找出活动对应的CouponOnsale列表
         CouponOnsalePoExample example = new CouponOnsalePoExample();
         example.createCriteria().andActivityIdEqualTo(couponActivityId);
-        ReturnObject<PageInfo<CouponOnsale>> retCouponOnsalePageInfo =
+        ReturnObject<PageInfo<Object>> retPageInfo =
                 couponDao.listBoByExample(example, CouponOnsale.class, pageNumber, pageSize);
-        if (!retCouponOnsalePageInfo.getCode().equals(ReturnNo.OK)) {
-            return retCouponOnsalePageInfo;
+        if (!retPageInfo.getCode().equals(ReturnNo.OK)) {
+            return retPageInfo;
         }
 
         // 根据CouponOnsale列表找出每一个CouponOnsale对应的product
-        List<CouponOnsale> couponOnsaleList = retCouponOnsalePageInfo.getData().getList();
-        List<VoObject> productVoList = new ArrayList<>();
-        for (CouponOnsale couponOnsale : couponOnsaleList) {
-            ReturnObject<VoObject> retProductVo =
-                    goodsService.getProductByOnsaleId(couponOnsale.getOnsaleId());
+        List<Object> couponOnsaleList = retPageInfo.getData().getList();
+        List<Object> productVoList = new ArrayList<>();
+        for (Object couponOnsale : couponOnsaleList) {
+            ReturnObject<Object> retProductVo =
+                    goodsService.getProductByOnsaleId(((CouponOnsale)couponOnsale).getOnsaleId());
             if (retProductVo.getCode().equals(ReturnNo.OK)) {
                 productVoList.add((ProductVo) retProductVo.getData());
             }
         }
 
-        PageInfo<VoObject> productVoPageInfo = new PageInfo<>(productVoList);
-        return new ReturnObject<>(productVoPageInfo);
+        retPageInfo.getData().setList(productVoList);
+        return retPageInfo;
     }
 
 
@@ -116,22 +116,21 @@ public class CouponService {
         // 根据CouponActivityId的列表，找出所有的CouponActivity，并分页
         CouponActivityPoExample example2 = new CouponActivityPoExample();
         example2.createCriteria().andIdIn(couponActivityIdList);
-        ReturnObject<PageInfo<CouponActivity>> retCouponActivityPageInfo =
+        ReturnObject<PageInfo<Object>> retPageInfo =
                 couponDao.listBoByExample(example2, CouponActivity.class, pageNumber, pageSize);
-        if (!retCouponActivityPageInfo.getCode().equals(ReturnNo.OK)) {
-            return retCouponActivityPageInfo;
+        if (!retPageInfo.getCode().equals(ReturnNo.OK)) {
+            return retPageInfo;
         }
 
         // 将所有的CouponActivity转成Vo，返回
-        List<CouponActivity> couponActivityList = retCouponActivityPageInfo.getData().getList();
-        List<VoObject> couponActivityVoList = new ArrayList<>();
-        for (CouponActivity couponActivity : couponActivityList) {
-            couponActivityVoList.add((VoObject) Common.cloneVo(couponActivity, CouponActivityRetVo.class));
+        List<Object> couponActivityList = retPageInfo.getData().getList();
+        List<Object> couponActivityVoList = new ArrayList<>();
+        for (Object couponActivity : couponActivityList) {
+            couponActivityVoList.add(Common.cloneVo(couponActivity, CouponActivityRetVo.class));
         }
 
-        // TODO: pageInfo所处位置的相关问题
-        PageInfo<VoObject> couponActivityVoPageInfo = new PageInfo<>(couponActivityVoList);
-        return new ReturnObject<>(couponActivityVoPageInfo);
+        retPageInfo.getData().setList(couponActivityVoList);
+        return retPageInfo;
     }
 
     /**

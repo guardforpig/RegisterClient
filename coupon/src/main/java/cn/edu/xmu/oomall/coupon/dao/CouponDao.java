@@ -9,6 +9,7 @@ import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPo;
 import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
+import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePoExample;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -74,19 +75,24 @@ public class CouponDao {
     public ReturnObject listBoByExample(Object example, Class boClass, Integer pageNumber, Integer pageSize) {
         initBoMap();
         try {
-            PageHelper.startPage(pageNumber, pageSize, true, null, true);
+            PageHelper.startPage(pageNumber, pageSize, true, true, true);
             Method selectMethod = boMap.get(boClass).get("Mapper").getClass().getMethod("selectByExample", example.getClass());
             List<Object> poList = (List<Object>) selectMethod.invoke(boMap.get(boClass).get("Mapper"), example);
+
             if (poList.size() == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
             }
 
+            var pageInfo = new PageInfo<>(poList);
             List<Object> boList = new ArrayList<>();
             for (Object po : poList) {
                 boList.add(Common.cloneVo(po, boClass));
             }
 
-            return new ReturnObject<>(new PageInfo<>(boList));
+            pageInfo.setList(boList);
+            pageInfo.setPageNum(pageNumber);
+            pageInfo.setPageSize(pageSize);
+            return new ReturnObject<>(pageInfo);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -137,4 +143,5 @@ public class CouponDao {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, ReturnNo.INTERNAL_SERVER_ERR.getMessage());
         }
     }
+
 }

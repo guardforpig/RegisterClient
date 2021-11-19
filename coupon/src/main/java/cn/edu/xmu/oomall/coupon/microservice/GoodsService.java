@@ -23,7 +23,7 @@ public interface GoodsService {
             @ApiImplicitParam(name = "id", value = "onsaleId", required = true, dataType = "Integer", paramType = "path")
     })
     @RequestMapping(value = "/internal/onsale/{id}/product", method = RequestMethod.GET)
-    ReturnObject<VoObject> getProductByOnsaleId(@PathVariable("id") Long onsaleId);
+    ReturnObject getProductByOnsaleId(@PathVariable("id") Long onsaleId);
 
 
     @ApiOperation(value = "通过productId返回OnsaleVo（1对多）")
@@ -31,6 +31,6 @@ public interface GoodsService {
             @ApiImplicitParam(name = "id", value = "productId", required = true, dataType = "Integer", paramType = "path")
     })
     @RequestMapping(value = "/internal/product/{id}/onsales", method = RequestMethod.GET)
-    ReturnObject<List<VoObject>> listOnsalesByProductId(@PathVariable("id") Long productId);
+    ReturnObject listOnsalesByProductId(@PathVariable("id") Long productId);
 }
 
