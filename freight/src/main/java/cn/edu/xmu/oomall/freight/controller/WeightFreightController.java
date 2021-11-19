@@ -59,7 +59,6 @@ public class WeightFreightController {
         if(shopId!=0){
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
         }
-
         Object object = processFieldErrors(bindingResult, httpServletResponse);
         if (object != null){
             return object;
@@ -67,9 +66,10 @@ public class WeightFreightController {
 
         WeightFreight weightFreight = (WeightFreight) Common.cloneVo(weightFreightVo,WeightFreight.class);
         weightFreight.setFreightModelId(id);
-        ReturnObject returnObject = weightFreightService.addWeightItems(weightFreight, userId, userName);
 
+        ReturnObject returnObject = weightFreightService.addWeightItems(weightFreight, userId, userName);
         returnObject = Common.getRetVo(returnObject,WeightFreightRetVo.class);
+
         return Common.decorateReturnObject(returnObject);
     }
 
@@ -97,8 +97,8 @@ public class WeightFreightController {
         }
 
         ReturnObject returnObject = weightFreightService.getWeightItems(id, page, pageSize);
-
         returnObject = Common.getPageRetVo(returnObject,WeightFreightRetVo.class);
+
         return Common.decorateReturnObject(returnObject);
     }
 

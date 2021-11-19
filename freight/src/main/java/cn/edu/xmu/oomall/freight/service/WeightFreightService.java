@@ -73,7 +73,8 @@ public class WeightFreightService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject updateWeightItems(WeightFreight weightFreight, Long userId, String userName) {
 
-        return weightFreightDao.updateWeightItems((WeightFreightPo) Common.cloneVo(weightFreight, WeightFreightPo.class),userId,userName);
+        ReturnObject returnObject = weightFreightDao.updateWeightItems((WeightFreightPo) Common.cloneVo(weightFreight, WeightFreightPo.class),userId,userName);
+        return returnObject;
     }
 
     /**
