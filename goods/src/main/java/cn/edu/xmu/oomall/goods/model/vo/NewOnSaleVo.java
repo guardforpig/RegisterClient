@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -17,20 +18,23 @@ import java.time.format.DateTimeFormatter;
 @Data
 public class NewOnSaleVo {
 
+    @Min(0)
     private Long price;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd HH:mm:ss.SSS" )
     private LocalDateTime beginTime;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd HH:mm:ss.SSS" )
     private LocalDateTime endTime;
 
     @Min(1)
     private Integer quantity;
 
+    @NotNull
     private Integer type;
 
     public NewOnSaleVo(){}
-
 
 }
