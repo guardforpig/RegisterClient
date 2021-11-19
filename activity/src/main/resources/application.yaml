@@ -28,7 +28,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF8
     username: dbuser
     password: 12345678
     druid:
@@ -104,7 +104,7 @@ pagehelper:
 
 oomall:
   activity:
-    activity:
+    advancesale:
       expiretime: 10000
     share:
       expiretime: 10000

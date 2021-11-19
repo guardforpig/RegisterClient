@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.activity.service;
 
 import cn.edu.xmu.oomall.activity.dao.AdvanceSaleDao;
-import cn.edu.xmu.oomall.activity.microsservice.GoodsService;
+import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSale;
 import cn.edu.xmu.oomall.activity.model.po.AdvanceSalePo;
 import cn.edu.xmu.oomall.activity.model.vo.*;

@@ -1,6 +1,6 @@
 package cn.edu.xmu.oomall.activity;
 
-import cn.edu.xmu.oomall.activity.microsservice.GoodsService;
+import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import com.github.pagehelper.Page;
