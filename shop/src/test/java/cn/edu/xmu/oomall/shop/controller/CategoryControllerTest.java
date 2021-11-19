@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * 商品分类测试类
  *
  * @author Zhiliang Li
- * @date 2021/11/14
+ * @date 2021/11/19
  */
 @SpringBootTest(classes = ShopApplication.class)
 @AutoConfigureMockMvc
@@ -38,7 +38,6 @@ public class CategoryControllerTest {
                 .andReturn().getResponse().getContentAsString();
         assertEquals("{\"errno\":901,\"errmsg\":\"类目名称已存在\"}", responseString);
 
-
         // 找不到
         requestJson = "{\"name\": \"女装男装\"}";
         responseString = this.mvc.perform(post("/shops/0/categories/500/subcategories").contentType("application/json;charset=UTF-8").content(requestJson))
@@ -53,7 +52,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        JSONAssert.assertEquals("{\"errno\":0,\"data\":{\"commissionRatio\":null,\"name\":\"童装a\",\"modifiedBy\":{\"id\":null,\"name\":null},\"gmtModified\":null},\"errmsg\":\"成功\"}", responseString, false);
+        JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"commissionRatio\":null,\"name\":\"童装a\"}}", responseString, false);
 
         // 成功插入，一级目录
         requestJson = "{\"name\": \"军械\"}";
@@ -61,7 +60,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        JSONAssert.assertEquals("{\"errno\":0,\"data\":{\"commissionRatio\":null,\"name\":\"军械\",\"modifiedBy\":{\"id\":null,\"name\":null},\"gmtModified\":null},\"errmsg\":\"成功\"}", responseString, false);
+        JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"commissionRatio\":null,\"name\":\"军械\"}}", responseString, false);
 
         // 不能插入成为三级目录
         requestJson = "{\"name\": \"手机游戏\"}";
@@ -106,7 +105,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        JSONAssert.assertEquals("{\"errno\":0,\"data\":[{\"id\":186,\"commissionRatio\":6,\"name\":\"女式上装\",\"createdBy\":{\"id\":1,\"name\":\"admin\"},\"modifiedBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11T12:21:18\",\"gmtModified\":null},{\"id\":187,\"commissionRatio\":1,\"name\":\"女式裤子\",\"createdBy\":{\"id\":1,\"name\":\"admin\"},\"modifiedBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11T12:21:18\",\"gmtModified\":null},{\"id\":188,\"commissionRatio\":2,\"name\":\"女式裙子\",\"createdBy\":{\"id\":1,\"name\":\"admin\"},\"modifiedBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11T12:21:18\",\"gmtModified\":null},{\"id\":189,\"commissionRatio\":7,\"name\":\"其他女装\",\"createdBy\":{\"id\":1,\"name\":\"admin\"},\"modifiedBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11T12:21:18\",\"gmtModified\":null},{\"id\":190,\"commissionRatio\":12,\"name\":\"男式上装\",\"createdBy\":{\"id\":1,\"name\":\"admin\"},\"modifiedBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11T12:21:18\",\"gmtModified\":null},{\"id\":191,\"commissionRatio\":7,\"name\":\"男式裤子\",\"createdBy\":{\"id\":1,\"name\":\"admin\"},\"modifiedBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11T12:21:18\",\"gmtModified\":null},{\"id\":192,\"commissionRatio\":15,\"name\":\"其他男装\",\"createdBy\":{\"id\":1,\"name\":\"admin\"},\"modifiedBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11T12:21:18\",\"gmtModified\":null}],\"errmsg\":\"成功\"}", responseString, false);
+        JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\"}", responseString, false);
 
         // 找不到
         responseString = this.mvc.perform(get("/categories/500/subcategories"))
@@ -120,7 +119,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":0,\"data\":[],\"errmsg\":\"成功\"}", responseString);
+        JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\"}", responseString, false);
 
         // 尝试查所有一级分类
         responseString = this.mvc.perform(get("/categories/0/subcategories"))
@@ -134,7 +133,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":0,\"data\":[],\"errmsg\":\"成功\"}", responseString);
+        JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\"}", responseString, false);
     }
 
     @Test
