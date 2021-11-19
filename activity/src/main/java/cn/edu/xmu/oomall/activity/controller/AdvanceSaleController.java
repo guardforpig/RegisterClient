@@ -1,6 +1,6 @@
 package cn.edu.xmu.oomall.activity.controller;
 
-import cn.edu.xmu.oomall.activity.microsservice.GoodsService;
+import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.model.vo.AdvanceSaleModifyVo;
 import cn.edu.xmu.oomall.activity.service.AdvanceSaleService;
 import cn.edu.xmu.oomall.core.util.Common;
@@ -37,7 +37,7 @@ public class AdvanceSaleController {
             @ApiImplicitParam(paramType = "path", dataType = "Long", name = "id", value = "预售活动id", required = true)
     })
     @PutMapping("/shops/{shopId}/advancesales/{id}/online")
-    public Object onlineAdvancesale(Long adminId,String adminName, @PathVariable("shopId")Long shopId, @PathVariable("id")Long advancesaleId) throws MicrosServiceConnectException {
+    public Object onlineAdvancesale(Long adminId,String adminName, @PathVariable("shopId")Long shopId, @PathVariable("id")Long advancesaleId) {
         adminId=1L;adminName="店铺管理员";
         ReturnObject returnObject = null;
         returnObject= advanceSaleService.onlineAdvancesale(adminId,adminName,shopId,advancesaleId);
@@ -51,7 +51,7 @@ public class AdvanceSaleController {
             @ApiImplicitParam(paramType = "path", dataType = "Long", name = "id", value = "预售活动id", required = true)
     })
     @PutMapping("/shops/{shopId}/advancesales/{id}/offline")
-    public Object offlineAdvancesale(Long adminId,String adminName, @PathVariable("shopId")Long shopId, @PathVariable("id")Long advancesaleId) throws MicrosServiceConnectException {
+    public Object offlineAdvancesale(Long adminId,String adminName, @PathVariable("shopId")Long shopId, @PathVariable("id")Long advancesaleId)  {
         adminId=1L;adminName="店铺管理员";
         ReturnObject returnObject = null;
         returnObject= advanceSaleService.offlineAdvancesale(adminId,adminName,shopId,advancesaleId);
@@ -81,7 +81,7 @@ public class AdvanceSaleController {
             @ApiImplicitParam(paramType = "path", dataType = "Long", name = "id", value = "预售活动id", required = true)
     })
     @DeleteMapping("/shops/{shopId}/advancesales/{id}")
-    public Object deleteAdvancesale(Long adminId,String adminName, @PathVariable("shopId")Long shopId, @PathVariable("id")Long advancesaleId) throws MicrosServiceConnectException {
+    public Object deleteAdvancesale(Long adminId,String adminName, @PathVariable("shopId")Long shopId, @PathVariable("id")Long advancesaleId) {
         adminId=1L;adminName="店铺管理员";
         ReturnObject returnObject = null;
         returnObject= advanceSaleService.deleteAdvancesale(adminId,shopId,advancesaleId);
