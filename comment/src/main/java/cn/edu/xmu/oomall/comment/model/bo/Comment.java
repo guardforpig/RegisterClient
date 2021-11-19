@@ -55,7 +55,6 @@ public class Comment{
 
     private Long id;
     private Long productId;
-    private Long orderitemId;
     private Byte type;
     private String content;
     private Byte state;
