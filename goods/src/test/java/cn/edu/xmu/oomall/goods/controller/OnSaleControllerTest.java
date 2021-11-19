@@ -10,7 +10,7 @@ import cn.edu.xmu.oomall.goods.model.vo.ModifyOnSaleVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
 
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -60,11 +60,9 @@ public class OnSaleControllerTest {
 
     DateTimeFormatter df;
 
-
-
-    @BeforeAll
-    void init(){
-        df=DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.SSS");
+    @BeforeEach
+    public void init(){
+        df=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
     }
 
@@ -143,7 +141,7 @@ public class OnSaleControllerTest {
         vo=new NewOnSaleVo();
         vo.setPrice(1000L);
         vo.setBeginTime(LocalDateTime.parse("2028-03-11 15:30:30.000",df));
-        vo.setEndTime(LocalDateTime.parse("2029-02-12 16:20:30.000",df));
+        vo.setEndTime(LocalDateTime.parse("2029-03-12 16:20:30.000",df));
         vo.setQuantity(10);
         vo.setType(0);
         s= JacksonUtil.toJson(vo);
@@ -159,7 +157,7 @@ public class OnSaleControllerTest {
         vo=new NewOnSaleVo();
         vo.setPrice(1000L);
         vo.setBeginTime(LocalDateTime.parse("2028-03-11 15:30:30.000",df));
-        vo.setEndTime(LocalDateTime.parse("2028-02-12 16:20:30.000",df));
+        vo.setEndTime(LocalDateTime.parse("2028-03-12 16:20:30.000",df));
         vo.setQuantity(10);
         vo.setType(0);
         s= JacksonUtil.toJson(vo);
@@ -298,7 +296,7 @@ public class OnSaleControllerTest {
         String res = this.mvc.perform(post("/internal/products/2532/onsales")
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isCreated()).andReturn()
                 .getResponse().getContentAsString();
-String expect="{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11 15:20:30.000\",\"endTime\":\"2022-10-1216:20:30.000\",\"quantity\":10},\"errmsg\":\"成功\"}\n";
+String expect="{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11 15:20:30.000\",\"endTime\":\"2022-10-12 16:20:30.000\",\"quantity\":10},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expect, res,false);
 
 
