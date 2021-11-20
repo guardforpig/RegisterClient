@@ -40,6 +40,10 @@ public class FreightModelDao {
     private final String freightModelKey = "freightModel_";
 
 
+    /**
+     * 用于dao层内部调用，主要是先查redis，再查数据库
+     * @return 默认模板
+     */
     private FreightModel getDefaultFreightInternal() {
         try {
             FreightModel defaultFreightModel = (FreightModel) redisUtil.get(defaultFreightModelKey);
@@ -60,6 +64,10 @@ public class FreightModelDao {
         }
     }
 
+    /**
+     * 用于dao层内部调用，主要用于更新redis，与数据库
+     * @param defaultFreightModel 默认模板
+     */
     private void setDefaultFreightInternal(FreightModel defaultFreightModel) {
         try {
             //先删redis
@@ -82,7 +90,11 @@ public class FreightModelDao {
     }
 
 
-
+    /**
+     * 插入模板
+     * @param freightModel
+     * @return
+     */
     public ReturnObject addFreightModel(FreightModel freightModel) {
         try {
             FreightModelPo freightModelPo = (FreightModelPo) Common.cloneVo(freightModel, FreightModelPo.class);
@@ -93,22 +105,21 @@ public class FreightModelDao {
         }
     }
 
-
-    public ReturnObject showFreightModel(String name, Integer page, Integer pageSize) {
+    /**
+     * 根据name查询运费模板
+     * @param name
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public ReturnObject showFreightModelByName(String name, Integer page, Integer pageSize) {
         try {
             List<FreightModelPo> freightModelPoList;
             PageHelper.startPage(page, pageSize);
-            //如果name非空那就用name筛选
-            if (name != null && !"".equals(name)) {
-                FreightModelPoExample example = new FreightModelPoExample();
-                FreightModelPoExample.Criteria criteria = example.createCriteria();
-                criteria.andNameEqualTo(name);
-                freightModelPoList = freightModelPoMapper.selectByExample(example);
-            }
-            else
-            {
-                freightModelPoList = freightModelPoMapper.selectByExample(null);
-            }
+            FreightModelPoExample example = new FreightModelPoExample();
+            FreightModelPoExample.Criteria criteria = example.createCriteria();
+            criteria.andNameEqualTo(name);
+            freightModelPoList = freightModelPoMapper.selectByExample(example);
             List<FreightModel> freightModelList = new ArrayList<>();
             for (FreightModelPo fmPo : freightModelPoList) {
                 freightModelList.add((FreightModel) Common.cloneVo(fmPo, FreightModel.class));
@@ -116,13 +127,34 @@ public class FreightModelDao {
             PageInfo<FreightModel> pageInfo = new PageInfo<>(freightModelList);
             return new ReturnObject<>(pageInfo);
         } catch (Exception e) {
-            return new ReturnObject<>(ReturnNo.IMG_FORMAT_ERROR);
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
         }
     }
 
+    /**
+     * 查询所有运费模板
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public ReturnObject showAllFreightModel(Integer page, Integer pageSize) {
+        try {
+            List<FreightModelPo> freightModelPoList;
+            PageHelper.startPage(page, pageSize);
+            freightModelPoList = freightModelPoMapper.selectByExample(null);
+            List<FreightModel> freightModelAllList = new ArrayList<>();
+            for (FreightModelPo fmPo : freightModelPoList) {
+                freightModelAllList.add((FreightModel) Common.cloneVo(fmPo, FreightModel.class));
+            }
+            PageInfo<FreightModel> pageInfo = new PageInfo<>(freightModelAllList);
+            return new ReturnObject<>(pageInfo);
+        } catch (Exception e) {
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
+        }
+    }
 
     /**
-     * 获得运费模板详情
+     * 通过id获得运费模板详情
      *
      * @param id 运费模板id
      * @return 运费模板
@@ -192,7 +224,10 @@ public class FreightModelDao {
         }
     }
 
-
+    /**
+     * 获得默认运费模板
+     * @return
+     */
     public ReturnObject getDefaultModel() {
         FreightModel defaultFreightModel= getDefaultFreightInternal();
         if(defaultFreightModel != null) {
@@ -201,6 +236,10 @@ public class FreightModelDao {
         return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
     }
 
+    /**
+     * 设置默认运费模板
+     * @return
+     */
     public  ReturnObject setDefaultModel(FreightModel defaultFreightModel) {
         setDefaultFreightInternal(defaultFreightModel);
         return new ReturnObject();
