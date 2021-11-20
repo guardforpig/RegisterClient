@@ -252,11 +252,45 @@ public class Common {
                 try {
                     boField= boClass.getDeclaredField(voField.getName());
                 }
-                //bo中查找不到对应的属性
+                //bo中查找不到对应的属性，那就有可能为特殊情况xxx，需要由xxxId与xxxName组装
                 catch (NoSuchFieldException e)
                 {
-                    //将此属性设置为null,继续进行下一retVo属性的复制
-                    voField.set(newVo, null);
+                    //提取头部
+                    String head=voField.getName();
+                    Field boxxxNameField=null;
+                    Field boxxxIdField=null;
+                    for (Field bof:boFields)
+                    {
+                        if(bof.getName().matches(head+"Name")){
+                            boxxxNameField=bof;
+                        }
+                        else if(bof.getName().matches(head+"Id")) {
+                            boxxxIdField=bof;
+                        }
+                    }
+                    //找不到xxxName或者找不到xxxId
+                    if (boxxxNameField==null||boxxxIdField==null)
+                    {
+                        voField.set(newVo, null);
+                        continue;
+                    }
+
+                    Object newSimpleRetVo = voField.getType().getDeclaredConstructor().newInstance();
+                    Field newSimpleRetVoIdField=newSimpleRetVo.getClass().getDeclaredField("id");
+                    Field newSimpleRetVoNameField=newSimpleRetVo.getClass().getDeclaredField("name");
+                    newSimpleRetVoIdField.setAccessible(true);
+                    newSimpleRetVoNameField.setAccessible(true);
+
+                    //bo的xxxId和xxxName组装为SimpleRetVo的id,name
+                    boxxxIdField.setAccessible(true);
+                    boxxxNameField.setAccessible(true);
+                    Object boxxxId=boxxxIdField.get(bo);
+                    Object boxxxName=boxxxNameField.get(bo);
+
+                    newSimpleRetVoIdField.set(newSimpleRetVo,boxxxId);
+                    newSimpleRetVoNameField.set(newSimpleRetVo,boxxxName);
+
+                    voField.set(newVo, newSimpleRetVo);
                     continue;
                 }
                 Class<?> boFieldType = boField.getType();
@@ -270,65 +304,13 @@ public class Common {
                 //属性名相同，类型不同
                 else
                 {
-                    //如果不是特殊情况，赋值为null
-                    if(!voField.getName().matches(".+Id"))
-                    {
-                        voField.set(newVo, null);
-                        continue;
-                    }
-                    //提取头部
-                    String pattern="(.+)Id";
-                    Matcher matcher = Pattern.compile(pattern).matcher(voField.getName());
-                    matcher.find();
-                    String head=matcher.group(1);
-                    Field boxxxNameField=null;
-                    for (Field bof:boFields)
-                    {
-                        if(bof.getName().matches(head+"Name")){
-                            boxxxNameField=bof;
-                        }
-                    }
-                    //找不到xxxName
-                    if (boxxxNameField==null)
-                    {
-                        voField.set(newVo, null);
-                        continue;
-                    }
-
-                    Object newSimpleRetVo = voField.getType().getDeclaredConstructor().newInstance();
-                    Field newSimpleRetVoIdField=newSimpleRetVo.getClass().getDeclaredField("id");
-                    Field newSimpleRetVoNameField=newSimpleRetVo.getClass().getDeclaredField("userName");
-                    newSimpleRetVoIdField.setAccessible(true);
-                    newSimpleRetVoNameField.setAccessible(true);
-
-                    //bo的xxxBy和xxxName组装为SimpleRetVo的id,userName
-                    Field boxxxByField = boClass.getDeclaredField(voField.getName());
-                    boxxxByField.setAccessible(true);
-                    boxxxNameField.setAccessible(true);
-                    Object boxxxBy=boxxxByField.get(bo);
-                    Object boxxxName=boxxxNameField.get(bo);
-
-                    newSimpleRetVoIdField.set(newSimpleRetVo,boxxxBy);
-                    newSimpleRetVoNameField.set(newSimpleRetVo,boxxxName);
-
-                    voField.set(newVo, newSimpleRetVo);
+                    voField.set(newVo, null);
                 }
             }
         } catch (Exception e) {
             logger.error(e.toString());
         }
         return newVo;
-    }
-
-
-    public static ReturnObject getNullRetObj(ReturnObject<Object> returnObject) {
-        ReturnNo code = returnObject.getCode();
-        switch (code) {
-            case RESOURCE_ID_NOTEXIST:
-                return new ReturnObject(returnObject.getCode());
-            default:
-                return new ReturnObject(returnObject.getCode(), returnObject.getErrmsg());
-        }
     }
 
     /**
