@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.goods.dao;
 
+import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -23,9 +24,11 @@ import java.util.List;
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 
 /**
- * @author Huang Tianyue
- * 2021.11.15
+ * @author 黄添悦
  **/
+/**
+ * @author 王文飞
+ */
 @Repository
 public class GoodsDao {
     private static final Logger logger = LoggerFactory.getLogger(GoodsDao.class);
@@ -42,11 +45,13 @@ public class GoodsDao {
     @Value("${goodsdemo.goods.expiretime}")
     private long goodsTimeout;
 
-    public ReturnObject createNewGoods(GoodsPo goodsPo)
+    public ReturnObject createNewGoods(Goods goods)
     {
         try
         {
+            GoodsPo goodsPo=(GoodsPo) Common.cloneVo(goods,GoodsPo.class);
             goodsPoMapper.insert(goodsPo);
+            goods.setId(goodsPo.getId());
             return new ReturnObject((Goods) cloneVo(goodsPo,Goods.class));
         }
         catch (Exception e)
@@ -56,18 +61,28 @@ public class GoodsDao {
         }
     }
 
-    public ReturnObject updateGoods(GoodsPo goodsPo)
+    public ReturnObject updateGoods(Goods goods)
     {
         try
         {
-            goodsPoMapper.updateByPrimaryKeySelective(goodsPo);
+            GoodsPo oldGoods=goodsPoMapper.selectByPrimaryKey(goods.getId());
+            if(oldGoods==null) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"商品id不存在");
+            }
+            if(!oldGoods.getShopId().equals(goods.getShopId())) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE, "该商品不属于该商铺");
+            }
+            GoodsPo newGoods=(GoodsPo) Common.cloneVo(oldGoods,GoodsPo.class);
+            newGoods.setName(goods.getName());
+            Common.setPoModifiedFields(newGoods,goods.getModifiedBy(),goods.getModifiedName());
+            goodsPoMapper.updateByPrimaryKeySelective(newGoods);
+            return new ReturnObject<>(ReturnNo.OK);
         }
         catch (Exception e)
         {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        return new ReturnObject<>(ReturnNo.OK);
     }
 
     public ReturnObject<Goods> searchGoodsById(Long shopId,Long id)

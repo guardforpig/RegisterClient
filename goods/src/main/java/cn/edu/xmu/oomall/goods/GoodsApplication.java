@@ -11,7 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author Ming Qiu
  **/
 
-@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core.*", "cn.edu.xmu.oomall.goods.*"})
+@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core.*", "cn.edu.xmu.oomall.goods.*","cn.edu.xmu.privilegegateway.*"})
 @EnableConfigurationProperties
 @MapperScan("cn.edu.xmu.oomall.goods.mapper")
 public class GoodsApplication {

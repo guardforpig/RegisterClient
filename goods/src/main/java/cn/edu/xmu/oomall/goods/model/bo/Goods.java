@@ -11,9 +11,11 @@ import java.util.List;
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 
 /**
- * @author Huang Tianyue
- * 2021.11.15
+ * @author 黄添悦
  **/
+/**
+ * @author 王文飞
+ */
 @Data
 @Getter
 @Setter
@@ -24,9 +26,11 @@ public class Goods implements VoObject,Serializable {
     private Long shopId;
     private List<Product> productList;
     private Long createdBy;
+    private String createName;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
     private Long modifiedBy;
+    private String modifiedName;
     @Override
     public GoodsVo createVo() {
         return (GoodsVo)cloneVo(this,GoodsVo.class);
