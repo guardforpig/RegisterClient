@@ -9,7 +9,6 @@ import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPo;
 import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
-import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePoExample;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -90,8 +89,6 @@ public class CouponDao {
             }
 
             pageInfo.setList(boList);
-            pageInfo.setPageNum(pageNumber);
-            pageInfo.setPageSize(pageSize);
             return new ReturnObject<>(pageInfo);
         } catch (Exception e) {
             logger.error(e.getMessage());

@@ -8,6 +8,8 @@ public class OnsaleVo implements VoObject {
 
     private Long id;
 
+    private Long shopId;
+
     private Long productId;
 
     /**

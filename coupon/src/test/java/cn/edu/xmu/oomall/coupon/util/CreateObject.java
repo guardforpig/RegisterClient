@@ -83,4 +83,28 @@ public class CreateObject {
         return new ReturnObject<>(onSaleVoList);
     }
 
+    public static ReturnObject<VoObject> createOnsaleVo1() {
+        return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
+    }
+
+    public static ReturnObject<VoObject> createOnsaleVo2() {
+        OnsaleVo onsaleVo = new OnsaleVo();
+        onsaleVo.setId(1L);
+        onsaleVo.setShopId(3L);
+        return new ReturnObject<>(onsaleVo);
+    }
+
+    public static ReturnObject<VoObject> createOnsaleVo3() {
+        OnsaleVo onsaleVo = new OnsaleVo();
+        onsaleVo.setId(2L);
+        onsaleVo.setShopId(2L);
+        return new ReturnObject<>(onsaleVo);
+    }
+
+    public static ReturnObject<VoObject> createOnsaleVo4() {
+        OnsaleVo onsaleVo = new OnsaleVo();
+        onsaleVo.setId(3912L);
+        onsaleVo.setShopId(2L);
+        return new ReturnObject<>(onsaleVo);
+    }
 }

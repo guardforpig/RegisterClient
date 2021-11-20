@@ -32,5 +32,14 @@ public interface GoodsService {
     })
     @RequestMapping(value = "/internal/product/{id}/onsales", method = RequestMethod.GET)
     ReturnObject listOnsalesByProductId(@PathVariable("id") Long productId);
+
+
+    @ApiOperation(value = "通过Id返回OnsaleVo")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Integer", paramType = "path")
+    })
+    @RequestMapping(value = "/internal/onsales/{id}", method = RequestMethod.GET)
+    ReturnObject getOnsaleById(@PathVariable("id") Long id);
+
 }
 

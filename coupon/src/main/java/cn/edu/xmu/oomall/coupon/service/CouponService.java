@@ -113,9 +113,11 @@ public class CouponService {
             couponActivityIdList.add(couponOnsale.getActivityId());
         }
 
-        // 根据CouponActivityId的列表，找出所有的CouponActivity，并分页
+        // 根据CouponActivityId的列表，找出所有上线的CouponActivity，并分页
         CouponActivityPoExample example2 = new CouponActivityPoExample();
-        example2.createCriteria().andIdIn(couponActivityIdList);
+        example2.createCriteria()
+                .andIdIn(couponActivityIdList)
+                .andStateEqualTo(CouponActivity.State.ONLINE.getCode());
         ReturnObject<PageInfo<Object>> retPageInfo =
                 couponDao.listBoByExample(example2, CouponActivity.class, pageNumber, pageSize);
         if (!retPageInfo.getCode().equals(ReturnNo.OK)) {
@@ -195,7 +197,7 @@ public class CouponService {
                     Common.setPoModifiedFields(formerCouponActivity, userId, userName);
 
                     ReturnObject returnObject = couponDao.updateBo(formerCouponActivity, CouponActivityPo.class);
-                 // if (!returnObject.getCode().equals(ReturnNo.OK))
+
                     return returnObject;
 
                     // TODO: 将已发行未用的优惠卷一并下线
@@ -226,14 +228,32 @@ public class CouponService {
             return retCouponActivity;
         }
 
-        // TODO：是否需要判断onsale是否存在
-        // TODO: 是否需要判断数据库中已经有CouponOnsale表示该onsale已经参与了该活动
+        // 判断Onsale是否存在
+        ReturnObject<OnsaleVo> retOnsaleVo = goodsService.getOnsaleById(onsaleId);
+        if (!retOnsaleVo.getCode().equals(ReturnNo.OK)) {
+            return retOnsaleVo;
+        }
 
-        // 判断创建活动的商店Id是否与传入的shopId对应
+        // 判断couponActivity和onSale是否都属于该shop
         CouponActivity couponActivity = retCouponActivity.getData();
+        OnsaleVo onsaleVo = retOnsaleVo.getData();
         if (!couponActivity.getShopId().equals(shopId)) {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "该优惠活动不属于该商店");
         }
+        if (!onsaleVo.getShopId().equals(shopId)) {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "该Onsale不属于该商店");
+        }
+
+        // 判断数据库中是否已经有CouponOnsale表示该onsale已经参与了该活动
+        CouponOnsalePoExample example = new CouponOnsalePoExample();
+        example.createCriteria().andOnsaleIdEqualTo(onsaleId).andActivityIdEqualTo(couponActivityId);
+        ReturnObject<PageInfo<Object>> retPageInfo =
+                couponDao.listBoByExample(example, CouponOnsale.class, 1, 10);
+        if (!retPageInfo.getCode().equals(ReturnNo.RESOURCE_ID_NOTEXIST)) {
+            return new ReturnObject<>(ReturnNo.STATENOTALLOW, "该onsale已经参与了该活动");
+        }
+
+        // 判断该活动是不是下线态，下线态出错
         if (couponActivity.getState().equals(CouponActivity.State.OFFLINE.getCode())) {
             return new ReturnObject<>(ReturnNo.STATENOTALLOW, ReturnNo.STATENOTALLOW.getMessage());
         }
