@@ -1,17 +1,13 @@
 package cn.edu.xmu.oomall.core.util;
 
 
-
 import cn.edu.xmu.oomall.core.util.bo.Category;
 import cn.edu.xmu.oomall.core.util.vo.CategoryRetVo;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class CloneVoTest {
 
@@ -24,10 +20,10 @@ class CloneVoTest {
         Category categoryBo=new Category();
         categoryBo.setId(1L);
         categoryBo.setCommissionRatio(1);
-        categoryBo.setCreatedBy(2L);
-        categoryBo.setCreateName("CreateName");
-        categoryBo.setModifiedBy(3L);
-        categoryBo.setModiName("ModiName");
+        categoryBo.setCreatorId(2L);
+        categoryBo.setCreatorName("CreateName");
+        categoryBo.setModifierId(3L);
+        categoryBo.setModifierName("ModiName");
         LocalDateTime gmtCreate=LocalDateTime.now().minusDays(1);
         LocalDateTime gmtModified=LocalDateTime.now();
         categoryBo.setGmtCreate(gmtCreate);
@@ -40,10 +36,10 @@ class CloneVoTest {
         assertEquals(categoryRetVo.getId(),1L);
         assertEquals(categoryRetVo.getName(),"name");
 
-        assertEquals(categoryRetVo.getCreatedBy().getId(),2L);
-        assertEquals(categoryRetVo.getCreatedBy().getName(),"CreateName");
-        assertEquals(categoryRetVo.getModifiedBy().getId(),3L);
-        assertEquals(categoryRetVo.getModifiedBy().getName(),"ModiName");
+        assertEquals(categoryRetVo.getCreator().getId(),2L);
+        assertEquals(categoryRetVo.getCreator().getName(),"CreateName");
+        assertEquals(categoryRetVo.getModifier().getId(),3L);
+        assertEquals(categoryRetVo.getModifier().getName(),"ModiName");
         assertEquals(categoryRetVo.getCommissionRate(),null);
         assertEquals(categoryRetVo.getGmtCreate(),gmtCreate);
         assertEquals(categoryRetVo.getGmtModified(),gmtModified);
