@@ -8,16 +8,22 @@ import java.time.LocalDateTime;
 
 /**
  * @author ziyi guo
- * @date 2021/11/17
+ * @date 2021/11/16
  */
 @Data
 @NoArgsConstructor
-public class FreightModel implements Serializable {
+public class WeightFreight implements Serializable {
+
     private Long id;
-    private String name;
-    private Byte defaultModel;
-    private Byte type;
-    private Integer unit;
+    private Long freightModelId;
+    private Integer firstWeight;
+    private Long firstWeightFreight;
+    private Long tenPrice;
+    private Long fiftyPrice;
+    private Long hundredPrice;
+    private Long trihunPrice;
+    private Long abovePrice;
+    private Long regionId;
     private Long creatorId;
     private String creatorName;
     private Long modifierId;
