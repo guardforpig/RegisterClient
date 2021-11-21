@@ -2,7 +2,6 @@ package cn.edu.xmu.oomall.activity.controller;
 
 import cn.edu.xmu.oomall.activity.ActivityApplication;
 import cn.edu.xmu.oomall.activity.mapper.GroupOnActivityPoMapper;
-import cn.edu.xmu.oomall.activity.microservice.OnSaleService;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVO;
 import cn.edu.xmu.oomall.activity.model.po.GroupOnActivityPo;
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityVo;

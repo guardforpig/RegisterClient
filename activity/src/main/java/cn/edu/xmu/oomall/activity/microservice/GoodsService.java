@@ -56,4 +56,8 @@ public interface GoodsService {
 
     @DeleteMapping("/internal/activities/{id}/onsales")
     SimpleReturnObject deleteOnsale(@PathVariable(value="id") Long activityId);
+
+    @PostMapping("/shops/{shopId}/products/{id}/onsales")
+    ReturnObject addOnsale(@PathVariable("shopId") long shopId,@PathVariable("id") long id,
+                           @RequestBody SimpleSaleInfoVO simpleSaleInfoVo);
 }

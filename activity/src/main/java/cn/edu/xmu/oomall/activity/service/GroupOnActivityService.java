@@ -3,10 +3,12 @@ package cn.edu.xmu.oomall.activity.service;
 
 import cn.edu.xmu.oomall.activity.constant.GroupOnState;
 import cn.edu.xmu.oomall.activity.dao.GroupActivityDao;
-import cn.edu.xmu.oomall.activity.microservice.OnSaleService;
+import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVO;
 import cn.edu.xmu.oomall.activity.model.bo.GroupOnActivity;
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityVo;
+import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
+import cn.edu.xmu.oomall.activity.model.vo.SimpleReturnObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -31,7 +33,7 @@ public class GroupOnActivityService {
     private GroupActivityDao groupActivityDao;
 
     @Autowired
-    private OnSaleService onSaleService;
+    private GoodsService goodsService;
 
 
 
@@ -51,9 +53,11 @@ public class GroupOnActivityService {
         if(!obj.getCode().equals(ReturnNo.OK)) {
             return obj;
         }
-        ReturnObject retDel = onSaleService.deleteOnSale(id);
-        if(!retDel.getCode().equals(ReturnNo.OK)) {
-            return retDel;
+        SimpleReturnObject result = goodsService.deleteOnsale(id);
+        if(result.getErrno()!=0){
+            obj=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
+        }else{
+            obj=new ReturnObject();
         }
         return obj;
     }
@@ -94,19 +98,20 @@ public class GroupOnActivityService {
         }
         LocalDateTime beginTime;
         LocalDateTime endTime;
-        SimpleSaleInfoVO simpleSaleInfoVO = new SimpleSaleInfoVO();
+        OnsaleModifyVo onsaleModifyVo = new OnsaleModifyVo();
         if(groupOnActivity.getBeginTime()!=null) {
             beginTime = groupOnActivity.getBeginTime();
-            simpleSaleInfoVO.setBeginTime(beginTime);
+            onsaleModifyVo.setBegintime(beginTime);
         }
         if(groupOnActivity.getEndTime()!=null) {
             endTime = groupOnActivity.getEndTime();
-            simpleSaleInfoVO.setEndTime(endTime);
+            onsaleModifyVo.setEndtime(endTime);
         }
-        ReturnObject retUp = onSaleService.updateGrouponOnsale(groupOnActivity.getId(),simpleSaleInfoVO);
-        if(!retUp.getCode().equals(ReturnNo.OK))
-        {
-            return retUp;
+        SimpleReturnObject result = goodsService.modifyOnsale(groupOnActivity.getId(),onsaleModifyVo);
+        if(result.getErrno()!=0){
+            obj=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
+        }else{
+            obj=new ReturnObject();
         }
         return obj;
     }
@@ -144,9 +149,11 @@ public class GroupOnActivityService {
             return obj;
         }
 
-        ReturnObject retUpdate = onSaleService.onlineOnsale(id);
-        if(!retUpdate.getCode().equals(ReturnNo.OK)) {
-            return retUpdate;
+        SimpleReturnObject result = goodsService.onlineOnsale(id);
+        if(result.getErrno()!=0){
+            obj=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
+        }else{
+            obj=new ReturnObject();
         }
         return obj;
     }
@@ -183,9 +190,11 @@ public class GroupOnActivityService {
             return obj;
         }
 
-        ReturnObject retUpdate = onSaleService.offlineOnsale(id);
-        if(!retUpdate.getCode().equals(ReturnNo.OK)) {
-            return retUpdate;
+        SimpleReturnObject result = goodsService.offlineOnsale(id);
+        if(result.getErrno()!=0){
+            obj=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
+        }else{
+            obj=new ReturnObject();
         }
         return obj;
     }
@@ -226,7 +235,7 @@ public class GroupOnActivityService {
         simpleOnSaleInfoVo.setEndTime(endTime);
         simpleOnSaleInfoVo.setBeginTime(beginTime);
         simpleOnSaleInfoVo.setActivityId(id);
-        ReturnObject retObj = onSaleService.addOnsale(shopId,pid,simpleOnSaleInfoVo);
+        ReturnObject retObj = goodsService.addOnsale(shopId,pid,simpleOnSaleInfoVo);
         if(!retObj.getCode().equals(ReturnNo.OK)) {
             return retObj;
         }
