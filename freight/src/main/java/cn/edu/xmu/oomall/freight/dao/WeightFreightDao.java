@@ -79,6 +79,29 @@ public class WeightFreightDao {
     }
 
     /**
+     * 店家或管理员查询某个重量运费模板的明细,不分页
+     *
+     * @param freightModelId
+     * @return ReturnObject
+     */
+    public ReturnObject getAllWeightItems(Long freightModelId) {
+        try {
+
+            WeightFreightPoExample example=new WeightFreightPoExample();
+            WeightFreightPoExample.Criteria criteria=example.createCriteria();
+            criteria.andFreightModelIdEqualTo(freightModelId);
+            List<WeightFreightPo> weightFreightPoList = weightFreightPoMapper.selectByExample(example);
+            List<WeightFreight> weightFreightBoList = new ArrayList<>();
+            for (WeightFreightPo wfPo : weightFreightPoList) {
+                weightFreightBoList.add((WeightFreight) Common.cloneVo(wfPo,WeightFreight.class));
+            }
+            return new ReturnObject(weightFreightBoList);
+        } catch (Exception e) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
+    }
+
+    /**
      * 店家或管理员修改重量运费模板明细
      * @param weightFreightPo,userId,userName
      * @return ReturnObject

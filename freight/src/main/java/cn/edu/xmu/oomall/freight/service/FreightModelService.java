@@ -4,12 +4,16 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.dao.FreightModelDao;
+import cn.edu.xmu.oomall.freight.dao.WeightFreightDao;
 import cn.edu.xmu.oomall.freight.model.bo.FreightModel;
+import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
+import cn.edu.xmu.oomall.freight.model.po.WeightFreightPo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -23,7 +27,8 @@ public class FreightModelService {
     @Autowired
     FreightModelDao freightModelDao;
 
-
+    @Autowired
+    WeightFreightDao weightFreightDao;
     /**
      * 管理员定义运费模板
      * @param freightModelInfo 运费模板资料
@@ -79,7 +84,7 @@ public class FreightModelService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject cloneFreightModel(Long id, Long userId, String userName){
-        ReturnObject returnObjectToBeCloned=freightModelDao.showFreightModelById(id);
+        ReturnObject returnObjectToBeCloned=freightModelDao.selectFreightModelById(id);
         //如果查不到,返回资源不存在
         if(returnObjectToBeCloned.getCode().equals(ReturnNo.RESOURCE_ID_NOTEXIST)) {
             return returnObjectToBeCloned;
@@ -99,6 +104,28 @@ public class FreightModelService {
         freightModelToBeCloned.setName(freightModelToBeCloned.getName() + r.nextInt(10000000));
         //克隆的不是默认模板
         freightModelToBeCloned.setType((byte)0);
+
+        ReturnObject returnObject1=weightFreightDao.getAllWeightItems(id);
+
+        //克隆freightItem
+        if (returnObject1.getCode().equals(ReturnNo.OK))
+        {
+            List<WeightFreight> weightFreightList= (List<WeightFreight>) returnObject1.getData();
+            for (WeightFreight weightFreight:weightFreightList)
+            {
+                //设置创建人
+                Common.setPoCreatedFields(weightFreight,userId,userName);
+                //将置空id
+                weightFreight.setId(null);
+                weightFreight.setFreightModelId(freightModelToBeCloned.getId());
+                //模板修改时间,修改人信息置空
+                weightFreight.setGmtModified(null);
+                weightFreight.setModifierId(null);
+                weightFreight.setModifierName(null);
+                weightFreightDao.addWeightItems((WeightFreightPo) Common.cloneVo(weightFreight, WeightFreightPo.class),userId,userName);
+            }
+        }
+
         //插入
         return freightModelDao.addFreightModel(freightModelToBeCloned);
     }
@@ -120,7 +147,7 @@ public class FreightModelService {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject showFreightModelById(Long id){
 
-        ReturnObject returnObject=freightModelDao.showFreightModelById(id);
+        ReturnObject returnObject=freightModelDao.selectFreightModelById(id);
         //如果查不到
         if(returnObject.getCode().equals(ReturnNo.RESOURCE_ID_NOTEXIST)) {
             return freightModelDao.getDefaultFreight();
@@ -163,7 +190,18 @@ public class FreightModelService {
             //不能删默认模板
             return new ReturnObject(ReturnNo.FREIGHT_NOTDELETED);
         }
+
+        ReturnObject returnObject1=weightFreightDao.getAllWeightItems(id);
+
+        //删除freightItem
+        if (returnObject1.getCode().equals(ReturnNo.OK))
+        {
+            List<WeightFreight> weightFreightList= (List<WeightFreight>) returnObject1.getData();
+            for (WeightFreight weightFreight:weightFreightList)
+            {
+                weightFreightDao.deleteWeightItems(weightFreight.getId());
+            }
+        }
         return freightModelDao.deleteFreightModel(id);
     }
-
 }
