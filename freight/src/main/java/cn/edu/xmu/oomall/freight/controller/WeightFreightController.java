@@ -52,7 +52,7 @@ public class WeightFreightController {
             @ApiResponse(code=997,message = "该运费模板中该地区已经定义"),
             @ApiResponse(code=996,message = "该运费模板类型与内容不符")
     })
-    @Audit
+    @Audit(departName = "shops")
     @PostMapping("/shops/{shopId}/freightmodels/{id}/weightItems")
     public Object addWeightItems(@Validated @RequestBody WeightFreightVo weightFreightVo, @PathVariable("shopId") Integer shopId, @PathVariable("id") Long id, @LoginUser Long userId, @LoginName String userName, BindingResult bindingResult) {
 
@@ -88,7 +88,7 @@ public class WeightFreightController {
             @ApiResponse(code=500,message = "服务器内部错误"),
             @ApiResponse(code=504,message = "操作的资源id不存在")
     })
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("/shops/{shopId}/freightmodels/{id}/weightItems")
     public Object getWeightItems(@PathVariable("shopId") Integer shopId, @PathVariable("id") Long id, @RequestParam(name = "page", required = false, defaultValue = "1") Integer page, @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
@@ -117,7 +117,7 @@ public class WeightFreightController {
             @ApiResponse(code=504,message = "操作的资源id不存在"),
             @ApiResponse(code=999,message = "运费模板中该地区已经定义")
     })
-    @Audit
+    @Audit(departName = "shops")
     @PutMapping("/shops/{shopId}/weightItems/{id}")
     public Object updateWeightItems(@RequestBody WeightFreightVo weightFreightVo, @PathVariable("shopId") Integer shopId, @PathVariable("id") Long id, @LoginUser Long userId, @LoginName String userName) {
 
@@ -144,7 +144,7 @@ public class WeightFreightController {
             @ApiResponse(code=500,message = "服务器内部错误"),
             @ApiResponse(code=504,message = "操作的资源id不存在"),
     })
-    @Audit
+    @Audit(departName = "shops")
     @DeleteMapping("/shops/{shopId}/weightItems/{id}")
     public Object deleteWeightItems(@PathVariable("shopId") Integer shopId, @PathVariable("id") Long id) {
 

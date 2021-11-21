@@ -4,7 +4,6 @@ import cn.edu.xmu.oomall.core.util.JacksonUtil;
 import cn.edu.xmu.oomall.freight.FreightApplication;
 import cn.edu.xmu.oomall.freight.model.vo.WeightFreightVo;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
