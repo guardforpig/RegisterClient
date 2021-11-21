@@ -5,7 +5,6 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.dao.FreightModelDao;
 import cn.edu.xmu.oomall.freight.model.bo.FreightModel;
-import cn.edu.xmu.oomall.freight.model.po.FreightModelPoExample;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,11 +56,11 @@ public class FreightModelService {
     public ReturnObject showFreightModel(String name, Integer page, Integer pageSize){
         //如果name非空那就用name筛选
         if (name != null && !"".equals(name)) {
-            return freightModelDao.showFreightModelByName(name,page,pageSize);
+            return freightModelDao.selectFreightModelByName(name,page,pageSize);
         }
         else
         {
-            return freightModelDao.showAllFreightModel(page,pageSize);
+            return freightModelDao.selectAllFreightModel(page,pageSize);
         }
     }
 

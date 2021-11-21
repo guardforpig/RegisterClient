@@ -112,7 +112,7 @@ public class FreightModelDao {
      * @param pageSize
      * @return
      */
-    public ReturnObject showFreightModelByName(String name, Integer page, Integer pageSize) {
+    public ReturnObject selectFreightModelByName(String name, Integer page, Integer pageSize) {
         try {
             List<FreightModelPo> freightModelPoList;
             PageHelper.startPage(page, pageSize);
@@ -137,7 +137,7 @@ public class FreightModelDao {
      * @param pageSize
      * @return
      */
-    public ReturnObject showAllFreightModel(Integer page, Integer pageSize) {
+    public ReturnObject selectAllFreightModel(Integer page, Integer pageSize) {
         try {
             List<FreightModelPo> freightModelPoList;
             PageHelper.startPage(page, pageSize);
@@ -159,7 +159,7 @@ public class FreightModelDao {
      * @param id 运费模板id
      * @return 运费模板
      */
-    public ReturnObject showFreightModelById(Long id) {
+    public ReturnObject selectFreightModelById(Long id) {
         try {
             //查redis
             String key = freightModelKey + id;
