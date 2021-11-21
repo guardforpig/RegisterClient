@@ -1,6 +1,8 @@
 package cn.edu.xmu.oomall.comment.model.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.List;
  * @sn 22920192204219
  **/
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentSelectRetVo {
     private Long page;
     private Long pageSize;

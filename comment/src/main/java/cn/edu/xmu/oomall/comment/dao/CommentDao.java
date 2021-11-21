@@ -48,8 +48,6 @@ public class CommentDao {
      */
     public ReturnObject insertComment(CommentPo commentPo){
         try{
-            commentPo.setGmtCreate(LocalDateTime.now());
-            commentPo.setGmtModified(LocalDateTime.now());
             commentPo.setPostTime(LocalDateTime.now());
             int ret=commentPoMapper.insertSelective(commentPo);
             if(ret==0){

@@ -95,7 +95,7 @@ public class CommentController {
             @ApiResponse(code = 0, message = "成功"),
     })
     @GetMapping("/products/{id}/comments")
-    public Object selectProductComments(@PathVariable("id") Long id, @RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+    public Object selectProductComments(@PathVariable("id") Long id, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize){
 
         ReturnObject ret=commentService.selectAllPassCommentByProductId(id,page,pageSize);
         return Common.getPageRetVo(ret,CommentRetVo.class);
@@ -143,8 +143,8 @@ public class CommentController {
     @GetMapping("/comments")
     public Object getOwnComments(
             @LoginUser Long loginUser,
-            @RequestParam(required = false,defaultValue = "1") Integer page,
-            @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer pageSize){
 
         ReturnObject<PageInfo<Object>> ret=commentService.selectAllCommentsOfUser(loginUser,page,pageSize);
         return Common.getPageRetVo(ret, CommentRetVo.class);
@@ -166,8 +166,8 @@ public class CommentController {
     @GetMapping("/shops/{id}/newcomments")
     public Object getAllComments(
             @PathVariable("id") Long id,
-            @RequestParam(required = false,defaultValue = "1") Integer page,
-            @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer pageSize){
         Integer state=0;
         if (id != 0) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
@@ -182,7 +182,7 @@ public class CommentController {
     @ApiOperation(value = "商铺管理员查看评论列表")
     @Audit(departName = "shops")
     @GetMapping("/shops/{id}/comments")
-    public Object showShopCommentsByShopId( @PathVariable("id") Long id,@RequestParam(required = false,defaultValue = "1") Integer page, @RequestParam(required = false,defaultValue = "10") Integer pageSize){
+    public Object showShopCommentsByShopId( @PathVariable("id") Long id,@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize){
 
         ReturnObject ret=commentService.selectAllPassCommentByShopId(id,page,pageSize);
         return Common.getPageRetVo(ret,CommentRetVo.class);

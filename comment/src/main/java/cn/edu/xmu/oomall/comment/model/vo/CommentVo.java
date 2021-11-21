@@ -2,7 +2,9 @@ package cn.edu.xmu.oomall.comment.model.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -10,6 +12,8 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @ApiModel(value = "评论视图")
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentVo {
 
     @Max(2)

@@ -45,8 +45,6 @@ public class CommentService {
 
         commentPo.setProductId(productId);
         commentPo.setContent(commentVo.getContent());
-        commentPo.setPostId(loginUser);
-        commentPo.setPostName(loginUsername);
         commentPo.setShopId(shopId);
         commentPo.setType(commentVo.getType().byteValue());
         commentPo.setState(Comment.State.NOT_AUDIT.getCode());
