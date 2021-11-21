@@ -14,7 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 评论
+ * @author Xinyu Jiang
+ * @sn 22920192204219
+ * @date:2021/11/21
+ **/
 @Service
 public class CommentService {
 
@@ -52,7 +57,6 @@ public class CommentService {
         ReturnObject ret_insert = commentDao.insertComment(commentPo);
         if (ret_insert.getCode().equals(0)) {
             CommentRetVo commentRetVo = (CommentRetVo) Common.cloneVo(commentPo, CommentRetVo.class);
-            commentRetVo.setAuthor(new SimpleUserRetVo(loginUser, loginUsername));//手动set返回格式中不匹配的部分
             return new ReturnObject(commentRetVo);
         }
         return ret_insert;
@@ -120,7 +124,6 @@ public class CommentService {
         Comment comment = new Comment();
         comment.setId(id);
         comment.setState(conclusion.getConclusion() == true ? Comment.State.PASS.getCode() : Comment.State.FORBID.getCode());
-        comment.setAuditedBy(new SimpleUserRetVo(loginUser, loginUserName));
         Common.setPoModifiedFields(comment, loginUser, loginUserName);
         ReturnObject ret = commentDao.updateCommentState(comment);
         return ret;

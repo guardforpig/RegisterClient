@@ -12,13 +12,16 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * 评论
+ * @author Xinyu Jiang
+ * @sn 22920192204219
+ * @date:2021/11/21
+ **/
 @Repository
 public class CommentDao {
     @Autowired
@@ -48,7 +51,6 @@ public class CommentDao {
      */
     public ReturnObject insertComment(CommentPo commentPo){
         try{
-            commentPo.setPostTime(LocalDateTime.now());
             int ret=commentPoMapper.insertSelective(commentPo);
             if(ret==0){
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
@@ -108,8 +110,6 @@ public class CommentDao {
      */
     public ReturnObject updateCommentState(Comment comment){
         CommentPo commentPo = (CommentPo) Common.cloneVo(comment, CommentPo.class);
-        commentPo.setGmtModified(LocalDateTime.now());
-        commentPo.setAuditTime(LocalDateTime.now());
         int ret;
         try{
             ret=commentPoMapper.updateByPrimaryKeySelective(commentPo);
