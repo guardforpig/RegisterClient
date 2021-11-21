@@ -47,8 +47,7 @@ public class GroupActivityController {
                              @PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername)
     {
         if(shopId!=0){
-            return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
-        }
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
         ReturnObject<Object> returnObject = groupOnActivityService.addOnsaleToGroupOn(shopId,pid,id,loginUser,loginUsername);
         return Common.decorateReturnObject(returnObject);
     }
@@ -63,10 +62,9 @@ public class GroupActivityController {
             @ApiResponse(code = 507, message = "当前状态禁止此操作")})
     @Audit(departName = "shops")
     @DeleteMapping("/shops/{shopId}/groupons/{id}")
-    public Object delGroupon(@PathVariable("id") long id) {
+    public Object delGroupon(@PathVariable("id") long id,@PathVariable("shopId") long shopId) {
         if(shopId!=0){
-            return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
-        }
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
         ReturnObject<Object> returnObject = groupOnActivityService.delGroupon(id);
         return Common.decorateReturnObject(returnObject);
     }
@@ -82,8 +80,7 @@ public class GroupActivityController {
     @PutMapping("/shops/{shopId}/groupons/{id}")
     public Object modiGood(@Validated @RequestBody GroupOnActivityVo groupOnActivityVo, BindingResult bindingResult,@PathVariable("id") Integer id, @PathVariable("shopId") Integer shopId,@LoginUser Long loginUser,@LoginName String loginUsername){
         if(shopId!=0){
-            return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
-        }
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
         Object obj = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != obj) {
             return obj;
@@ -110,8 +107,7 @@ public class GroupActivityController {
     @PutMapping("/shops/{shopId}/groupons/{id}/online")
     public Object onlineGroupOnActivity( @PathVariable("shopId") long shopId,@PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername){
         if(shopId!=0){
-            return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
-        }
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
         ReturnObject<Object> returnObject = groupOnActivityService.onlineGroupOnActivity( id, shopId,loginUser,loginUsername);
         return Common.decorateReturnObject(returnObject);
     }
@@ -127,8 +123,7 @@ public class GroupActivityController {
     @PutMapping("/shops/{shopId}/groupons/{id}/offline")
     public Object offlineGroupOnActivity( @PathVariable("shopId") long shopId,@PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername){
         if(shopId!=0){
-            return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
-        }
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
         ReturnObject<Object> returnObject = groupOnActivityService.offlineGroupOnActivity( id, shopId,loginUser,loginUsername);
         return Common.decorateReturnObject(returnObject);
     }
