@@ -36,7 +36,12 @@ public class FreightModelService {
                                         Long userId, String userName){
         FreightModel freightModel = (FreightModel) Common.cloneVo(freightModelInfo,FreightModel.class);
         //新建,不为默认
-        freightModel.setDefaultModel((byte) 0);
+
+        //如果是默认模板需要把原来默认模板改为非默认
+        if(freightModel.getDefaultModel().equals((byte)1))
+        {
+            freightModelDao.deleteDefaultFreight();
+        }
         //设置创建者
         Common.setPoCreatedFields(freightModel,userId,userName);
         //id置空
@@ -104,7 +109,7 @@ public class FreightModelService {
      */
     @Transactional(readOnly = true,rollbackFor = Exception.class)
     public ReturnObject getDefaultFreightModel() {
-        return freightModelDao.getDefaultModel();
+        return freightModelDao.getDefaultFreight();
     }
 
     /**
@@ -118,7 +123,7 @@ public class FreightModelService {
         ReturnObject returnObject=freightModelDao.showFreightModelById(id);
         //如果查不到
         if(returnObject.getCode().equals(ReturnNo.RESOURCE_ID_NOTEXIST)) {
-            return freightModelDao.getDefaultModel();
+            return freightModelDao.getDefaultFreight();
         }
         return returnObject;
     }
@@ -139,7 +144,7 @@ public class FreightModelService {
         //如果修改的是默认的模板，会将原来的取消，如果修改的是原来的默认模板，逻辑不变
         if(freightModelInfo.getDefaultModel().equals((byte)1))
         {
-            return freightModelDao.setDefaultModel(freightModel);
+            freightModelDao.deleteDefaultFreight();
         }
         return freightModelDao.updateFreightModel(freightModel);
     }
@@ -151,7 +156,7 @@ public class FreightModelService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject deleteFreightModel(Long id){
-        ReturnObject returnObject=freightModelDao.getDefaultModel();
+        ReturnObject returnObject=freightModelDao.getDefaultFreight();
         //如果有默认模板，且删除的正是默认模板
         if(!returnObject.getCode().equals(ReturnNo.RESOURCE_ID_NOTEXIST)&&((FreightModel) returnObject.getData()).getId().equals(id))
         {

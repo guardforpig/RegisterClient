@@ -42,10 +42,10 @@ public class FreightModelDao {
 
 
     /**
-     * 用于dao层内部调用，主要是先查redis，再查数据库
+     * 主要是先查redis，再查数据库
      * @return 默认模板
      */
-    private FreightModel getDefaultFreightInternal() {
+    public ReturnObject getDefaultFreight() {
         try {
             FreightModel defaultFreightModel = (FreightModel) redisUtil.get(defaultFreightModelKey);
             if (defaultFreightModel == null) {
@@ -58,35 +58,33 @@ public class FreightModelDao {
                 defaultFreightModel = (FreightModel) Common.cloneVo(defaultFreightModelPo, FreightModel.class);
                 redisUtil.set(defaultFreightModelKey, defaultFreightModel, freightModelRedisTimeout);
             }
-            return defaultFreightModel;
+            return new ReturnObject(defaultFreightModel);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            return null;
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,e.getMessage());
         }
     }
 
     /**
-     * 用于dao层内部调用，主要用于更新redis，与数据库
-     * @param defaultFreightModel 默认模板
+     * 主要用于更新redis，与数据库,删除老的的默认模板
      */
-    private void setDefaultFreightInternal(FreightModel defaultFreightModel) {
+    public ReturnObject deleteDefaultFreight() {
         try {
             //先删redis
             redisUtil.del(defaultFreightModelKey);
 
-            //更新老的运费模板
-            FreightModel oldDefaultFreightModel=getDefaultFreightInternal();
-            if(oldDefaultFreightModel!=null)
+            ReturnObject returnObject=getDefaultFreight();
+
+            //不存在老的运费模板,不需要删除
+            if(returnObject.getCode().equals(ReturnNo.RESOURCE_ID_NOTEXIST))
             {
-                oldDefaultFreightModel.setDefaultModel((byte)0);
-                freightModelPoMapper.updateByPrimaryKeySelective((FreightModelPo) Common.cloneVo(oldDefaultFreightModel,FreightModelPo.class));
+                return new ReturnObject();
             }
-            //更新defaultFreightModel为新的运费模板
-            redisUtil.set(defaultFreightModelKey, defaultFreightModel, freightModelRedisTimeout);
-            FreightModelPo freightModelPo= (FreightModelPo)Common.cloneVo(defaultFreightModel,FreightModelPo.class);
-            freightModelPoMapper.updateByPrimaryKeySelective(freightModelPo);
+            FreightModel oldDefaultFreightModel= (FreightModel) returnObject.getData();
+            oldDefaultFreightModel.setDefaultModel((byte)0);
+            freightModelPoMapper.updateByPrimaryKeySelective((FreightModelPo) Common.cloneVo(oldDefaultFreightModel,FreightModelPo.class));
+            return new ReturnObject();
         } catch (Exception e) {
-            log.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
     }
 
@@ -225,24 +223,4 @@ public class FreightModelDao {
         }
     }
 
-    /**
-     * 获得默认运费模板
-     * @return
-     */
-    public ReturnObject getDefaultModel() {
-        FreightModel defaultFreightModel= getDefaultFreightInternal();
-        if(defaultFreightModel != null) {
-           return new ReturnObject(defaultFreightModel);
-        }
-        return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-    }
-
-    /**
-     * 设置默认运费模板
-     * @return
-     */
-    public  ReturnObject setDefaultModel(FreightModel defaultFreightModel) {
-        setDefaultFreightInternal(defaultFreightModel);
-        return new ReturnObject();
-    }
 }
