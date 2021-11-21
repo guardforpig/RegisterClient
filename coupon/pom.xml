@@ -127,6 +127,10 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.edu.xmu.privilegegateway</groupId>
+            <artifactId>annotation</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
