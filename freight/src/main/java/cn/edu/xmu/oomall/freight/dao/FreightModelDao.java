@@ -101,7 +101,7 @@ public class FreightModelDao {
             freightModelPoMapper.insertSelective(freightModelPo);
             return new ReturnObject(freightModel);
         } catch (Exception e) {
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
     }
 
@@ -127,7 +127,7 @@ public class FreightModelDao {
             PageInfo<FreightModel> pageInfo = new PageInfo<>(freightModelList);
             return new ReturnObject<>(pageInfo);
         } catch (Exception e) {
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
     }
 
@@ -149,7 +149,7 @@ public class FreightModelDao {
             PageInfo<FreightModel> pageInfo = new PageInfo<>(freightModelAllList);
             return new ReturnObject<>(pageInfo);
         } catch (Exception e) {
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
     }
 
@@ -220,7 +220,7 @@ public class FreightModelDao {
             }
             return new ReturnObject<>();
         } catch (Exception e) {
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
     }
 
