@@ -21,17 +21,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author xucangbai
- * @date 2021/11/20
+ * @author ziyi guo
+ * @date 2021/11/17
  */
 @Repository
 public class FreightModelDao {
     private Logger log = LoggerFactory.getLogger(FreightModelDao.class);
-    @Autowired
-    FreightModelPoMapper freightModelPoMapper;
 
     @Value("${oomall.freight.model.expiretime}")
     private Long freightModelRedisTimeout;
+
+    @Autowired
+    FreightModelPoMapper freightModelPoMapper;
 
     @Autowired
     private RedisUtil redisUtil;
