@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author xucangbai
  * @date 2021/11/20
  */
+@Api(value = "运费模板", tags = "运费模板")
 @RestController
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class FreightModelController {
@@ -45,7 +46,7 @@ public class FreightModelController {
             @ApiResponse(code=500,message = "服务器内部错误"),
             @ApiResponse(code=504,message = "操作的资源id不存在")
     })
-    @Audit
+    @Audit(departName = "shops")
     @PostMapping("shops/{shopId}/freightmodels")
     public Object addFreightModel(@PathVariable Long shopId, @Validated @RequestBody FreightModelInfoVo freightModelInfo,
                                   BindingResult bindingResult, @LoginUser Long userId, @LoginName String userName) {
@@ -72,7 +73,7 @@ public class FreightModelController {
             @ApiResponse(code=500,message = "服务器内部错误"),
             @ApiResponse(code=504,message = "操作的资源id不存在")
     })
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("shops/{shopId}/freightmodels")
     public Object showFreightModel(@PathVariable Long shopId, @RequestParam(required = false) String name,
                                    @RequestParam(required = false,defaultValue = "1") Integer page,
@@ -95,7 +96,7 @@ public class FreightModelController {
             @ApiResponse(code=500,message = "服务器内部错误"),
             @ApiResponse(code=504,message = "操作的资源id不存在")
     })
-    @Audit
+    @Audit(departName = "shops")
     @PostMapping("shops/{shopId}/freightmodels/{id}/clone")
     public Object cloneFreightModel(@PathVariable Long shopId, @PathVariable Long id,
                                     @LoginUser Long userId, @LoginName String userName) {
@@ -117,7 +118,7 @@ public class FreightModelController {
             @ApiResponse(code=0,message = "成功"),
             @ApiResponse(code=500,message = "服务器内部错误")
     })
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("shops/{shopId}/freightmodels/default")
     public Object showDefaultFreightModel(@PathVariable Long shopId) {
         ReturnObject ret=freightModelService.getDefaultFreightModel();
@@ -135,7 +136,7 @@ public class FreightModelController {
             @ApiResponse(code=0,message = "成功"),
             @ApiResponse(code=500,message = "服务器内部错误")
     })
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("shops/{shopId}/freightmodels/{id}")
     public Object showFreightModelById(@PathVariable Long shopId, @PathVariable Long id) {
         ReturnObject ret=freightModelService.showFreightModelById(id);
@@ -155,7 +156,7 @@ public class FreightModelController {
             @ApiResponse(code=500,message = "服务器内部错误"),
             @ApiResponse(code=504,message = "操作的资源id不存在")
     })
-    @Audit
+    @Audit(departName = "shops")
     @PutMapping("shops/{shopId}/freightmodels/{id}")
     public Object updateFreightModel(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody FreightModelInfoVo freightModelInfo,
                                      BindingResult bindingResult, @LoginUser Long userId, @LoginName String userName) {
@@ -181,7 +182,7 @@ public class FreightModelController {
             @ApiResponse(code=504,message = "操作的资源id不存在"),
             @ApiResponse(code=998,message = "存在上架销售商品，不能删除运费模板")
     })
-    @Audit
+    @Audit(departName = "shops")
     @DeleteMapping("shops/{shopId}/freightmodels/{id}")
     public Object deleteFreightModel(@PathVariable Long shopId, @PathVariable Long id) {
         if (shopId != 0) {
