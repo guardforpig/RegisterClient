@@ -32,7 +32,7 @@ public class FreightModelDao {
     private Long freightModelRedisTimeout;
 
     @Autowired
-    FreightModelPoMapper freightModelPoMapper;
+    private FreightModelPoMapper freightModelPoMapper;
 
     @Autowired
     private RedisUtil redisUtil;
