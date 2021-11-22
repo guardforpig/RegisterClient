@@ -16,6 +16,7 @@ import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 
@@ -39,7 +40,7 @@ public class ProductDao {
     @Autowired
     private ProductDraftPoMapper productDraftPoMapper;
     @Autowired
-    private RedisUtil redisUtils;
+    private RedisUtil redisUtil;
 
 
     public ReturnObject listProductsByFreightId(Long shopId,Long fid,Integer pageNumber, Integer pageSize)
@@ -80,15 +81,11 @@ public class ProductDao {
         productDraftPo=productDraftPoMapper.selectByPrimaryKey(id);
         if(productDraftPo!=null)
         {
-            if(!productDraftPo.getShopId().equals(shopId))
-            {
-                return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
-            }
             ProductPo productPo=(ProductPo) cloneVo(productDraftPo,ProductPo.class);
             productPo.setState((byte) Product.ProductState.OFFSHELF.getCode());
             productPoMapper.insert(productPo);
             productDraftPoMapper.deleteByPrimaryKey(id);
-            redisUtils.del("g_"+productPo.getGoodsId());
+            redisUtil.del("g_"+productPo.getGoodsId());
             return new ReturnObject<Product>((Product)cloneVo(productPo,Product.class));
         }else
         {
@@ -114,10 +111,6 @@ public class ProductDao {
             if(productPo==null)
             {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }
-            if(!productPo.getShopId().equals(shopId))
-            {
-                return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
             }
         if(productPo.getState().equals((byte) Product.ProductState.OFFSHELF.getCode()))
         {
@@ -147,10 +140,6 @@ public class ProductDao {
             if(productPo==null)
             {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }
-            if(!productPo.getShopId().equals(shopId))
-            {
-                return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
             }
         if(productPo.getState().equals((byte) Product.ProductState.ONSHELF.getCode()))
         {
@@ -183,10 +172,6 @@ public class ProductDao {
             {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            if(!productPo.getShopId().equals(shopId))
-            {
-                return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
-            }
         if(productPo.getState().equals((byte) Product.ProductState.BANNED.getCode()))
         {
 
@@ -217,10 +202,6 @@ public class ProductDao {
             if(productPo==null)
             {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }
-            if(!productPo.getShopId().equals(shopId))
-            {
-                return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
             }
         if(productPo.getState().equals((byte) Product.ProductState.ONSHELF.getCode())||productPo.getState().equals((byte) Product.ProductState.OFFSHELF.getCode()))
         {

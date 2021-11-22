@@ -39,8 +39,6 @@ public class GoodsController {
     @Autowired
     ProductService productService;
 
-    @Autowired
-    private HttpServletResponse httpServletResponse;
 
     @ApiOperation(value="查看运费模板用到的商品")
     @ApiImplicitParams({
@@ -56,7 +54,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @GetMapping("shops/{shopId}/freightmodels/{fid}/products")
-    @Audit
+    @Audit(departName = "shops")
     public Object getFreightProducts(@PathVariable("shopId") Long shopId,@PathVariable("fid") Long fid,@ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
                                      @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,@LoginUser Long loginUserId, @LoginName String loginUserName)
     {
@@ -80,7 +78,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @PostMapping("shops/{id}/goods")
-    @Audit
+    @Audit(departName = "shops")
     public Object insertGoods(@PathVariable("id") Long shopId, @Validated @RequestBody GoodsVo goodsVo, BindingResult bindingResult, @LoginUser Long loginUserId, @LoginName String loginUserName)
     {
         if(bindingResult.hasErrors()){
@@ -106,7 +104,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @PutMapping("shops/{shopId}/goods/{id}")
-    @Audit
+    @Audit(departName = "shops")
     public Object updateGoods(@PathVariable("shopId") Long shopId,@PathVariable("id") Long id,@RequestBody GoodsVo goodsVo,BindingResult bindingResult,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
         if(bindingResult.hasErrors()){
@@ -129,7 +127,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @GetMapping(value="/shops/{shopId}/goods/{id}" )
-    @Audit
+    @Audit(departName = "shops")
     public Object searchGoods(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
         return Common.getRetObject(goodsService.searchById(shopId,id));
@@ -148,7 +146,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @DeleteMapping(value="shops/{shopId}/goods/{id}")
-    @Audit
+    @Audit(departName = "shops")
     public Object deleteGoods(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
         return Common.decorateReturnObject(goodsService.deleteGoods(shopId,id));
@@ -168,7 +166,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @PutMapping(value="shops/{shopId}/products/{id}/publish")
-    @Audit
+    @Audit(departName = "shops")
     public Object publishProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
         return Common.getRetObject(productService.pulishProduct(shopId,id));
@@ -187,7 +185,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @PutMapping(value="shops/{shopId}/products/{id}/onshelves")
-    @Audit
+    @Audit(departName = "shops")
     public Object onshelvesProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
         return Common.decorateReturnObject(productService.onshelvesProduct(shopId,id));
@@ -206,7 +204,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @PutMapping(value="shops/{shopId}/products/{id}/offshelves")
-    @Audit
+    @Audit(departName = "shops")
     public Object offshelvesProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
         return Common.decorateReturnObject(productService.offshelvesProduct(shopId,id));
@@ -225,7 +223,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @PutMapping(value="shops/{shopId}/products/{id}/allow")
-    @Audit
+    @Audit(departName = "shops")
     public Object allowProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
         return Common.decorateReturnObject(productService.allowProduct(shopId,id));
@@ -244,7 +242,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @PutMapping(value="shops/{shopId}/products/{id}/prohibit")
-    @Audit
+    @Audit(departName = "shops")
     public Object prohibitProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
         return Common.decorateReturnObject(productService.prohibitProduct(shopId,id));

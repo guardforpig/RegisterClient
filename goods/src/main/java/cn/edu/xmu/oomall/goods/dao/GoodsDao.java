@@ -51,7 +51,6 @@ public class GoodsDao {
         {
             GoodsPo goodsPo=(GoodsPo) Common.cloneVo(goods,GoodsPo.class);
             goodsPoMapper.insert(goodsPo);
-            goods.setId(goodsPo.getId());
             return new ReturnObject((Goods) cloneVo(goodsPo,Goods.class));
         }
         catch (Exception e)
@@ -72,10 +71,9 @@ public class GoodsDao {
             if(!oldGoods.getShopId().equals(goods.getShopId())) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE, "该商品不属于该商铺");
             }
-            GoodsPo newGoods=(GoodsPo) Common.cloneVo(oldGoods,GoodsPo.class);
-            newGoods.setName(goods.getName());
-            Common.setPoModifiedFields(newGoods,goods.getModifiedBy(),goods.getModifiedName());
-            goodsPoMapper.updateByPrimaryKeySelective(newGoods);
+            oldGoods.setName(goods.getName());
+            Common.setPoModifiedFields(oldGoods,goods.getModifiedBy(),goods.getModifiedName());
+            goodsPoMapper.updateByPrimaryKeySelective(oldGoods);
             return new ReturnObject<>(ReturnNo.OK);
         }
         catch (Exception e)
