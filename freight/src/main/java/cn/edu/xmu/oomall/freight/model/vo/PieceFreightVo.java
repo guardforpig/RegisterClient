@@ -5,14 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
-
 /**
  * @author Yitong  Gao
  */
 @Data
 @NoArgsConstructor
-public class PieceFreightVo implements VoObject {
+public class PieceFreightVo {
     @ApiModelProperty(value = "抵达地区码")
     @Min(0)
     private Long regionId;
@@ -28,13 +28,4 @@ public class PieceFreightVo implements VoObject {
     @ApiModelProperty(value = "续费")
     @Min(0)
     private Long additionalItemsPrice;
-    @Override
-    public Object createVo() {
-        return this;
-    }
-
-    @Override
-    public Object createSimpleVo() {
-        return this;
-    }
 }
