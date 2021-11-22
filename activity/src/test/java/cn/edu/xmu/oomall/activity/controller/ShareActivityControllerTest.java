@@ -8,11 +8,10 @@ import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVO;
 import cn.edu.xmu.oomall.activity.util.CreateObject;
 import cn.edu.xmu.oomall.core.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.util.JwtHelper;
 import com.github.pagehelper.PageInfo;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -23,7 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author xiuchen lang 22920192204222
  * @date 11/13/2021
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = ActivityApplication.class)
 @AutoConfigureMockMvc
 @Rollback(value = true)
@@ -59,7 +56,7 @@ public class ShareActivityControllerTest {
 
     JwtHelper jwtHelper = new JwtHelper();
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         //生成一个 onsale对象
         ReturnObject<PageInfo<SimpleSaleInfoVO>> onSaleInfoDTO = CreateObject.createOnSaleInfoDTO(1L);
@@ -80,7 +77,7 @@ public class ShareActivityControllerTest {
         Mockito.when(redisUtil.get("shareactivivybyid_1")).thenReturn("{\"id\":1,\"shopId\":1,\"shopName\":\"甜蜜之旅\",\"name\":\"分享活动1\",\"beginTime\":[2021,11,11,15,1,23],\"endTime\":[2022,2,19,15,1,23],\"state\":1,\"createdBy\":1,\"createName\":\"admin\",\"modifiedBy\":null,\"modiName\":null,\"gmtCreate\":[2021,11,11,15,1,23],\"gmtModified\":null,\"strategy\":null}");
         Mockito.when(redisUtil.get("shareactivivyid_1_shopid_10")).thenReturn(null);
         Mockito.when(redisUtil.get("shareactivivyid_1_shopid_2")).thenReturn("{\"id\":1,\"shopId\":1,\"shopName\":\"甜蜜之旅\",\"name\":\"分享活动1\",\"beginTime\":[2021,11,11,15,1,23],\"endTime\":[2022,2,19,15,1,23],\"state\":1,\"createdBy\":1,\"createName\":\"admin\",\"modifiedBy\":null,\"modiName\":null,\"gmtCreate\":[2021,11,11,15,1,23],\"gmtModified\":null,\"strategy\":null}");
-        token = jwtHelper.createToken(666L, "lxc", 1L, 5000);
+        token = jwtHelper.createToken(666L, "lxc", 1L, 1,5000);
     }
 
     /**
