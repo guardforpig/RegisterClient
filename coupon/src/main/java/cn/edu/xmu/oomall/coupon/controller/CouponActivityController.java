@@ -293,7 +293,6 @@ public class CouponActivityController {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME));
         }
 
-
         ReturnObject returnObject = couponActivityService.updateCouponActivity(userId, userName, shopId, couponActivityId, couponActivityVo, null);
         return Common.decorateReturnObject(returnObject);
     }

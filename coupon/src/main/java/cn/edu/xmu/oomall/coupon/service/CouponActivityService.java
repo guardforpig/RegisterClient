@@ -219,7 +219,7 @@ public class CouponActivityService {
             return retPageInfo;
         }
 
-        // 根据CouponOnsale列表找出每一个CouponOnsale对应的product
+        // 根据CouponOnsale列表找出每一个CouponOnsale对应的OnsaleVo，并获得OnsaleVo对应的ProductVo
         List<Object> couponOnsaleList = retPageInfo.getData().getList();
         List<Object> productVoList = new ArrayList<>();
         for (Object couponOnsale : couponOnsaleList) {

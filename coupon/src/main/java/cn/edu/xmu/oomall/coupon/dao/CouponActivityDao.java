@@ -213,7 +213,6 @@ public class CouponActivityDao {
             String key = "couponactivity_" + id;
             Serializable serializableBo = redisUtils.get(key);
             if (serializableBo != null) {
-                // return new ReturnObject<>((CouponActivity)serializableBo);
                 return new ReturnObject<>(JacksonUtil.toObj(serializableBo.toString(), CouponActivity.class));
             }
             CouponActivityPo po = couponActivityPoMapper.selectByPrimaryKey(id);
