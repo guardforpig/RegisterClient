@@ -481,5 +481,4 @@ public class CouponControllerTest {
         expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
     }
-
 }
