@@ -1,8 +1,10 @@
 package cn.edu.xmu.oomall.coupon.controller;
 
-import cn.edu.xmu.oomall.core.model.VoObject;
+import cn.edu.xmu.oomall.core.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
+import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
 import cn.edu.xmu.oomall.coupon.util.CreateObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.Before;
@@ -44,34 +46,39 @@ public class CouponControllerTest {
     @MockBean
     private GoodsService goodsService;
 
+    @MockBean
+    private RedisUtil redisUtil;
+
     @Before
     public void init() throws Exception {
         // 返回ProductVo
-        ReturnObject<VoObject> ProductVo1 = CreateObject.createProductVo(100L);
-        ReturnObject<VoObject> ProductVo2 = CreateObject.createProductVo(10L);
+        ReturnObject<ProductVo> ProductVo1 = CreateObject.createProductVo(100L);
+        ReturnObject<ProductVo> ProductVo2 = CreateObject.createProductVo(10L);
         Mockito.when(goodsService.getProductByOnsaleId(1L)).thenReturn(ProductVo1);
         Mockito.when(goodsService.getProductByOnsaleId(2L)).thenReturn(ProductVo2);
 
         // 返回OnsaleVoList
-        ReturnObject<List<VoObject>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
+        ReturnObject<List<OnsaleVo>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
         Mockito.when(goodsService.listOnsalesByProductId(1550L)).thenReturn(onsaleVoList1);
-        ReturnObject<List<VoObject>> onsaleVoList2 = CreateObject.createOnsaleVoList2();
+        ReturnObject<List<OnsaleVo>> onsaleVoList2 = CreateObject.createOnsaleVoList2();
         Mockito.when(goodsService.listOnsalesByProductId(10000L)).thenReturn(onsaleVoList2);
-        ReturnObject<List<VoObject>> onsaleVoList3 = CreateObject.createOnsaleVoList3();
+        ReturnObject<List<OnsaleVo>> onsaleVoList3 = CreateObject.createOnsaleVoList3();
         Mockito.when(goodsService.listOnsalesByProductId(1549L)).thenReturn(onsaleVoList3);
-        ReturnObject<List<VoObject>> onsaleVoList4 = CreateObject.createOnsaleVoList4();
+        ReturnObject<List<OnsaleVo>> onsaleVoList4 = CreateObject.createOnsaleVoList4();
         Mockito.when(goodsService.listOnsalesByProductId(1548L)).thenReturn(onsaleVoList4);
 
         // 返回OnsaleVo
-        ReturnObject<VoObject> onsaleVo1 = CreateObject.createOnsaleVo1();
+        ReturnObject<OnsaleVo> onsaleVo1 = CreateObject.createOnsaleVo1();
         Mockito.when(goodsService.getOnsaleById(3915L)).thenReturn(onsaleVo1);
-        ReturnObject<VoObject> onsaleVo2 = CreateObject.createOnsaleVo2();
+        ReturnObject<OnsaleVo> onsaleVo2 = CreateObject.createOnsaleVo2();
         Mockito.when(goodsService.getOnsaleById(1L)).thenReturn(onsaleVo2);
-        ReturnObject<VoObject> onsaleVo3 = CreateObject.createOnsaleVo3();
+        ReturnObject<OnsaleVo> onsaleVo3 = CreateObject.createOnsaleVo3();
         Mockito.when(goodsService.getOnsaleById(2L)).thenReturn(onsaleVo3);
-        ReturnObject<VoObject> onsaleVo4 = CreateObject.createOnsaleVo4();
+        ReturnObject<OnsaleVo> onsaleVo4 = CreateObject.createOnsaleVo4();
         Mockito.when(goodsService.getOnsaleById(3912L)).thenReturn(onsaleVo4);
 
+        Mockito.when(redisUtil.get("couponactivity_11")).thenReturn("{\"id\":11,\"name\":null,\"shopId\":1,\"shopName\":null,\"couponTime\":null,\"beginTime\":null,\"endTime\":null,\"quantity\":null,\"quantityType\":null,\"validTerm\":null,\"imageUrl\":null,\"strategy\":null,\"state\":0,\"createdBy\":null,\"createName\":null,\"modifiedBy\":null,\"modiName\":null,\"gmtCreate\":[2021,11,17,19,2,20],\"gmtModified\":null}");
+        Mockito.when(redisUtil.get("coupononsale_5")).thenReturn("{\"id\":5,\"activityId\":2,\"onsaleId\":21,\"createdBy\":1,\"createName\":\"admin\",\"modifiedBy\":null,\"modiName\":null,\"gmtCreate\":[2021,11,11,15,40,45],\"gmtModified\":null}");
         adminToken = jwtHelper.createToken(1L,"admin",1L, 3600);
     }
 
@@ -185,15 +192,6 @@ public class CouponControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expectString = "{\"errno\":947,\"errmsg\":\"开始时间不能晚于结束时间\"}";
-        JSONAssert.assertEquals(expectString, responseString, true);
-
-        // 优惠券发布时间晚于开始时间
-        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-10T15:40:45.000\",\"endTime\": \"2021-11-10T15:40:50.000\",\"couponTime\": \"2021-11-12T15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
-        responseString = mvc.perform(put("/shops/1/couponactivities/3").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":950,\"errmsg\":\"优惠卷领卷时间晚于活动开始时间\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 不在草稿态

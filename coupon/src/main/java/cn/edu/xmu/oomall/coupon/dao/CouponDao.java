@@ -1,26 +1,26 @@
 package cn.edu.xmu.oomall.coupon.dao;
 
-import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.ReturnNo;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.core.util.*;
 import cn.edu.xmu.oomall.coupon.mapper.CouponActivityPoMapper;
 import cn.edu.xmu.oomall.coupon.mapper.CouponOnsalePoMapper;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPo;
+import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
 import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
+import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePoExample;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Method;
+import java.io.Serializable;
+import java.net.StandardSocketOptions;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author qingguo Hu 22920192204208
@@ -34,61 +34,78 @@ public class CouponDao {
     @Autowired
     private CouponOnsalePoMapper couponOnsalePoMapper;
 
-    private Map<Class, Map<String, Object>> boMap;
+    @Autowired
+    private RedisUtil redisUtils;
+
+    @Value("${coupon.coupononsale.expiretime}")
+    private long couponOnsaleTimeout;
+
+    @Value("${coupon.couponactivity.expiretime}")
+    private long couponActivityTimeout;
 
     private static final Logger logger = LoggerFactory.getLogger(CouponDao.class);
 
-    private void initBoMap() {
-        boMap = new HashMap<>() {
-            final Map<String, Object> CouponActivityMap = new HashMap<>() {{
-                put("PoClass", CouponActivityPo.class);
-                put("Mapper", couponActivityPoMapper);
-            }};
-            final Map<String, Object> CouponOnsaleMap = new HashMap<>() {{
-                put("PoClass", CouponOnsalePo.class);
-                put("Mapper", couponOnsalePoMapper);
-            }};
-            {
-                put(CouponActivity.class, CouponActivityMap);
-                put(CouponOnsale.class, CouponOnsaleMap);
-            }};
-    }
-
-    public ReturnObject getBoByPrimaryKey(Long id, Class boClass) {
-        initBoMap();
+    public ReturnObject getCouponActivityById(Long id) {
         try {
-            Method selectMethod = boMap.get(boClass).get("Mapper").getClass().getMethod("selectByPrimaryKey", Long.class);
-            Object po = selectMethod.invoke(boMap.get(boClass).get("Mapper"), id);
-            if (po == null) {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
+            String key = "couponactivity_" + id;
+            Serializable serializableBo = redisUtils.get(key);
+            if (serializableBo != null) {
+                // return new ReturnObject<>((CouponActivity)serializableBo);
+                return new ReturnObject<>(JacksonUtil.toObj(serializableBo.toString(), CouponActivity.class));
             }
-
-            return new ReturnObject<>(Common.cloneVo(po, boClass));
+            CouponActivityPo po = couponActivityPoMapper.selectByPrimaryKey(id);
+            if (po == null) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            CouponActivity couponActivity = (CouponActivity) Common.cloneVo(po, CouponActivity.class);
+            redisUtils.set(key, couponActivity, couponActivityTimeout);
+            return new ReturnObject<>(couponActivity);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
+    public ReturnObject getCouponOnsaleById(Long id ) {
+        try {
+            String key = "coupononsale_" + id;
+            Serializable serializableBo = redisUtils.get(key);
+            if (serializableBo != null) {
+                return new ReturnObject<>(JacksonUtil.toObj(serializableBo.toString(), CouponOnsale.class));
+            }
+            CouponOnsalePo po = couponOnsalePoMapper.selectByPrimaryKey(id);
+            if (po == null) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            CouponOnsale couponOnsale = (CouponOnsale) Common.cloneVo(po, CouponOnsale.class);
+            redisUtils.set(key, couponOnsale, couponOnsaleTimeout);
+            return new ReturnObject<>(couponOnsale);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
 
-    public ReturnObject listBoByExample(Object example, Class boClass, Integer pageNumber, Integer pageSize) {
-        initBoMap();
+    public ReturnObject listCouponOnsaleByActivityId(Long activityId, Integer pageNumber, Integer pageSize) {
         try {
             PageHelper.startPage(pageNumber, pageSize, true, true, true);
-            Method selectMethod = boMap.get(boClass).get("Mapper").getClass().getMethod("selectByExample", example.getClass());
-            List<Object> poList = (List<Object>) selectMethod.invoke(boMap.get(boClass).get("Mapper"), example);
-
+            CouponOnsalePoExample example = new CouponOnsalePoExample();
+            example.createCriteria().andActivityIdEqualTo(activityId);
+            List<CouponOnsalePo> poList = couponOnsalePoMapper.selectByExample(example);
             if (poList.size() == 0) {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
 
-            var pageInfo = new PageInfo<>(poList);
             List<Object> boList = new ArrayList<>();
             for (Object po : poList) {
-                boList.add(Common.cloneVo(po, boClass));
+                boList.add(Common.cloneVo(po, CouponOnsale.class));
             }
-
-            pageInfo.setList(boList);
+            var pageInfo = new PageInfo<>(boList);
+            var temp = new PageInfo<>(poList);
+            pageInfo.setPageNum(temp.getPageNum());
+            pageInfo.setPageSize(temp.getPageSize());
+            pageInfo.setTotal(temp.getTotal());
+            pageInfo.setPages(temp.getPages());
             return new ReturnObject<>(pageInfo);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -96,29 +113,100 @@ public class CouponDao {
         }
     }
 
-    public ReturnObject insertBo(Object bo, Class poClass) {
-        initBoMap();
+    public ReturnObject listCouponOnsaleByIdList(List<Long> onsaleIdList, Integer pageNumber, Integer pageSize) {
         try {
-            Object po = Common.cloneVo(bo, poClass);
-            Method insertMethod = boMap.get(bo.getClass()).get("Mapper").getClass().getMethod("insert", poClass);
-            insertMethod.invoke(boMap.get(bo.getClass()).get("Mapper"), po);
-            return new ReturnObject<>(ReturnNo.OK, ReturnNo.OK.getMessage());
+            PageHelper.startPage(pageNumber, pageSize, true, true, true);
+            CouponOnsalePoExample example = new CouponOnsalePoExample();
+            example.createCriteria().andOnsaleIdIn(onsaleIdList);
+            List<CouponOnsalePo> poList = couponOnsalePoMapper.selectByExample(example);
+            if (poList.size() == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+
+            List<Object> boList = new ArrayList<>();
+            for (Object po : poList) {
+                boList.add(Common.cloneVo(po, CouponOnsale.class));
+            }
+            var pageInfo = new PageInfo<>(boList);
+            var temp = new PageInfo<>(poList);
+            pageInfo.setPageNum(temp.getPageNum());
+            pageInfo.setPageSize(temp.getPageSize());
+            pageInfo.setTotal(temp.getTotal());
+            pageInfo.setPages(temp.getPages());
+            return new ReturnObject<>(pageInfo);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
-    public ReturnObject updateBo(Object bo, Class poClass) {
-        initBoMap();
+    public ReturnObject listCouponActivityByIdList(List<Long> idList, Integer pageNumber, Integer pageSize) {
         try {
-            Object po = Common.cloneVo(bo, poClass);
-            Method updateMethod = boMap.get(bo.getClass()).get("Mapper").getClass().getMethod("updateByPrimaryKeySelective", poClass);
-            int flag = (int) updateMethod.invoke(boMap.get(bo.getClass()).get("Mapper"), po);
+            PageHelper.startPage(pageNumber, pageSize, true, true, true);
+            CouponActivityPoExample example = new CouponActivityPoExample();
+            example.createCriteria()
+                    .andIdIn(idList)
+                    .andStateEqualTo(CouponActivity.State.ONLINE.getCode());
+            List<CouponActivityPo> poList = couponActivityPoMapper.selectByExample(example);
+            if (poList.size() == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+
+            List<Object> boList = new ArrayList<>();
+            for (Object po : poList) {
+                boList.add(Common.cloneVo(po, CouponActivity.class));
+            }
+            var pageInfo = new PageInfo<>(boList);
+            var temp = new PageInfo<>(poList);
+            pageInfo.setPageNum(temp.getPageNum());
+            pageInfo.setPageSize(temp.getPageSize());
+            pageInfo.setTotal(temp.getTotal());
+            pageInfo.setPages(temp.getPages());
+            return new ReturnObject<>(pageInfo);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+    public ReturnObject listCouponOnsaleByOnsaleIdAndActivityId(Long onsaleId, Long activityId, Integer pageNumber, Integer pageSize) {
+        try {
+            PageHelper.startPage(pageNumber, pageSize, true, true, true);
+            CouponOnsalePoExample example = new CouponOnsalePoExample();
+            example.createCriteria().andOnsaleIdEqualTo(onsaleId).andActivityIdEqualTo(activityId);
+            List<CouponOnsalePo> poList = couponOnsalePoMapper.selectByExample(example);
+            if (poList.size() == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            List<Object> boList = new ArrayList<>();
+            for (Object po : poList) {
+                boList.add(Common.cloneVo(po, CouponActivity.class));
+            }
+            var pageInfo = new PageInfo<>(boList);
+            var temp = new PageInfo<>(poList);
+            pageInfo.setPageNum(temp.getPageNum());
+            pageInfo.setPageSize(temp.getPageSize());
+            pageInfo.setTotal(temp.getTotal());
+            pageInfo.setPages(temp.getPages());
+            return new ReturnObject<>(pageInfo);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+
+    public ReturnObject updateCouponActivity(CouponActivity couponActivity) {
+        try {
+            String key = "couponactivity_" + couponActivity.getId();
+            CouponActivityPo couponActivityPo =
+                    (CouponActivityPo) Common.cloneVo(couponActivity, CouponActivityPo.class);
+            int flag = couponActivityPoMapper.updateByPrimaryKeySelective(couponActivityPo);
             if (flag == 0) {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             } else {
-                return new ReturnObject<>(ReturnNo.OK, ReturnNo.OK.getMessage());
+                redisUtils.del(key);
+                return new ReturnObject<>(ReturnNo.OK);
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -126,19 +214,46 @@ public class CouponDao {
         }
     }
 
-    public ReturnObject deleteBoByPrimaryKey(Long id, Class boClass) {
-        initBoMap();
+
+    public ReturnObject insertCouponOnsale(CouponOnsale couponOnsale) {
         try {
-            Method deleteMethod = boMap.get(boClass).get("Mapper").getClass().getMethod("deleteByPrimaryKey", Long.class);
-            int flag = (int) deleteMethod.invoke(boMap.get(boClass).get("Mapper"), id);
-            if (flag == 0) {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
-            } else {
-                return new ReturnObject<>(ReturnNo.OK, ReturnNo.OK.getMessage());
-            }
+            CouponOnsalePo couponOnsalePo =
+                    (CouponOnsalePo) Common.cloneVo(couponOnsale, CouponOnsalePo.class);
+            couponOnsalePoMapper.insert(couponOnsalePo);
+            return new ReturnObject<>(ReturnNo.OK);
         } catch (Exception e) {
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, ReturnNo.INTERNAL_SERVER_ERR.getMessage());
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
+    public ReturnObject deleteCouponOnsaleById(Long id) {
+        try {
+            String key = "coupononsale_" + id;
+            int flag = couponOnsalePoMapper.deleteByPrimaryKey(id);
+            if (flag == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            } else {
+                redisUtils.del(key);
+                return new ReturnObject<>(ReturnNo.OK);
+            }
+        } catch (Exception e) {
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+    public ReturnObject deleteCouponActivityById(Long id) {
+        try {
+            String key = "couponactivity_" + id;
+            int flag = couponActivityPoMapper.deleteByPrimaryKey(id);
+            if (flag == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            } else {
+                redisUtils.del(key);
+                return new ReturnObject<>(ReturnNo.OK);
+            }
+        } catch (Exception e) {
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
 }

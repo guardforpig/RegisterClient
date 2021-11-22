@@ -1,11 +1,12 @@
 package cn.edu.xmu.oomall.coupon.controller;
 
 
-import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
+import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.service.CouponService;
 import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
@@ -46,18 +47,17 @@ public class CouponController {
             @ApiResponse(code = 500, message = "服务器内部错误"),
             @ApiResponse(code = 504, message = "资源不存在")
     })
-    @RequestMapping(value = "/couponactivities/{id}/products", method = RequestMethod.GET)
+    @GetMapping("/couponactivities/{id}/products")
     public Object listProductsByCouponActivityId(@ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                                  @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
                                                  @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         if (couponActivityId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID));
         }
-        pageSize = pageSize >= 1 ? pageSize : 10;
 
-        ReturnObject<PageInfo<VoObject>> retVoObject =
+        ReturnObject<PageInfo<Object>> retVoObject =
                 couponService.listProductsByCouponActivityId(couponActivityId, pageNumber, pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(retVoObject));
+        return Common.decorateReturnObject(Common.getPageRetVo(retVoObject, ProductVo.class));
 
     }
 
@@ -73,20 +73,19 @@ public class CouponController {
             @ApiResponse(code = 500, message = "服务器内部错误"),
             @ApiResponse(code = 504, message = "资源不存在")
     })
-    @RequestMapping(value = "products/{id}/couponactivities", method = RequestMethod.GET)
+    @GetMapping("products/{id}/couponactivities")
     public Object listCouponActivitiesByProductId(@ApiParam(value = "货品ID", required = true) @PathVariable("id") Long productId,
                                                   @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
                                                   @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         if (productId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID));
         }
-        pageSize = pageSize >= 1 ? pageSize : 10;
 
-        ReturnObject<PageInfo<VoObject>> retVoObject =
+        ReturnObject<PageInfo<Object>> retVoObject =
                 couponService.listCouponActivitiesByProductId(productId, pageNumber, pageSize);
 
         if (retVoObject.getCode().equals(ReturnNo.OK)) {
-            return Common.decorateReturnObject(Common.getPageRetObject(retVoObject));
+            return Common.decorateReturnObject(Common.getPageRetVo(retVoObject, CouponActivityRetVo.class));
         } else {
             return Common.decorateReturnObject(retVoObject);
         }
@@ -106,14 +105,14 @@ public class CouponController {
             @ApiResponse(code = 947, message = "开始时间不能晚于结束时间"),
             @ApiResponse(code = 950, message = "优惠卷领卷时间晚于活动开始时间")
     })
-    @RequestMapping(value = "/shops/{shopId}/couponactivities/{id}", method = RequestMethod.PUT)
+    @PutMapping("/shops/{shopId}/couponactivities/{id}")
     @Audit(departName = "shops")
     public Object updateCouponActivity(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                        @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                        @ApiParam(value = "可修改的优惠活动信息", required = true) @Validated @RequestBody CouponActivityVo couponActivityVo,
                                        @LoginUser Long userId, @LoginName String userName, BindingResult bindingResult) {
-        if (shopId <= 0 || couponActivityId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
+        if (couponActivityId <= 0) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID));
         }
 
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
@@ -125,9 +124,6 @@ public class CouponController {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_LATE_BEGINTIME));
         }
 
-        if (couponActivityVo.getCouponTime().isAfter((couponActivityVo.getBeginTime()))) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.COUPON_LATE_COUPONTIME));
-        }
 
         ReturnObject returnObject = couponService.updateCouponActivity(userId, userName, shopId, couponActivityId, couponActivityVo, null);
         return Common.decorateReturnObject(returnObject);
@@ -144,13 +140,13 @@ public class CouponController {
             @ApiResponse(code = 200, message = "成功"),
             @ApiResponse(code = 507, message = "当前状态禁止此操作"),
     })
-    @RequestMapping(value = "/shops/{shopId}/couponactivities/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping("/shops/{shopId}/couponactivities/{id}")
     @Audit(departName = "shops")
     public Object deleteCouponActivity(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                        @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                        @LoginUser Long userId, @LoginName String userName) {
-        if (shopId <= 0 || couponActivityId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
+        if (couponActivityId <= 0) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID));
         }
 
         ReturnObject returnObject = couponService.deleteCouponActivity(userId, userName, shopId, couponActivityId);
@@ -168,14 +164,14 @@ public class CouponController {
             @ApiResponse(code = 200, message = "成功"),
             @ApiResponse(code = 507, message = "当前状态禁止此操作"),
     })
-    @RequestMapping(value = "/shops/{shopId}/couponactivities/{id}/onsales/{sid}", method = RequestMethod.POST)
+    @PostMapping("/shops/{shopId}/couponactivities/{id}/onsales/{sid}")
     @Audit(departName = "shops")
     public Object insertCouponOnsale(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                      @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                      @ApiParam(value = "销售活动ID", required = true) @PathVariable("sid") Long onsaleId,
                                      @LoginUser Long userId, @LoginName String userName) {
-        if (shopId <= 0 || couponActivityId <= 0 || onsaleId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
+        if (couponActivityId <= 0 || onsaleId <= 0) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID));
         }
 
         ReturnObject returnObject = couponService.insertCouponOnsale(userId, userName, shopId, couponActivityId, onsaleId);
@@ -193,13 +189,13 @@ public class CouponController {
             @ApiResponse(code = 200, message = "成功"),
             @ApiResponse(code = 507, message = "当前状态禁止此操作"),
     })
-    @RequestMapping(value = "/shops/{shopId}/coupononsale/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping("/shops/{shopId}/coupononsale/{id}")
     @Audit(departName = "shops")
     public Object deleteCouponOnsale(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                      @ApiParam(value = "couponOnsaleId", required = true) @PathVariable("id") Long couponOnsaleId,
                                      @LoginUser Long userId, @LoginName String userName) {
-        if (shopId <= 0 || couponOnsaleId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
+        if (couponOnsaleId <= 0) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID));
         }
 
         ReturnObject returnObject = couponService.deleteCouponOnsale(userId, userName, shopId, couponOnsaleId);
@@ -217,13 +213,13 @@ public class CouponController {
             @ApiResponse(code = 200, message = "成功"),
             @ApiResponse(code = 507, message = "当前状态禁止此操作"),
     })
-    @RequestMapping(value = "/shops/{shopId}/couponactivities/{id}/online", method = RequestMethod.PUT)
+    @PutMapping("/shops/{shopId}/couponactivities/{id}/online")
     @Audit(departName = "shops")
     public Object updateCouponActivityToOnline(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                                @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                                @LoginUser Long userId, @LoginName String userName) {
-        if (shopId <= 0 || couponActivityId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
+        if (couponActivityId <= 0) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID));
         }
 
         ReturnObject returnObject = couponService.updateCouponActivity(userId, userName, shopId, couponActivityId, null, CouponActivity.State.ONLINE);
@@ -241,13 +237,13 @@ public class CouponController {
             @ApiResponse(code = 200, message = "成功"),
             @ApiResponse(code = 507, message = "当前状态禁止此操作"),
     })
-    @RequestMapping(value = "/shops/{shopId}/couponactivities/{id}/offline", method = RequestMethod.PUT)
+    @PutMapping("/shops/{shopId}/couponactivities/{id}/offline")
     @Audit(departName = "shops")
     public Object updateCouponActivityToOffline(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                                 @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                                 @LoginUser Long userId, @LoginName String userName) {
-        if (shopId <= 0 || couponActivityId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, ReturnNo.FIELD_NOTVALID.getMessage()));
+        if (couponActivityId <= 0) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID));
         }
 
         ReturnObject returnObject = couponService.updateCouponActivity(userId, userName, shopId, couponActivityId, null, CouponActivity.State.OFFLINE);

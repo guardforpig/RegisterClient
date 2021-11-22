@@ -20,7 +20,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8
     username: root
-    password: zrjwq2714#
+    password: 6585
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       #初始化时建立物理连接的个数
@@ -90,6 +90,13 @@ webdav:
   password: zrj2714
   baseurl: http://localhost/webdav/
 
+coupon:
+  coupononsale:
+    # 对象在Redis中失效秒数
+    expiretime: 600
+  couponactivity:
+    # 对象在Redis中失效秒数
+    expiretime: 600
 
 
 

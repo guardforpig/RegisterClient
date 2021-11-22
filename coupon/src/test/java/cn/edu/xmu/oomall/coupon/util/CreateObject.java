@@ -14,14 +14,14 @@ import java.util.List;
  */
 public class CreateObject {
 
-    public static ReturnObject<VoObject> createProductVo(Long id) {
+    public static ReturnObject<ProductVo> createProductVo(Long id) {
         ProductVo productVo = new ProductVo();
         productVo.setId(id);
         return new ReturnObject<>(productVo);
     }
 
-    public static ReturnObject<List<VoObject>> createOnsaleVoList1() {
-        List<VoObject> onSaleVoList = new ArrayList<>();
+    public static ReturnObject<List<OnsaleVo>> createOnsaleVoList1() {
+        List<OnsaleVo> onSaleVoList = new ArrayList<>();
         OnsaleVo onsaleVo1 = new OnsaleVo();
         onsaleVo1.setId(1L);
         onSaleVoList.add(onsaleVo1);
@@ -62,46 +62,46 @@ public class CreateObject {
         return new ReturnObject<>(onSaleVoList);
     }
 
-    public static ReturnObject<List<VoObject>> createOnsaleVoList2() {
+    public static ReturnObject<List<OnsaleVo>> createOnsaleVoList2() {
         return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
     }
 
 
-    public static ReturnObject<List<VoObject>> createOnsaleVoList3() {
-        List<VoObject> onSaleVoList = new ArrayList<>();
+    public static ReturnObject<List<OnsaleVo>> createOnsaleVoList3() {
+        List<OnsaleVo> onSaleVoList = new ArrayList<>();
         OnsaleVo onsaleVo1 = new OnsaleVo();
         onsaleVo1.setId(3913L);
         onSaleVoList.add(onsaleVo1);
         return new ReturnObject<>(onSaleVoList);
     }
 
-    public static ReturnObject<List<VoObject>> createOnsaleVoList4() {
-        List<VoObject> onSaleVoList = new ArrayList<>();
+    public static ReturnObject<List<OnsaleVo>> createOnsaleVoList4() {
+        List<OnsaleVo> onSaleVoList = new ArrayList<>();
         OnsaleVo onsaleVo1 = new OnsaleVo();
         onsaleVo1.setId(3914L);
         onSaleVoList.add(onsaleVo1);
         return new ReturnObject<>(onSaleVoList);
     }
 
-    public static ReturnObject<VoObject> createOnsaleVo1() {
+    public static ReturnObject<OnsaleVo> createOnsaleVo1() {
         return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
     }
 
-    public static ReturnObject<VoObject> createOnsaleVo2() {
+    public static ReturnObject<OnsaleVo> createOnsaleVo2() {
         OnsaleVo onsaleVo = new OnsaleVo();
         onsaleVo.setId(1L);
         onsaleVo.setShopId(3L);
         return new ReturnObject<>(onsaleVo);
     }
 
-    public static ReturnObject<VoObject> createOnsaleVo3() {
+    public static ReturnObject<OnsaleVo> createOnsaleVo3() {
         OnsaleVo onsaleVo = new OnsaleVo();
         onsaleVo.setId(2L);
         onsaleVo.setShopId(2L);
         return new ReturnObject<>(onsaleVo);
     }
 
-    public static ReturnObject<VoObject> createOnsaleVo4() {
+    public static ReturnObject<OnsaleVo> createOnsaleVo4() {
         OnsaleVo onsaleVo = new OnsaleVo();
         onsaleVo.setId(3912L);
         onsaleVo.setShopId(2L);

@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.coupon.model.bo;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,8 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CouponActivity {
+@Data
+public class CouponActivity implements Serializable {
     public enum State {
         /**
          * 草稿
