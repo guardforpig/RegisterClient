@@ -118,8 +118,11 @@
         <dependency>
             <groupId>cn.edu.xmu.oomall</groupId>
             <artifactId>core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.edu.xmu.privilegegateway</groupId>
+            <artifactId>annotation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jacoco</groupId>

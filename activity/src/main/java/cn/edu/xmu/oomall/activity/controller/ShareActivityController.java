@@ -110,11 +110,14 @@ public class ShareActivityController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "成功")})
     @PostMapping("/shops/{shopId}/shareactivities")
-    public Object addShareAct(String createName, Long createId, @PathVariable(value = "shopId", required = true) Long shopId,
+    @Audit
+    public Object addShareAct(@LoginName String createName, @LoginUser Long createId, @PathVariable(value = "shopId", required = true) Long shopId,
                               @Validated @RequestBody ShareActivityVo shareActivityVo,
                               BindingResult bindingResult) {
-        createName = "lxc";
-        createId = 666L;
+        System.out.println(createName);
+        System.out.println(createId);
+//        createName = "lxc";
+//        createId = 666L;
         Object obj = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (null != obj) {
             return obj;
