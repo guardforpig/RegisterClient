@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CouponOnsale implements VoObject, Serializable {
+public class CouponOnsale implements Serializable {
 
     private Long id;
 
@@ -32,24 +32,4 @@ public class CouponOnsale implements VoObject, Serializable {
 
     private LocalDateTime gmtModified;
 
-
-    /**
-     * 创建Vo对象
-     *
-     * @return Vo对象
-     */
-    @Override
-    public Object createVo() {
-        return null;
-    }
-
-    /**
-     * 创建简单Vo对象
-     *
-     * @return 简单Vo对象
-     */
-    @Override
-    public Object createSimpleVo() {
-        return null;
-    }
 }
