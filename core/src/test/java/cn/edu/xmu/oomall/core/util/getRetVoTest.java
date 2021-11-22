@@ -5,7 +5,6 @@ import cn.edu.xmu.oomall.core.util.vo.CategoryRetVo;
 import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +23,10 @@ public class getRetVoTest {
         Category categoryBo=new Category();
         categoryBo.setId(1L);
         categoryBo.setCommissionRatio(1);
-        categoryBo.setCreatedBy(2L);
-        categoryBo.setCreateName("CreateName");
-        categoryBo.setModifiedBy(3L);
-        categoryBo.setModiName("ModiName");
+        categoryBo.setCreatorId(2L);
+        categoryBo.setCreatorName("CreateName");
+        categoryBo.setModifierId(3L);
+        categoryBo.setModifierName("ModiName");
         LocalDateTime gmtCreate=LocalDateTime.now().minusDays(1);
         LocalDateTime gmtModified=LocalDateTime.now();
         categoryBo.setGmtCreate(gmtCreate);
@@ -48,10 +47,10 @@ public class getRetVoTest {
         CategoryRetVo categoryRetVo = (CategoryRetVo) retObjVo1.getData();
         assertEquals(categoryRetVo.getId(),1L);
         assertEquals(categoryRetVo.getName(),"name");
-        assertEquals(categoryRetVo.getCreatedBy().getId(),2L);
-        assertEquals(categoryRetVo.getCreatedBy().getName(),"CreateName");
-        assertEquals(categoryRetVo.getModifiedBy().getId(),3L);
-        assertEquals(categoryRetVo.getModifiedBy().getName(),"ModiName");
+        assertEquals(categoryRetVo.getCreator().getId(),2L);
+        assertEquals(categoryRetVo.getCreator().getName(),"CreateName");
+        assertEquals(categoryRetVo.getModifier().getId(),3L);
+        assertEquals(categoryRetVo.getModifier().getName(),"ModiName");
         assertEquals(categoryRetVo.getCommissionRate(),1);
         assertEquals(categoryRetVo.getGmtCreate(),gmtCreate);
         assertEquals(categoryRetVo.getGmtModified(),gmtModified);
@@ -70,10 +69,10 @@ public class getRetVoTest {
         Category categoryBo=new Category();
         categoryBo.setId(1L);
         categoryBo.setCommissionRatio(1);
-        categoryBo.setCreatedBy(2L);
-        categoryBo.setCreateName("CreateName");
-        categoryBo.setModifiedBy(3L);
-        categoryBo.setModiName("ModiName");
+        categoryBo.setCreatorId(2L);
+        categoryBo.setCreatorName("CreateName");
+        categoryBo.setModifierId(3L);
+        categoryBo.setModifierName("ModiName");
         LocalDateTime gmtCreate=LocalDateTime.now().minusDays(1);
         LocalDateTime gmtModified=LocalDateTime.now();
         categoryBo.setGmtCreate(gmtCreate);
@@ -97,10 +96,10 @@ public class getRetVoTest {
         CategoryRetVo categoryRetVo = voList.get(0);
         assertEquals(categoryRetVo.getId(),1L);
         assertEquals(categoryRetVo.getName(),"name");
-        assertEquals(categoryRetVo.getCreatedBy().getId(),2L);
-        assertEquals(categoryRetVo.getCreatedBy().getName(),"CreateName");
-        assertEquals(categoryRetVo.getModifiedBy().getId(),3L);
-        assertEquals(categoryRetVo.getModifiedBy().getName(),"ModiName");
+        assertEquals(categoryRetVo.getCreator().getId(),2L);
+        assertEquals(categoryRetVo.getCreator().getName(),"CreateName");
+        assertEquals(categoryRetVo.getModifier().getId(),3L);
+        assertEquals(categoryRetVo.getModifier().getName(),"ModiName");
         assertEquals(categoryRetVo.getCommissionRate(),1);
         assertEquals(categoryRetVo.getGmtCreate(),gmtCreate);
         assertEquals(categoryRetVo.getGmtModified(),gmtModified);
@@ -119,10 +118,10 @@ public class getRetVoTest {
         Category categoryBo=new Category();
         categoryBo.setId(1L);
         categoryBo.setCommissionRatio(1);
-        categoryBo.setCreatedBy(2L);
-        categoryBo.setCreateName("CreateName");
-        categoryBo.setModifiedBy(3L);
-        categoryBo.setModiName("ModiName");
+        categoryBo.setCreatorId(2L);
+        categoryBo.setCreatorName("CreateName");
+        categoryBo.setModifierId(3L);
+        categoryBo.setModifierName("ModiName");
         LocalDateTime gmtCreate=LocalDateTime.now().minusDays(1);
         LocalDateTime gmtModified=LocalDateTime.now();
         categoryBo.setGmtCreate(gmtCreate);
@@ -146,10 +145,10 @@ public class getRetVoTest {
         CategoryRetVo categoryRetVo = voList.get(0);
         assertEquals(categoryRetVo.getId(),1L);
         assertEquals(categoryRetVo.getName(),"name");
-        assertEquals(categoryRetVo.getCreatedBy().getId(),2L);
-        assertEquals(categoryRetVo.getCreatedBy().getName(),"CreateName");
-        assertEquals(categoryRetVo.getModifiedBy().getId(),3L);
-        assertEquals(categoryRetVo.getModifiedBy().getName(),"ModiName");
+        assertEquals(categoryRetVo.getCreator().getId(),2L);
+        assertEquals(categoryRetVo.getCreator().getName(),"CreateName");
+        assertEquals(categoryRetVo.getModifier().getId(),3L);
+        assertEquals(categoryRetVo.getModifier().getName(),"ModiName");
         assertEquals(categoryRetVo.getCommissionRate(),null);
         assertEquals(categoryRetVo.getGmtCreate(),gmtCreate);
         assertEquals(categoryRetVo.getGmtModified(),gmtModified);
@@ -168,10 +167,10 @@ public class getRetVoTest {
         Category categoryBo=new Category();
         categoryBo.setId(1L);
         categoryBo.setCommissionRatio(1);
-        categoryBo.setCreatedBy(2L);
-        categoryBo.setCreateName("CreateName");
-        categoryBo.setModifiedBy(3L);
-        categoryBo.setModiName("ModiName");
+        categoryBo.setCreatorId(2L);
+        categoryBo.setCreatorName("CreateName");
+        categoryBo.setModifierId(3L);
+        categoryBo.setModifierName("ModiName");
         LocalDateTime gmtCreate=LocalDateTime.now().minusDays(1);
         LocalDateTime gmtModified=LocalDateTime.now();
         categoryBo.setGmtCreate(gmtCreate);
@@ -197,10 +196,10 @@ public class getRetVoTest {
         CategoryRetVo categoryRetVo = voList.get(0);
         assertEquals(categoryRetVo.getId(),1L);
         assertEquals(categoryRetVo.getName(),"name");
-        assertEquals(categoryRetVo.getCreatedBy().getId(),2L);
-        assertEquals(categoryRetVo.getCreatedBy().getName(),"CreateName");
-        assertEquals(categoryRetVo.getModifiedBy().getId(),3L);
-        assertEquals(categoryRetVo.getModifiedBy().getName(),"ModiName");
+        assertEquals(categoryRetVo.getCreator().getId(),2L);
+        assertEquals(categoryRetVo.getCreator().getName(),"CreateName");
+        assertEquals(categoryRetVo.getModifier().getId(),3L);
+        assertEquals(categoryRetVo.getModifier().getName(),"ModiName");
         assertEquals(categoryRetVo.getCommissionRate(),1);
         assertEquals(categoryRetVo.getGmtCreate(),gmtCreate);
         assertEquals(categoryRetVo.getGmtModified(),gmtModified);
@@ -223,10 +222,10 @@ public class getRetVoTest {
         Category categoryBo=new Category();
         categoryBo.setId(1L);
         categoryBo.setCommissionRatio(1);
-        categoryBo.setCreatedBy(2L);
-        categoryBo.setCreateName("CreateName");
-        categoryBo.setModifiedBy(3L);
-        categoryBo.setModiName("ModiName");
+        categoryBo.setCreatorId(2L);
+        categoryBo.setCreatorName("CreateName");
+        categoryBo.setModifierId(3L);
+        categoryBo.setModifierName("ModiName");
         LocalDateTime gmtCreate=LocalDateTime.now().minusDays(1);
         LocalDateTime gmtModified=LocalDateTime.now();
         categoryBo.setGmtCreate(gmtCreate);
@@ -252,10 +251,10 @@ public class getRetVoTest {
         CategoryRetVo categoryRetVo = voList.get(0);
         assertEquals(categoryRetVo.getId(),1L);
         assertEquals(categoryRetVo.getName(),"name");
-        assertEquals(categoryRetVo.getCreatedBy().getId(),2L);
-        assertEquals(categoryRetVo.getCreatedBy().getName(),"CreateName");
-        assertEquals(categoryRetVo.getModifiedBy().getId(),3L);
-        assertEquals(categoryRetVo.getModifiedBy().getName(),"ModiName");
+        assertEquals(categoryRetVo.getCreator().getId(),2L);
+        assertEquals(categoryRetVo.getCreator().getName(),"CreateName");
+        assertEquals(categoryRetVo.getModifier().getId(),3L);
+        assertEquals(categoryRetVo.getModifier().getName(),"ModiName");
         assertEquals(categoryRetVo.getCommissionRate(),null);
         assertEquals(categoryRetVo.getGmtCreate(),gmtCreate);
         assertEquals(categoryRetVo.getGmtModified(),gmtModified);
@@ -271,22 +270,6 @@ public class getRetVoTest {
         assertEquals(retObjVo3.getCode(),ReturnNo.RESOURCE_ID_NOTEXIST);
         assertEquals(retObjVo3.getErrmsg(),"操作的资源id不存在");
         assertEquals(retObjVo3.getData(),null);
-    }
-
-    @Test
-    public void getNullRetObjTest(){
-        ReturnObject retObjBo1 = new ReturnObject();
-        ReturnObject retObjBo2 = new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-
-        ReturnObject retObjVo1 = Common.getNullRetObj(retObjBo1);
-        ReturnObject retObjVo2 = Common.getNullRetObj(retObjBo2);
-
-        assertEquals(retObjVo1.getCode(),ReturnNo.OK);
-        assertEquals(retObjVo1.getErrmsg(),"成功");
-        assertEquals(retObjVo1.getData(),null);
-        assertEquals(retObjVo2.getCode(),ReturnNo.RESOURCE_ID_NOTEXIST);
-        assertEquals(retObjVo2.getErrmsg(),"操作的资源id不存在");
-        assertEquals(retObjVo2.getData(),null);
     }
 
 }

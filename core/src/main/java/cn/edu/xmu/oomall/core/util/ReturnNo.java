@@ -26,7 +26,7 @@ public enum ReturnNo {
     IMG_FORMAT_ERROR(508,"图片格式不正确"),
     IMG_SIZE_EXCEED(509,"图片大小超限"),
     PARAMETER_MISSED(510, "缺少必要参数"),
-    ACT_LATE_BEGINTIME(947, "开始时间不能晚于结束时间"),
+    LATE_BEGINTIME(947, "开始时间不能晚于结束时间"),
     ACT_LATE_PAYTIME(948, "尾款支付时间晚于活动结束时间"),
     ACT_EARLY_PAYTIME(949, "尾款支付时间早于活动开始时间"),
     COUPON_LATE_COUPONTIME(950,"优惠卷领卷时间晚于活动开始时间"),
@@ -69,13 +69,21 @@ public enum ReturnNo {
     GOODS_PRICE_CONFLICT(902,"商品销售时间冲突"),
     GOODS_CATEGORY_NOTALLOW(903, "不允许加入到一级分类"),
 
+
+    COUPON_NOTBEGIN(909,"未到优惠卷领取时间"),
+    COUPON_FINISH(910,"优惠卷领罄"),
+    COUPON_END(911,"优惠卷活动终止"),
+    STATE_NOCHANGE(920,"状态未改变"),
+    CATEALTER_INVALID(921,"对SPU类别操作无效"),
+    ACTIVITY_NOTFOUND(924,"无符合条件的优惠活动"),
+    SHOP_NOTOPERABLE(925,"不可对该商铺进行操作"),
     COMMENT_EXISTED(941,"该订单条目已评论"),
-    COMMENT_USER_NOORDER(970,"用户没有购买此商品"),
 
     SHOP_HASDEPOSIT(966,"店铺仍有保证金未结算"),
     SHOP_CATEGORY_NOTPERMIT(967, "不允许增加新的下级分类"),
     SHOP_NOT_RECON(968,"店铺尚有支付未清算完毕"),
     SHOP_USER_HASSHOP(969,"用户已经有店铺"),
+    COMMENT_USER_NOORDER(970,"用户没有购买此商品"),
 
     FREIGHT_REGIONOBSOLETE(995,"地区已废弃"),
     FREIGHT_WRONGTYPE(996,"该运费模板类型与内容不符"),
@@ -90,6 +98,15 @@ public enum ReturnNo {
         this.message = message;
     }
 
+    public static ReturnNo getByCode(int code1) {
+        ReturnNo[] all=ReturnNo.values();
+        for (ReturnNo returnNo :all) {
+            if (returnNo.code==code1) {
+                return returnNo;
+            }
+        }
+        return null;
+    }
     public int getCode() {
         return code;
     }
