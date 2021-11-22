@@ -20,13 +20,13 @@ public class CouponOnsale implements VoObject, Serializable {
 
     private Long onsaleId;
 
-    private Long createdBy;
+    private Long creatorId;
 
-    private String createName;
+    private String creatorName;
 
-    private Long modifiedBy;
+    private Long modifierId;
 
-    private String modiName;
+    private String modifierName;
 
     private LocalDateTime gmtCreate;
 

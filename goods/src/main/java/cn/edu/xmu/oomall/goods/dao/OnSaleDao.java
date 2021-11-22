@@ -66,10 +66,10 @@ public class OnSaleDao {
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andActivityIdEqualTo(actId);
-            Byte s1 = (byte) (0XFF & cntState.getCode());
+            Byte s1 = cntState.getCode().byteValue();
             cr.andStateEqualTo(s1);
 
-            Byte s2 = (byte) (0XFF & finalState.getCode());
+            Byte s2 = finalState.getCode().byteValue();
             List<OnSalePo> pos = onSalePoMapper.selectByExample(oe);
 
             for (OnSalePo po : pos) {
@@ -128,7 +128,7 @@ public class OnSaleDao {
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andActivityIdEqualTo(actId);
-            cr.andStateEqualTo((byte) (0XFF & OnSale.State.DRAFT.getCode()));
+            cr.andStateEqualTo(OnSale.State.DRAFT.getCode().byteValue());
             List<OnSalePo> pos = onSalePoMapper.selectByExample(oe);
             for (OnSalePo po : pos) {
                 onSalePoMapper.deleteByPrimaryKey(po.getId());
@@ -184,7 +184,7 @@ public class OnSaleDao {
         try {
             OnSalePo po = (OnSalePo) cloneVo(onsale, OnSalePo.class);
             setPoModifiedFields(po, userId, userName);
-            onSalePoMapper.updateByPrimaryKey(po);
+            onSalePoMapper.updateByPrimaryKeySelective(po);
             return new ReturnObject(ReturnNo.OK);
         } catch (Exception e) {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());

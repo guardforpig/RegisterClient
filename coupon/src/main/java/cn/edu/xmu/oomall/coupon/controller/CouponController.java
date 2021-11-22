@@ -121,7 +121,7 @@ public class CouponController {
         }
 
         if (couponActivityVo.getBeginTime().isAfter(couponActivityVo.getEndTime())) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_LATE_BEGINTIME));
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME));
         }
 
 

@@ -77,8 +77,8 @@ public class CouponControllerTest {
         ReturnObject<OnsaleVo> onsaleVo4 = CreateObject.createOnsaleVo4();
         Mockito.when(goodsService.getOnsaleById(3912L)).thenReturn(onsaleVo4);
 
-        Mockito.when(redisUtil.get("couponactivity_11")).thenReturn("{\"id\":11,\"name\":null,\"shopId\":1,\"shopName\":null,\"couponTime\":null,\"beginTime\":null,\"endTime\":null,\"quantity\":null,\"quantityType\":null,\"validTerm\":null,\"imageUrl\":null,\"strategy\":null,\"state\":0,\"createdBy\":null,\"createName\":null,\"modifiedBy\":null,\"modiName\":null,\"gmtCreate\":[2021,11,17,19,2,20],\"gmtModified\":null}");
-        Mockito.when(redisUtil.get("coupononsale_5")).thenReturn("{\"id\":5,\"activityId\":2,\"onsaleId\":21,\"createdBy\":1,\"createName\":\"admin\",\"modifiedBy\":null,\"modiName\":null,\"gmtCreate\":[2021,11,11,15,40,45],\"gmtModified\":null}");
+        Mockito.when(redisUtil.get("couponactivity_11")).thenReturn("{\"id\":11,\"name\":null,\"shopId\":1,\"shopName\":null,\"couponTime\":null,\"beginTime\":null,\"endTime\":null,\"quantity\":null,\"quantityType\":null,\"validTerm\":null,\"imageUrl\":null,\"strategy\":null,\"state\":0,\"creatorId\":null,\"creatorName\":null,\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,17,19,2,20],\"gmtModified\":null}");
+        Mockito.when(redisUtil.get("coupononsale_5")).thenReturn("{\"id\":5,\"activityId\":2,\"onsaleId\":21,\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,11,15,40,45],\"gmtModified\":null}");
         adminToken = jwtHelper.createToken(1L,"admin",1L, 3600);
     }
 

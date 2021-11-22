@@ -15,7 +15,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Data
 public class CouponActivity implements Serializable {
     public enum State {
         /**
@@ -72,10 +71,10 @@ public class CouponActivity implements Serializable {
     private String imageUrl;
     private String strategy;
     private Byte state;
-    private Long createdBy;
-    private String createName;
-    private Long modifiedBy;
-    private String modiName;
+    private Long creatorId;
+    private String creatorName;
+    private Long modifierId;
+    private String modifierName;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 

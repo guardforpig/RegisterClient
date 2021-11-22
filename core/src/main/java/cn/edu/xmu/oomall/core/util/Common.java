@@ -11,11 +11,12 @@ import org.springframework.validation.FieldError;
 
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 通用工具类
@@ -239,8 +240,8 @@ public class Common {
             //默认voClass有无参构造函数
             newVo = voClass.getDeclaredConstructor().newInstance();
             Field[] voFields = voClass.getDeclaredFields();
+            Field[] boFields = boClass.getDeclaredFields();
             for (Field voField : voFields) {
-
                 //静态和Final不能拷贝
                 int mod = voField.getModifiers();
                 if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
@@ -251,27 +252,24 @@ public class Common {
                 try {
                     boField= boClass.getDeclaredField(voField.getName());
                 }
-                //bo中查找不到对应的属性
+                //bo中查找不到对应的属性，那就有可能为特殊情况xxx，需要由xxxId与xxxName组装
                 catch (NoSuchFieldException e)
                 {
-                    //将此属性设置为null,继续进行下一retVo属性的复制
-                    voField.set(newVo, null);
-                    continue;
-                }
-
-                Class<?> boFieldType = boField.getType();
-                //属性名相同，类型相同，直接克隆
-                if (voField.getType().equals(boFieldType))
-                {
-                    boField.setAccessible(true);
-                    Object newObject = boField.get(bo);
-                    voField.set(newVo, newObject);
-                }
-                //属性名相同，类型不同
-                else
-                {
-                    //如果不是特殊情况，赋值为null
-                    if(!"createdBy".equals(voField.getName()) && !"modifiedBy".equals(voField.getName()))
+                    //提取头部
+                    String head=voField.getName();
+                    Field boxxxNameField=null;
+                    Field boxxxIdField=null;
+                    for (Field bof:boFields)
+                    {
+                        if(bof.getName().matches(head+"Name")){
+                            boxxxNameField=bof;
+                        }
+                        else if(bof.getName().matches(head+"Id")) {
+                            boxxxIdField=bof;
+                        }
+                    }
+                    //找不到xxxName或者找不到xxxId
+                    if (boxxxNameField==null||boxxxIdField==null)
                     {
                         voField.set(newVo, null);
                         continue;
@@ -283,53 +281,36 @@ public class Common {
                     newSimpleRetVoIdField.setAccessible(true);
                     newSimpleRetVoNameField.setAccessible(true);
 
-                    //bo的createdBy和createName组装为SimpleRetVo的id,name
-                    if("createdBy".equals(boField.getName()))
-                    {
-                        Field boCreatedByField = boClass.getDeclaredField("createdBy");
-                        Field boCreateNameField = boClass.getDeclaredField("createName");
-                        boCreatedByField.setAccessible(true);
-                        boCreateNameField.setAccessible(true);
-                        Object boCreatedBy=boCreatedByField.get(bo);
-                        Object boCreateName=boCreateNameField.get(bo);
+                    //bo的xxxId和xxxName组装为SimpleRetVo的id,name
+                    boxxxIdField.setAccessible(true);
+                    boxxxNameField.setAccessible(true);
+                    Object boxxxId=boxxxIdField.get(bo);
+                    Object boxxxName=boxxxNameField.get(bo);
 
-                        newSimpleRetVoIdField.set(newSimpleRetVo,boCreatedBy);
-                        newSimpleRetVoNameField.set(newSimpleRetVo,boCreateName);
+                    newSimpleRetVoIdField.set(newSimpleRetVo,boxxxId);
+                    newSimpleRetVoNameField.set(newSimpleRetVo,boxxxName);
 
-                        voField.set(newVo, newSimpleRetVo);
-                    }
-                    //把bo的modifiedBy和modifiedName组装为SimpleRetVo的id,name
-                    else if("modifiedBy".equals(boField.getName()))
-                    {
-                        Field boModifiedByField = boClass.getDeclaredField("modifiedBy");
-                        Field boModiNameField = boClass.getDeclaredField("modiName");
-                        boModifiedByField.setAccessible(true);
-                        boModiNameField.setAccessible(true);
-                        Object boModifiedBy=boModifiedByField.get(bo);
-                        Object boModiName=boModiNameField.get(bo);
-
-                        newSimpleRetVoIdField.set(newSimpleRetVo,boModifiedBy);
-                        newSimpleRetVoNameField.set(newSimpleRetVo,boModiName);
-
-                        voField.set(newVo, newSimpleRetVo);
-                    }
+                    voField.set(newVo, newSimpleRetVo);
+                    continue;
+                }
+                Class<?> boFieldType = boField.getType();
+                //属性名相同，类型相同，直接克隆
+                if (voField.getType().equals(boFieldType))
+                {
+                    boField.setAccessible(true);
+                    Object newObject = boField.get(bo);
+                    voField.set(newVo, newObject);
+                }
+                //属性名相同，类型不同
+                else
+                {
+                    voField.set(newVo, null);
                 }
             }
         } catch (Exception e) {
             logger.error(e.toString());
         }
         return newVo;
-    }
-
-
-    public static ReturnObject getNullRetObj(ReturnObject<Object> returnObject) {
-        ReturnNo code = returnObject.getCode();
-        switch (code) {
-            case RESOURCE_ID_NOTEXIST:
-                return new ReturnObject(returnObject.getCode());
-            default:
-                return new ReturnObject(returnObject.getCode(), returnObject.getErrmsg());
-        }
     }
 
     /**
@@ -362,7 +343,7 @@ public class Common {
             case RESOURCE_FALSIFY:
             case IMG_FORMAT_ERROR:
             case IMG_SIZE_EXCEED:
-            case ACT_LATE_BEGINTIME:
+            case LATE_BEGINTIME:
             case ACT_LATE_PAYTIME:
             case ACT_EARLY_PAYTIME:
             case COUPON_LATE_COUPONTIME:
@@ -430,8 +411,8 @@ public class Common {
      * 设置所有po对象的createdBy, createName和gmtCreate字段属性
      *
      * @author : Wangzixia 32420182202938
-     * @date： 2021/11/12 11:12
-     * @version: 1.0
+     * @date： 2021/11/19 00:12
+     * @version: 2.0
      *
      * @param po       po对象
      * @param userId   设置到createdBy
@@ -441,9 +422,9 @@ public class Common {
     public static boolean setPoCreatedFields(Object po, long userId, String userName) {
         Class<?> aClass = po.getClass();
         try {
-            Field createdBy = aClass.getDeclaredField("createdBy");
-            createdBy.setAccessible(true);
-            createdBy.set(po, userId);
+            Field creatorId = aClass.getDeclaredField("creatorId");
+            creatorId.setAccessible(true);
+            creatorId.set(po, userId);
 
         } catch (NoSuchFieldException e) {
             logger.info(e.getMessage());
@@ -454,9 +435,9 @@ public class Common {
         }
 
         try {
-            Field createName = aClass.getDeclaredField("createName");
-            createName.setAccessible(true);
-            createName.set(po, userName);
+            Field creatorName = aClass.getDeclaredField("creatorName");
+            creatorName.setAccessible(true);
+            creatorName.set(po, userName);
         } catch (NoSuchFieldException e) {
             logger.info(e.getMessage());
             return false;
@@ -482,8 +463,8 @@ public class Common {
      * 设置所有po对象的modifiedBy, modiName和gmtModify字段属性
      *
      * @author : Wangzixia 32420182202938
-     * @date： 2021/11/17 15:12
-     * @version: 1.1
+     * @date： 2021/11/19 00:12
+     * @version: 2.0
      *
      *
      * @param po       po对象
@@ -494,9 +475,9 @@ public class Common {
     public static boolean setPoModifiedFields(Object po, long userId, String userName) {
         Class<?> aClass = po.getClass();
         try {
-            Field modifiedBy = aClass.getDeclaredField("modifiedBy");
-            modifiedBy.setAccessible(true);
-            modifiedBy.set(po, userId);
+            Field modifierId = aClass.getDeclaredField("modifierId");
+            modifierId.setAccessible(true);
+            modifierId.set(po, userId);
         } catch (NoSuchFieldException e) {
             logger.info(e.getMessage());
             return false;
@@ -506,9 +487,9 @@ public class Common {
         }
 
         try {
-            Field modiName = aClass.getDeclaredField("modiName");
-            modiName.setAccessible(true);
-            modiName.set(po, userName);
+            Field modifierName = aClass.getDeclaredField("modifierName");
+            modifierName.setAccessible(true);
+            modifierName.set(po, userName);
         } catch (NoSuchFieldException e) {
             logger.info(e.getMessage());
             return false;

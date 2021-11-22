@@ -47,8 +47,8 @@ public class CouponActivityVoInfo implements VoObject {
         this.gmtCreate = couponActivityPo.getGmtCreate();
         this.gmtModified = couponActivityPo.getGmtModified();
         this.quantityType = couponActivityPo.getQuantityType();
-        this.createBy = new SimpleUserRetVo(couponActivityPo.getCreatedBy(),couponActivityPo.getCreateName());
-        this.modifiedBy = new SimpleUserRetVo(couponActivityPo.getModifiedBy(),couponActivityPo.getModiName());
+        this.createBy = new SimpleUserRetVo(couponActivityPo.getCreatorId(),couponActivityPo.getCreatorName());
+        this.modifiedBy = new SimpleUserRetVo(couponActivityPo.getModifierId(),couponActivityPo.getModifierName());
     }
 
     @Override
