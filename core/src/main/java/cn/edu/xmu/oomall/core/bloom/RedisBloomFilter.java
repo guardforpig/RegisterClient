@@ -1,70 +1,52 @@
 package cn.edu.xmu.oomall.core.bloom;
 
-import cn.edu.xmu.oomall.core.util.RedisUtil;
 import com.google.common.base.Preconditions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.scripting.support.ResourceScriptSource;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 
 /**
- * @author Zhiliang Li
- * @date 2020-11-20
+ * @author xincong yao
+ * @date 2020-11-4
  */
+public class RedisBloomFilter<T> {
 
-@Component
-public class RedisBloomFilter {
-    @Autowired
+    private BloomFilterHelper<T> bloomFilterHelper;
+
     private RedisTemplate redisTemplate;
-    @Autowired
-    private RedisUtil redisUtil;
 
-    private static double size = Math.pow(2, 32);
+    public RedisBloomFilter(RedisTemplate redisTemplate, BloomFilterHelper<T> bloomFilterHelper) {
+        this.redisTemplate = redisTemplate;
+        this.bloomFilterHelper = bloomFilterHelper;
+    }
 
     /**
-     * 有序集合获取排名
-     *
-     * @param key
+     * 向redis的bitmap中添加值
      */
-    public Set<ZSetOperations.TypedTuple<Object>> reverseZRankWithRank(String key, long start, long end) {
-        ZSetOperations<String, Object> zset = redisTemplate.opsForZSet();
-        Set<ZSetOperations.TypedTuple<Object>> ret = zset.reverseRangeWithScores(key, start, end);
-        return ret;
+    public void addByBloomFilter(String key, T value) {
+        validate();
+        int[] offset = bloomFilterHelper.murmurHashOffset(value);
+        for (int i : offset) {
+            redisTemplate.opsForValue().setBit(key, i, true);
+        }
     }
 
-    public Boolean bloomFilterAdd(String bloomFilterName, String value) {
-        DefaultRedisScript<Boolean> bloomAdd = new DefaultRedisScript<>();
-        bloomAdd.setScriptSource(new ResourceScriptSource(new ClassPathResource("bloomFilterAdd.lua")));
-        bloomAdd.setResultType(Boolean.class);
-        List<Object> keyList = new ArrayList<>();
-        keyList.add("bloom" + bloomFilterName);
-        keyList.add(value);
-        Boolean result = (Boolean) redisTemplate.execute(bloomAdd, keyList);
-        return result;
+    /**
+     * 判断redis的bitmap中是否存在某个值
+     */
+    public boolean includeByBloomFilter(String key, T value) {
+        validate();
+        int[] offset = bloomFilterHelper.murmurHashOffset(value);
+        for (int i : offset) {
+            if (!redisTemplate.opsForValue().getBit(key, i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    public Boolean bloomFilterExists(String bloomFilterName, String value) {
-        DefaultRedisScript<Boolean> bloomExists = new DefaultRedisScript<>();
-        bloomExists.setScriptSource(new ResourceScriptSource(new ClassPathResource("bloomFilterExist.lua")));
-        bloomExists.setResultType(Boolean.class);
-        List<Object> keyList = new ArrayList<>();
-        keyList.add("bloom" + bloomFilterName);
-        keyList.add(value);
-        Boolean result = (Boolean) redisTemplate.execute(bloomExists, keyList);
-        return result;
+    private void validate() {
+        Preconditions.checkArgument(bloomFilterHelper != null, "bloomFilterHelper不能为空");
+        Preconditions.checkArgument(redisTemplate != null, "redisTemplate不能为空");
     }
 
-    public void bloomFilterDelete(String key) {
-        redisUtil.del("bloom" + key);
-    }
 }
