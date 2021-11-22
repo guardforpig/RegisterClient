@@ -3,9 +3,10 @@ package cn.edu.xmu.oomall.freight.dao;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+
 import cn.edu.xmu.oomall.freight.mapper.FreightModelPoMapper;
 import cn.edu.xmu.oomall.freight.mapper.PieceFreightPoMapper;
-import cn.edu.xmu.oomall.freight.model.bo.PieceFreightBo;
+import cn.edu.xmu.oomall.freight.model.bo.PieceFreight;
 import cn.edu.xmu.oomall.freight.model.po.FreightModelPo;
 import cn.edu.xmu.oomall.freight.model.po.PieceFreightPo;
 import cn.edu.xmu.oomall.freight.model.po.PieceFreightPoExample;
@@ -33,98 +34,59 @@ public class PieceFreightDao {
 
     /**
      * 新增件数运费模板
-     * @param pieceFreightBo
+     *
+     * @param pieceFreight
      * @return
      */
-    public ReturnObject addPieceFreight(PieceFreightBo pieceFreightBo, Long createId,String createName){
-        PieceFreightPo pieceFreightPo = (PieceFreightPo) Common.cloneVo(pieceFreightBo, PieceFreightPo.class);
-        Common.setPoCreatedFields(pieceFreightPo, createId, createName);
-        Common.setPoModifiedFields(pieceFreightPo, createId, createName);
+    public ReturnObject addPieceFreight(PieceFreight pieceFreight, Long createId, String createName) {
         try {
-            if (pieceFreightPoMapper.insert(pieceFreightPo) == 1) {
-                PieceFreightBo pieceFreightBo1 = (PieceFreightBo) Common.cloneVo(pieceFreightPo,PieceFreightBo.class);
-                return new ReturnObject(pieceFreightBo1);
-            } else {
-                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+            PieceFreightPo pieceFreightPo = (PieceFreightPo) Common.cloneVo(pieceFreight, PieceFreightPo.class);
+            Common.setPoCreatedFields(pieceFreightPo, createId, createName);
+            if (pieceFreight.getRegionId() != null) {
+                PieceFreightPoExample example = new PieceFreightPoExample();
+                PieceFreightPoExample.Criteria criteria = example.createCriteria();
+                criteria.andRegionIdEqualTo(pieceFreight.getRegionId());
+                List<PieceFreightPo> list = pieceFreightPoMapper.selectByExample(example);
+                if (list != null && list.size() > 0) {
+                    return new ReturnObject(ReturnNo.FREIGHT_REGIONEXIST);
+                }
             }
-        }
-        catch (Exception e) {
+            pieceFreightPoMapper.insertSelective(pieceFreightPo);
+            PieceFreightPo newPieceFreightPo = pieceFreightPoMapper.selectByPrimaryKey(pieceFreightPo.getId());
+            return new ReturnObject((Common.cloneVo(newPieceFreightPo, PieceFreight.class)));
+        } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
-    /**
-     * 判断运费模板中该地区是否已经定义
-     * @param regionId
-     * @return
-     */
-    public ReturnObject judgeRegionId(Long regionId)
-    {
-
-        try {
-            PieceFreightPoExample example = new PieceFreightPoExample();
-            PieceFreightPoExample.Criteria criteria = example.createCriteria();
-            criteria.andRegionIdEqualTo(regionId);
-            List<PieceFreightPo> list = pieceFreightPoMapper.selectByExample(example);
-            if (list.size() != 0) {
-                return new ReturnObject(false);
-            } else {
-                return new ReturnObject(true);
-            }
-        }
-        catch (Exception e) {
-            logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
-        }
-    }
-
-    /**
-     * 根据id查询运费模板
-     * @param freightModelId
-     * @return
-     */
-    public ReturnObject getFreightModelById(Long freightModelId)
-    {
-        try {
-            FreightModelPo freightModelPo = freightModelPoMapper.selectByPrimaryKey(freightModelId);
-            return new ReturnObject(freightModelPo);
-        }
-        catch (Exception e) {
-            logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
-        }
-    }
     /**
      * 店家或管理员查询件数运费模板的明细
-     * @param id
+     *
+     * @param freightModelId
      * @param page
      * @param pageSize
      * @return
      */
-    public ReturnObject getPieceFreight(Long id,Integer page,Integer pageSize)
-    {
-        PieceFreightPoExample example = new PieceFreightPoExample();
-        PieceFreightPoExample.Criteria criteria = example.createCriteria();
+    public ReturnObject getPieceFreight(Long freightModelId, Integer page, Integer pageSize) {
         try {
-            criteria.andFreightModelIdEqualTo(id);
+            PieceFreightPoExample example = new PieceFreightPoExample();
+            PieceFreightPoExample.Criteria criteria = example.createCriteria();
+            criteria.andFreightModelIdEqualTo(freightModelId);
             PageHelper.startPage(page, pageSize);
             List<PieceFreightPo> list = pieceFreightPoMapper.selectByExample(example);
-            if(list==null)
-            {
+            if (list == null) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             PageInfo pageInfo = new PageInfo(list);
-            List<PieceFreightBo> pieceFreightBos=new ArrayList<>();
-            for(PieceFreightPo pieceFreightPo:list)
-            {
-                PieceFreightBo pieceFreightBo=(PieceFreightBo) Common.cloneVo(pieceFreightPo,PieceFreightBo.class);
-                pieceFreightBos.add(pieceFreightBo);
+            List<PieceFreight> pieceFreights = new ArrayList<>();
+            for (PieceFreightPo pieceFreightPo : list) {
+                PieceFreight pieceFreight = (PieceFreight) Common.cloneVo(pieceFreightPo, PieceFreight.class);
+                pieceFreights.add(pieceFreight);
             }
-            pageInfo.setList(pieceFreightBos);
+            pageInfo.setList(pieceFreights);
             return new ReturnObject(pageInfo);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
@@ -132,44 +94,54 @@ public class PieceFreightDao {
 
     /**
      * 店家或管理员删掉件数运费模板明细
+     *
      * @param id
      * @return
      */
-    public ReturnObject deletePieceFreight(Long id)
-    {
+    public ReturnObject deletePieceFreight(Long id) {
         try {
-            if(pieceFreightPoMapper.deleteByPrimaryKey(id)==1)
-            {
-                return new ReturnObject();
+            int ret = pieceFreightPoMapper.deleteByPrimaryKey(id);
+            if (ret == 0) {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            } else {
+                return new ReturnObject(ReturnNo.OK);
             }
-            else
-            {
-                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
-            }
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
+
     /**
      * 店家或管理员修改件数运费模板明细
-     * @param pieceFreightBo
+     *
+     * @param pieceFreight
      * @param userId
      * @param userName
      * @return
      */
-    public ReturnObject modifyPieceFreight(PieceFreightBo pieceFreightBo,Long userId,String userName)
-    {
-        PieceFreightPo pieceFreightPo=(PieceFreightPo) Common.cloneVo(pieceFreightBo,PieceFreightPo.class);
-        Common.setPoModifiedFields(pieceFreightPo, userId, userName);
+    public ReturnObject updatePieceFreight(PieceFreight pieceFreight, Long userId, String userName) {
         try {
-            PieceFreightPo rp=pieceFreightPoMapper.selectByPrimaryKey(pieceFreightBo.getId());
+            PieceFreightPo pieceFreightPo = (PieceFreightPo) Common.cloneVo(pieceFreight, PieceFreightPo.class);
+            Common.setPoModifiedFields(pieceFreightPo, userId, userName);
+            PieceFreightPo rp = pieceFreightPoMapper.selectByPrimaryKey(pieceFreight.getId());
             if (rp == null) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            if (pieceFreight.getRegionId() != null) {
+                PieceFreightPoExample example = new PieceFreightPoExample();
+                PieceFreightPoExample.Criteria criteria = example.createCriteria();
+                criteria.andRegionIdEqualTo(pieceFreight.getRegionId());
+                List<PieceFreightPo> list = pieceFreightPoMapper.selectByExample(example);
+                if (list != null && list.size() > 0) {
+                    if (!list.get(0).getId().equals(pieceFreightPo.getId())) {
+                        return new ReturnObject(ReturnNo.FREIGHT_REGIONSAME);
+                    }
+                }
             }
             pieceFreightPoMapper.updateByPrimaryKeySelective(pieceFreightPo);
             return new ReturnObject();
 
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
