@@ -197,7 +197,6 @@ public class CouponActivityService {
 /**
  * @author qingguo Hu 22920192204208
  */
-
     /**
      *
      * @param couponActivityId
@@ -224,10 +223,10 @@ public class CouponActivityService {
         List<Object> couponOnsaleList = retPageInfo.getData().getList();
         List<Object> productVoList = new ArrayList<>();
         for (Object couponOnsale : couponOnsaleList) {
-            ReturnObject<Object> retProductVo =
-                    goodsService.getProductByOnsaleId(((CouponOnsale)couponOnsale).getOnsaleId());
-            if (retProductVo.getCode().equals(ReturnNo.OK)) {
-                productVoList.add(retProductVo.getData());
+            ReturnObject<OnsaleVo> retOnsaleVo =
+                    goodsService.getOnsaleById(((CouponOnsale)couponOnsale).getOnsaleId());
+            if (retOnsaleVo.getCode().equals(ReturnNo.OK)) {
+                productVoList.add(retOnsaleVo.getData().getProduct());
             }
         }
 
@@ -259,7 +258,6 @@ public class CouponActivityService {
         }
 
         // 根据OnsaleId的列表，找出所有的CouponOnsale
-
         ReturnObject<PageInfo<CouponOnsale>> retCouponOnsaleListPage =
                 couponActivityDao.listCouponOnsaleByIdList(onsaleIdList, 1, 0);
         if (!retCouponOnsaleListPage.getCode().equals(ReturnNo.OK)) {
@@ -322,7 +320,6 @@ public class CouponActivityService {
             if (!formerCouponActivity.getState().equals(CouponActivity.State.DRAFT.getCode())) {
                 return new ReturnObject<>(ReturnNo.STATENOTALLOW);
             }
-
             CouponActivity newCouponActivity = (CouponActivity) Common.cloneVo(couponActivityVo, CouponActivity.class);
             newCouponActivity.setId(couponActivityId);
             Common.setPoModifiedFields(newCouponActivity, userId, userName);
@@ -339,7 +336,6 @@ public class CouponActivityService {
                     }
                     formerCouponActivity.setState(CouponActivity.State.ONLINE.getCode());
                     Common.setPoModifiedFields(formerCouponActivity, userId, userName);
-
                     return couponActivityDao.updateCouponActivity(formerCouponActivity);
                 }
                 case OFFLINE: {
@@ -349,9 +345,9 @@ public class CouponActivityService {
                     }
                     formerCouponActivity.setState(CouponActivity.State.OFFLINE.getCode());
                     Common.setPoModifiedFields(formerCouponActivity, userId, userName);
-
                     ReturnObject returnObject = couponActivityDao.updateCouponActivity(formerCouponActivity);
                     return returnObject;
+
                     // TODO: 将已发行未用的优惠卷一并下线
                     // 数据库好像没有优惠券，暂时先放着
                 }
@@ -390,11 +386,11 @@ public class CouponActivityService {
         if (!couponActivity.getShopId().equals(shopId)) {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "该优惠活动不属于该商店");
         }
-        if (!onsaleVo.getShopId().equals(shopId)) {
+        if (!onsaleVo.getShop().getId().equals(shopId)) {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "该Onsale不属于该商店");
         }
 
-        // 判断数据库中是否已经有CouponOnsale表示该onsale已经~参与了该活动
+        // 判断数据库中是否已经有CouponOnsale表示该onsale已经参与了该活动
         ReturnObject<PageInfo<Object>> retPageInfo =
                 couponActivityDao.listCouponOnsaleByOnsaleIdAndActivityId(onsaleId, couponActivityId, 1, 10);
         if (!retPageInfo.getCode().equals(ReturnNo.RESOURCE_ID_NOTEXIST)) {

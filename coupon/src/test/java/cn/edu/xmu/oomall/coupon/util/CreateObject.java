@@ -1,10 +1,10 @@
 package cn.edu.xmu.oomall.coupon.util;
 
-import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +14,12 @@ import java.util.List;
  */
 public class CreateObject {
 
-    public static ReturnObject<ProductVo> createProductVo(Long id) {
+    public static ReturnObject<OnsaleVo> createOnsaleVo(Long id) {
+        OnsaleVo onsaleVo = new OnsaleVo();
         ProductVo productVo = new ProductVo();
         productVo.setId(id);
-        return new ReturnObject<>(productVo);
+        onsaleVo.setProduct(productVo);
+        return new ReturnObject<>(onsaleVo);
     }
 
     public static ReturnObject<List<OnsaleVo>> createOnsaleVoList1() {
@@ -89,22 +91,28 @@ public class CreateObject {
 
     public static ReturnObject<OnsaleVo> createOnsaleVo2() {
         OnsaleVo onsaleVo = new OnsaleVo();
+        ShopVo shopVo = new ShopVo();
+        shopVo.setId(3L);
         onsaleVo.setId(1L);
-        onsaleVo.setShopId(3L);
+        onsaleVo.setShop(shopVo);
         return new ReturnObject<>(onsaleVo);
     }
 
     public static ReturnObject<OnsaleVo> createOnsaleVo3() {
         OnsaleVo onsaleVo = new OnsaleVo();
+        ShopVo shopVo = new ShopVo();
+        shopVo.setId(2L);
         onsaleVo.setId(2L);
-        onsaleVo.setShopId(2L);
+        onsaleVo.setShop(shopVo);
         return new ReturnObject<>(onsaleVo);
     }
 
     public static ReturnObject<OnsaleVo> createOnsaleVo4() {
         OnsaleVo onsaleVo = new OnsaleVo();
+        ShopVo shopVo = new ShopVo();
+        shopVo.setId(2L);
         onsaleVo.setId(3912L);
-        onsaleVo.setShopId(2L);
+        onsaleVo.setShop(shopVo);
         return new ReturnObject<>(onsaleVo);
     }
 }

@@ -21,6 +21,7 @@ public class CouponActivity implements Serializable {
          * 草稿
          */
         DRAFT((byte)0,"草稿"),
+
         /**
          * 上线
          */

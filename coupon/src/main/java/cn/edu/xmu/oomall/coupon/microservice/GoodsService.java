@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(value = "goods")
 public interface GoodsService {
 
-    @ApiOperation(value = "通过onsaleId返回productVo（1对1）")
+    @ApiOperation(value = "通过Id返回OnsaleVo")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "onsaleId", required = true, dataType = "Integer", paramType = "path")
+            @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Integer", paramType = "path")
     })
-    @GetMapping("/internal/onsales/{id}/products")
-    ReturnObject getProductByOnsaleId(@PathVariable("id") Long onsaleId);
+    @GetMapping("/internal/onsales/{id}")
+    ReturnObject getOnsaleById(@PathVariable("id") Long id);
 
 
     @ApiOperation(value = "通过productId返回OnsaleVo（1对多）")
@@ -28,14 +28,6 @@ public interface GoodsService {
     })
     @GetMapping("/internal/products/{id}/onsales")
     ReturnObject listOnsalesByProductId(@PathVariable("id") Long productId);
-
-
-    @ApiOperation(value = "通过Id返回OnsaleVo")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Integer", paramType = "path")
-    })
-    @GetMapping("/internal/onsales/{id}")
-    ReturnObject getOnsaleById(@PathVariable("id") Long id);
 
 }
 

@@ -4,9 +4,8 @@ import cn.edu.xmu.oomall.core.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
-import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
 import cn.edu.xmu.oomall.coupon.util.CreateObject;
-import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.util.JwtHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,10 +51,10 @@ public class CouponControllerTest {
     @Before
     public void init() throws Exception {
         // 返回ProductVo
-        ReturnObject<ProductVo> ProductVo1 = CreateObject.createProductVo(100L);
-        ReturnObject<ProductVo> ProductVo2 = CreateObject.createProductVo(10L);
-        Mockito.when(goodsService.getProductByOnsaleId(1L)).thenReturn(ProductVo1);
-        Mockito.when(goodsService.getProductByOnsaleId(2L)).thenReturn(ProductVo2);
+        ReturnObject<OnsaleVo> OnsaleVo1 = CreateObject.createOnsaleVo(100L);
+        ReturnObject<OnsaleVo> OnsaleVo2 = CreateObject.createOnsaleVo(10L);
+        Mockito.when(goodsService.getOnsaleById(3L)).thenReturn(OnsaleVo1);
+        Mockito.when(goodsService.getOnsaleById(4L)).thenReturn(OnsaleVo2);
 
         // 返回OnsaleVoList
         ReturnObject<List<OnsaleVo>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
@@ -79,7 +78,8 @@ public class CouponControllerTest {
 
         Mockito.when(redisUtil.get("couponactivity_11")).thenReturn("{\"id\":11,\"name\":null,\"shopId\":1,\"shopName\":null,\"couponTime\":null,\"beginTime\":null,\"endTime\":null,\"quantity\":null,\"quantityType\":null,\"validTerm\":null,\"imageUrl\":null,\"strategy\":null,\"state\":0,\"creatorId\":null,\"creatorName\":null,\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,17,19,2,20],\"gmtModified\":null}");
         Mockito.when(redisUtil.get("coupononsale_5")).thenReturn("{\"id\":5,\"activityId\":2,\"onsaleId\":21,\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,11,15,40,45],\"gmtModified\":null}");
-        adminToken = jwtHelper.createToken(1L,"admin",1L, 3600);
+
+        adminToken = jwtHelper.createToken(1L,"admin",0L, 1,3600);
     }
 
 
@@ -168,7 +168,7 @@ public class CouponControllerTest {
     @Transactional(rollbackFor = Exception.class)
     public void testUpdateCouponActivity() throws Exception {
         // 正常
-        String requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000\",\"endTime\": \"2021-11-11T15:40:50.000\",\"couponTime\": \"2021-11-10T15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        String requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11 15:40:45.000\",\"endTime\": \"2021-11-11 15:40:50.000\",\"couponTime\": \"2021-11-10 15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         String responseString = mvc.perform(put("/shops/1/couponactivities/3").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -177,7 +177,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 字段不合法
-        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-09T15:40:45.000\",\"endTime\": \"2021-11-10T15:40:50.000\",\"couponTime\": \"2021-11-01T15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-09 15:40:45.000\",\"endTime\": \"2021-11-10 15:40:50.000\",\"couponTime\": \"2021-11-01 15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         responseString = mvc.perform(put("/shops/1/couponactivities/-3").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -186,7 +186,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 开始时间晚于结束时间
-        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000\",\"endTime\": \"2021-11-10T15:40:50.000\",\"couponTime\": \"2021-11-10T15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11 15:40:45.000\",\"endTime\": \"2021-11-10 15:40:50.000\",\"couponTime\": \"2021-11-10 15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         responseString = mvc.perform(put("/shops/1/couponactivities/3").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -195,7 +195,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 不在草稿态
-        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000\",\"endTime\": \"2021-11-11T15:40:50.000\",\"couponTime\": \"2021-11-10T15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11 15:40:45.000\",\"endTime\": \"2021-11-11 15:40:50.000\",\"couponTime\": \"2021-11-10 15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         responseString = mvc.perform(put("/shops/1/couponactivities/6").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -239,7 +239,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":504,\"errmsg\":\"该优惠活动不属于该商店\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",2L, 1,3600);
         // 活动没有对应的商品
         responseString = mvc.perform(delete("/shops/2/couponactivities/12").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
@@ -248,7 +248,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",2L, 1,3600);
         // 不在草稿态
         responseString = mvc.perform(delete("/shops/2/couponactivities/1").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -261,7 +261,7 @@ public class CouponControllerTest {
     @Test
     @Transactional(rollbackFor = Exception.class)
     public void testInsertCouponOnsale() throws Exception {
-        adminToken = jwtHelper.createToken(1L,"admin",3L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",3L, 1,3600);
         // 正常
         String responseString = mvc.perform(post("/shops/3/couponactivities/2/onsales/1").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -278,7 +278,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",2L, 1,3600);
         // 活动不存在
         responseString = mvc.perform(post("/shops/2/couponactivities/15/onsales/1").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
@@ -288,7 +288,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
 
-        adminToken = jwtHelper.createToken(1L,"admin",3L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",3L, 1,3600);
         // onsale不存在
         responseString = mvc.perform(post("/shops/3/couponactivities/2/onsales/3915").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
@@ -298,7 +298,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
 
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",2L, 1,3600);
 
         // 活动和店铺不对应
         responseString = mvc.perform(post("/shops/2/couponactivities/11/onsales/1").header("authorization", adminToken))
@@ -308,7 +308,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":504,\"errmsg\":\"该优惠活动不属于该商店\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",3L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",3L, 1, 3600);
 
         // onsale和店铺不对应
         responseString = mvc.perform(post("/shops/3/couponactivities/2/onsales/2").header("authorization", adminToken))
@@ -318,7 +318,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":504,\"errmsg\":\"该Onsale不属于该商店\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
 
         // 数据库中已经有CouponOnsale表示该onsale已经参与了该活动
         responseString = mvc.perform(post("/shops/2/couponactivities/1/onsales/3912").header("authorization", adminToken))
@@ -328,7 +328,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":507,\"errmsg\":\"该onsale已经参与了该活动\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
 
         // 当前状态不允许
         responseString = mvc.perform(post("/shops/2/couponactivities/1/onsales/2").header("authorization", adminToken))
@@ -343,7 +343,7 @@ public class CouponControllerTest {
     @Test
     @Transactional(rollbackFor = Exception.class)
     public void testDeleteCouponOnsale() throws Exception {
-        adminToken = jwtHelper.createToken(1L,"admin",3L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",3L, 1, 3600);
         // 正常
         String responseString = mvc.perform(delete("/shops/3/coupononsale/5").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -352,7 +352,7 @@ public class CouponControllerTest {
         String expectString = "{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",3L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",3L, 1, 3600);
         // 字段不合法
         responseString = mvc.perform(delete("/shops/3/coupononsale/0").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
@@ -361,7 +361,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",3L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",3L, 1, 3600);
         // CouponSale不存在
         responseString = mvc.perform(delete("/shops/3/coupononsale/10000").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
@@ -370,7 +370,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",3L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",3L, 1, 3600);
         // 活动不存在
         responseString = mvc.perform(delete("/shops/3/coupononsale/3347").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
@@ -379,7 +379,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",1L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",1L, 1, 3600);
         // 该CouponOnSale参与的优惠活动不属于该商店
         responseString = mvc.perform(delete("/shops/1/coupononsale/12").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
@@ -388,7 +388,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":504,\"errmsg\":\"该CouponOnSale参与的优惠活动不属于该商店\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
         // 对应活动下线
         responseString = mvc.perform(delete("/shops/2/coupononsale/3307").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -403,7 +403,7 @@ public class CouponControllerTest {
     @Test
     @Transactional(rollbackFor = Exception.class)
     public void testUpdateCouponActivityToOnline() throws Exception {
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
         // 正常
         String responseString = mvc.perform(put("/shops/2/couponactivities/1/online").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -412,7 +412,7 @@ public class CouponControllerTest {
         String expectString = "{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",3L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",3L, 1, 3600);
         // 字段不合法
         responseString = mvc.perform(put("/shops/3/couponactivities/-1/online").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
@@ -421,7 +421,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
         // 活动不存在
         responseString = mvc.perform(put("/shops/2/couponactivities/15/online").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
@@ -430,7 +430,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",3L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",3L, 1, 3600);
         // 处于上线态
         responseString = mvc.perform(put("/shops/3/couponactivities/2/online").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -453,7 +453,7 @@ public class CouponControllerTest {
     @Transactional(rollbackFor = Exception.class)
     public void testUpdateCouponActivityToOffline() throws Exception {
 
-        adminToken = jwtHelper.createToken(1L,"admin",3L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",3L, 1, 3600);
         // 正常
         String responseString = mvc.perform(put("/shops/3/couponactivities/2/offline").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -463,7 +463,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
 
-        adminToken = jwtHelper.createToken(1L,"admin",1L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",1L, 1, 3600);
         // 字段不合法
         responseString = mvc.perform(put("/shops/1/couponactivities/-1/offline").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
@@ -472,7 +472,7 @@ public class CouponControllerTest {
         expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 3600);
+        adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
         // 处于下线态
         responseString = mvc.perform(put("/shops/2/couponactivities/1/offline").header("authorization", adminToken))
                 .andExpect(status().isOk())
