@@ -55,6 +55,7 @@ public class PieceFreightController {
             @ApiResponse(code =0, message = "成功"),
             @ApiResponse(code= 500,message = "服务器内部错误"),
             @ApiResponse(code= 504,message = "操作的资源id不存在"),
+            ApiResponse(code= 505,message = "操作的资源id不是自己的对象"),
             @ApiResponse(code = 996, message = "该运费模板类型与内容不符"),
             @ApiResponse(code = 997, message = "运费模板中该地区已经定义")})
     @Audit(departName = "shops")
@@ -123,6 +124,7 @@ public class PieceFreightController {
     @ApiResponses({
             @ApiResponse(code=0,message = "成功"),
             @ApiResponse(code= 500,message = "服务器内部错误"),
+            ApiResponse(code= 505,message = "操作的资源id不是自己的对象"),
             @ApiResponse(code=504,message = "操作的资源id不存在")    })
     @Audit(departName = "shops")
     @DeleteMapping("/shops/{shopId}/pieceItems/{id}")
@@ -156,6 +158,7 @@ public class PieceFreightController {
             @ApiResponse(code=0,message = "成功"),
             @ApiResponse(code= 500,message = "服务器内部错误"),
             @ApiResponse(code=504,message = "操作的资源id不存在"),
+            ApiResponse(code= 505,message = "操作的资源id不是自己的对象"),
             @ApiResponse(code = 999, message = "运费模板中该地区已经定义"),
 
     })
