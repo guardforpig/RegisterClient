@@ -1,14 +1,13 @@
 package cn.edu.xmu.oomall.freight.model.bo;
 
 
+import cn.edu.xmu.oomall.freight.model.vo.SimpleUserRetVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
-
 /**
- * @author Yitong  Gao
+ * @author 高艺桐 22920192204199
  */
 @Data
 @NoArgsConstructor
@@ -32,8 +31,8 @@ public class PieceFreightBo {
     private LocalDateTime gmtCreate;
     @ApiModelProperty(value = "修改时间")
     private LocalDateTime gmtModified;
-    private Long createdBy;
-    private String createName;
-    private Long modifiedBy;
-    private String modiName;
+    private Long creatorId;
+    private String creatorName;
+    private Long modifierId;
+    private String modifierName;
 }
