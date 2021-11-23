@@ -7,7 +7,6 @@ import cn.edu.xmu.oomall.freight.dao.FreightModelDao;
 import cn.edu.xmu.oomall.freight.dao.PieceFreightDao;
 import cn.edu.xmu.oomall.freight.model.bo.FreightModel;
 import cn.edu.xmu.oomall.freight.model.bo.PieceFreight;
-import cn.edu.xmu.oomall.freight.model.po.FreightModelPo;
 import cn.edu.xmu.oomall.freight.model.vo.PieceFreightRetVo;
 import cn.edu.xmu.oomall.freight.model.vo.PieceFreightVo;
 import com.github.pagehelper.PageInfo;
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 /**
- * @author Yitong  Gao
+ * @author 高艺桐 22920192204199
  */
 @Service
 public class PieceFreightService {
@@ -48,7 +47,11 @@ public class PieceFreightService {
             return new ReturnObject(ReturnNo.FREIGHT_WRONGTYPE);
 
         }
-        PieceFreight returnPieceFreight = (PieceFreight) pieceFreightDao.addPieceFreight(pieceFreight,userId, userName).getData();
+        ReturnObject returnObject= pieceFreightDao.addPieceFreight(pieceFreight,userId, userName);
+        PieceFreight returnPieceFreight=(PieceFreight)returnObject.getData();
+        if (returnPieceFreight == null) {
+            return returnObject;
+        }
         PieceFreightRetVo pieceFreightRetVo = (PieceFreightRetVo) Common.cloneVo(returnPieceFreight, PieceFreightRetVo.class);
         return new ReturnObject(pieceFreightRetVo);
     }
@@ -84,7 +87,6 @@ public class PieceFreightService {
 
     /**
      * 店家或管理员删掉件数运费模板明细
-     *
      * @param id
      * @return
      */
