@@ -40,7 +40,7 @@ public class PieceFreightControllerTest {
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(12L);
         vo.setFirstItems(1);
-        vo.setFirstItemPrice(10L);
+        vo.setFirstItemFreight(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -49,7 +49,7 @@ public class PieceFreightControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errno\":0,\"data\":{\"regionId\":12,\"firstItems\":1,\"firstItemFreight\":null,\"additionalItems\":1,\"additionalItemsPrice\":5,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
+        String expectedResponse = "{\"errno\":0,\"data\":{\"regionId\":12,\"firstItems\":1,\"firstItemFreight\":10,\"additionalItems\":1,\"additionalItemsPrice\":5,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, false);
 
     }
@@ -64,7 +64,7 @@ public class PieceFreightControllerTest {
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(1L);
         vo.setFirstItems(1);
-        vo.setFirstItemPrice(10L);
+        vo.setFirstItemFreight(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -87,7 +87,7 @@ public class PieceFreightControllerTest {
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(10L);
         vo.setFirstItems(1);
-        vo.setFirstItemPrice(10L);
+        vo.setFirstItemFreight(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -109,7 +109,7 @@ public class PieceFreightControllerTest {
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(10L);
         vo.setFirstItems(1);
-        vo.setFirstItemPrice(10L);
+        vo.setFirstItemFreight(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -132,7 +132,7 @@ public class PieceFreightControllerTest {
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(10L);
         vo.setFirstItems(1);
-        vo.setFirstItemPrice(10L);
+        vo.setFirstItemFreight(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -246,7 +246,7 @@ public class PieceFreightControllerTest {
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(1L);
         vo.setFirstItems(1);
-        vo.setFirstItemPrice(10L);
+        vo.setFirstItemFreight(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -270,7 +270,7 @@ public class PieceFreightControllerTest {
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(1L);
         vo.setFirstItems(1);
-        vo.setFirstItemPrice(10L);
+        vo.setFirstItemFreight(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -294,7 +294,7 @@ public class PieceFreightControllerTest {
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(1L);
         vo.setFirstItems(1);
-        vo.setFirstItemPrice(10L);
+        vo.setFirstItemFreight(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -318,7 +318,7 @@ public class PieceFreightControllerTest {
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(1L);
         vo.setFirstItems(1);
-        vo.setFirstItemPrice(10L);
+        vo.setFirstItemFreight(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
