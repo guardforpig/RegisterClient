@@ -1,34 +1,25 @@
 package cn.edu.xmu.oomall.freight.controller;
 
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.model.vo.PieceFreightVo;
 import cn.edu.xmu.privilegegateway.util.JwtHelper;
-import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class PieceFreightTest {
+public class PieceFreightControllerTest {
     @Autowired
     private MockMvc mvc;
     private static JwtHelper jwtHelper = new JwtHelper();
@@ -40,11 +31,11 @@ public class PieceFreightTest {
      */
     @Test
     public void createPieceFreightModelTest() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,2000);
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(1L);
         vo.setFirstItems(1);
-        vo.setFirstItemFreight(10L);
+        vo.setFirstItemPrice(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -64,11 +55,11 @@ public class PieceFreightTest {
      */
     @Test
     public void createPieceFreightModelTest1() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,2000);
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(10L);
         vo.setFirstItems(1);
-        vo.setFirstItemFreight(10L);
+        vo.setFirstItemPrice(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -87,11 +78,11 @@ public class PieceFreightTest {
      */
     @Test
     public void createPieceFreightModelTest2() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,2000);
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(10L);
         vo.setFirstItems(1);
-        vo.setFirstItemFreight(10L);
+        vo.setFirstItemPrice(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -109,11 +100,11 @@ public class PieceFreightTest {
      */
     @Test
     public void createPieceFreightModelTest3() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,2000);
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(10L);
         vo.setFirstItems(1);
-        vo.setFirstItemFreight(10L);
+        vo.setFirstItemPrice(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
@@ -131,7 +122,7 @@ public class PieceFreightTest {
      */
     @Test
     public void getPieceFreightTest() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,2000);
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
         String responseString = this.mvc.perform(get("/shops/0/freightmodels/2/pieceItems").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -148,7 +139,7 @@ public class PieceFreightTest {
     @Test
     public void deletePieceFreightTest() throws Exception
     {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,2000);
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
         String responseString = this.mvc.perform(delete("/shops/0/pieceItems/3").contentType("application/json;charset=UTF-8").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -158,17 +149,17 @@ public class PieceFreightTest {
     }
 
     /**
-     *
+     * 修改件数运费模板明细
      * @throws Exception
      */
 
     @Test
     public void modifyPieceFreightModelTest() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,2000);
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
         PieceFreightVo vo = new PieceFreightVo();
         vo.setRegionId(1L);
         vo.setFirstItems(1);
-        vo.setFirstItemFreight(10L);
+        vo.setFirstItemPrice(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
