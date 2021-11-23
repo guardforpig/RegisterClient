@@ -121,7 +121,7 @@ public class CouponActivityService {
         couponActivity.setShopId(shopId);
         couponActivity.setShopName(shop.getName());
         // 新建优惠时默认是草稿
-        couponActivity.setState(CouponActivity.State.EXAME.getCode().byteValue());
+        couponActivity.setState(CouponActivity.State.DRAFT.getCode().byteValue());
         Common.setPoCreatedFields(couponActivity,userId,userName);
         return couponActivityDao.addCouponActivity(couponActivity);
     }
@@ -146,8 +146,8 @@ public class CouponActivityService {
         if(state != null){
             criteria.andStateEqualTo(state);
         }
-        criteria.andCreatedByEqualTo(userId);
-        criteria.andCreateNameEqualTo(userName);
+        criteria.andCreatorIdEqualTo(userId);
+        criteria.andCreatorNameEqualTo(userName);
         return couponActivityDao.showCouponActivitiesByExample(example,page,pageSize);
     }
 

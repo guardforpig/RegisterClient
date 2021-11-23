@@ -18,11 +18,14 @@ import java.time.format.DateTimeFormatter;
 public class ModifyOnSaleVo {
 
 
+    @Min(0)
     private Long price;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @JsonFormat(shape = JsonFormat.Shape.STRING ,pattern="yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime beginTime;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @JsonFormat(shape = JsonFormat.Shape.STRING ,pattern="yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime endTime;
 

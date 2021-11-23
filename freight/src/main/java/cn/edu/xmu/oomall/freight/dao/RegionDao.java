@@ -4,7 +4,7 @@ import cn.edu.xmu.oomall.core.util.*;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.mapper.RegionPoMapper;
-import cn.edu.xmu.oomall.core.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import cn.edu.xmu.oomall.freight.model.bo.Region;
 import cn.edu.xmu.oomall.freight.model.po.RegionPo;
 import cn.edu.xmu.oomall.freight.model.po.RegionPoExample;

@@ -1,10 +1,6 @@
 package cn.edu.xmu.oomall.goods.dao;
 
-import cn.edu.xmu.oomall.core.model.VoObject;
-import cn.edu.xmu.oomall.core.util.RedisUtil;
-import cn.edu.xmu.oomall.core.util.ReturnNo;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.ProductDraftPo;

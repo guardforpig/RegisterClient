@@ -26,7 +26,7 @@ public enum ReturnNo {
     IMG_FORMAT_ERROR(508,"图片格式不正确"),
     IMG_SIZE_EXCEED(509,"图片大小超限"),
     PARAMETER_MISSED(510, "缺少必要参数"),
-    ACT_LATE_BEGINTIME(947, "开始时间不能晚于结束时间"),
+    LATE_BEGINTIME(947, "开始时间不能晚于结束时间"),
     ACT_LATE_PAYTIME(948, "尾款支付时间晚于活动结束时间"),
     ACT_EARLY_PAYTIME(949, "尾款支付时间早于活动开始时间"),
     COUPON_LATE_COUPONTIME(950,"优惠卷领卷时间晚于活动开始时间"),
@@ -47,7 +47,6 @@ public enum ReturnNo {
      **************************************************/
     ADDRESS_OUTLIMIT(601,"达到地址簿上限"),
 
-    SHAREACT_CONFLICT(605,"分享活动时段冲突"),
     ORDERITEM_NOTSHARED(606,"订单明细无分享记录"),
     ADVERTISEMENT_STATENOTALLOW(608,"广告状态禁止"),
 
@@ -55,20 +54,27 @@ public enum ReturnNo {
     /***************************************************
      *    订单模块错误码
      **************************************************/
-    ORDER_STATENOTALLOW(801,"订单状态禁止"),
+    ORDER_CHANGENOTALLOW(801,"订单地址费用变化"),
     REFUND_MORE(804,"退款金额超过支付金额"),
-    REGION_NOT_REACH(805,"该地区不可达"),
-
 
 
     /***************************************************
      *    商品模块错误码
      **************************************************/
-    GOODS_STOCK_NOTENOUGH(900,"商品规格库存不够"),
     GOODS_CATEGORY_SAME(901, "类目名称已存在"),
     GOODS_PRICE_CONFLICT(902,"商品销售时间冲突"),
     GOODS_CATEGORY_NOTALLOW(903, "不允许加入到一级分类"),
+    GOODS_STOCK_SHORTAGE(904,"库存不足"),
+    GOODS_ONSALE_NOTEFFECTIVE(905, "货品不在有效的销售状态和时间"),
 
+
+    COUPON_NOTBEGIN(909,"未到优惠卷领取时间"),
+    COUPON_FINISH(910,"优惠卷领罄"),
+    COUPON_END(911,"优惠卷活动终止"),
+    STATE_NOCHANGE(920,"状态未改变"),
+    CATEALTER_INVALID(921,"对SPU类别操作无效"),
+    ACTIVITY_NOTFOUND(924,"无符合条件的优惠活动"),
+    SHOP_NOTOPERABLE(925,"不可对该商铺进行操作"),
     COMMENT_EXISTED(941,"该订单条目已评论"),
 
     SHOP_HASDEPOSIT(966,"店铺仍有保证金未结算"),
@@ -77,6 +83,7 @@ public enum ReturnNo {
     SHOP_USER_HASSHOP(969,"用户已经有店铺"),
     COMMENT_USER_NOORDER(970,"用户没有购买此商品"),
 
+    FREIGHT_REGION_NOTREACH(994,"该地区不可达（包括暂停和不在配送范围）"),
     FREIGHT_REGIONOBSOLETE(995,"地区已废弃"),
     FREIGHT_WRONGTYPE(996,"该运费模板类型与内容不符"),
     FREIGHT_REGIONEXIST(997,"该运费模板中该地区已经定义"),
@@ -90,6 +97,15 @@ public enum ReturnNo {
         this.message = message;
     }
 
+    public static ReturnNo getByCode(int code1) {
+        ReturnNo[] all=ReturnNo.values();
+        for (ReturnNo returnNo :all) {
+            if (returnNo.code==code1) {
+                return returnNo;
+            }
+        }
+        return null;
+    }
     public int getCode() {
         return code;
     }

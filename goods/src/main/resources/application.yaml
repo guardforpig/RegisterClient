@@ -24,13 +24,19 @@ spring:
       enabled: true
       #最大请求文件的大小
       max-request-size: 10MB
+  cloud:
+    loadbalancer:
+      ribbon:
+        enable: true
+
 
   datasource:
-    url: jdbc:mysql://123.60.75.90:3306/oomall?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-    username: root
-    password: XMUwwf@4288
+
+    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8
+    username: dbuser
+    password: 12345678
     druid:
       #初始化时建立物理连接的个数
       initial-size: 3
@@ -40,6 +46,13 @@ spring:
       max-active: 100
       #获取连接时最大等待时间
       max-wait: 60000
+      #配置监控页面访问登录名及密码
+      stat-view-servlet:
+        login-username: admin
+        login-password: 123456
+        enabled: true
+        url-pattern: /druid/*
+
       filter:
         stat:
           #是否开启慢sql查询监控
@@ -47,7 +60,7 @@ spring:
           #慢SQL执行时间
           slow-sql-millis: 100
       validation-query: select 1
-
+    sql-script-encoding: UTF-8
 
   redis:
     # Redis数据库索引（默认为0）
@@ -72,7 +85,7 @@ spring:
       mode: always
       encoding: UTF-8
       username: dbuser
-      password: icJzHtqe9O7qGlIod91x0KFwPdL5hzDNNOTcx9xXSNcS6AN43jWRLIxFG3rdk/L+EFLZfcETeIg+RhA3ZbcE3Q==
+      password: 12345678
 
 mybatis:
   #po对象的包
@@ -89,10 +102,17 @@ mybatis:
 pagehelper:
   helper-dialect: mysql
 
-goodsdemo:
+
+oomall:
   goods:
-    # Goods对象在Redis中失效秒数
-    expiretime: 600
+    onsale:
+      expiretime: 10000
+    product:
+      expiretime: 10000
+
+
+
+
 
 
 
