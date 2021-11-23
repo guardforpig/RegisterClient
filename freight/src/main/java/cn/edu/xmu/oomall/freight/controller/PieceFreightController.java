@@ -58,8 +58,7 @@ public class PieceFreightController {
             @ApiResponse(code = 996, message = "该运费模板类型与内容不符"),
             @ApiResponse(code = 997, message = "运费模板中该地区已经定义")})
     @Audit(departName = "shops")
-    @RequestMapping(value = "/shops/{shopId}/freightmodels/{id}/pieceItems", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
-    @ResponseBody
+    @PostMapping("/shops/{shopId}/freightmodels/{id}/pieceItems")
     public Object addPieceFreight(@LoginUser Long loginUserId, @LoginName String loginUserName, @PathVariable(value = "shopId", required = true) Long shopId,
                                   @PathVariable(value = "id", required = true) Long id,
                                   @Validated @RequestBody PieceFreightVo pieceFreightVo,
