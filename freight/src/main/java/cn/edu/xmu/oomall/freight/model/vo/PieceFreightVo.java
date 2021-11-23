@@ -27,7 +27,7 @@ public class PieceFreightVo {
     @NotNull(message="首费不能为空")
     @Min(value = 0,message = "首费不能为负")
     @ApiModelProperty(value = "首费")
-    private Long firstItemPrice;
+    private Long firstItemFreight;
 
     @NotNull(message="续件数不能为空")
     @Min(value = 0,message = "续件数不能为负")
