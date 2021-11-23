@@ -129,41 +129,35 @@ public class GoodsDao {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
     }
-    public ReturnObject<Object> deleteGoodsById(Long shopId,Long id)
-    {
+    public ReturnObject<Object> deleteGoodsById(Long shopId,Long id) {
         GoodsPo goodsPo;
-        try
-        {
-            Goods goods=(Goods) redisUtils.get("g_"+id);
-            if(goods!=null)
-            {
-                redisUtils.del("g_"+id);
+        try {
+            Goods goods = (Goods) redisUtils.get("g_" + id);
+            if (goods != null) {
+                redisUtils.del("g_" + id);
             }
-            goodsPo=goodsPoMapper.selectByPrimaryKey(id);
-            if(goodsPo==null)
-            {
+            goodsPo = goodsPoMapper.selectByPrimaryKey(id);
+            if (goodsPo == null) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            if(!goodsPo.getShopId().equals(shopId))
-            {
+            if (!goodsPo.getShopId().equals(shopId)) {
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
-        ProductPoExample productPoExample=new ProductPoExample();
-        ProductPoExample.Criteria cr=productPoExample.createCriteria();
-        cr.andGoodsIdEqualTo(id);
-            List<ProductPo> productPoList=productPoMapper.selectByExample(productPoExample);
-            for(ProductPo productPo:productPoList)
-            {
-                    productPo.setGoodsId(Long.valueOf(0));
-                    productPoMapper.updateByPrimaryKey(productPo);
-            }
-
+            ProductPoExample productPoExample = new ProductPoExample();
+            ProductPoExample.Criteria cr = productPoExample.createCriteria();
+            cr.andGoodsIdEqualTo(id);
+            ProductPo productPo=new ProductPo();
+            productPo.setGoodsId(0L);
+            productPoMapper.updateByExampleSelective(productPo,productPoExample);
+            /*List<ProductPo> productPoList = productPoMapper.selectByExample(productPoExample);
+            for (ProductPo productPo : productPoList) {
+                productPo.setGoodsId(Long.valueOf(0));
+                productPoMapper.updateByPrimaryKey(productPo);
+            }*/
             goodsPoMapper.deleteByPrimaryKey(id);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             logger.error(e.getMessage());
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
         return new ReturnObject(ReturnNo.OK);
     }

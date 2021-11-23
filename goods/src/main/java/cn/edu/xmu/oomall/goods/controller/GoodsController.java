@@ -11,8 +11,10 @@ import cn.edu.xmu.oomall.goods.service.ProductService;
 import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
 import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
+import cn.edu.xmu.privilegegateway.aop.PageAspect;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
+import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -39,7 +41,6 @@ public class GoodsController {
     @Autowired
     ProductService productService;
 
-
     @ApiOperation(value="查看运费模板用到的商品")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "shopId", value = "商铺id", required = true, dataType = "Long", paramType = "path"),
@@ -55,12 +56,11 @@ public class GoodsController {
     })
     @GetMapping("shops/{shopId}/freightmodels/{fid}/products")
     @Audit(departName = "shops")
-    public Object getFreightProducts(@PathVariable("shopId") Long shopId,@PathVariable("fid") Long fid,@ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
-                                     @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,@LoginUser Long loginUserId, @LoginName String loginUserName)
+    public Object getFreightProducts(@PathVariable("shopId") Long shopId,@PathVariable("fid") Long fid,@RequestParam(value = "page", required = false) Integer page,
+                                     @RequestParam(value = "pageSize", required = false) Integer pageSize,@LoginUser Long loginUserId, @LoginName String loginUserName)
     {
-        pageSize = pageSize >= 1 ? pageSize : 10;
         ReturnObject<PageInfo<VoObject>> retVoObject =
-                productService.listProductsByFreightId(shopId,fid, pageNumber, pageSize);
+                productService.listProductsByFreightId(shopId,fid, page, pageSize);
         return Common.decorateReturnObject(Common.getPageRetObject(retVoObject));
     }
 

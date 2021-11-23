@@ -22,7 +22,7 @@
         <dependency>
             <groupId>cn.edu.xmu.privilegegateway</groupId>
             <artifactId>annotation</artifactId>
-            <scope>compile</scope>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
