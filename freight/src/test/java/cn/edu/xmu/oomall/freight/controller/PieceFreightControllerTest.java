@@ -49,7 +49,7 @@ public class PieceFreightControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = " {\"errno\":0,\"data\":{\"regionId\":12,\"firstItems\":1,\"firstItemPrice\":null,\"additionalItems\":1,\"additionalItemsPrice\":5,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
+        String expectedResponse = "{\"errno\":0,\"data\":{\"regionId\":12,\"firstItems\":1,\"firstItemFreight\":null,\"additionalItems\":1,\"additionalItemsPrice\":5,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, false);
 
     }
@@ -136,7 +136,7 @@ public class PieceFreightControllerTest {
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
-        String responseString = this.mvc.perform(post("/shops/0/freightmodels/1/pieceItems").contentType("application/json;charset=UTF-8")
+        String responseString = this.mvc.perform(post("/shops/0/freightmodels/6/pieceItems").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken).content(requestJSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -156,7 +156,7 @@ public class PieceFreightControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":3,\"regionId\":1,\"firstItems\":1,\"firstItemPrice\":null,\"additionalItems\":2,\"additionalItemsPrice\":5,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2021-11-22T14:47:21\",\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},{\"id\":4,\"regionId\":2,\"firstItems\":1,\"firstItemPrice\":null,\"additionalItems\":3,\"additionalItemsPrice\":4,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2021-11-22T14:47:21\",\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}}]},\"errmsg\":\"成功\"}";
+        String expectedResponse = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":3,\"regionId\":1,\"firstItems\":1,\"firstItemFreight\":10,\"additionalItems\":2,\"additionalItemsPrice\":5,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2021-11-22T14:47:21\",\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},{\"id\":4,\"regionId\":2,\"firstItems\":1,\"firstItemFreight\":10,\"additionalItems\":3,\"additionalItemsPrice\":4,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2021-11-22T14:47:21\",\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, false);
     }
     /**
