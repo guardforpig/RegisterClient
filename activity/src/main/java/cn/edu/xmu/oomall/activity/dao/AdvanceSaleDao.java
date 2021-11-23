@@ -4,7 +4,7 @@ import cn.edu.xmu.oomall.activity.mapper.AdvanceSalePoMapper;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSale;
 import cn.edu.xmu.oomall.activity.model.po.AdvanceSalePo;
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-
-import java.io.Serializable;
 
 /**
  * @author GXC 22920192204194
