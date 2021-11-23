@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static cn.edu.xmu.oomall.core.util.Common.*;
 /**
- * @author Yitong  Gao
+ * @author 高艺桐 22920192204199
  */
 @Api(value = "件数运费模板API", tags = "件数运费模板API")
 @RestController
@@ -58,7 +58,8 @@ public class PieceFreightController {
             @ApiResponse(code = 996, message = "该运费模板类型与内容不符"),
             @ApiResponse(code = 997, message = "运费模板中该地区已经定义")})
     @Audit(departName = "shops")
-    @PostMapping("/shops/{shopId}/freightmodels/{id}/pieceItems")
+    @RequestMapping(value = "/shops/{shopId}/freightmodels/{id}/pieceItems", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    @ResponseBody
     public Object addPieceFreight(@LoginUser Long loginUserId, @LoginName String loginUserName, @PathVariable(value = "shopId", required = true) Long shopId,
                                   @PathVariable(value = "id", required = true) Long id,
                                   @Validated @RequestBody PieceFreightVo pieceFreightVo,
@@ -163,10 +164,15 @@ public class PieceFreightController {
     @PutMapping("/shops/{shopId}/pieceItems/{id}")
     public Object updatePieceFreight(@LoginUser Long loginUserId, @LoginName String loginUserName, @PathVariable(value = "shopId", required = true) Long shopId,
                                      @PathVariable(value = "id", required = true) Long id,
-                                     @Validated @RequestBody PieceFreightVo pieceFreightVo){
+                                     @Validated @RequestBody PieceFreightVo pieceFreightVo,
+                                     BindingResult bindingResult){
 
         if(shopId!=0){
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
+        }
+        Object object = processFieldErrors(bindingResult, httpServletResponse);
+        if (object != null){
+            return object;
         }
         ReturnObject returnObject = pieceFreightService.updatePieceFreight(pieceFreightVo,id,loginUserId, loginUserName);
 
