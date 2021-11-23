@@ -22,7 +22,7 @@ public class PieceFreightBo {
     @ApiModelProperty(value = "首件数")
     private Integer firstItems;
     @ApiModelProperty(value = "首费")
-    private Long firstItemPrice;
+    private Long firstItemFreight;
     @ApiModelProperty(value = "续件数")
     private Integer additionalItems;
     @ApiModelProperty(value = "续费")
