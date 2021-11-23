@@ -4,11 +4,9 @@ import cn.edu.xmu.oomall.core.model.VoObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
-
 /**
- * @author Yitong  Gao
+ * @author 高艺桐 22920192204199
  */
 @Data
 @NoArgsConstructor
@@ -20,19 +18,19 @@ public class PieceFreightRetVo implements VoObject {
     @ApiModelProperty(value = "首件数")
     private Integer firstItems;
     @ApiModelProperty(value = "首费")
-    private Long firstItemFreight;
+    private Long firstItemPrice;
     @ApiModelProperty(value = "续件数")
     private Integer additionalItems;
     @ApiModelProperty(value = "续费")
     private Long additionalItemsPrice;
-    @ApiModelProperty(value = "创建者id")
-    private SimpleUserRetVo createdBy;
+    @ApiModelProperty(value = "创建者")
+    private SimpleUserRetVo creator;
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime gmtCreate;
     @ApiModelProperty(value = "修改时间")
     private LocalDateTime gmtModified;
-    @ApiModelProperty(value = "修改者id")
-    private SimpleUserRetVo modifiedBy;
+    @ApiModelProperty(value = "修改者")
+    private SimpleUserRetVo modifier;
 
     @Override
     public Object createVo() {
