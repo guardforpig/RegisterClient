@@ -71,7 +71,7 @@ public class PieceFreightController {
         if (object != null){
             return object;
         }
-        PieceFreight pieceFreight = (PieceFreight) Common.cloneVo(pieceFreightVo,WeightFreight.class);
+        PieceFreight pieceFreight = (PieceFreight) Common.cloneVo(pieceFreightVo,PieceFreight.class);
         pieceFreight.setFreightModelId(id);
         ReturnObject returnObject = pieceFreightService.addPieceFreight(loginUserName,loginUserId,pieceFreight);
         return Common.decorateReturnObject(returnObject);
