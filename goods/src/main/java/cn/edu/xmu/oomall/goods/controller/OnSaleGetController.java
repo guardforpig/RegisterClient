@@ -4,10 +4,17 @@ import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import cn.edu.xmu.oomall.goods.service.OnSaleGetService;
+import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
+import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 /**
  * @author Zijun Min 22920192204257
@@ -33,18 +40,12 @@ public class OnSaleGetController {
      */
     @Audit
     @GetMapping("shops/{shopId}/products/{id}/onsales")
-    public Object selectCertainOnsale(@LoginUser Long loginUser,@LoginName String loginUsername,
+    public Object selectCertainOnsale(@LoginUser Long loginUser, @LoginName String loginUsername,
                                       @PathVariable("shopId")Long shopId, @PathVariable("id")Long id,
                                       @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                       @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
-        loginUsername="admin";
-        loginUser=1L;
-        if(page<0||pageSize<0){
-            ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.FIELD_NOTVALID);
-            return Common.decorateReturnObject(returnObjectNotValid);
-        }
-        ReturnObject<PageInfo<VoObject>> returnObject=onSaleService.selectCertainOnsale(shopId,id,loginUser,loginUsername,page,pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(returnObject));
+        ReturnObject<PageInfo<VoObject>> returnObject=onSaleService.selectCertainOnsale(shopId,id,page,pageSize);
+        return Common.decorateReturnObject(returnObject);
     }
 
     /**
@@ -59,10 +60,7 @@ public class OnSaleGetController {
     @GetMapping("shops/{shopId}/onsales/{id}")
     public Object selectOnsale(@LoginUser Long loginUser,@LoginName String loginUsername,
                                @PathVariable("shopId")Long shopId, @PathVariable("id")Long id){
-        loginUsername="admin";
-        loginUser=1L;
-        ReturnObject returnObject;
-        returnObject = onSaleService.selectOnsale(shopId,id,loginUser,loginUsername);
+        ReturnObject returnObject = onSaleService.selectOnsale(shopId,id);
         return Common.decorateReturnObject(returnObject);
     }
 
@@ -74,16 +72,23 @@ public class OnSaleGetController {
      * @param pageSize
      * @return
      */
-    @GetMapping("internal/activities/{id}/onsales")
-    public Object selectActivities(@PathVariable("id")Long id,@RequestParam Byte state,
+    @Audit
+    @GetMapping("internal/shops/{did}/activities/{id}/onsales")
+    public Object selectActivities(@LoginUser Long loginUser, @LoginName String loginUsername,
+                                   @PathVariable("did")Long did, @PathVariable("id")Long id, @RequestParam(required = false) Byte state,
+                                   @RequestParam(required = false) LocalDateTime beginTime, @RequestParam(required = false) LocalDateTime endTime,
                                    @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                    @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
-        if(state<0||state>3){
+        if(state< OnSale.State.DRAFT.getCode()||state>OnSale.State.OFFLINE.getCode()){
             ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.FIELD_NOTVALID);
             return Common.decorateReturnObject(returnObjectNotValid);
         }
-        ReturnObject returnObject= onSaleService.selectActivities(id,state,page,pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(returnObject));
+        if(beginTime.isAfter(endTime)){
+            ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
+            return Common.decorateReturnObject(returnObjectNotValid);
+        }
+        ReturnObject returnObject= onSaleService.selectActivities(id,did,state,beginTime,endTime,page,pageSize);
+        return Common.decorateReturnObject(returnObject);
     }
 
     /**
@@ -94,16 +99,18 @@ public class OnSaleGetController {
      * @param pageSize
      * @return
      */
-    @GetMapping("internal/shareactivities/{id}/onsales")
-    public Object selectShareActivities(@PathVariable("id")Long id,@RequestParam Byte state,
+    @Audit
+    @GetMapping("internal/shops/{did}/shareactivities/{id}/onsales")
+    public Object selectShareActivities(@LoginUser Long loginUser,@LoginName String loginUsername,
+                                        @PathVariable("did")Long did, @PathVariable("id")Long id,@RequestParam(required = false) Byte state,
                                         @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                         @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
-        if(state<0||state>3){
+        if(state< OnSale.State.DRAFT.getCode()||state>OnSale.State.OFFLINE.getCode()){
             ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.FIELD_NOTVALID);
             return Common.decorateReturnObject(returnObjectNotValid);
         }
-        ReturnObject returnObject = onSaleService.selectShareActivities(id,state,page,pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(returnObject));
+        ReturnObject returnObject = onSaleService.selectShareActivities(did,id,state,page,pageSize);
+        return Common.decorateReturnObject(returnObject);
     }
 
     /**
@@ -111,26 +118,39 @@ public class OnSaleGetController {
      * @param id
      * @return 所有类型都会返回
      */
+    @Audit
     @GetMapping( "internal/onsales/{id}")
-    public Object selectFullOnsale(@PathVariable("id")Long id) {
-        ReturnObject returnObject;
-        returnObject = onSaleService.selectFullOnsale(id);
+    public Object selectFullOnsale(@LoginUser Long loginUser,@LoginName String loginUsername,@PathVariable("id")Long id) {
+        ReturnObject returnObject = onSaleService.selectFullOnsale(id);
         return Common.decorateReturnObject(returnObject);
     }
 
     /**
      * 管理员查询所有商品的价格浮动
-     * @param id
+     * @param loginUser
+     * @param loginUsername
+     * @param shopId
+     * @param productId
+     * @param beginTime
+     * @param endTime
      * @param page
      * @param pageSize
      * @return
      */
-    @GetMapping("internal/products/{id}/onsales")
-    public Object selectAnyOnsale(@PathVariable("id")Long id,
+    @GetMapping("internal/onsales")
+    public Object selectAnyOnsale( Long loginUser, String loginUsername,
+                                  @RequestParam(required = false) Long shopId,@RequestParam(required = false) Long productId,
+                                  @RequestParam(required = false) LocalDateTime beginTime, @RequestParam(required = false) LocalDateTime endTime,
                                   @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                   @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
-        ReturnObject returnObject= onSaleService.selectAnyOnsale(id,page,pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(returnObject));
+        loginUser=1L;
+        loginUsername="admin";
+        if(beginTime.isAfter(endTime)){
+            ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
+            return Common.decorateReturnObject(returnObjectNotValid);
+        }
+        ReturnObject returnObject= onSaleService.selectAnyOnsale(shopId,productId,beginTime,endTime,page,pageSize);
+        return Common.decorateReturnObject(returnObject);
     }
 
 

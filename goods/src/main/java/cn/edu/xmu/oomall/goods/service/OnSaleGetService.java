@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,14 +47,12 @@ OnSaleGetService {
      * 管理员查询特定商品的价格浮动
      * @param shopId
      * @param id
-     * @param loginUser
-     * @param loginUsername
      * @param page
      * @param pageSize
      * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<PageInfo<VoObject>> selectCertainOnsale(Long shopId, Long id, Long loginUser,String loginUsername,Integer page,Integer pageSize){
+    public ReturnObject selectCertainOnsale(Long shopId, Long id,Integer page,Integer pageSize){
         return onSaleDao.selectCertainOnsale(shopId,id,page,pageSize);
     }
 
@@ -61,12 +60,10 @@ OnSaleGetService {
      * 管理员查询特定价格浮动的详情
      * @param shopId
      * @param id
-     * @param loginUser
-     * @param loginUsername
      * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject selectOnsale(Long shopId, Long id, Long loginUser,String loginUsername){
+    public ReturnObject selectOnsale(Long shopId, Long id){
         ReturnObject returnObject=onSaleDao.selectOnSale(id);
         if(!returnObject.getCode().equals(ReturnNo.OK)) {
             return returnObject;
@@ -90,8 +87,9 @@ OnSaleGetService {
      * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject selectActivities(Long id,Byte state,Integer page,Integer pageSize){
-        return onSaleDao.selectActivities(id,state,page,pageSize);
+    public ReturnObject selectActivities(Long id, Long did, Byte state, LocalDateTime beginTime,
+                                         LocalDateTime endTime,Integer page, Integer pageSize){
+        return onSaleDao.selectActivities(id,did,state,beginTime,endTime,page,pageSize);
     }
 
     /**
@@ -103,8 +101,8 @@ OnSaleGetService {
      * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject selectShareActivities(Long id,Byte state,Integer page,Integer pageSize){
-        return onSaleDao.selectShareActivities(id,state,page,pageSize);
+    public ReturnObject selectShareActivities(Long did,Long id,Byte state,Integer page,Integer pageSize){
+        return onSaleDao.selectShareActivities(did,id,state,page,pageSize);
     }
 
     /**
@@ -123,7 +121,6 @@ OnSaleGetService {
         OnSaleRetVo onSaleRetVo=(OnSaleRetVo)Common.cloneVo(onSalePo,OnSaleRetVo.class);
         ReturnObject returnObjectProduct=productDao.getProductInfo(onSalePo.getProductId());
         if(returnObjectProduct.getCode().equals(ReturnNo.OK)){
-            //加入simpleonsale
             SimpleProductBo simpleProductBo=(SimpleProductBo) returnObjectProduct.getData();
             onSaleRetVo.setProduct(simpleProductBo);
         }
@@ -132,14 +129,17 @@ OnSaleGetService {
 
     /**
      * 管理员查询所有商品的价格浮动
-     * @param id
+     * @param shopId
+     * @param productId
+     * @param beginTime
+     * @param endTime
      * @param page
      * @param pageSize
      * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject selectAnyOnsale(Long id,Integer page,Integer pageSize){
-        ReturnObject<PageInfo<VoObject>> returnObject=onSaleDao.selectAnyOnsale(id,page,pageSize);
-        return returnObject;
+    public ReturnObject selectAnyOnsale(Long shopId,Long productId,LocalDateTime beginTime,
+                                        LocalDateTime endTime,Integer page,Integer pageSize){
+        return onSaleDao.selectAnyOnsale(shopId,productId,beginTime,endTime,page,pageSize);
     }
 }

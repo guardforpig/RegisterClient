@@ -1,12 +1,12 @@
 package cn.edu.xmu.oomall.goods.dao;
 
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.goods.model.bo.SimpleProductBo;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
-import cn.edu.xmu.oomall.goods.model.bo.SimpleProductBo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,23 +65,18 @@ public class ProductDao {
         catch(Exception e){
             return null;
         }
+
+
     }
 
     public ReturnObject getProductInfo(Long id){
         try{
-            String productKey="p_"+id;
-            SimpleProductBo simpleProductBoRedis=(SimpleProductBo)redisUtil.get(productKey);
-            if(simpleProductBoRedis!=null) {
-                return new ReturnObject(simpleProductBoRedis);
+            ProductPo productPo = productMapper.selectByPrimaryKey(id);
+            if(productPo==null){
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }else{
-                ProductPo productPo = productMapper.selectByPrimaryKey(id);
-                if(productPo==null){
-                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-                }else{
-                    SimpleProductBo simpleProductBo = (SimpleProductBo) Common.cloneVo(productPo, SimpleProductBo.class);
-                    redisUtil.set(productKey,simpleProductBo,productTimeout);
-                    return new ReturnObject(simpleProductBo);
-                }
+                SimpleProductBo simpleProductBo = (SimpleProductBo) Common.cloneVo(productPo, SimpleProductBo.class);
+                return new ReturnObject(simpleProductBo);
             }
         }catch (Exception e){
             logger.error(e.getMessage());

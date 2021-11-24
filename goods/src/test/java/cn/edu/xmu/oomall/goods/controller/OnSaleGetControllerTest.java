@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.goods.controller;
 
+import cn.edu.xmu.privilegegateway.util.JwtHelper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -7,6 +8,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OnSaleGetControllerTest {
-    private static String adminToken="0";
-    private static String userToken="0";
+    private static JwtHelper jwtHelper = new JwtHelper();
+    private static String adminToken = jwtHelper.createToken(1L, "admin", 0L, 1, 3600);
 
     @Autowired
     private MockMvc mvc;
@@ -39,34 +41,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":1,\"page\":1,\"list\":[{\"id\":1,\"price\":53295,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":26}]},\"errmsg\":\"成功\"}\n";
-        JSONAssert.assertEquals(expectedJson, responseJson, false);
-    }
-
-    @Test
-    @Transactional
-    public void selectCertainOnsale_fieldNotValid() throws Exception {
-        //正常情况
-        String responseJson=this.mvc.perform(get("/shops/10/products/1550/onsales?page=-1&pageSize=10")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":503,\"errmsg\":\"字段不合法\"}";
-        JSONAssert.assertEquals(expectedJson, responseJson, false);
-    }
-
-    @Test
-    @Transactional
-    public void selectOnsale_noRedis() throws Exception {
-        //正常情况
-        String responseJson=this.mvc.perform(get("/shops/8/onsales/5")
-                .header("authorization", userToken)
-                .contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"id\":5,\"price\":3280,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":67},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"price\":53295,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":26,\"activityId\":null,\"shareActId\":null,\"type\":0}]},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -75,7 +50,7 @@ public class OnSaleGetControllerTest {
     public void selectOnsale() throws Exception {
         //正常情况
         String responseJson=this.mvc.perform(get("/shops/8/onsales/5")
-                .header("authorization", userToken)
+                .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -87,9 +62,8 @@ public class OnSaleGetControllerTest {
     @Test
     @Transactional
     public void selectOnsale_noResource() throws Exception {
-        //正常情况
         String responseJson=this.mvc.perform(get("/shops/8/onsales/5000")
-                .header("authorization", userToken)
+                .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -97,11 +71,12 @@ public class OnSaleGetControllerTest {
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
-   @Test
+    @Test
     @Transactional
     public void selectActivities() throws Exception {
         //正常情况
-        String responseJson=this.mvc.perform(get("/internal/activities/3/onsales?state=1&page=1&pageSize=10")
+        String responseJson=this.mvc.perform(get("/internal/shops/5/activities/3/onsales?state&beginTime&endTime&page&pageSize")
+                .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -113,8 +88,8 @@ public class OnSaleGetControllerTest {
     @Test
     @Transactional
     public void selectActivities_fieldNotValid() throws Exception {
-        //正常情况
-        String responseJson=this.mvc.perform(get("/internal/activities/3/onsales?state=10&page=1&pageSize=10")
+        //state不合法
+        String responseJson=this.mvc.perform(get("/internal/shops/5/activities/3/onsales?state=10&beginTime&endTime&page&pageSize")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -125,14 +100,33 @@ public class OnSaleGetControllerTest {
 
     @Test
     @Transactional
+    public void selectActivities_beginLaterEnd() throws Exception {
+        //开始时间晚于结束时间
+        String responseJson=this.mvc.perform(get("/internal/shops/5/activities/3/onsales")
+                .param("state","")
+                .param("beginTime","")
+                .param("endTime","")
+                .param("page","")
+                .param("pageSize","")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header("authorization", adminToken))
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectedJson="{\"errno\":503,\"errmsg\":\"字段不合法\"}";
+        JSONAssert.assertEquals(expectedJson, responseJson, false);
+    }
+
+    @Test
+    @Transactional
     public void selectShare() throws Exception {
         //正常情况
-        String responseJson=this.mvc.perform(get("/internal/shareactivities/9/onsales?state=1&page=1&pageSize=10")
+        String responseJson=this.mvc.perform(get("/internal/shops/2/shareactivities/7/onsales?state=1&page=1&pageSize=10")
+                .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":60,\"price\":1833,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":27},{\"id\":61,\"price\":1082,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":21}]},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":33,\"price\":6035,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":21,\"activityId\":9,\"shareActId\":7,\"type\":3}]},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -140,7 +134,7 @@ public class OnSaleGetControllerTest {
     @Transactional
     public void selectShare_fieldNotValid() throws Exception {
         //正常情况
-        String responseJson=this.mvc.perform(get("/internal/shareactivities/9/onsales?state=10&page=1&pageSize=10")
+        String responseJson=this.mvc.perform(get("/internal/shops/2/shareactivities/9/onsales?state=10&page=1&pageSize=10")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -154,6 +148,7 @@ public class OnSaleGetControllerTest {
     public void selectFullOnsales() throws Exception {
         //正常情况
         String responseJson=this.mvc.perform(get("/internal/onsales/1")
+                .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -166,8 +161,8 @@ public class OnSaleGetControllerTest {
     @Transactional
     public void selectAnyOnsale() throws Exception {
         //正常情况
-        String responseJson=this.mvc.perform(get("/internal/products/1550/onsales?page=1&pageSize=10")
-                .header("authorization", userToken)
+        String responseJson=this.mvc.perform(get("/internal/onsales?shopId=2&productId&beginTime&endTime&page=1&pageSize=10")
+                .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))

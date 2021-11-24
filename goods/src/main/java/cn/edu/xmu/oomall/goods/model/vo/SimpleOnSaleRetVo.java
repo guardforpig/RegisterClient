@@ -1,19 +1,20 @@
 package cn.edu.xmu.oomall.goods.model.vo;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
-import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 /**
- * @author yujie lin
- * @date 2021/11/10
- */
+ * @author Zijun Min
+ * @description
+ * @createTime 2021/11/24 15:21
+ **/
 @Data
-public class NewOnSaleRetVo{
+@NoArgsConstructor
+public class SimpleOnSaleRetVo implements VoObject {
     private Long id;
 
     private Long price;
@@ -26,4 +27,19 @@ public class NewOnSaleRetVo{
 
     private Integer quantity;
 
+    private Long activityId;
+
+    private Long shareActId;
+
+    private Byte type;
+
+    @Override
+    public Object createVo() {
+        return this;
+    }
+
+    @Override
+    public Object createSimpleVo() {
+        return this;
+    }
 }
