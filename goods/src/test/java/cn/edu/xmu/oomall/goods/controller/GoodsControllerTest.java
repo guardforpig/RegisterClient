@@ -79,7 +79,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expected="{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"id\":510,\"name\":\"小米\",\"productList\":null}}";
+        String expected="{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"name\":\"小米\"}}";
         JSONAssert.assertEquals(expected,responseString,true);
 
     }
@@ -158,7 +158,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expected="{\"errno\":0,\"data\":{\"code\":\"FIELD_NOTVALID\",\"errmsg\":\"字段不合法\",\"data\":null},\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":0,\"data\":{\"code\":\"RESOURCE_ID_OUTSCOPE\",\"errmsg\":\"该商品不属于该商铺\",\"data\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test

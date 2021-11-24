@@ -98,7 +98,7 @@ public class GoodsDao {
             Goods goods = new Goods();
             GoodsPo goodsPo = goodsPoMapper.selectByPrimaryKey(id);
             if (goodsPo == null) {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"商品id不存在");
             }
             if (!goodsPo.getShopId().equals(shopId)) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE, "该商品不属于该商铺");
@@ -130,10 +130,10 @@ public class GoodsDao {
             }
             goodsPo = goodsPoMapper.selectByPrimaryKey(id);
             if (goodsPo == null) {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"商品id不存在");
             }
             if (!goodsPo.getShopId().equals(shopId)) {
-                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+                return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该商品不属于该商铺");
             }
             ProductPoExample productPoExample = new ProductPoExample();
             ProductPoExample.Criteria cr = productPoExample.createCriteria();

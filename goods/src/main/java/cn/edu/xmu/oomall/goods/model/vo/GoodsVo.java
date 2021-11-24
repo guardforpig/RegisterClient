@@ -22,9 +22,8 @@ import java.util.List;
 @AllArgsConstructor
 @ApiModel(description="商品视图对象")
 public class GoodsVo {
-    private Long id;
+    //private Long id;
     @NotBlank(message="商品名称不能为空")
     private String name;
     private List<Product> productList;
-
 }

@@ -121,7 +121,7 @@ public class ProductDao {
             return new ReturnObject<Product>((Product)cloneVo(productPo,Product.class));
         }else
         {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
         }
     }catch(Exception e)
     {
@@ -142,7 +142,7 @@ public class ProductDao {
             productPo=productPoMapper.selectByPrimaryKey(id);
             if(productPo==null)
             {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
             }
         if(productPo.getState().equals((byte) Product.ProductState.OFFSHELF.getCode()))
         {
@@ -151,7 +151,7 @@ public class ProductDao {
         }
         else
         {
-            return new ReturnObject(ReturnNo.STATENOTALLOW);
+            return new ReturnObject(ReturnNo.STATENOTALLOW,"当前状态不允许上架商品");
         }
         }catch(Exception e)
         {
@@ -171,7 +171,7 @@ public class ProductDao {
             productPo=productPoMapper.selectByPrimaryKey(id);
             if(productPo==null)
             {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
             }
         if(productPo.getState().equals((byte) Product.ProductState.ONSHELF.getCode()))
         {
@@ -181,7 +181,7 @@ public class ProductDao {
         }
         else
         {
-            return new ReturnObject(ReturnNo.STATENOTALLOW);
+            return new ReturnObject(ReturnNo.STATENOTALLOW,"当前状态不允许下架商品");
         }
     }catch (Exception e)
     {
@@ -202,7 +202,7 @@ public class ProductDao {
             productPo=productPoMapper.selectByPrimaryKey(id);
             if(productPo==null)
             {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"商品id不存在");
             }
         if(productPo.getState().equals((byte) Product.ProductState.BANNED.getCode()))
         {
@@ -213,7 +213,7 @@ public class ProductDao {
         }
         else
         {
-            return new ReturnObject(ReturnNo.STATENOTALLOW);
+            return new ReturnObject(ReturnNo.STATENOTALLOW,"当前状态不允许解禁商品");
         }
     }catch (Exception e)
     {
@@ -233,7 +233,7 @@ public class ProductDao {
             productPo=productPoMapper.selectByPrimaryKey(id);
             if(productPo==null)
             {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"商品id不存在");
             }
         if(productPo.getState().equals((byte) Product.ProductState.ONSHELF.getCode())||productPo.getState().equals((byte) Product.ProductState.OFFSHELF.getCode()))
         {
@@ -243,7 +243,7 @@ public class ProductDao {
         }
         else
         {
-            return new ReturnObject(ReturnNo.STATENOTALLOW);
+            return new ReturnObject(ReturnNo.STATENOTALLOW,"当前状态不允许禁售商品");
         }
     }catch (Exception e)
     {

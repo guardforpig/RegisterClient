@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.GoodsDao;
 import cn.edu.xmu.oomall.goods.model.bo.Goods;
 import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
+import cn.edu.xmu.oomall.goods.model.vo.CreateGoodsVo;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,13 @@ public class GoodsService {
         Goods goods=(Goods)cloneVo(goodsVo,Goods.class);
         Common.setPoCreatedFields(goods,loginUserId,loginUserName);
         goods.setShopId(shopId);
-        return new ReturnObject(goodsDao.createNewGoods(goods).getData());
+        ReturnObject<Goods> ret=goodsDao.createNewGoods(goods);
+        if(ret.getData()!=null){
+            CreateGoodsVo goodsVo1=(CreateGoodsVo)Common.cloneVo(ret.getData(),CreateGoodsVo.class);
+            return new ReturnObject(goodsVo1);
+        }else{
+            return ret;
+        }
     }
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject deleteGoods(Long shopId,Long id)
@@ -48,7 +55,13 @@ public class GoodsService {
     @Transactional(readOnly = true,rollbackFor=Exception.class)
     public ReturnObject searchById(Long shopId,Long id)
     {
-        return goodsDao.searchGoodsById(shopId,id);
+        ReturnObject<Goods> ret=goodsDao.searchGoodsById(shopId,id);
+        if(ret.getData()!=null){
+            GoodsVo goodsVo=(GoodsVo)Common.cloneVo(ret.getData(),GoodsVo.class);
+            return new ReturnObject(goodsVo);
+        }else{
+            return ret;
+        }
     }
 
 }
