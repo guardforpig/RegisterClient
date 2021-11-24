@@ -2,7 +2,7 @@ package cn.edu.xmu.oomall.core.util;
 
 
 import cn.edu.xmu.oomall.core.util.bo.Category;
-import cn.edu.xmu.oomall.core.util.vo.CategoryRetVo;
+import cn.edu.xmu.oomall.core.util.bo.CategoryRetVo;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -40,7 +40,6 @@ class CloneVoTest {
         assertEquals(categoryRetVo.getCreator().getName(),"CreateName");
         assertEquals(categoryRetVo.getModifier().getId(),3L);
         assertEquals(categoryRetVo.getModifier().getName(),"ModiName");
-        assertEquals(categoryRetVo.getCommissionRate(),null);
         assertEquals(categoryRetVo.getGmtCreate(),gmtCreate);
         assertEquals(categoryRetVo.getGmtModified(),gmtModified);
     }
