@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
-public class ShareActivityBo {
+public class ShareActivityBo implements Serializable {
     private Long id;
     private Long shopId;
     private String shopName;
@@ -25,10 +26,10 @@ public class ShareActivityBo {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
     private LocalDateTime endTime;
     private Byte state;
-    private Long createdBy;
-    private String createName;
-    private Long modifiedBy;
-    private String modiName;
+    private Long creatorId;
+    private String creatorName;
+    private Long modifierId;
+    private String modifierName;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
     private LocalDateTime gmtCreate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")

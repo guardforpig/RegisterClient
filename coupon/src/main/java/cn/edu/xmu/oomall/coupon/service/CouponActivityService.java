@@ -146,8 +146,8 @@ public class CouponActivityService {
         if(state != null){
             criteria.andStateEqualTo(state);
         }
-        criteria.andCreatedByEqualTo(userId);
-        criteria.andCreateNameEqualTo(userName);
+        criteria.andCreatorIdEqualTo(userId);
+        criteria.andCreatorNameEqualTo(userName);
         return couponActivityDao.showCouponActivitiesByExample(example,page,pageSize);
     }
 
