@@ -85,8 +85,7 @@ public class GoodsController {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID,"传入的RequestBody参数格式不合法"));
         }
         ReturnObject ro = goodsService.insertGoods(shopId,goodsVo,loginUserId,loginUserName);
-        return Common.getRetObject(ro);
-
+        return Common.decorateReturnObject(ro);
     }
 
     @ApiOperation(value="修改特定商品集合")
@@ -130,7 +129,7 @@ public class GoodsController {
     @Audit(departName = "shops")
     public Object searchGoods(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
-        return Common.getRetObject(goodsService.searchById(shopId,id));
+        return Common.decorateReturnObject(goodsService.searchById(shopId,id));
     }
 
     @ApiOperation(value="删除特定商品集合")
@@ -169,7 +168,7 @@ public class GoodsController {
     @Audit(departName = "shops")
     public Object publishProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
-        return Common.getRetObject(productService.pulishProduct(shopId,id));
+        return Common.decorateReturnObject(productService.pulishProduct(shopId,id));
     }
 
     @ApiOperation(value="上架货品")
