@@ -53,8 +53,7 @@ public class PieceFreightDao {
                 }
             }
             pieceFreightPoMapper.insertSelective(pieceFreightPo);
-            PieceFreightPo newPieceFreightPo = pieceFreightPoMapper.selectByPrimaryKey(pieceFreightPo.getId());
-            return new ReturnObject((Common.cloneVo(newPieceFreightPo, PieceFreight.class)));
+            return new ReturnObject((Common.cloneVo(pieceFreightPo, PieceFreight.class)));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
