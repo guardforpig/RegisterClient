@@ -11,6 +11,7 @@ import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
+import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVoInfo;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -197,13 +199,6 @@ public class CouponActivityService {
 /**
  * @author qingguo Hu 22920192204208
  */
-    /**
-     *
-     * @param couponActivityId
-     * @param pageNumber
-     * @param pageSize
-     * @return
-     */
     @Transactional(readOnly = true)
     public ReturnObject listProductsByCouponActivityId(Long couponActivityId, Integer pageNumber, Integer pageSize) {
         // 判断活动存在与否
@@ -213,59 +208,55 @@ public class CouponActivityService {
         }
 
         // 根据活动找出活动对应的CouponOnsale列表
-        ReturnObject<PageInfo<Object>> retPageInfo =
+        ReturnObject retPageInfo =
                 couponActivityDao.listCouponOnsaleByActivityId(couponActivityId, pageNumber, pageSize);
         if (!retPageInfo.getCode().equals(ReturnNo.OK)) {
             return retPageInfo;
         }
 
         // 根据CouponOnsale列表找出每一个CouponOnsale对应的OnsaleVo，并获得OnsaleVo对应的ProductVo
-        List<Object> couponOnsaleList = retPageInfo.getData().getList();
+        Map<String, Object> retMap = (Map<String, Object>) retPageInfo.getData();
+        List<CouponOnsale> couponOnsaleList = (List<CouponOnsale>) retMap.get("list");
         List<Object> productVoList = new ArrayList<>();
-        for (Object couponOnsale : couponOnsaleList) {
+        for (CouponOnsale couponOnsale : couponOnsaleList) {
             ReturnObject<OnsaleVo> retOnsaleVo =
-                    goodsService.getOnsaleById(((CouponOnsale)couponOnsale).getOnsaleId());
+                    goodsService.getOnsaleById(couponOnsale.getOnsaleId());
             if (retOnsaleVo.getCode().equals(ReturnNo.OK)) {
                 productVoList.add(retOnsaleVo.getData().getProduct());
             }
         }
 
-        retPageInfo.getData().setList(productVoList);
+        retMap.put("list", productVoList);
         return retPageInfo;
     }
 
 
-    /**
-     *
-     * @param productId
-     * @param pageNumber
-     * @param pageSize
-     * @return
-     */
     @Transactional(readOnly = true)
     public ReturnObject listCouponActivitiesByProductId(Long productId, Integer pageNumber, Integer pageSize) {
         // 找到Product对应的所有OnsaleVo
-        ReturnObject<List<Object>> retOnsaleVoList = goodsService.listOnsalesByProductId(productId);
-        if (!retOnsaleVoList.getCode().equals(ReturnNo.OK)) {
-            return retOnsaleVoList;
+        ReturnObject<List<Object>> retOnsaleVoPageInfo = goodsService.listOnsale(productId, pageNumber, 100);
+        if (!retOnsaleVoPageInfo.getCode().equals(ReturnNo.OK)) {
+            return retOnsaleVoPageInfo;
         }
 
         // 获取所有Onsale的id，存在列表里
-        List<Object> onsaleVoList = retOnsaleVoList.getData();
+        Map<String, Object> retOnsaleMap = (Map<String, Object>) retOnsaleVoPageInfo.getData();
+        List<OnsaleVo> onsaleVoList = (List<OnsaleVo>) retOnsaleMap.get("list");
         List<Long> onsaleIdList = new ArrayList<>();
-        for (Object onsaleVo : onsaleVoList) {
-            onsaleIdList.add(((OnsaleVo) onsaleVo).getId());
+        for (OnsaleVo onsaleVo : onsaleVoList) {
+            onsaleIdList.add(onsaleVo.getId());
         }
 
         // 根据OnsaleId的列表，找出所有的CouponOnsale
         ReturnObject<PageInfo<CouponOnsale>> retCouponOnsaleListPage =
-                couponActivityDao.listCouponOnsaleByIdList(onsaleIdList, 1, 0);
+                couponActivityDao.listCouponOnsaleByIdList(onsaleIdList, pageNumber, 100);
         if (!retCouponOnsaleListPage.getCode().equals(ReturnNo.OK)) {
             return retCouponOnsaleListPage;
         }
 
         // 根据所有CouponOnsale，找出对应所有的CouponActivityId，存在列表里
-        List<CouponOnsale> couponOnsaleList = retCouponOnsaleListPage.getData().getList();
+        Map<String, Object> retCouponOnsaleMap = (Map<String, Object>) retCouponOnsaleListPage.getData();
+        List<CouponOnsale> couponOnsaleList = (List<CouponOnsale>) retCouponOnsaleMap.get("list");
         List<Long> couponActivityIdList = new ArrayList<>();
         for (CouponOnsale couponOnsale : couponOnsaleList) {
             couponActivityIdList.add(couponOnsale.getActivityId());
@@ -279,26 +270,18 @@ public class CouponActivityService {
         }
 
         // 将所有的CouponActivity转成Vo，返回
-        List<Object> couponActivityList = retPageInfo.getData().getList();
+        Map<String, Object> retMap = (Map<String, Object>) retPageInfo.getData();
+        List<CouponActivity> couponActivityList = (List<CouponActivity>) retMap.get("list");
         List<Object> couponActivityVoList = new ArrayList<>();
         for (Object couponActivity : couponActivityList) {
             couponActivityVoList.add(Common.cloneVo(couponActivity, CouponActivityRetVo.class));
         }
 
-        retPageInfo.getData().setList(couponActivityVoList);
+        retMap.put("list", couponActivityVoList);
         return retPageInfo;
     }
 
-    /**
-     *
-     * @param userId
-     * @param userName
-     * @param shopId
-     * @param couponActivityId
-     * @param couponActivityVo
-     * @param newState
-     * @return
-     */
+
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject updateCouponActivity(Long userId, String userName, Long shopId, Long couponActivityId, CouponActivityVo couponActivityVo, CouponActivity.State newState) {
         // 判断活动存在与否
@@ -357,15 +340,7 @@ public class CouponActivityService {
         }
     }
 
-    /**
-     *
-     * @param userId
-     * @param userName
-     * @param shopId
-     * @param couponActivityId
-     * @param onsaleId
-     * @return
-     */
+
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject insertCouponOnsale(Long userId, String userName, Long shopId, Long couponActivityId, Long onsaleId) {
         // 判断CouponActivity是否存在
@@ -412,14 +387,7 @@ public class CouponActivityService {
         return couponActivityDao.insertCouponOnsale(newCouponOnsale);
     }
 
-    /**
-     *
-     * @param userId
-     * @param userName
-     * @param shopId
-     * @param couponActivityId
-     * @return
-     */
+
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject deleteCouponActivity(Long userId, String userName, Long shopId, Long couponActivityId) {
         // 判断CouponActivity是否存在
@@ -445,7 +413,8 @@ public class CouponActivityService {
         }
 
         //将优惠活动关联的商品一并删除
-        List<CouponOnsale> couponOnsaleList = retCouponOnsalePageInfo.getData().getList();
+        Map<String, Object> retOnsaleMap = (Map<String, Object>) retCouponOnsalePageInfo.getData();
+        List<CouponOnsale> couponOnsaleList = (List<CouponOnsale>) retOnsaleMap.get("list");
         for (CouponOnsale couponOnsale : couponOnsaleList) {
             couponActivityDao.deleteCouponOnsaleById(couponOnsale.getId());
         }
@@ -454,14 +423,7 @@ public class CouponActivityService {
         return couponActivityDao.deleteCouponActivityById(couponActivityId);
     }
 
-    /**
-     *
-     * @param userId
-     * @param userName
-     * @param shopId
-     * @param couponOnsaleId
-     * @return
-     */
+
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject deleteCouponOnsale(Long userId, String userName, Long shopId, Long couponOnsaleId) {
         // 判断CouponOnsale是否存在

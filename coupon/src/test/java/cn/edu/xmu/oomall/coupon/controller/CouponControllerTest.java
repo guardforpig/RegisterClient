@@ -58,13 +58,13 @@ public class CouponControllerTest {
 
         // 返回OnsaleVoList
         ReturnObject<List<OnsaleVo>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
-        Mockito.when(goodsService.listOnsalesByProductId(1550L)).thenReturn(onsaleVoList1);
+        Mockito.when(goodsService.listOnsale(1550L,1, 100)).thenReturn(onsaleVoList1);
         ReturnObject<List<OnsaleVo>> onsaleVoList2 = CreateObject.createOnsaleVoList2();
-        Mockito.when(goodsService.listOnsalesByProductId(10000L)).thenReturn(onsaleVoList2);
+        Mockito.when(goodsService.listOnsale(10000L, 1, 100)).thenReturn(onsaleVoList2);
         ReturnObject<List<OnsaleVo>> onsaleVoList3 = CreateObject.createOnsaleVoList3();
-        Mockito.when(goodsService.listOnsalesByProductId(1549L)).thenReturn(onsaleVoList3);
+        Mockito.when(goodsService.listOnsale(1549L,1, 100)).thenReturn(onsaleVoList3);
         ReturnObject<List<OnsaleVo>> onsaleVoList4 = CreateObject.createOnsaleVoList4();
-        Mockito.when(goodsService.listOnsalesByProductId(1548L)).thenReturn(onsaleVoList4);
+        Mockito.when(goodsService.listOnsale(1548L, 1, 100)).thenReturn(onsaleVoList4);
 
         // 返回OnsaleVo
         ReturnObject<OnsaleVo> onsaleVo1 = CreateObject.createOnsaleVo1();
@@ -76,8 +76,10 @@ public class CouponControllerTest {
         ReturnObject<OnsaleVo> onsaleVo4 = CreateObject.createOnsaleVo4();
         Mockito.when(goodsService.getOnsaleById(3912L)).thenReturn(onsaleVo4);
 
-        Mockito.when(redisUtil.get("couponactivity_11")).thenReturn("{\"id\":11,\"name\":null,\"shopId\":1,\"shopName\":null,\"couponTime\":null,\"beginTime\":null,\"endTime\":null,\"quantity\":null,\"quantityType\":null,\"validTerm\":null,\"imageUrl\":null,\"strategy\":null,\"state\":0,\"creatorId\":null,\"creatorName\":null,\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,17,19,2,20],\"gmtModified\":null}");
-        Mockito.when(redisUtil.get("coupononsale_5")).thenReturn("{\"id\":5,\"activityId\":2,\"onsaleId\":21,\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,11,15,40,45],\"gmtModified\":null}");
+//        Mockito.when(redisUtil.get("couponactivity_11")).thenReturn("{\"id\":11,\"name\":null,\"shopId\":1,\"shopName\":null,\"couponTime\":null,\"beginTime\":null,\"endTime\":null,\"quantity\":null,\"quantityType\":null,\"validTerm\":null,\"imageUrl\":null,\"strategy\":null,\"state\":0,\"creatorId\":null,\"creatorName\":null,\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,17,19,2,20],\"gmtModified\":null}");
+//        Mockito.when(redisUtil.get("coupononsale_5")).thenReturn("{\"id\":5,\"activityId\":2,\"onsaleId\":21,\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,11,15,40,45],\"gmtModified\":null}");
+        Mockito.when(redisUtil.get("couponactivity_11")).thenReturn(null);
+        Mockito.when(redisUtil.get("coupononsale_5")).thenReturn(null);
 
         adminToken = jwtHelper.createToken(1L,"admin",0L, 1,3600);
     }
@@ -99,7 +101,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
+        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 活动没有对应的商品
@@ -122,20 +124,14 @@ public class CouponControllerTest {
     @Test
     @Transactional(rollbackFor = Exception.class)
     public void testListCouponActivitiesByProductId() throws Exception {
-        // 字段不合法
-        String responseString = mvc.perform(get("/products/-1/couponactivities"))
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
-        JSONAssert.assertEquals(expectString, responseString, true);
+
 
         // 正常
-        responseString = mvc.perform(get("/products/1550/couponactivities"))
+        String responseString = mvc.perform(get("/products/1550/couponactivities"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":0,\"data\":{\"total\":7,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        String expectString = "{\"errno\":0,\"data\":{\"total\":7,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 货品不存在
@@ -182,7 +178,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
+        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 开始时间晚于结束时间
@@ -220,7 +216,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
+        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 活动不存在
@@ -275,7 +271,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
+        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1,3600);
@@ -358,7 +354,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
+        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",3L, 1, 3600);
@@ -418,7 +414,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
+        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
@@ -469,7 +465,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":503,\"errmsg\":\"字段不合法\"}";
+        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);

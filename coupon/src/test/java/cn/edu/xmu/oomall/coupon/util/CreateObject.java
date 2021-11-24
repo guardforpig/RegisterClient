@@ -1,10 +1,13 @@
 package cn.edu.xmu.oomall.coupon.util;
 
+import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
+import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
+import com.github.pagehelper.PageInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +64,8 @@ public class CreateObject {
         onsaleVo12.setId(12L);
         onSaleVoList.add(onsaleVo12);
 
-        return new ReturnObject<>(onSaleVoList);
+        ReturnObject ret = new ReturnObject<>(new PageInfo<>(onSaleVoList));
+        return Common.getPageRetVo(ret, OnsaleVo.class);
     }
 
     public static ReturnObject<List<OnsaleVo>> createOnsaleVoList2() {
@@ -74,7 +78,8 @@ public class CreateObject {
         OnsaleVo onsaleVo1 = new OnsaleVo();
         onsaleVo1.setId(3913L);
         onSaleVoList.add(onsaleVo1);
-        return new ReturnObject<>(onSaleVoList);
+        ReturnObject ret = new ReturnObject<>(new PageInfo<>(onSaleVoList));
+        return Common.getPageRetVo(ret, OnsaleVo.class);
     }
 
     public static ReturnObject<List<OnsaleVo>> createOnsaleVoList4() {
@@ -82,7 +87,8 @@ public class CreateObject {
         OnsaleVo onsaleVo1 = new OnsaleVo();
         onsaleVo1.setId(3914L);
         onSaleVoList.add(onsaleVo1);
-        return new ReturnObject<>(onSaleVoList);
+        ReturnObject ret = new ReturnObject<>(new PageInfo<>(onSaleVoList));
+        return Common.getPageRetVo(ret, OnsaleVo.class);
     }
 
     public static ReturnObject<OnsaleVo> createOnsaleVo1() {

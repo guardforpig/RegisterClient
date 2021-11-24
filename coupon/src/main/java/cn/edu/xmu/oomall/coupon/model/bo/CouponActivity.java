@@ -10,11 +10,9 @@ import java.util.Map;
 /**
  * @author RenJieZheng 22920192204334
  */
-@Setter
-@Getter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@ToString
+@NoArgsConstructor
 public class CouponActivity implements Serializable {
     public enum State {
         /**

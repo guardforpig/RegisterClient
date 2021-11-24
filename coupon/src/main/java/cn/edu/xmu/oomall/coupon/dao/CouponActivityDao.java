@@ -60,9 +60,12 @@ public class CouponActivityDao {
     @Value("${coupon.couponactivity.expiretime}")
     private long couponActivityTimeout;
 
-
-
     private static final Logger logger = LoggerFactory.getLogger(CouponActivityDao.class);
+
+    public final static String COUPONACTIVITYKEY = "couponactivity_%d";
+
+    public final static String COUPONONSALEKEY = "coupononsale_%d";
+
 
     /**
      * 查看优惠活动模块的所有活动
@@ -210,10 +213,10 @@ public class CouponActivityDao {
      */
     public ReturnObject getCouponActivityById(Long id) {
         try {
-            String key = "couponactivity_" + id;
+            String key = String.format(COUPONACTIVITYKEY, id);
             Serializable serializableBo = redisUtils.get(key);
             if (serializableBo != null) {
-                return new ReturnObject<>(JacksonUtil.toObj(serializableBo.toString(), CouponActivity.class));
+                return new ReturnObject<>((CouponActivity) serializableBo);
             }
             CouponActivityPo po = couponActivityPoMapper.selectByPrimaryKey(id);
             if (po == null) {
@@ -230,10 +233,10 @@ public class CouponActivityDao {
 
     public ReturnObject getCouponOnsaleById(Long id ) {
         try {
-            String key = "coupononsale_" + id;
+            String key = String.format(COUPONONSALEKEY, id);
             Serializable serializableBo = redisUtils.get(key);
             if (serializableBo != null) {
-                return new ReturnObject<>(JacksonUtil.toObj(serializableBo.toString(), CouponOnsale.class));
+                return new ReturnObject<>((CouponOnsale) serializableBo);
             }
             CouponOnsalePo po = couponOnsalePoMapper.selectByPrimaryKey(id);
             if (po == null) {
@@ -258,17 +261,8 @@ public class CouponActivityDao {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
 
-            List<Object> boList = new ArrayList<>();
-            for (Object po : poList) {
-                boList.add(Common.cloneVo(po, CouponOnsale.class));
-            }
-            var pageInfo = new PageInfo<>(boList);
-            var temp = new PageInfo<>(poList);
-            pageInfo.setPageNum(temp.getPageNum());
-            pageInfo.setPageSize(temp.getPageSize());
-            pageInfo.setTotal(temp.getTotal());
-            pageInfo.setPages(temp.getPages());
-            return new ReturnObject<>(pageInfo);
+            ReturnObject ret = new ReturnObject<>(new PageInfo<>(poList));
+            return Common.getPageRetVo(ret, CouponOnsale.class);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -285,17 +279,8 @@ public class CouponActivityDao {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
 
-            List<Object> boList = new ArrayList<>();
-            for (Object po : poList) {
-                boList.add(Common.cloneVo(po, CouponOnsale.class));
-            }
-            var pageInfo = new PageInfo<>(boList);
-            var temp = new PageInfo<>(poList);
-            pageInfo.setPageNum(temp.getPageNum());
-            pageInfo.setPageSize(temp.getPageSize());
-            pageInfo.setTotal(temp.getTotal());
-            pageInfo.setPages(temp.getPages());
-            return new ReturnObject<>(pageInfo);
+            ReturnObject ret = new ReturnObject<>(new PageInfo<>(poList));
+            return Common.getPageRetVo(ret, CouponOnsale.class);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -314,17 +299,8 @@ public class CouponActivityDao {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
 
-            List<Object> boList = new ArrayList<>();
-            for (Object po : poList) {
-                boList.add(Common.cloneVo(po, CouponActivity.class));
-            }
-            var pageInfo = new PageInfo<>(boList);
-            var temp = new PageInfo<>(poList);
-            pageInfo.setPageNum(temp.getPageNum());
-            pageInfo.setPageSize(temp.getPageSize());
-            pageInfo.setTotal(temp.getTotal());
-            pageInfo.setPages(temp.getPages());
-            return new ReturnObject<>(pageInfo);
+            ReturnObject ret = new ReturnObject<>(new PageInfo<>(poList));
+            return Common.getPageRetVo(ret, CouponActivity.class);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -340,17 +316,9 @@ public class CouponActivityDao {
             if (poList.size() == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            List<Object> boList = new ArrayList<>();
-            for (Object po : poList) {
-                boList.add(Common.cloneVo(po, CouponActivity.class));
-            }
-            var pageInfo = new PageInfo<>(boList);
-            var temp = new PageInfo<>(poList);
-            pageInfo.setPageNum(temp.getPageNum());
-            pageInfo.setPageSize(temp.getPageSize());
-            pageInfo.setTotal(temp.getTotal());
-            pageInfo.setPages(temp.getPages());
-            return new ReturnObject<>(pageInfo);
+
+            ReturnObject ret = new ReturnObject<>(new PageInfo<>(poList));
+            return Common.getPageRetVo(ret, CouponOnsale.class);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -360,7 +328,7 @@ public class CouponActivityDao {
 
     public ReturnObject updateCouponActivity(CouponActivity couponActivity) {
         try {
-            String key = "couponactivity_" + couponActivity.getId();
+            String key = String.format(COUPONACTIVITYKEY, couponActivity.getId());
             CouponActivityPo couponActivityPo =
                     (CouponActivityPo) Common.cloneVo(couponActivity, CouponActivityPo.class);
             int flag = couponActivityPoMapper.updateByPrimaryKeySelective(couponActivityPo);
@@ -391,7 +359,7 @@ public class CouponActivityDao {
 
     public ReturnObject deleteCouponOnsaleById(Long id) {
         try {
-            String key = "coupononsale_" + id;
+            String key = String.format(COUPONONSALEKEY, id);
             int flag = couponOnsalePoMapper.deleteByPrimaryKey(id);
             if (flag == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -406,7 +374,7 @@ public class CouponActivityDao {
 
     public ReturnObject deleteCouponActivityById(Long id) {
         try {
-            String key = "couponactivity_" + id;
+            String key = String.format(COUPONACTIVITYKEY, id);
             int flag = couponActivityPoMapper.deleteByPrimaryKey(id);
             if (flag == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
