@@ -38,25 +38,44 @@ public interface GoodsService {
     @GetMapping("internal/onsales/{id}")
     public ReturnObject<PageInfo<SimpleSaleInfoVO>> getOnSalesByProductId(@PathVariable("id") Long id, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize);
 
-    @PutMapping("/internal/activities/{id}/onsales/online")
-    SimpleReturnObject onlineOnsale(@PathVariable(value="id") Long activityId);
+    /**
+     * @modifiedBy Lin Jiyuan
+     */
+    @PutMapping("/internal/shops/{did}/activities/{id}/onsales/online")
+    ReturnObject onlineOnsale(@PathVariable(value="did") Long shopId,
+                              @PathVariable(value="id") Long activityId);
 
-    @PutMapping("/internal/activities/{id}/onsales/offline")
-    SimpleReturnObject offlineOnsale( @PathVariable(value="id") Long activityId);
+    /**
+     * @modifiedBy Lin Jiyuan
+     */
+    @PutMapping("/internal/shops/{did}/activities/{id}/onsales/online")
+    ReturnObject offlineOnsale( @PathVariable(value="did") Long shopId,
+                                @PathVariable(value="id") Long activityId);
 
-
+    /**
+     * @modifiedBy Lin Jiyuan
+     */
     @GetMapping("/internal/activities/{id}/onsales")
-    SimpleReturnObject<PageVo<OnsaleVo>> getOnsale(@PathVariable(value="id")Long activityId,
+    ReturnObject<PageVo<OnsaleVo>> getOnsale(@PathVariable(value="id")Long activityId,
                                                    @RequestParam(name="state",required = false)Integer state,
                                                    @RequestParam(name="page",required = false)Integer page,
                                                    @RequestParam(name="pageSize",required = false)Integer pageSize);
 
+    /**
+     * @modifiedBy Lin Jiyuan
+     */
     @PutMapping("/internal/onsales/{id}")
-    SimpleReturnObject modifyOnsale(@PathVariable(value="id")Long onsaleId,@RequestBody OnsaleModifyVo vo);
+    ReturnObject modifyOnsale(@PathVariable(value="id")Long onsaleId,@RequestBody OnsaleModifyVo vo);
 
+    /**
+     * @modifiedBy Lin Jiyuan
+     */
     @DeleteMapping("/internal/activities/{id}/onsales")
-    SimpleReturnObject deleteOnsale(@PathVariable(value="id") Long activityId);
+    ReturnObject deleteOnsale(@PathVariable(value="id") Long activityId);
 
+    /**
+     * @author Lin Jiyuan
+     */
     @PostMapping("/shops/{shopId}/products/{id}/onsales")
     ReturnObject addOnsale(@PathVariable("shopId") long shopId,@PathVariable("id") long id,
                            @RequestBody SimpleSaleInfoVO simpleSaleInfoVo);

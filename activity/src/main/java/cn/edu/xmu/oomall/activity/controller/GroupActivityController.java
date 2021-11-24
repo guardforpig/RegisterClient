@@ -46,8 +46,6 @@ public class GroupActivityController {
     public Object addGrouponProduct(@PathVariable("shopId") long shopId, @PathVariable("pid") long pid,
                              @PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername)
     {
-        if(shopId!=0){
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
         ReturnObject<Object> returnObject = groupOnActivityService.addOnsaleToGroupOn(shopId,pid,id,loginUser,loginUsername);
         return Common.decorateReturnObject(returnObject);
     }
