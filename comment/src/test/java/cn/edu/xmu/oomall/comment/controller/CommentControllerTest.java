@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.comment.controller;
 
 import cn.edu.xmu.oomall.comment.model.vo.CommentConclusionVo;
-import cn.edu.xmu.oomall.core.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.util.JacksonUtil;
 import cn.edu.xmu.privilegegateway.util.JwtHelper;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;

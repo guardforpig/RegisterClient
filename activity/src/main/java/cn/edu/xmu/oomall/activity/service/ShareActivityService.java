@@ -179,6 +179,8 @@ public class ShareActivityService {
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
         RetShareActivitySpecificInfoVo retShareActivitySpecificInfoVo = (RetShareActivitySpecificInfoVo) Common.cloneVo(shareActivityBo, RetShareActivitySpecificInfoVo.class);
         retShareActivitySpecificInfoVo.setShop(new ShopVo(shareActivityBo.getShopId(), shareActivityBo.getShopName()));
+        retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getCreatorId(), shareActivityBo.getCreatorName()));
+        retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getModifierId(), shareActivityBo.getModifierName()));
         return new ReturnObject(retShareActivitySpecificInfoVo);
     }
 }

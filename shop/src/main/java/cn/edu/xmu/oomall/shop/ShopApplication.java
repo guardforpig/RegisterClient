@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 /**
  * @author Ming Qiu
  **/
-@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core.*", "cn.edu.xmu.oomall.shop.*", "cn.edu.xmu.privilegegateway.annotation"})
+@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core", "cn.edu.xmu.oomall.shop","cn.edu.xmu.privilegegateway"})
 @EnableConfigurationProperties
 @MapperScan("cn.edu.xmu.oomall.shop.mapper")
 @EnableFeignClients(basePackages = "cn.edu.xmu.oomall.shop.microservice")

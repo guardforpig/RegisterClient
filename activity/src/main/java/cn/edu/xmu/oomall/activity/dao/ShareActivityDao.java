@@ -5,7 +5,9 @@ import cn.edu.xmu.oomall.activity.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.activity.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.activity.model.po.ShareActivityPoExample;
 import cn.edu.xmu.oomall.activity.model.vo.*;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.*;
+import cn.edu.xmu.privilegegateway.util.JacksonUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -46,7 +48,7 @@ public class ShareActivityDao {
     public ReturnObject getShareByShopId(ShareActivityBo bo, List<Long> shareIds, Integer page, Integer pageSize) {
         ShareActivityPoExample example = new ShareActivityPoExample();
         ShareActivityPoExample.Criteria criteria = example.createCriteria();
-        if(bo.getShopId()!=null){
+        if (bo.getShopId() != null) {
             criteria.andShopIdEqualTo(bo.getShopId());
         }
         if (shareIds != null && !shareIds.isEmpty()) {
@@ -58,7 +60,7 @@ public class ShareActivityDao {
         if (bo.getEndTime() != null) {
             criteria.andEndTimeLessThanOrEqualTo(bo.getEndTime());
         }
-        if(bo.getShopId()!=null){
+        if (bo.getShopId() != null) {
             criteria.andShopIdEqualTo(bo.getShopId());
         }
         if (bo.getState() != null) {
@@ -84,7 +86,7 @@ public class ShareActivityDao {
     /**
      * 管理员新增分享活动
      *
-     * @param shareActivityBo   shareActivityBo对象
+     * @param shareActivityBo shareActivityBo对象
      * @return
      */
     public ReturnObject addShareAct(ShareActivityBo shareActivityBo) {
@@ -95,7 +97,7 @@ public class ShareActivityDao {
             if (flag == 0) {
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
-            ShareActivityBo shareActivityBo1 = (ShareActivityBo) Common.cloneVo(shareActivityPo,ShareActivityBo.class);
+            ShareActivityBo shareActivityBo1 = (ShareActivityBo) Common.cloneVo(shareActivityPo, ShareActivityBo.class);
             if (shareActivityPo.getStrategy() != null) {
                 List<StrategyVo> strategyVos = (List<StrategyVo>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
                 shareActivityBo1.setStrategy(strategyVos);
@@ -118,23 +120,23 @@ public class ShareActivityDao {
     public ReturnObject getShareActivityById(Long id) {
         String key = "shareactivivybyid_" + id;
         try {
-            Serializable serializable = redisUtil.get(key);
-            if (serializable != null) {
-                ShareActivityBo shareActivityBo = JacksonUtil.toObj(serializable.toString(), ShareActivityBo.class);
+            System.out.println(redisUtil.get(key));
+            ShareActivityBo shareActivityBo = (ShareActivityBo) redisUtil.get(key);
+            if (shareActivityBo != null) {
                 return new ReturnObject(shareActivityBo);
             }
             ShareActivityPo shareActivityPo = shareActivityPoMapper.selectByPrimaryKey(id);
-            if (shareActivityPo==null) {
+            if (shareActivityPo == null) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             //使用clonevo
-            ShareActivityBo shareActivityBo = (ShareActivityBo) Common.cloneVo(shareActivityPo, ShareActivityBo.class);
+            shareActivityBo = (ShareActivityBo) Common.cloneVo(shareActivityPo, ShareActivityBo.class);
             if (shareActivityPo.getStrategy() != null) {
                 List<StrategyVo> strategyVos = (List<StrategyVo>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
                 shareActivityBo.setStrategy(strategyVos);
             }
             //查不到插入redis设置超时时间
-            redisUtil.set(key, JacksonUtil.toJson(shareActivityBo), shareActivityExpireTime);
+            redisUtil.set(key, shareActivityBo, shareActivityExpireTime);
             return new ReturnObject(shareActivityBo);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -150,11 +152,11 @@ public class ShareActivityDao {
      * @return
      */
     public ReturnObject getShareActivityByShopIdAndId(Long shopId, Long id) {
-        String key = "shareactivivyid_"+id+"_shopid_"+ shopId;
+        String key = "shareactivivyid_" + id + "_shopid_" + shopId;
         try {
-            Serializable serializable = redisUtil.get(key);
-            if (serializable != null) {
-                ShareActivityBo shareActivityBo = JacksonUtil.toObj(serializable.toString(), ShareActivityBo.class);
+            System.out.println(redisUtil.get(key));
+            ShareActivityBo shareActivityBo = (ShareActivityBo) redisUtil.get(key);
+            if (shareActivityBo != null) {
                 return new ReturnObject(shareActivityBo);
             }
             ShareActivityPoExample shareActivityPoExample = new ShareActivityPoExample();
@@ -166,12 +168,12 @@ public class ShareActivityDao {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             ShareActivityPo shareActivityPo = shareActivityPos.get(0);
-            ShareActivityBo shareActivityBo= (ShareActivityBo) Common.cloneVo(shareActivityPo,ShareActivityBo.class);
+            shareActivityBo = (ShareActivityBo) Common.cloneVo(shareActivityPo, ShareActivityBo.class);
             if (shareActivityPo.getStrategy() != null) {
                 List<StrategyVo> strategyVos = (List<StrategyVo>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
                 shareActivityBo.setStrategy(strategyVos);
             }
-            redisUtil.set(key, JacksonUtil.toJson(shareActivityBo), shareActivityExpireTime);
+            redisUtil.set(key, shareActivityBo, shareActivityExpireTime);
             return new ReturnObject(shareActivityBo);
         } catch (Exception e) {
             logger.error(e.getMessage());
