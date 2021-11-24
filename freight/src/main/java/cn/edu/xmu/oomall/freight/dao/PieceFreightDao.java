@@ -11,6 +11,7 @@ import cn.edu.xmu.oomall.freight.model.po.FreightModelPo;
 import cn.edu.xmu.oomall.freight.model.po.PieceFreightPo;
 import cn.edu.xmu.oomall.freight.model.po.PieceFreightPoExample;
 import cn.edu.xmu.oomall.freight.model.vo.PieceFreightRetVo;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -32,6 +33,10 @@ public class PieceFreightDao {
     private PieceFreightPoMapper pieceFreightPoMapper;
     @Autowired
     private FreightModelPoMapper freightModelPoMapper;
+    @Autowired
+    private RedisUtil redisUtil;
+
+    public final static String PIECE_FREIGHT_KEY = "piecefreight_%d";
 
     /**
      * 新增件数运费模板
@@ -99,6 +104,7 @@ public class PieceFreightDao {
             if (ret == 0) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             } else {
+                redisUtil.del(String.format(PIECE_FREIGHT_KEY,id));
                 return new ReturnObject(ReturnNo.OK);
             }
         } catch (Exception e) {
@@ -134,6 +140,7 @@ public class PieceFreightDao {
                 }
             }
             pieceFreightPoMapper.updateByPrimaryKeySelective(pieceFreightPo);
+            redisUtil.del(String.format(PIECE_FREIGHT_KEY,pieceFreightPo.getId()));
             return new ReturnObject();
 
         } catch (Exception e) {
