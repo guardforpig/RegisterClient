@@ -69,20 +69,11 @@ public class PieceFreightService {
         if (freightModel==null) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        ReturnObject<PageInfo<PieceFreight>> pageInfoReturnObject = pieceFreightDao.getPieceFreight(freightModelId, page, pageSize);
+        ReturnObject pageInfoReturnObject = pieceFreightDao.getPieceFreight(freightModelId, page, pageSize);
         if (pageInfoReturnObject.getData() == null) {
             return pageInfoReturnObject;
         }
-        PageInfo<PieceFreight> pieceFreightBoPageInfo = pageInfoReturnObject.getData();
-        List<PieceFreightRetVo> retList = new ArrayList<>();
-        for (PieceFreight pieceFreight : pieceFreightBoPageInfo.getList()) {
-            PieceFreightRetVo pieceFreightRetVo = (PieceFreightRetVo) Common.cloneVo(pieceFreight, PieceFreightRetVo.class);
-            retList.add(pieceFreightRetVo);
-        }
-        PageInfo<PieceFreightRetVo> p = (PageInfo<PieceFreightRetVo>) Common.cloneVo(pieceFreightBoPageInfo, new PageInfo<PieceFreightRetVo>().getClass());
-        p.setTotal(pieceFreightBoPageInfo.getTotal());
-        p.setList(retList);
-        return new ReturnObject(p);
+        return pageInfoReturnObject;
     }
 
     /**
