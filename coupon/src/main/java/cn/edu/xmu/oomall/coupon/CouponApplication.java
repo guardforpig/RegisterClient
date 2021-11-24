@@ -15,8 +15,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * @author qingguo Hu 22920192204208
  */
-@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core", "cn.edu.xmu.privilegegateway.annotation",
-        "cn.edu.xmu.privilegegateway.aop", "cn.edu.xmu.oomall.coupon"})
+@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core.*", "cn.edu.xmu.privilegegateway.annotation",
+        "cn.edu.xmu.privilegegateway.aop", "cn.edu.xmu.oomall.coupon.*"})
 @EnableConfigurationProperties
 @MapperScan("cn.edu.xmu.oomall.coupon.mapper")
 @EnableFeignClients(basePackages = "cn.edu.xmu.oomall.coupon.microservice")
