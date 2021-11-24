@@ -28,7 +28,7 @@ public class GoodsService {
         Goods goods=(Goods)cloneVo(goodsVo,Goods.class);
         Common.setPoCreatedFields(goods,loginUserId,loginUserName);
         goods.setShopId(shopId);
-        return goodsDao.createNewGoods(goods);
+        return new ReturnObject(goodsDao.createNewGoods(goods).getData());
     }
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject deleteGoods(Long shopId,Long id)

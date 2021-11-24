@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.goods.dao;
 
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.GoodsPoMapper;
@@ -12,13 +11,18 @@ import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPoExample;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
@@ -42,7 +46,7 @@ public class GoodsDao {
     @Autowired
     private RedisUtil redisUtils;
 
-    @Value("${goodsdemo.goods.expiretime}")
+    @Value("${oomall.goods.onsale.expiretime}")
     private long goodsTimeout;
 
     public ReturnObject createNewGoods(Goods goods)
@@ -50,6 +54,11 @@ public class GoodsDao {
         try
         {
             GoodsPo goodsPo=(GoodsPo) Common.cloneVo(goods,GoodsPo.class);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            String threeDaysAfter = simpleDateFormat.format(new Date());
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            LocalDateTime localDateTime = LocalDateTime.parse(threeDaysAfter, dateTimeFormatter);
+            goodsPo.setGmtCreate(localDateTime);
             goodsPoMapper.insert(goodsPo);
             return new ReturnObject((Goods) cloneVo(goodsPo,Goods.class));
         }
@@ -85,43 +94,26 @@ public class GoodsDao {
 
     public ReturnObject<Goods> searchGoodsById(Long shopId,Long id)
     {
-        try
-        {
-            Goods goods=(Goods) redisUtils.get("g_"+id);
-
-            if(goods!=null)
-            {
-                if(!goods.getShopId().equals(shopId))
-                {
-                    return new ReturnObject(ReturnNo.FIELD_NOTVALID);
-                }
-                return new ReturnObject<>(goods);
+        try {
+            Goods goods = new Goods();
+            GoodsPo goodsPo = goodsPoMapper.selectByPrimaryKey(id);
+            if (goodsPo == null) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            else
-            {
-                GoodsPo goodsPo=goodsPoMapper.selectByPrimaryKey(id);
-                if(goodsPo==null)
-                {
-                    return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-                }
-                if(!goodsPo.getShopId().equals(shopId))
-                {
-                    return new ReturnObject(ReturnNo.FIELD_NOTVALID);
-                }
-                goods=(Goods)cloneVo(goodsPo,Goods.class);
-                ProductPoExample productPoExample=new ProductPoExample();
-                ProductPoExample.Criteria cr=productPoExample.createCriteria();
-                cr.andGoodsIdEqualTo(id);
-                List<ProductPo> products=productPoMapper.selectByExample(productPoExample);
-                List<Product> productList=new ArrayList<>(products.size());
-                for(ProductPo productPo:products)
-                {
-                    productList.add((Product) cloneVo(productPo,Product.class));
-                }
-                goods.setProductList(productList);
-                redisUtils.set("g_"+id,goods,goodsTimeout);
-                return new ReturnObject<>(goods);
+            if (!goodsPo.getShopId().equals(shopId)) {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE, "该商品不属于该商铺");
             }
+            goods = (Goods) cloneVo(goodsPo, Goods.class);
+            ProductPoExample productPoExample = new ProductPoExample();
+            ProductPoExample.Criteria cr = productPoExample.createCriteria();
+            cr.andGoodsIdEqualTo(id);
+            List<ProductPo> products = productPoMapper.selectByExample(productPoExample);
+            List<Product> productList = new ArrayList<>(products.size());
+            for (ProductPo productPo : products) {
+                productList.add((Product) cloneVo(productPo, Product.class));
+            }
+            goods.setProductList(productList);
+            return new ReturnObject<>(goods);
         }
         catch (Exception e)
         {

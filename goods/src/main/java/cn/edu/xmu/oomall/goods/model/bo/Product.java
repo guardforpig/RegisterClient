@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.goods.model.bo;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
-import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductVo;
 import lombok.Data;
 import lombok.Getter;
