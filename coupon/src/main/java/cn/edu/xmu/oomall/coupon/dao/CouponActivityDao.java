@@ -13,6 +13,7 @@ import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
 import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePoExample;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVoInfo;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
