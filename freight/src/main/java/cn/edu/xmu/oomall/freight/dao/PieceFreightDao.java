@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.freight.dao;
 
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.mapper.PieceFreightPoMapper;
@@ -9,6 +8,7 @@ import cn.edu.xmu.oomall.freight.model.bo.PieceFreight;
 import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
 import cn.edu.xmu.oomall.freight.model.po.PieceFreightPoExample;
 import cn.edu.xmu.oomall.freight.model.po.WeightFreightPoExample;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;

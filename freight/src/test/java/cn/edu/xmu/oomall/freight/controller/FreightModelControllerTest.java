@@ -223,14 +223,12 @@ class FreightModelControllerTest {
 
         //默认模板不存在返回404,errno:504
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(null);
-        String responseString3= this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/0/freightmodels/default")
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/0/freightmodels/default")
                 .header("authorization",token)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedResponseString3="{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
-        JSONAssert.assertEquals(expectedResponseString3,responseString3,true);
+                .andExpect(jsonPath("$.errno").value(504));
 
 
         //正常情况
@@ -310,16 +308,13 @@ class FreightModelControllerTest {
         token=jwtHelper.createToken(1L,"admin", 0L, 1, 3600);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(null);
         //以下是正常情况返回的,过redis
-        String responseString4;
-        responseString4 = this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/1/freightmodels/666666")
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/1/freightmodels/666666")
                 .header("authorization",token)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+                .andExpect(jsonPath("$.errno").value(504));
 
-        String expectedResponseString4="{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
-        JSONAssert.assertEquals(expectedResponseString4,responseString4,true);
     }
 
     @Test

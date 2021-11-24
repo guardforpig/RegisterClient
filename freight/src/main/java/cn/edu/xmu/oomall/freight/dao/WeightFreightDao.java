@@ -1,15 +1,17 @@
 package cn.edu.xmu.oomall.freight.dao;
 
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.mapper.WeightFreightPoMapper;
 import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
 import cn.edu.xmu.oomall.freight.model.po.WeightFreightPo;
 import cn.edu.xmu.oomall.freight.model.po.WeightFreightPoExample;
+import cn.edu.xmu.oomall.freight.util.ValidList;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -26,6 +28,12 @@ public class WeightFreightDao {
 
     @Autowired
     private WeightFreightPoMapper weightFreightPoMapper;
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Value("${oomall.freight.model.expiretime}")
+    private long timeout;
 
     /**
      * 管理员新增重量模板明细

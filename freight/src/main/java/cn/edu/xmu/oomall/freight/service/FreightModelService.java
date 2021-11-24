@@ -7,10 +7,7 @@ import cn.edu.xmu.oomall.freight.dao.FreightModelDao;
 import cn.edu.xmu.oomall.freight.dao.PieceFreightDao;
 import cn.edu.xmu.oomall.freight.dao.RegionDao;
 import cn.edu.xmu.oomall.freight.dao.WeightFreightDao;
-import cn.edu.xmu.oomall.freight.model.bo.FreightModel;
-import cn.edu.xmu.oomall.freight.model.bo.PieceFreight;
-import cn.edu.xmu.oomall.freight.model.bo.Region;
-import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
+import cn.edu.xmu.oomall.freight.model.bo.*;
 import cn.edu.xmu.oomall.freight.model.po.WeightFreightPo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightCalculatingPostVo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightCalculatingRetVo;
@@ -33,10 +30,17 @@ public class FreightModelService {
 
 
     @Autowired
-    FreightModelDao freightModelDao;
+    private FreightModelDao freightModelDao;
 
     @Autowired
-    WeightFreightDao weightFreightDao;
+    private WeightFreightDao weightFreightDao;
+
+    @Autowired
+    private PieceFreightDao pieceFreightDao;
+
+    @Autowired
+    private RegionDao regionDao;
+
     /**
      * 管理员定义运费模板
      * @param freightModelInfo 运费模板资料
@@ -51,7 +55,7 @@ public class FreightModelService {
         //新建,不为默认
 
         //如果是默认模板需要把原来默认模板改为非默认
-        if(freightModel.getDefaultModel().equals((byte)1))
+        if(Objects.equals(freightModel.getDefaultModel(), 1))
         {
             freightModelDao.deleteDefaultFreight();
         }
@@ -241,67 +245,31 @@ public class FreightModelService {
         }
         for (var item : items) {
             Long fid = item.getFreightId();
-            ReturnObject freightRet = getFreightModelById(fid);
+            ReturnObject freightRet = showFreightModelById(fid);
             if (!freightRet.getCode().equals(ReturnNo.OK)) {
                 return freightRet;
             }
             var freightModel = (FreightModel) freightRet.getData();
+            ReturnObject freightItemRet;
+            Integer amount;
             if (freightModel.getType() == 0) {
-                ReturnObject weightFreightRet = weightFreightDao.getWeightItem(fid, regionIds);
-                if (!weightFreightRet.getCode().equals(ReturnNo.OK)) {
-                    return weightFreightRet;
-                }
-                Long newPrice = calculateWeightFright(sumWeight, (WeightFreight) weightFreightRet.getData(), freightModel.getUnit());
-                if (newPrice > freightPrice) {
-                    freightPrice = newPrice;
-                    productId = item.getProductId();
-                }
+                freightItemRet =  weightFreightDao.getWeightItem(fid, regionIds);
+                amount = sumWeight;
             } else {
-                ReturnObject pieceFreightRet = pieceFreightDao.getPieceItem(fid, regionIds);
-                if (!pieceFreightRet.getCode().equals(ReturnNo.OK)) {
-                    return pieceFreightRet;
-                }
-                Long newPrice = calculatePieceFright(sumQuantity, (PieceFreight) pieceFreightRet.getData(), freightModel.getUnit());
-                if (newPrice > freightPrice) {
-                    freightPrice = newPrice;
-                    productId = item.getProductId();
-                }
+                freightItemRet = pieceFreightDao.getPieceItem(fid, regionIds);
+                amount = sumQuantity;
             }
+            if (!freightItemRet.getCode().equals(ReturnNo.OK)) {
+                return freightItemRet;
+            }
+            var freightItem = (FreightItem)freightItemRet.getData();
+            Long newPrice = freightItem.calculate(amount, freightModel.getUnit());
+            if (newPrice > freightPrice) {
+                freightPrice = newPrice;
+                productId = item.getProductId();
+            }
+
         }
         return new ReturnObject(new FreightCalculatingRetVo(freightPrice, productId));
-    }
-
-    private Long calculatePieceFright(Integer quantity, PieceFreight pieceFreight, Integer unit) {
-        var firstItem = pieceFreight.getFirstItems();
-        var firstItemPrice = pieceFreight.getFirstItemFreight();
-        var additionalItemsPrice = pieceFreight.getAdditionalItemsPrice();
-        return firstItemPrice + calculatePart(firstItem, null, quantity, unit, additionalItemsPrice);
-    }
-
-    private Long calculateWeightFright(Integer weight, WeightFreight weightFreight, Integer unit) {
-        var firstWeight = weightFreight.getFirstWeight();
-        var firstWeightFreight = weightFreight.getFirstWeightFreight();
-        var tenPrice = weightFreight.getTenPrice();
-        var fiftyPrice = weightFreight.getFiftyPrice();
-        var hundredPrice = weightFreight.getHundredPrice();
-        var trihunPrice = weightFreight.getTrihunPrice();
-        var abovePrice = weightFreight.getAbovePrice();
-        return firstWeightFreight +
-                calculatePart(firstWeight, 10_000, weight, unit, tenPrice) +
-                calculatePart(10_000, 50_000, weight, unit, fiftyPrice) +
-                calculatePart(50_000, 100_000, weight, unit, hundredPrice) +
-                calculatePart(100_000, 300_000, weight, unit, trihunPrice) +
-                calculatePart(300_000, null, weight, unit, abovePrice)
-                ;
-    }
-
-    private Long calculatePart(Integer level, Integer nextLevel, Integer weight, Integer unit, Long price) {
-        if (weight <= level) {
-            return 0L;
-        } else if (Objects.isNull(nextLevel) || weight <= nextLevel) {
-            return (weight - level + unit - 1) / unit * price;
-        } else {
-            return (nextLevel - level + unit - 1) / unit * price;
-        }
     }
 }

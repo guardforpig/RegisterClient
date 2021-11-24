@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PieceFreight implements Serializable {
+public class PieceFreight extends FreightItem implements Serializable {
     private Long id;
     private Long freightModelId;
     private Long regionId;
@@ -28,4 +28,9 @@ public class PieceFreight implements Serializable {
     private String createName;
     private Long modifiedBy;
     private String modiName;
+
+    @Override
+    public Long calculate(Integer quantity, Integer unit) {
+        return firstItemFreight + calculatePart(firstItems, null, quantity, unit, additionalItemsPrice);
+    }
 }

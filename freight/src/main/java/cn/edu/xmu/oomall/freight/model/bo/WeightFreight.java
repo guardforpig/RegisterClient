@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-public class WeightFreight implements Serializable {
+public class WeightFreight extends FreightItem implements Serializable {
 
     private Long id;
     private Long freightModelId;
@@ -30,4 +30,15 @@ public class WeightFreight implements Serializable {
     private String modifierName;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
+
+    @Override
+    public Long calculate(Integer weight, Integer unit) {
+        return firstWeightFreight +
+                calculatePart(firstWeight, 10_000, weight, unit, tenPrice) +
+                calculatePart(10_000, 50_000, weight, unit, fiftyPrice) +
+                calculatePart(50_000, 100_000, weight, unit, hundredPrice) +
+                calculatePart(100_000, 300_000, weight, unit, trihunPrice) +
+                calculatePart(300_000, null, weight, unit, abovePrice)
+                ;
+    }
 }
