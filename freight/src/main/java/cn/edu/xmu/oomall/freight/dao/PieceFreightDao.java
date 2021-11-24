@@ -10,6 +10,7 @@ import cn.edu.xmu.oomall.freight.model.bo.PieceFreight;
 import cn.edu.xmu.oomall.freight.model.po.FreightModelPo;
 import cn.edu.xmu.oomall.freight.model.po.PieceFreightPo;
 import cn.edu.xmu.oomall.freight.model.po.PieceFreightPoExample;
+import cn.edu.xmu.oomall.freight.model.vo.PieceFreightRetVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -79,13 +80,8 @@ public class PieceFreightDao {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             PageInfo pageInfo = new PageInfo(list);
-            List<PieceFreight> pieceFreights = new ArrayList<>();
-            for (PieceFreightPo pieceFreightPo : list) {
-                PieceFreight pieceFreight = (PieceFreight) Common.cloneVo(pieceFreightPo, PieceFreight.class);
-                pieceFreights.add(pieceFreight);
-            }
-            pageInfo.setList(pieceFreights);
-            return new ReturnObject(pageInfo);
+            ReturnObject pageRetVo = Common.getPageRetVo(new ReturnObject<>(pageInfo), PieceFreightRetVo.class);
+            return pageRetVo;
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -107,7 +103,6 @@ public class PieceFreightDao {
                 return new ReturnObject(ReturnNo.OK);
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
@@ -143,7 +138,6 @@ public class PieceFreightDao {
             return new ReturnObject();
 
         } catch (Exception e) {
-           logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
