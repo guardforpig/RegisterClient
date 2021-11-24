@@ -1,14 +1,16 @@
 package cn.edu.xmu.oomall.goods.controller;
 
 
-import cn.edu.xmu.privilegegateway.util.JacksonUtil;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+
 import cn.edu.xmu.oomall.goods.GoodsApplication;
 
 import cn.edu.xmu.oomall.goods.model.vo.ModifyOnSaleVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
 
 
+import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -32,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * OnsaleController Tester.
  *
- * @author <Authors name>
+ * @author yujie 22920192204242
  * @version 1.0
  * @since <pre>11月 11, 2021</pre>
  */
@@ -53,10 +55,15 @@ public class OnSaleControllerTest {
 
     DateTimeFormatter df;
 
+    String adminToken;
+
     @BeforeEach
     public void init(){
         df=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+
+        JwtHelper jwtHelper = new JwtHelper();
+        adminToken = jwtHelper.createToken(1L, "admin", 0L, 1, 3600);
     }
 
 
