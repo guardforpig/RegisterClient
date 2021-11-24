@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.freight.controller;
 
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.ResponseUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.model.bo.PieceFreight;
@@ -12,8 +11,6 @@ import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -108,7 +105,7 @@ public class PieceFreightController {
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize", required = false) Integer pageSize) {
         ReturnObject returnObject = pieceFreightService.getPieceFreight(id, page, pageSize);
-        return decorateReturnObject(getPageRetObject(returnObject));
+        return decorateReturnObject(returnObject);
     }
 
     /**
