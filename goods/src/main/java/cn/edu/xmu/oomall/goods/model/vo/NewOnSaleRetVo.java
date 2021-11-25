@@ -20,12 +20,10 @@ public class NewOnSaleRetVo {
     @Min(0)
     private Long price;
 
-    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-    @JsonFormat(shape = JsonFormat.Shape.STRING ,pattern= Constants.DATE_TIME_FORMAT)
+    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime beginTime;
 
-    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-    @JsonFormat(shape = JsonFormat.Shape.STRING ,pattern=Constants.DATE_TIME_FORMAT)
+    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime endTime;
 
     @Min(1)
