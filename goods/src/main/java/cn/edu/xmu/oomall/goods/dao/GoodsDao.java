@@ -49,6 +49,8 @@ public class GoodsDao {
     @Value("${oomall.goods.onsale.expiretime}")
     private long goodsTimeout;
 
+    public final static String GOODSKEY="goods_%d";
+
     public ReturnObject createNewGoods(Goods goods)
     {
         try
@@ -58,6 +60,9 @@ public class GoodsDao {
             String threeDaysAfter = simpleDateFormat.format(new Date());
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
             LocalDateTime localDateTime = LocalDateTime.parse(threeDaysAfter, dateTimeFormatter);
+            /*
+                todo:Common完成后使用Common.setFieldGmtCreate
+             */
             goodsPo.setGmtCreate(localDateTime);
             goodsPoMapper.insert(goodsPo);
             return new ReturnObject((Goods) cloneVo(goodsPo,Goods.class));
@@ -124,9 +129,10 @@ public class GoodsDao {
     public ReturnObject<Object> deleteGoodsById(Long shopId,Long id) {
         GoodsPo goodsPo;
         try {
-            Goods goods = (Goods) redisUtils.get("g_" + id);
+            String key=String.format(GOODSKEY,id);
+            Goods goods = (Goods) redisUtils.get(key);
             if (goods != null) {
-                redisUtils.del("g_" + id);
+                redisUtils.del(key);
             }
             goodsPo = goodsPoMapper.selectByPrimaryKey(id);
             if (goodsPo == null) {
@@ -141,11 +147,6 @@ public class GoodsDao {
             ProductPo productPo=new ProductPo();
             productPo.setGoodsId(0L);
             productPoMapper.updateByExampleSelective(productPo,productPoExample);
-            /*List<ProductPo> productPoList = productPoMapper.selectByExample(productPoExample);
-            for (ProductPo productPo : productPoList) {
-                productPo.setGoodsId(Long.valueOf(0));
-                productPoMapper.updateByPrimaryKey(productPo);
-            }*/
             goodsPoMapper.deleteByPrimaryKey(id);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -153,6 +154,4 @@ public class GoodsDao {
         }
         return new ReturnObject(ReturnNo.OK);
     }
-
-
 }

@@ -4,6 +4,7 @@ import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
+import cn.edu.xmu.oomall.goods.model.bo.Goods;
 import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
@@ -25,12 +26,17 @@ import java.util.List;
 
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 
-
+/**
+ * @author yujie lin
+ * @date 2021/11/11
+ */
 /**
  * @author 黄添悦
+ * @date 2021/11/25
  **/
 /**
  * @author 王文飞
+ * @date 2021/11/25
  */
 @Repository
 public class ProductDao {
@@ -43,6 +49,7 @@ public class ProductDao {
     private RedisUtil redisUtil;
     @Value("${oomall.goods.product.expiretime}")
     private long productTimeout;
+    public final static String GOODSKEY="goods_%d";
     public boolean hasExist(Long productId) {
         return null != productPoMapper.selectByPrimaryKey(productId);
     }
@@ -51,7 +58,6 @@ public class ProductDao {
         ProductPo productPo=productPoMapper.selectByPrimaryKey(productId);
         return shopId.equals(productPo.getShopId());
     }
-
     public Long getShopIdById(Long id){
         try{
             Product ret=(Product) redisUtil.get("p_"+id);
@@ -75,6 +81,14 @@ public class ProductDao {
 
 
     }
+    /**
+     * @author 黄添悦
+     * @date 2021/11/25
+     **/
+    /**
+     * @author 王文飞
+     * @date 2021/11/25
+     */
     public ReturnObject listProductsByFreightId(Long shopId, Long fid, Integer pageNumber, Integer pageSize)
     {
         try {
@@ -101,7 +115,14 @@ public class ProductDao {
 
     }
 
-
+    /**
+     * @author 黄添悦
+     * @date 2021/11/25
+     **/
+    /**
+     * @author 王文飞
+     * @date 2021/11/25
+     */
     public ReturnObject publishById(Long shopId,Long id)
     {
         try
@@ -109,28 +130,49 @@ public class ProductDao {
             if(shopId!=0){
                 return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
             }
-        ProductDraftPo productDraftPo;
-        productDraftPo=productDraftPoMapper.selectByPrimaryKey(id);
-        if(productDraftPo!=null)
+            ProductDraftPo productDraftPo;
+            productDraftPo=productDraftPoMapper.selectByPrimaryKey(id);
+            if(productDraftPo!=null)
+            {
+                ProductPo productPo=null;
+                productPo=(ProductPo) cloneVo(productDraftPo,ProductPo.class);
+                productPo.setState((byte) Product.ProductState.OFFSHELF.getCode());
+                if(productDraftPo.getProductId()==0)
+                {
+                    productPo.setId(null);
+                    productPoMapper.insert(productPo);
+                }
+                else
+                {
+                    productPo.setId(productDraftPo.getProductId());
+                    productPoMapper.updateByPrimaryKey(productPo);
+                }
+                String key = String.format(GOODSKEY, productPo.getGoodsId());
+                Goods goods = (Goods) redisUtil.get(key);
+                if (goods != null) {
+                    redisUtil.del(key);
+                }
+                productDraftPoMapper.deleteByPrimaryKey(id);
+                return new ReturnObject<Product>((Product)cloneVo(productPo,Product.class));
+            }else
+            {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
+            }
+        }catch(Exception e)
         {
-            ProductPo productPo=(ProductPo) cloneVo(productDraftPo,ProductPo.class);
-            productPo.setState((byte) Product.ProductState.OFFSHELF.getCode());
-            productPoMapper.insert(productPo);
-            productDraftPoMapper.deleteByPrimaryKey(id);
-            redisUtil.del("g_"+productPo.getGoodsId());
-            return new ReturnObject<Product>((Product)cloneVo(productPo,Product.class));
-        }else
-        {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-    }catch(Exception e)
-    {
-        logger.error(e.getMessage());
-        return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-    }
 
     }
-
+    /**
+     * @author 黄添悦
+     * @date 2021/11/25
+     **/
+    /**
+     * @author 王文飞
+     * @date 2021/11/25
+     */
     public ReturnObject onshelvesById(Long shopId,Long id)
     {
         ProductPo productPo;
@@ -159,7 +201,14 @@ public class ProductDao {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
     }
-
+    /**
+     * @author 黄添悦
+     * @date 2021/11/25
+     **/
+    /**
+     * @author 王文飞
+     * @date 2021/11/25
+     */
     public ReturnObject offshelvesById(Long shopId,Long id)
     {
         ProductPo productPo;
@@ -190,7 +239,14 @@ public class ProductDao {
     }
 
     }
-
+    /**
+     * @author 黄添悦
+     * @date 2021/11/25
+     **/
+    /**
+     * @author 王文飞
+     * @date 2021/11/25
+     */
     public ReturnObject allowProductById(Long shopId,Long id)
     {
         ProductPo productPo;
@@ -221,7 +277,14 @@ public class ProductDao {
         return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
     }
     }
-
+    /**
+     * @author 黄添悦
+     * @date 2021/11/25
+     **/
+    /**
+     * @author 王文飞
+     * @date 2021/11/25
+     */
     public ReturnObject prohibitProductById(Long shopId,Long id)
     {
         ProductPo productPo;
