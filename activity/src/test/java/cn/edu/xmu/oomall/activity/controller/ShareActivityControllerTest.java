@@ -6,7 +6,7 @@ import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVO;
 import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVO;
 import cn.edu.xmu.oomall.activity.util.CreateObject;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import com.github.pagehelper.PageInfo;
 import org.junit.Before;
