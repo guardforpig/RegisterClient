@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author xucangbai
@@ -19,6 +20,8 @@ public class FreightModelInfoVo {
     private String name;
     @Min(value = 0,message = "最小值为0")
     private Integer unit;
+    @NotNull
     private Byte type;
+    @NotNull
     private Byte defaultModel;
 }
