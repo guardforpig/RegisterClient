@@ -25,5 +25,11 @@ public class GoodsVo {
     //private Long id;
     @NotBlank(message="商品名称不能为空")
     private String name;
-    private List<Product> productList;
+    private List<ProductVo> productList;
+    private Long creatorId;
+    private String creatorName;
+    private Long modifierId;
+    private String modifierName;
+    private LocalDateTime gmtCreate;
+    private LocalDateTime gmtModified;
 }

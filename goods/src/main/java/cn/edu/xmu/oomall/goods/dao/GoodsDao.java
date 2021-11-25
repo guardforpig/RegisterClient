@@ -86,7 +86,7 @@ public class GoodsDao {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE, "该商品不属于该商铺");
             }
             oldGoods.setName(goods.getName());
-            Common.setPoModifiedFields(oldGoods,goods.getModifiedBy(),goods.getModifiedName());
+            Common.setPoModifiedFields(oldGoods,goods.getModifierId(),goods.getModifierName());
             goodsPoMapper.updateByPrimaryKeySelective(oldGoods);
             return new ReturnObject<>(ReturnNo.OK);
         }
