@@ -56,7 +56,7 @@ class CloneVoTest {
         //枚举转Byte
         assertEquals(Byte.valueOf("2"),shopRetVoTest.getState());
 
-        //Byte转整形
+        //Byte转枚举
         shopRetVoTest.setState(Byte.valueOf("2"));
         Shop shop1= (Shop) Common.cloneVo(shopRetVoTest,Shop.class);
         assertEquals(Shop.State.ONLINE,shop1.getState());
