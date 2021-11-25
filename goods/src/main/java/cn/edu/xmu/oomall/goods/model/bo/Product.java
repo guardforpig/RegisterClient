@@ -78,7 +78,6 @@ public class Product implements Serializable {
 
     private Byte state;
 
-
     public enum ProductState
     {
         /**

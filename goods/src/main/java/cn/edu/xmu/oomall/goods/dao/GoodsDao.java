@@ -11,7 +11,7 @@ import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPoExample;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
-import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class GoodsDao {
     @Value("${oomall.goods.onsale.expiretime}")
     private long goodsTimeout;
 
-    public final static String GOODSKEY = "goods_%d";
+    public final static String GOODSKEY="goods_%d";
 
     public ReturnObject createNewGoods(Goods goods)
     {
@@ -60,6 +60,9 @@ public class GoodsDao {
             String threeDaysAfter = simpleDateFormat.format(new Date());
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
             LocalDateTime localDateTime = LocalDateTime.parse(threeDaysAfter, dateTimeFormatter);
+            /*
+                todo:Common完成后使用Common.setFieldGmtCreate
+             */
             goodsPo.setGmtCreate(localDateTime);
             goodsPoMapper.insert(goodsPo);
             return new ReturnObject((Goods) cloneVo(goodsPo,Goods.class));
@@ -126,7 +129,7 @@ public class GoodsDao {
     public ReturnObject<Object> deleteGoodsById(Long shopId,Long id) {
         GoodsPo goodsPo;
         try {
-            String key = String.format(GOODSKEY, id);
+            String key=String.format(GOODSKEY,id);
             Goods goods = (Goods) redisUtils.get(key);
             if (goods != null) {
                 redisUtils.del(key);
@@ -151,6 +154,4 @@ public class GoodsDao {
         }
         return new ReturnObject(ReturnNo.OK);
     }
-
-
 }
