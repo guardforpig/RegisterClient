@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-public class PieceFreightBo {
+public class PieceFreight {
 
     @ApiModelProperty(value = "主键")
     private Long id;
