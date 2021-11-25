@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.core.util;
 
 
-import cn.edu.xmu.oomall.core.util.JacksonUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

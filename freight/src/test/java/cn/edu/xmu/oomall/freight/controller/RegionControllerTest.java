@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.freight.controller;
 
-import cn.edu.xmu.oomall.core.util.JacksonUtil;
-import cn.edu.xmu.oomall.core.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.freight.FreightApplication;
 import cn.edu.xmu.oomall.freight.model.vo.RegionVo;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ public class RegionControllerTest {
     @Test
     public void getParentRegionTest() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(true);
+        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
         String responseString = this.mvc.perform(get("/freight/region/4191/ancestor"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -52,7 +52,7 @@ public class RegionControllerTest {
     @Test
     public void getParentRegionTest1() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(true);
+        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
         String responseString = this.mvc.perform(get("/freight/region/2/ancestor"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -66,7 +66,7 @@ public class RegionControllerTest {
     @Test
     public void getParentRegionTest2() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(true);
+        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
         String responseString = this.mvc.perform(get("/freight/region/0/ancestor"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -187,7 +187,7 @@ public class RegionControllerTest {
     @Test
     public void getChildRegionTest() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(true);
+        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
         String responseString = this.mvc.perform(get("/freight/regions/14/subregions"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -201,7 +201,7 @@ public class RegionControllerTest {
     @Test
     public void getChildRegionTest1() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(true);
+        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
         String responseString = this.mvc.perform(get("/freight/regions/0/subregions").contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -215,7 +215,7 @@ public class RegionControllerTest {
     @Test
     public void getChildRegionTest2() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(true);
+        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
         String responseString = this.mvc.perform(get("/freight/regions/4191/subregions"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))

@@ -1,6 +1,6 @@
 package cn.edu.xmu.oomall.coupon;
 
-import cn.edu.xmu.oomall.core.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
@@ -24,14 +24,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
  * @author RenJieZheng 22920192204334

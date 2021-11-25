@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.core.util;
 
 import cn.edu.xmu.oomall.core.util.bo.Category;
-import cn.edu.xmu.oomall.core.util.vo.CategoryRetVo;
+import cn.edu.xmu.oomall.core.util.bo.CategoryRetVo;
 import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Test;
 
@@ -271,6 +271,5 @@ public class getRetVoTest {
         assertEquals(retObjVo3.getErrmsg(),"操作的资源id不存在");
         assertEquals(retObjVo3.getData(),null);
     }
-
 
 }
