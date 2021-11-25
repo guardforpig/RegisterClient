@@ -80,7 +80,7 @@ public class PieceFreightDao {
             criteria.andFreightModelIdEqualTo(freightModelId);
             PageHelper.startPage(page, pageSize);
             List<PieceFreightPo> list = pieceFreightPoMapper.selectByExample(example);
-            if (list == null) {
+            if (list.size()==0) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             PageInfo pageInfo = new PageInfo(list);

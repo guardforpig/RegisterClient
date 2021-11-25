@@ -14,3 +14,9 @@ LOCK TABLES `oomall_piece_freight` WRITE;
 INSERT INTO `oomall_piece_freight` VALUES (4,2,1,10,3,4,2,1,'admin',NULL,NULL,'2021-11-22 14:47:21',NULL);
 /*!40000 ALTER TABLE `oomall_piece_freight` ENABLE KEYS */;
 UNLOCK TABLES;
+
+LOCK TABLES `oomall_freight_model` WRITE;
+/*!40000 ALTER TABLE `oomall_freight_model` DISABLE KEYS */;
+INSERT INTO `oomall_freight_model` VALUES (3,'piece model/2',0,1,2,1,'admin',NULL,NULL,'2021-11-22 14:47:21',NULL);
+/*!40000 ALTER TABLE `oomall_freight_model` ENABLE KEYS */;
+UNLOCK TABLES;

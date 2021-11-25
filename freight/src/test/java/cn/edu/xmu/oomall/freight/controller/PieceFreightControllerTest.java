@@ -145,6 +145,25 @@ public class PieceFreightControllerTest {
         JSONAssert.assertEquals(expectedResponse, responseString, false);
     }
     /**
+     * 管理员定义件数模板明细，传入参数不合法
+     * @throws Exception
+     */
+    @Test
+    public void createPieceFreightModelTest5() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
+        Mockito.when(redisUtil.get(Mockito.any())).thenReturn(null);
+        PieceFreightVo vo = new PieceFreightVo();
+        String requestJSON = JacksonUtil.toJson(vo);
+        String responseString = this.mvc.perform(post("/shops/0/freightmodels/2/pieceItems").contentType("application/json;charset=UTF-8")
+                .header("authorization", adminToken).content(requestJSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectedResponse = "{\"errno\":503}";
+        JSONAssert.assertEquals(expectedResponse, responseString, false);
+
+    }
+    /**
      * 店家或管理员查询件数运费模板的明细
      * @throws Exception
      */
@@ -183,10 +202,25 @@ public class PieceFreightControllerTest {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
         String responseString = this.mvc.perform(get("/shops/0/freightmodels/1/pieceItems").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = " {\"errno\":0,\"data\":{\"total\":0,\"pages\":0,\"pageSize\":10,\"page\":1,\"list\":[]},\"errmsg\":\"成功\"}";
+        String expectedResponse = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
+        JSONAssert.assertEquals(expectedResponse, responseString, false);
+    }
+    /**
+     * 店家或管理员查询件数运费模板的明细,查不到
+     * @throws Exception
+     */
+    @Test
+    public void getPieceFreightTest3() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
+        String responseString = this.mvc.perform(get("/shops/0/freightmodels/3/pieceItems").contentType("application/json;charset=UTF-8")
+                .header("authorization", adminToken))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectedResponse = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, false);
     }
     /**
@@ -316,18 +350,37 @@ public class PieceFreightControllerTest {
     public void modifyPieceFreightModelTest3() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
         PieceFreightVo vo = new PieceFreightVo();
-        vo.setRegionId(1L);
+        vo.setRegionId(2L);
         vo.setFirstItems(1);
         vo.setFirstItemFreight(10L);
         vo.setAdditionalItems(1);
         vo.setAdditionalItemsPrice(5L);
         String requestJSON = JacksonUtil.toJson(vo);
-        String responseString = this.mvc.perform(put("/shops/0/pieceItems/8").contentType("application/json;charset=UTF-8")
+        String responseString = this.mvc.perform(put("/shops/0/pieceItems/3").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken).content(requestJSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
+        String expectedResponse = "{\"errno\":999,\"errmsg\":\"运费模板中该地区已经定义\"}";
+        JSONAssert.assertEquals(expectedResponse, responseString, false);
+
+    }
+    /**
+     * 修改件数运费模板明细,传入参数不合法
+     * @throws Exception
+     */
+
+    @Test
+    public void modifyPieceFreightModelTest4() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 1,2000);
+        PieceFreightVo vo = new PieceFreightVo();
+        String requestJSON = JacksonUtil.toJson(vo);
+        String responseString = this.mvc.perform(put("/shops/0/pieceItems/3").contentType("application/json;charset=UTF-8")
+                .header("authorization", adminToken).content(requestJSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectedResponse = "{\"errno\":503}";
         JSONAssert.assertEquals(expectedResponse, responseString, false);
 
     }
