@@ -4,12 +4,17 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.GoodsDao;
 import cn.edu.xmu.oomall.goods.model.bo.Goods;
+import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
 import cn.edu.xmu.oomall.goods.model.vo.CreateGoodsVo;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
+import cn.edu.xmu.oomall.goods.model.vo.ProductVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 
@@ -56,8 +61,18 @@ public class GoodsService {
     public ReturnObject searchById(Long shopId,Long id)
     {
         ReturnObject<Goods> ret=goodsDao.searchGoodsById(shopId,id);
+        if(ret.getData()==null) {
+            return ret;
+        }
+        List<Product> temp=ret.getData().getProductList();
+        List<ProductVo> voList=new ArrayList<>();
+        for(Product product:temp){
+            ProductVo productVo=(ProductVo) Common.cloneVo(product,ProductVo.class);
+            voList.add(productVo);
+        }
         if(ret.getData()!=null){
             GoodsVo goodsVo=(GoodsVo)Common.cloneVo(ret.getData(),GoodsVo.class);
+            goodsVo.setProductList(voList);
             return new ReturnObject(goodsVo);
         }else{
             return ret;

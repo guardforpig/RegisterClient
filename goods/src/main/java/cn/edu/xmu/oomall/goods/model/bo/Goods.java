@@ -25,10 +25,10 @@ public class Goods implements Serializable {
     private String name;
     private Long shopId;
     private List<Product> productList;
-    private Long createdBy;
-    private String createName;
+    private Long creatorId;
+    private String creatorName;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
-    private Long modifiedBy;
-    private String modifiedName;
+    private Long modifierId;
+    private String modifierName;
 }
