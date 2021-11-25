@@ -29,13 +29,6 @@ import java.util.List;
 @Service
 public class
 OnSaleGetService {
-    /**
-     * 活动类型
-     */
-    private final Byte NO_ACTIVITY=0;
-    private final Byte SECOND_KILL=1;
-    private final Byte GROUPON=2;
-    private final Byte ADVANCE_SALE=3;
 
     @Autowired
     private OnSaleGetDao onSaleDao;
@@ -70,7 +63,7 @@ OnSaleGetService {
         }
         OnSale onSale=(OnSale) returnObject.getData();
         OnSalePo onSalePo=(OnSalePo) Common.cloneVo(onSale,OnSalePo.class);
-        if(onSalePo.getType().equals(NO_ACTIVITY)||onSalePo.getType().equals(SECOND_KILL)){
+        if(onSalePo.getType().equals(OnSale.Type.NOACTIVITY.getCode())||onSalePo.getType().equals(OnSale.Type.SECKILL.getCode())){
             NewOnSaleRetVo onSaleRetVo=(NewOnSaleRetVo)Common.cloneVo(onSalePo, NewOnSaleRetVo.class);
             return new ReturnObject(onSaleRetVo);
         }else{

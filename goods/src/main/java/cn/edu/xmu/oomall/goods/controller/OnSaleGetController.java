@@ -9,8 +9,11 @@ import cn.edu.xmu.oomall.goods.service.OnSaleGetService;
 import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
 import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.pagehelper.PageInfo;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,14 +79,17 @@ public class OnSaleGetController {
     @GetMapping("internal/shops/{did}/activities/{id}/onsales")
     public Object selectActivities(@LoginUser Long loginUser, @LoginName String loginUsername,
                                    @PathVariable("did")Long did, @PathVariable("id")Long id, @RequestParam(required = false) Byte state,
-                                   @RequestParam(required = false) LocalDateTime beginTime, @RequestParam(required = false) LocalDateTime endTime,
+                                   @RequestParam(value = "beginTime",required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime beginTime,
+                                   @RequestParam(value = "endTime",required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime endTime,
                                    @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                    @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
-        if(state< OnSale.State.DRAFT.getCode()||state>OnSale.State.OFFLINE.getCode()){
-            ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.FIELD_NOTVALID);
-            return Common.decorateReturnObject(returnObjectNotValid);
+        if(state!=null){
+            if(state< OnSale.State.DRAFT.getCode()||state>OnSale.State.OFFLINE.getCode()){
+                ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.FIELD_NOTVALID);
+                return Common.decorateReturnObject(returnObjectNotValid);
+            }
         }
-        if(beginTime.isAfter(endTime)){
+        if(beginTime!=null&&endTime!=null&&beginTime.isAfter(endTime)){
             ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
             return Common.decorateReturnObject(returnObjectNotValid);
         }
@@ -105,9 +111,11 @@ public class OnSaleGetController {
                                         @PathVariable("did")Long did, @PathVariable("id")Long id,@RequestParam(required = false) Byte state,
                                         @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                         @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
-        if(state< OnSale.State.DRAFT.getCode()||state>OnSale.State.OFFLINE.getCode()){
-            ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.FIELD_NOTVALID);
-            return Common.decorateReturnObject(returnObjectNotValid);
+        if(state!=null){
+            if(state< OnSale.State.DRAFT.getCode()||state>OnSale.State.OFFLINE.getCode()){
+                ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.FIELD_NOTVALID);
+                return Common.decorateReturnObject(returnObjectNotValid);
+            }
         }
         ReturnObject returnObject = onSaleService.selectShareActivities(did,id,state,page,pageSize);
         return Common.decorateReturnObject(returnObject);
@@ -137,15 +145,15 @@ public class OnSaleGetController {
      * @param pageSize
      * @return
      */
+    @Audit
     @GetMapping("internal/onsales")
-    public Object selectAnyOnsale( Long loginUser, String loginUsername,
-                                  @RequestParam(required = false) Long shopId,@RequestParam(required = false) Long productId,
-                                  @RequestParam(required = false) LocalDateTime beginTime, @RequestParam(required = false) LocalDateTime endTime,
+    public Object selectAnyOnsale(@LoginUser Long loginUser, @LoginName String loginUsername,
+                                  @RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
+                                  @RequestParam(value = "beginTime",required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime beginTime,
+                                  @RequestParam(value = "endTime",required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")LocalDateTime endTime,
                                   @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                   @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
-        loginUser=1L;
-        loginUsername="admin";
-        if(beginTime.isAfter(endTime)){
+        if(beginTime!=null&&endTime!=null&&beginTime.isAfter(endTime)){
             ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
             return Common.decorateReturnObject(returnObjectNotValid);
         }

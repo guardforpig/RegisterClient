@@ -30,15 +30,6 @@ import java.util.List;
  **/
 @Repository
 public class OnSaleGetDao {
-
-    /**
-     * 活动类型
-     */
-    private final Byte NO_ACTIVITY=0;
-    private final Byte SECOND_KILL=1;
-    private final Byte GROUPON=2;
-    private final Byte ADVANCE_SALE=3;
-
     @Autowired
     private OnSalePoMapper onSalePoMapper;
 
@@ -78,7 +69,7 @@ public class OnSaleGetDao {
         OnSalePoExample.Criteria criteria = onSalePoExample.createCriteria();
         criteria.andShopIdEqualTo(shopId);
         criteria.andProductIdEqualTo(id);
-        List<Byte> types = Arrays.asList(NO_ACTIVITY, SECOND_KILL);
+        List<Byte> types = Arrays.asList(OnSale.Type.NOACTIVITY.getCode(),OnSale.Type.SECKILL.getCode());
         criteria.andTypeIn(types);
         ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample,SimpleOnSaleRetVo.class, page, pageSize);
         return returnObject;
@@ -91,7 +82,7 @@ public class OnSaleGetDao {
         OnSalePoExample.Criteria criteria=onSalePoExample.createCriteria();
         criteria.andActivityIdEqualTo(id);
         criteria.andShopIdEqualTo(did);
-        List<Byte>types=Arrays.asList(GROUPON,ADVANCE_SALE);
+        List<Byte>types=Arrays.asList(OnSale.Type.GROUPON.getCode(),OnSale.Type.PRESALE.getCode());
         criteria.andTypeIn(types);
         if(state!=null){
             criteria.andStateEqualTo(state);
