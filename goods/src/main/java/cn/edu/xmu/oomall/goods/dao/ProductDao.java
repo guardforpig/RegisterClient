@@ -4,7 +4,8 @@ import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.oomall.goods.model.bo.Goods;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.ProductDraftPo;
@@ -43,6 +44,7 @@ public class ProductDao {
     private RedisUtil redisUtil;
     @Value("${oomall.goods.product.expiretime}")
     private long productTimeout;
+    public final static String GOODSKEY = "goods_%d";
     public boolean hasExist(Long productId) {
         return null != productPoMapper.selectByPrimaryKey(productId);
     }
@@ -113,11 +115,25 @@ public class ProductDao {
         productDraftPo=productDraftPoMapper.selectByPrimaryKey(id);
         if(productDraftPo!=null)
         {
-            ProductPo productPo=(ProductPo) cloneVo(productDraftPo,ProductPo.class);
+            ProductPo productPo=null;
+            productPo=(ProductPo) cloneVo(productDraftPo,ProductPo.class);
             productPo.setState((byte) Product.ProductState.OFFSHELF.getCode());
-            productPoMapper.insert(productPo);
+            if(productDraftPo.getProductId()==0)
+            {
+                productPo.setId(null);
+                productPoMapper.insert(productPo);
+            }
+            else
+            {
+                productPo.setId(productDraftPo.getProductId());
+                productPoMapper.updateByPrimaryKey(productPo);
+            }
+            String key = String.format(GOODSKEY, productPo.getGoodsId());
+            Goods goods = (Goods) redisUtil.get(key);
+            if (goods != null) {
+                redisUtil.del(key);
+            }
             productDraftPoMapper.deleteByPrimaryKey(id);
-            redisUtil.del("g_"+productPo.getGoodsId());
             return new ReturnObject<Product>((Product)cloneVo(productPo,Product.class));
         }else
         {

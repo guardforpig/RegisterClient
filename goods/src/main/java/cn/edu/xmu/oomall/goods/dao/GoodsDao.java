@@ -11,7 +11,7 @@ import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPoExample;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +48,8 @@ public class GoodsDao {
 
     @Value("${oomall.goods.onsale.expiretime}")
     private long goodsTimeout;
+
+    public final static String GOODSKEY = "goods_%d";
 
     public ReturnObject createNewGoods(Goods goods)
     {
@@ -124,9 +126,10 @@ public class GoodsDao {
     public ReturnObject<Object> deleteGoodsById(Long shopId,Long id) {
         GoodsPo goodsPo;
         try {
-            Goods goods = (Goods) redisUtils.get("g_" + id);
+            String key = String.format(GOODSKEY, id);
+            Goods goods = (Goods) redisUtils.get(key);
             if (goods != null) {
-                redisUtils.del("g_" + id);
+                redisUtils.del(key);
             }
             goodsPo = goodsPoMapper.selectByPrimaryKey(id);
             if (goodsPo == null) {
@@ -141,11 +144,6 @@ public class GoodsDao {
             ProductPo productPo=new ProductPo();
             productPo.setGoodsId(0L);
             productPoMapper.updateByExampleSelective(productPo,productPoExample);
-            /*List<ProductPo> productPoList = productPoMapper.selectByExample(productPoExample);
-            for (ProductPo productPo : productPoList) {
-                productPo.setGoodsId(Long.valueOf(0));
-                productPoMapper.updateByPrimaryKey(productPo);
-            }*/
             goodsPoMapper.deleteByPrimaryKey(id);
         } catch (Exception e) {
             logger.error(e.getMessage());

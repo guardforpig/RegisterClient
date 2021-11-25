@@ -1,13 +1,11 @@
 package cn.edu.xmu.oomall.goods.model.bo;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
-import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
-import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
-import com.alibaba.druid.support.spring.stat.annotation.Stat;
+import cn.edu.xmu.oomall.goods.model.vo.OnSalesVo;
+import cn.edu.xmu.oomall.goods.model.vo.ProductVo;
+import cn.edu.xmu.oomall.shop.model.bo.Shop;
+import cn.edu.xmu.oomall.shop.model.vo.ShopVo;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,12 +15,10 @@ import java.util.Map;
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 
 @Data
-@Getter
-@Setter
-@NoArgsConstructor
-public class OnSale  implements  VoObject, Serializable {
+public class OnSale implements  Serializable {
 
     private Long id;
+    private Product product;
     private Long shopId;
     private Long productId;
     private Long price;
@@ -57,20 +53,11 @@ public class OnSale  implements  VoObject, Serializable {
         return State.getStatusByCode(Integer.valueOf(state));
     }
 
+
     public void setState(State state) {
         Integer code=state.getCode();
         Byte b=code.byteValue();
         this.state=b;
-    }
-
-    @Override
-    public NewOnSaleRetVo createVo() {
-        return (NewOnSaleRetVo)cloneVo(this,NewOnSaleRetVo.class);
-    }
-
-    @Override
-    public Object createSimpleVo() {
-        return null;
     }
 
 
@@ -116,8 +103,7 @@ public class OnSale  implements  VoObject, Serializable {
     public enum State {
         DRAFT(0, "草稿"),
         ONLINE(1, "上线"),
-        OFFLINE(2, "下线"),
-        PROHIBIT(3,"禁售");
+        OFFLINE(2, "下线");
 
 
         private static final Map<Integer, State> STATE_MAP;

@@ -20,7 +20,7 @@ import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Goods implements VoObject,Serializable {
+public class Goods implements Serializable {
     private Long id;
     private String name;
     private Long shopId;
@@ -31,13 +31,4 @@ public class Goods implements VoObject,Serializable {
     private LocalDateTime gmtModified;
     private Long modifiedBy;
     private String modifiedName;
-    @Override
-    public GoodsVo createVo() {
-        return (GoodsVo)cloneVo(this,GoodsVo.class);
-    }
-
-    @Override
-    public Object createSimpleVo() {
-        return null;
-    }
 }

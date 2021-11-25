@@ -24,7 +24,7 @@ import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Product implements VoObject,Serializable {
+public class Product implements Serializable {
     private Long id;
 
 
@@ -77,15 +77,6 @@ public class Product implements VoObject,Serializable {
 
 
     private Byte state;
-    @Override
-    public ProductVo createVo() {
-        return (ProductVo) cloneVo(this,ProductVo.class);
-    }
-
-    @Override
-    public Object createSimpleVo() {
-        return null;
-    }
 
 
     public enum ProductState

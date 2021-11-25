@@ -62,7 +62,7 @@ class GoodsControllerTest {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString=this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/1/freightmodels/1/products").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isForbidden())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expected="{\"errno\":505,\"errmsg\":\"此商铺没有发布货品的权限\"}";
