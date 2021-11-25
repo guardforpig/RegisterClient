@@ -56,7 +56,7 @@ class FreightModelControllerTest {
     void addFreightModel() throws Exception{
         token=jwtHelper.createToken(1L,"admin",0L, 3600);
         //以下是正常情况返回的
-        FreightModelInfoVo freightModelInfo = new FreightModelInfoVo("modelname",666,(byte)0,null);
+        FreightModelInfoVo freightModelInfo = new FreightModelInfoVo("modelname",666,(byte)0,(byte)0);
         String json = JacksonUtil.toJson(freightModelInfo);
         String responseString = this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/0/freightmodels")
                 .header("authorization",token)
@@ -86,7 +86,7 @@ class FreightModelControllerTest {
         JSONAssert.assertEquals(expectedString,responseString,false);
 
         //body字段不合法
-        FreightModelInfoVo freightModelInfo2 = new FreightModelInfoVo(null,666,(byte)0,null);
+        FreightModelInfoVo freightModelInfo2 = new FreightModelInfoVo(null,666,(byte)0,(byte)0);
         String json2 = JacksonUtil.toJson(freightModelInfo2);
         String responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/0/freightmodels")
                 .header("authorization",token)
