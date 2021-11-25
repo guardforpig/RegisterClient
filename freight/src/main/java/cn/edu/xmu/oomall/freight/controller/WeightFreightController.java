@@ -8,9 +8,9 @@ import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
 import cn.edu.xmu.oomall.freight.model.vo.WeightFreightRetVo;
 import cn.edu.xmu.oomall.freight.model.vo.WeightFreightVo;
 import cn.edu.xmu.oomall.freight.service.WeightFreightService;
-import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
-import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.Audit;
+import cn.edu.xmu.privilegegateway.annotation.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -91,6 +91,10 @@ public class WeightFreightController {
     @Audit(departName = "shops")
     @GetMapping("/shops/{shopId}/freightmodels/{id}/weightItems")
     public Object getWeightItems(@PathVariable("shopId") Integer shopId, @PathVariable("id") Long id, @RequestParam(name = "page", required = false, defaultValue = "1") Integer page, @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+
+        if(shopId!=0){
+            return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
+        }
 
         ReturnObject returnObject = weightFreightService.getWeightItems(id, page, pageSize);
         returnObject = Common.getPageRetVo(returnObject,WeightFreightRetVo.class);

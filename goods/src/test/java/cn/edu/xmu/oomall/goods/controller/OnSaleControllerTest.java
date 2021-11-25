@@ -1,8 +1,8 @@
 package cn.edu.xmu.oomall.goods.controller;
 
 
-import cn.edu.xmu.privilegegateway.util.JacksonUtil;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.GoodsApplication;
 
 import cn.edu.xmu.oomall.goods.model.vo.ModifyOnSaleVo;
