@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.edu.xmu.oomall</groupId>
-    <artifactId>shop</artifactId>
+    <artifactId>comment</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -105,17 +105,21 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.cloud</groupId>
-                    <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>cn.edu.xmu.privilegegateway</groupId>
+            <artifactId>annotation</artifactId>
         </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.alibaba.cloud</groupId>-->
+        <!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <groupId>org.springframework.cloud</groupId>-->
+        <!--                    <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -142,7 +146,7 @@
                     <includes>
                         <include>**/ShopControllerTest.java</include>
                     </includes>
-<!--                    <skip>true</skip>-->
+                    <!--                    <skip>true</skip>-->
                 </configuration>
             </plugin>
         </plugins>

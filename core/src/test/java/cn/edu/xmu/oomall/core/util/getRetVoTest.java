@@ -272,20 +272,5 @@ public class getRetVoTest {
         assertEquals(retObjVo3.getData(),null);
     }
 
-    @Test
-    public void getNullRetObjTest(){
-        ReturnObject retObjBo1 = new ReturnObject();
-        ReturnObject retObjBo2 = new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-
-        ReturnObject retObjVo1 = Common.getNullRetObj(retObjBo1);
-        ReturnObject retObjVo2 = Common.getNullRetObj(retObjBo2);
-
-        assertEquals(retObjVo1.getCode(),ReturnNo.OK);
-        assertEquals(retObjVo1.getErrmsg(),"成功");
-        assertEquals(retObjVo1.getData(),null);
-        assertEquals(retObjVo2.getCode(),ReturnNo.RESOURCE_ID_NOTEXIST);
-        assertEquals(retObjVo2.getErrmsg(),"操作的资源id不存在");
-        assertEquals(retObjVo2.getData(),null);
-    }
 
 }

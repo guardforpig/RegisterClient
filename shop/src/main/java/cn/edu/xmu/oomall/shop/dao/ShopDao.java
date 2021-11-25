@@ -63,7 +63,6 @@ public class ShopDao {
     public ReturnObject newShop(ShopPo po) {
         int ret;
         po.setDeposit(Long.valueOf(0));
-        po.setGmtCreate(LocalDateTime.now());
         po.setState(Shop.State.EXAME.getCode().byteValue());
         try {
             ret = shopPoMapper.insertSelective(po);
@@ -111,7 +110,6 @@ public class ShopDao {
         int ret;
         try {
             ret = shopPoMapper.updateByPrimaryKeySelective(shopPo);
-            shopPo.setGmtModified(LocalDateTime.now());
         } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
         }
