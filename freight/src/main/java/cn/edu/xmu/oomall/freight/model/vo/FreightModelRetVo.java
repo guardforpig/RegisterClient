@@ -21,9 +21,9 @@ public class FreightModelRetVo{
     private Integer unit;
     private Byte defaultModel;
     private SimpleUserRetVo creator;
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd HH:mm:ss.SSS" )
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd HH:mm:ss.SSSZ" )
     private LocalDateTime gmtCreate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd HH:mm:ss.SSS" )
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd HH:mm:ss.SSSZ" )
     private LocalDateTime gmtModified;
     private SimpleUserRetVo modifier;
 }
