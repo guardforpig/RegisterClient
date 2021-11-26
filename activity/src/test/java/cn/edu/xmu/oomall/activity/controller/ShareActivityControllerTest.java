@@ -3,8 +3,7 @@ package cn.edu.xmu.oomall.activity.controller;
 import cn.edu.xmu.oomall.activity.ActivityApplication;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVO;
-import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVO;
+import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
 import cn.edu.xmu.oomall.activity.util.CreateObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
@@ -69,9 +68,9 @@ public class ShareActivityControllerTest {
         Mockito.when(goodsService.getOnSalesByProductId(2L, -1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
         Mockito.when(goodsService.getOnSalesByProductId(11111L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
         //生成一个shop对象
-        ReturnObject<ShopInfoVO> shopInfoDTO = CreateObject.createShopInfoDTO(1L);
-        ReturnObject<ShopInfoVO> shopInfoDTO2 = CreateObject.createShopInfoDTO(2L);
-        ReturnObject<ShopInfoVO> shopInfoDTO1 = CreateObject.createShopInfoDTO(-1L);
+        ReturnObject<ShopInfoVo> shopInfoDTO = CreateObject.createShopInfoDTO(1L);
+        ReturnObject<ShopInfoVo> shopInfoDTO2 = CreateObject.createShopInfoDTO(2L);
+        ReturnObject<ShopInfoVo> shopInfoDTO1 = CreateObject.createShopInfoDTO(-1L);
         Mockito.when(shopService.getShop(1L)).thenReturn(shopInfoDTO);
         Mockito.when(shopService.getShop(2L)).thenReturn(shopInfoDTO2);
         Mockito.when(shopService.getShop(11L)).thenReturn(shopInfoDTO1);

@@ -1,9 +1,7 @@
 package cn.edu.xmu.oomall.activity.util;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVO;
-import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVO;
-import cn.edu.xmu.oomall.core.util.Common;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import com.github.pagehelper.PageInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,33 +17,33 @@ public class CreateObject {
         if(id<=0){
             return new ReturnObject();
         }
-        List<SimpleSaleInfoVO> list = new ArrayList<>();
-        SimpleSaleInfoVO simpleSaleInfoVO = new SimpleSaleInfoVO();
+        List<SimpleSaleInfoVo> list = new ArrayList<>();
+        SimpleSaleInfoVo simpleSaleInfoVO = new SimpleSaleInfoVo();
         simpleSaleInfoVO.setShareActId(1l);
         list.add(simpleSaleInfoVO);
-        SimpleSaleInfoVO simpleSaleInfoVO2 = new SimpleSaleInfoVO();
-        simpleSaleInfoVO2.setShareActId(2l);
-        list.add(simpleSaleInfoVO2);
-        SimpleSaleInfoVO simpleSaleInfoVO3 = new SimpleSaleInfoVO();
-        simpleSaleInfoVO3.setShareActId(3l);
-        list.add(simpleSaleInfoVO3);
+        SimpleSaleInfoVo simpleSaleInfoVo2 = new SimpleSaleInfoVo();
+        simpleSaleInfoVo2.setShareActId(2l);
+        list.add(simpleSaleInfoVo2);
+        SimpleSaleInfoVo simpleSaleInfoVo3 = new SimpleSaleInfoVo();
+        simpleSaleInfoVo3.setShareActId(3l);
+        list.add(simpleSaleInfoVo3);
         //模拟不是share活动
-        SimpleSaleInfoVO simpleSaleInfoVO5 = new SimpleSaleInfoVO();
-        list.add(simpleSaleInfoVO5);
-        SimpleSaleInfoVO simpleSaleInfoVO4 = new SimpleSaleInfoVO();
-        simpleSaleInfoVO4.setShareActId(4l);
-        list.add(simpleSaleInfoVO4);
+        SimpleSaleInfoVo simpleSaleInfoVo5 = new SimpleSaleInfoVo();
+        list.add(simpleSaleInfoVo5);
+        SimpleSaleInfoVo simpleSaleInfoVo4 = new SimpleSaleInfoVo();
+        simpleSaleInfoVo4.setShareActId(4l);
+        list.add(simpleSaleInfoVo4);
         Map<String,Object> map = new HashMap<>();
         map.put("list",list);
         map.put("total",10);
         return new ReturnObject(map);
     }
 
-    public static ReturnObject<ShopInfoVO> createShopInfoDTO(Long id) {
+    public static ReturnObject<ShopInfoVo> createShopInfoDTO(Long id) {
         if(id<=0){
             return new ReturnObject();
         }
-        return new ReturnObject<>(new ShopInfoVO(id,"良耳的商铺"));
+        return new ReturnObject<>(new ShopInfoVo(id,"良耳的商铺"));
     }
 
 }

@@ -3,8 +3,8 @@ package cn.edu.xmu.oomall.activity.service;
 import cn.edu.xmu.oomall.activity.dao.ShareActivityDao;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVO;
-import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVO;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityStatesBo;
 import cn.edu.xmu.oomall.activity.model.vo.*;
@@ -87,8 +87,8 @@ public class ShareActivityService {
                 if (onSalesByProductId.getData() == null) {
                     return onSalesByProductId;
                 }
-                List<SimpleSaleInfoVO> list = (List<SimpleSaleInfoVO>) onSalesByProductId.getData().get("list");
-                for (SimpleSaleInfoVO simpleSaleInfoVO : list) {
+                List<SimpleSaleInfoVo> list = (List<SimpleSaleInfoVo>) onSalesByProductId.getData().get("list");
+                for (SimpleSaleInfoVo simpleSaleInfoVO : list) {
                     if (simpleSaleInfoVO.getShareActId() != null) {
                         shareActivityIds.add(simpleSaleInfoVO.getShareActId());
                     }
@@ -134,7 +134,7 @@ public class ShareActivityService {
         shareActivityBo.setState(ShareActivityStatesBo.DRAFT.getCode());
         shareActivityBo.setShopId(shopId);
         //TODO:通过商铺id弄到商铺名称
-        ReturnObject<ShopInfoVO> shop = shopService.getShop(shopId);
+        ReturnObject<ShopInfoVo> shop = shopService.getShop(shopId);
         if (shop.getData() == null) {
             return new ReturnObject<>(ReturnNo.FIELD_NOTVALID, "不存在该商铺");
         }
