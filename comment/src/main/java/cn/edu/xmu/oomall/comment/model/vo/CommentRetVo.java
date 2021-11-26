@@ -20,8 +20,8 @@ public class CommentRetVo{
     private String content;
 
     private Byte state;
-    private SimpleUserRetVo author;
-    private SimpleUserRetVo auditedBy;
+    private SimpleUserRetVo post;
+    private SimpleUserRetVo audit;
     private SimpleUserRetVo creator;
     private SimpleUserRetVo modifier;
     private LocalDateTime postTime;
