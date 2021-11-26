@@ -3,7 +3,7 @@ spring:
     nacos:
       server-addr: 172.16.4.136:8848
   application:
-    name: shop-service
+    name: comment-service
   profiles:
     active: dev
 
