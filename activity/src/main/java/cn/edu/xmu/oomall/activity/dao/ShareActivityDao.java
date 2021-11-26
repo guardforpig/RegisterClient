@@ -72,13 +72,8 @@ public class ShareActivityDao {
             PageHelper.startPage(page, pageSize);
             List<ShareActivityPo> shareActivityPos = shareActivityPoMapper.selectByExample(example);
             PageInfo pageInfo = new PageInfo(shareActivityPos);
-            List<ShareActivityBo> shareActivityBos = new ArrayList<>();
-            for (ShareActivityPo shareActivityPo : shareActivityPos) {
-                ShareActivityBo shareActivityBo = (ShareActivityBo) Common.cloneVo(shareActivityPo, ShareActivityBo.class);
-                shareActivityBos.add(shareActivityBo);
-            }
-            pageInfo.setList(shareActivityBos);
-            return new ReturnObject(pageInfo);
+            ReturnObject returnObject = Common.getPageRetVo(new ReturnObject<>(pageInfo),RetShareActivityListVo.class);
+            return returnObject;
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());

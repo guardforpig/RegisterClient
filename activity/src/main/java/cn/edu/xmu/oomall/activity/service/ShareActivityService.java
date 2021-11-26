@@ -11,7 +11,6 @@ import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +82,7 @@ public class ShareActivityService {
             }
             int total = (int) onSalesByProductId.getData().get("total");
             if (total != 0) {
-                onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, total>500?500:total);
+                onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, total > 500 ? 500 : total);
                 if (onSalesByProductId.getData() == null) {
                     return onSalesByProductId;
                 }
@@ -95,23 +94,7 @@ public class ShareActivityService {
                 }
             }
         }
-        ReturnObject<PageInfo<ShareActivityBo>> shareByShopId = shareActivityDao.getShareByShopId(bo, shareActivityIds, page, pageSize);
-        if (shareByShopId.getData() == null) {
-            return shareByShopId;
-        }
-        //BO转VO
-        PageInfo<ShareActivityBo> shareByShopIdData = shareByShopId.getData();
-        if (shareByShopIdData != null) {
-            List<RetShareActivityListVo> retShareActivityListVos = new ArrayList<>();
-            for (ShareActivityBo shareActivityBo : shareByShopIdData.getList()) {
-                RetShareActivityListVo rv = (RetShareActivityListVo) Common.cloneVo(shareActivityBo, RetShareActivityListVo.class);
-                retShareActivityListVos.add(rv);
-            }
-            PageInfo<RetShareActivityListVo> p = (PageInfo<RetShareActivityListVo>) Common.cloneVo(shareByShopIdData, new PageInfo<RetShareActivityListVo>().getClass());
-            p.setTotal(shareByShopIdData.getTotal());
-            p.setList(retShareActivityListVos);
-            return new ReturnObject(p);
-        }
+        ReturnObject shareByShopId = shareActivityDao.getShareByShopId(bo, shareActivityIds, page, pageSize);
         return shareByShopId;
     }
 

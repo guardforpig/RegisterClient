@@ -89,7 +89,7 @@ public class ShareActivityController {
         }
         ReturnObject shareByShopId = shareActivityService.getShareByShopId(shopId, productId,
                 beginTime, endTime, state, page, pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(shareByShopId));
+        return Common.decorateReturnObject(shareByShopId);
     }
 
     /**
@@ -166,7 +166,7 @@ public class ShareActivityController {
         }
         ReturnObject shareByShopId = shareActivityService.getShareByShopId(shopId, productId,
                 beginTime, endTime, ShareActivityStatesBo.ONLINE.getCode(), page, pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(shareByShopId));
+        return Common.decorateReturnObject(shareByShopId);
     }
 
     /**
