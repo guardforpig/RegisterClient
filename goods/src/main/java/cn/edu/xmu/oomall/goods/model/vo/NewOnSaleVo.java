@@ -23,11 +23,9 @@ public class NewOnSaleVo {
     private Long price;
 
     @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern =Constants.DATE_TIME_FORMAT )
     private LocalDateTime beginTime;
 
     @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern =Constants.DATE_TIME_FORMAT )
     private LocalDateTime endTime;
 
     @Min(1)

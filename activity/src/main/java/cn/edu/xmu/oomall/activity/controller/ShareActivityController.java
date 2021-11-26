@@ -4,9 +4,9 @@ import cn.edu.xmu.oomall.activity.model.bo.ShareActivityStatesBo;
 import cn.edu.xmu.oomall.activity.model.vo.ShareActivityVo;
 import cn.edu.xmu.oomall.activity.service.ShareActivityService;
 import cn.edu.xmu.oomall.core.util.*;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -89,7 +89,7 @@ public class ShareActivityController {
         }
         ReturnObject shareByShopId = shareActivityService.getShareByShopId(shopId, productId,
                 beginTime, endTime, state, page, pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(shareByShopId));
+        return Common.decorateReturnObject(shareByShopId);
     }
 
     /**
@@ -166,7 +166,7 @@ public class ShareActivityController {
         }
         ReturnObject shareByShopId = shareActivityService.getShareByShopId(shopId, productId,
                 beginTime, endTime, ShareActivityStatesBo.ONLINE.getCode(), page, pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(shareByShopId));
+        return Common.decorateReturnObject(shareByShopId);
     }
 
     /**

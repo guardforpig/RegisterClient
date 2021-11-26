@@ -46,7 +46,6 @@ public class ShopService {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject<PageInfo<Object>> getAllShop(Integer page, Integer pageSize) {
         List<ShopPo> shopPos = (List<ShopPo>) shopDao.getAllShop(page, pageSize).getData();
-
         List<Object> shopRetVos = new ArrayList<>();
         for (ShopPo po : shopPos) {
             shopRetVos.add(po);
@@ -138,8 +137,7 @@ public class ShopService {
         Shop shop = new Shop();
         shop.setId(id.longValue());
         shop.setState(Shop.State.FORBID.getCode().byteValue());
-        shop.setModifiedBy(loginUser);
-        shop.setModiName(loginUsername);
+        Common.setPoModifiedFields(shop, loginUser, loginUsername);
         ReturnObject retUpdate = shopDao.updateShopState(shop);
         return retUpdate;
 

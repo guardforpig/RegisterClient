@@ -141,12 +141,9 @@ public class FreightModelDao {
             List<FreightModelPo> freightModelPoList;
             PageHelper.startPage(page, pageSize);
             freightModelPoList = freightModelPoMapper.selectByExample(null);
-            List<FreightModel> freightModelAllList = new ArrayList<>();
-            for (FreightModelPo fmPo : freightModelPoList) {
-                freightModelAllList.add((FreightModel) Common.cloneVo(fmPo, FreightModel.class));
-            }
-            PageInfo<FreightModel> pageInfo = new PageInfo<>(freightModelAllList);
-            return new ReturnObject<>(pageInfo);
+            PageInfo<FreightModelPo> pageInfo = new PageInfo<>(freightModelPoList);
+            ReturnObject returnObject=new ReturnObject<>(pageInfo);
+            return Common.getPageRetVo(returnObject, FreightModelRetVo.class);
         } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
