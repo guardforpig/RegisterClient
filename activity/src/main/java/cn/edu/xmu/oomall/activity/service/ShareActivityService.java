@@ -92,6 +92,8 @@ public class ShareActivityService {
                         shareActivityIds.add(simpleSaleInfoVO.getShareActId());
                     }
                 }
+            }else {
+                return onSalesByProductId;
             }
         }
         ReturnObject shareByShopId = shareActivityDao.getShareByShopId(bo, shareActivityIds, page, pageSize);
