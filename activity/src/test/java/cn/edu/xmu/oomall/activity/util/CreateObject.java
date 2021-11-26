@@ -1,20 +1,23 @@
 package cn.edu.xmu.oomall.activity.util;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVO;
 import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVO;
+import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import com.github.pagehelper.PageInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiuchen lang 22920192204222
  * @date 2021/11/13 15:00
  */
 public class CreateObject {
-    public static ReturnObject<PageInfo<SimpleSaleInfoVO>> createOnSaleInfoDTO(Long id) {
+    public static ReturnObject createOnSaleInfoDTO(Long id) {
         if(id<=0){
-            return new ReturnObject(new PageInfo<>());
+            return new ReturnObject();
         }
         List<SimpleSaleInfoVO> list = new ArrayList<>();
         SimpleSaleInfoVO simpleSaleInfoVO = new SimpleSaleInfoVO();
@@ -32,9 +35,10 @@ public class CreateObject {
         SimpleSaleInfoVO simpleSaleInfoVO4 = new SimpleSaleInfoVO();
         simpleSaleInfoVO4.setShareActId(4l);
         list.add(simpleSaleInfoVO4);
-        PageInfo pageInfo = new PageInfo(list);
-        pageInfo.setTotal(10);
-        return new ReturnObject(pageInfo);
+        Map<String,Object> map = new HashMap<>();
+        map.put("list",list);
+        map.put("total",10);
+        return new ReturnObject(map);
     }
 
     public static ReturnObject<ShopInfoVO> createShopInfoDTO(Long id) {

@@ -9,7 +9,6 @@ import cn.edu.xmu.oomall.activity.util.CreateObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,6 +24,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ActivityApplication.class)
 @AutoConfigureMockMvc
 @Rollback(value = true)
+@Transactional
 public class ShareActivityControllerTest {
 
     private static String token = "0";
@@ -59,10 +61,13 @@ public class ShareActivityControllerTest {
     @BeforeEach
     public void init() throws Exception {
         //生成一个 onsale对象
-        ReturnObject<PageInfo<SimpleSaleInfoVO>> onSaleInfoDTO = CreateObject.createOnSaleInfoDTO(1L);
-        ReturnObject<PageInfo<SimpleSaleInfoVO>> onSaleInfoDTO1 = CreateObject.createOnSaleInfoDTO(-1L);
-        Mockito.when(goodsService.getOnSalesByProductId(1L, 1, 10)).thenReturn(onSaleInfoDTO);
-        Mockito.when(goodsService.getOnSalesByProductId(-1L, 1, 10)).thenReturn(onSaleInfoDTO1);
+        ReturnObject<Map<String, Object>> onSaleInfoDTO = CreateObject.createOnSaleInfoDTO(1L);
+        ReturnObject<Map<String, Object>> onSaleInfoDTO1 = CreateObject.createOnSaleInfoDTO(-1L);
+        Mockito.when(goodsService.getOnSalesByProductId(2L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getOnSalesByProductId(null, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getOnSalesByProductId(1L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getOnSalesByProductId(2L, -1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
+        Mockito.when(goodsService.getOnSalesByProductId(11111L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
         //生成一个shop对象
         ReturnObject<ShopInfoVO> shopInfoDTO = CreateObject.createShopInfoDTO(1L);
         ReturnObject<ShopInfoVO> shopInfoDTO2 = CreateObject.createShopInfoDTO(2L);
@@ -77,7 +82,7 @@ public class ShareActivityControllerTest {
         Mockito.when(redisUtil.get("shareactivivybyid_1")).thenReturn("{\"@class\":\"cn.edu.xmu.oomall.activity.model.bo.ShareActivityBo\",\"id\":1,\"shopId\":2,\"shopName\":\"甜蜜之旅\",\"name\":\"分享活动1\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"state\":1,\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":\"2021-11-11 15:01:23.000\",\"gmtModified\":null,\"strategy\":null}");
         Mockito.when(redisUtil.get("shareactivivyid_1_shopid_10")).thenReturn(null);
         Mockito.when(redisUtil.get("shareactivivyid_1_shopid_2")).thenReturn("{\"@class\":\"cn.edu.xmu.oomall.activity.model.bo.ShareActivityBo\",\"id\":1,\"shopId\":2,\"shopName\":\"甜蜜之旅\",\"name\":\"分享活动1\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"state\":1,\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":\"2021-11-11 15:01:23.000\",\"gmtModified\":null,\"strategy\":null}");
-        token = jwtHelper.createToken(666L, "lxc", 0L, 1,5000);
+        token = jwtHelper.createToken(666L, "lxc", 0L, 1, 5000);
     }
 
     /**

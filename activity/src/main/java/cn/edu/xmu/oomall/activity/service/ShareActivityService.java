@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiuchen lang 22920192204222
@@ -76,11 +77,17 @@ public class ShareActivityService {
         List<Long> shareActivityIds = new ArrayList<>();
         if (productId != null) {
             //TODO:openfeign获得分享活动id
-            ReturnObject<PageInfo<SimpleSaleInfoVO>> onSalesByProductId = goodsService.getOnSalesByProductId(productId, 1, 10);
-            if (onSalesByProductId != null) {
-                long total = onSalesByProductId.getData().getTotal();
-                ReturnObject<PageInfo<SimpleSaleInfoVO>> onSalesByProductId2 = goodsService.getOnSalesByProductId(productId, 1, (int) total);
-                List<SimpleSaleInfoVO> list = onSalesByProductId2.getData().getList();
+            ReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, 10);
+            if (onSalesByProductId.getData() == null) {
+                return onSalesByProductId;
+            }
+            int total = (int) onSalesByProductId.getData().get("total");
+            if (total != 0) {
+                onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, total>500?500:total);
+                if (onSalesByProductId.getData() == null) {
+                    return onSalesByProductId;
+                }
+                List<SimpleSaleInfoVO> list = (List<SimpleSaleInfoVO>) onSalesByProductId.getData().get("list");
                 for (SimpleSaleInfoVO simpleSaleInfoVO : list) {
                     if (simpleSaleInfoVO.getShareActId() != null) {
                         shareActivityIds.add(simpleSaleInfoVO.getShareActId());
@@ -88,9 +95,8 @@ public class ShareActivityService {
                 }
             }
         }
-
         ReturnObject<PageInfo<ShareActivityBo>> shareByShopId = shareActivityDao.getShareByShopId(bo, shareActivityIds, page, pageSize);
-        if(shareByShopId.getData()==null){
+        if (shareByShopId.getData() == null) {
             return shareByShopId;
         }
         //BO转VO
@@ -136,7 +142,7 @@ public class ShareActivityService {
         shareActivityBo.setShopName(shopName);
 
         ReturnObject returnObject = shareActivityDao.addShareAct(shareActivityBo);
-        if(returnObject.getData()==null){
+        if (returnObject.getData() == null) {
             return returnObject;
         }
         ShareActivityBo shareActivityBo1 = (ShareActivityBo) returnObject.getData();
@@ -154,7 +160,7 @@ public class ShareActivityService {
     @Transactional(readOnly = true)
     public ReturnObject getShareActivityById(Long id) {
         ReturnObject returnObject = shareActivityDao.getShareActivityById(id);
-        if(returnObject.getData()==null){
+        if (returnObject.getData() == null) {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
@@ -172,8 +178,8 @@ public class ShareActivityService {
      */
     @Transactional(readOnly = true)
     public ReturnObject getShareActivityByShopIdAndId(Long shopId, Long id) {
-        ReturnObject returnObject = shareActivityDao.getShareActivityByShopIdAndId(shopId,id);
-        if(returnObject.getData()==null){
+        ReturnObject returnObject = shareActivityDao.getShareActivityByShopIdAndId(shopId, id);
+        if (returnObject.getData() == null) {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
