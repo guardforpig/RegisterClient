@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +34,9 @@ public class ShareActivityDao {
 
     @Value("${oomall.activity.share.expiretime}")
     private long shareActivityExpireTime;
+
+    private final static String SHARE_BY_ID="shareactivivybyid_%d";
+    private final static String SHARE_BY_ID_AND_SHOP_ID="shareactivivybyid_%d_shop_%d";
 
     /**
      * 显示分享活动列表
@@ -118,7 +120,7 @@ public class ShareActivityDao {
      * @return
      */
     public ReturnObject getShareActivityById(Long id) {
-        String key = "shareactivivybyid_" + id;
+        String key = String.format(SHARE_BY_ID,id);
         try {
             System.out.println(redisUtil.get(key));
             ShareActivityBo shareActivityBo = (ShareActivityBo) redisUtil.get(key);
@@ -152,7 +154,7 @@ public class ShareActivityDao {
      * @return
      */
     public ReturnObject getShareActivityByShopIdAndId(Long shopId, Long id) {
-        String key = "shareactivivyid_" + id + "_shopid_" + shopId;
+        String key = String.format(SHARE_BY_ID_AND_SHOP_ID,id,shopId);
         try {
             System.out.println(redisUtil.get(key));
             ShareActivityBo shareActivityBo = (ShareActivityBo) redisUtil.get(key);
