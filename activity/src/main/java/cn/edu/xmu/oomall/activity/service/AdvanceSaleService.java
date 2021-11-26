@@ -11,6 +11,15 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import cn.edu.xmu.oomall.activity.microservice.ShopService;
+import cn.edu.xmu.oomall.activity.model.bo.AdvanceSaleStates;
+import cn.edu.xmu.oomall.activity.microservice.vo.*;
+import com.github.pagehelper.PageInfo;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author GXC 22920192204194
@@ -21,6 +30,8 @@ public class AdvanceSaleService {
     AdvanceSaleDao advanceSaleDao;
     @Autowired
     GoodsService goodsService;
+    @Autowired
+    ShopService shopService;
     /**
      * 商铺管理员上线预售活动
      * @param shopId 商铺id
@@ -172,4 +183,205 @@ public class AdvanceSaleService {
         }
         return returnObject;
     }
+
+    /**
+     * 获得预售活动的所有状态
+     * @return
+     */
+    public ReturnObject getAdvanceSaleState() {
+        List<RetStatesVo> list = new ArrayList<>();
+        for (AdvanceSaleStates value : AdvanceSaleStates.values()) {
+            RetStatesVo retStatesVO = new RetStatesVo(value.getCode(), value.getValue());
+            list.add(retStatesVO);
+        }
+        return new ReturnObject<>(list);
+    }
+
+
+    /**
+     * 管理员新增预售
+     * @param loginUserId
+     * @param loginUerName
+     * @param shopId
+     * @param id
+     * @param advanceSaleVo
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject addAdvanceSale(Long loginUserId, String loginUerName, Long shopId, Long id, AdvanceSaleVo advanceSaleVo) {
+        ////跨模块调接口，根据shopId,productId，beginTime，endTime获取OnSale列表
+        ReturnObject<PageInfo<SimpleOnSaleInfoVo>> OnSaleList1=goodsService.getAllOnsale(shopId,id,advanceSaleVo.getBeginTime(),advanceSaleVo.getEndTime(),1,10);
+        List<SimpleOnSaleInfoVo> list=new ArrayList<>();
+        if(OnSaleList1.getData()!=null) {
+            list=OnSaleList1.getData().getList();
+        }
+        if (advanceSaleVo.getBeginTime() != null && advanceSaleVo.getEndTime() != null) {
+            for (SimpleOnSaleInfoVo vo : list) {
+                //若活动的结束时间早于Onsale的开始时间，或者活动的开始时间晚于Onsale的结束时间，则时间不冲突。否则时间冲突。
+                if (!(advanceSaleVo.getEndTime().isBefore(vo.getBeginTime()) || advanceSaleVo.getBeginTime().isAfter(vo.getEndTime()))) {
+                    return new ReturnObject<>(ReturnNo.GOODS_PRICE_CONFLICT);
+                }
+            }
+        }
+        addOnsale(shopId,id, advanceSaleVo);
+        AdvanceSale advanceSaleBo = (AdvanceSale) Common.cloneVo(advanceSaleVo, AdvanceSale.class);
+        advanceSaleBo.setState(AdvanceSaleStates.DRAFT.getCode());
+        advanceSaleBo.setShopId(shopId);
+        ReturnObject<ShopInfoVO> shopVoReturnObject= shopService.getShop(shopId);
+        if (shopVoReturnObject.getCode() == null) {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
+        }
+        String shopName = shopVoReturnObject.getData().getName();
+        advanceSaleBo.setShopName(shopName);
+
+        ReturnObject returnObject = advanceSaleDao.addAdvanceSale(loginUserId, loginUerName, advanceSaleBo);
+        if(!returnObject.getCode().equals(ReturnNo.OK)){
+            return returnObject;
+        }
+        SimpleAdvanceSaleRetVo simpleAdvanceSaleRetVo = (SimpleAdvanceSaleRetVo) Common.cloneVo(returnObject.getData(), SimpleAdvanceSaleRetVo.class);
+        return new ReturnObject<>(simpleAdvanceSaleRetVo);
+    }
+
+
+    /**
+     * 根据shopId,productId,state,beginTime,endTime查询所有预售活动
+     * @param shopId
+     * @param productId
+     * @param beginTime
+     * @param endTime
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Transactional(readOnly = true,rollbackFor = Exception.class)
+    public ReturnObject getAllAdvanceSale(Long shopId, Long productId, Byte state, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize) {
+        //判断shop是否存在
+        if (shopId != null) {
+            ReturnObject<ShopInfoVO> shopVoReturnObject= shopService.getShop(shopId);
+            if (shopVoReturnObject.getData() == null) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
+            }
+        }
+        List<Long> activityIdList=new ArrayList<>();
+        if(productId!=null) {
+            //跨模块调接口，根据shopId,productId，beginTime，endTime获取OnSale列表
+            ReturnObject<PageInfo<SimpleOnSaleInfoVo>> OnSaleList1 = goodsService.getAllOnsale(shopId, productId, beginTime, endTime, 1, 10);
+            if (OnSaleList1 != null) {
+                long total = OnSaleList1.getData().getTotal();
+                ReturnObject<PageInfo<SimpleOnSaleInfoVo>> OnSaleList2 = goodsService.getShopOnsaleInfo(shopId, productId, null, null, null, 1, (int) total);
+                activityIdList=OnSaleList2.getData().getList().stream().map(SimpleOnSaleInfoVo::getActivityId).collect(Collectors.toList());
+            }
+        }
+        //获取OnSaleList所有的activityId
+
+        ReturnObject pageInfoReturnObject = advanceSaleDao.getAllAdvanceSale(shopId, state, activityIdList, page, pageSize);
+        //没找到满足条件的预售活动
+//        if (pageInfoReturnObject.getData() == null) {
+//            return pageInfoReturnObject;
+//        }
+//        PageInfo advanceSaleBoPageInfo = pageInfoReturnObject.getData();
+//        if (advanceSaleBoPageInfo != null) {
+//            List<SimpleAdvanceSaleRetVo> retList = new ArrayList<>();
+//            for (AdvanceSale advanceSaleBo : advanceSaleBoPageInfo.getList()) {
+//                SimpleAdvanceSaleRetVo simpleAdvanceSaleRetVo = (SimpleAdvanceSaleRetVo) Common.cloneVo(advanceSaleBo, SimpleAdvanceSaleRetVo.class);
+//                retList.add(simpleAdvanceSaleRetVo);
+//            }
+//            PageInfo<SimpleAdvanceSaleRetVo> p = (PageInfo<SimpleAdvanceSaleRetVo>) Common.cloneVo(advanceSaleBoPageInfo, new PageInfo<SimpleAdvanceSaleRetVo>().getClass());
+//            p.setTotal(advanceSaleBoPageInfo.getTotal());
+//            p.setList(retList);
+//            return new ReturnObject(p);
+//        }
+
+        return pageInfoReturnObject;
+    }
+
+    /**
+     * 查询上线预售活动的详细信息
+     * @param id
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ReturnObject getOnlineAdvanceSaleDetails(Long id) {
+        OnSaleInfoVo onSaleInfoVo=new OnSaleInfoVo();
+        //跨模块调接口，根据预售活动id获得相应Onsale
+        ReturnObject<PageInfo<OnSaleInfoVo>> pageInfoReturnObject = goodsService.getShopOnsaleInfo(null,id,null,null,null,1,10);
+        if(pageInfoReturnObject.getData()!=null){
+            onSaleInfoVo=pageInfoReturnObject.getData().getList().get(0);
+        }
+        if (onSaleInfoVo == null) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "活动不存在");
+        }
+        ReturnObject returnObject = advanceSaleDao.getOnlineAdvanceSaleInfo(id);
+        AdvanceSale advanceSaleBo = (AdvanceSale) returnObject.getData();
+        if (advanceSaleBo == null) {
+            return returnObject;
+        }
+        AdvanceSaleRetVo advanceSaleDetailsRetVo = (AdvanceSaleRetVo) Common.cloneVo(onSaleInfoVo, AdvanceSaleRetVo.class);
+        advanceSaleDetailsRetVo.setName(advanceSaleBo.getName());
+        advanceSaleDetailsRetVo.setPayTime(advanceSaleBo.getPayTime());
+        advanceSaleDetailsRetVo.setAdvancePayPrice(advanceSaleBo.getAdvancePayPrice());
+        return new ReturnObject(advanceSaleDetailsRetVo);
+    }
+
+
+    /**
+     * 管理员查询商铺的特定预售活动
+     * @param shopId
+     * @param id
+     * @return
+     */
+    @Transactional(readOnly = true,rollbackFor = Exception.class)
+    public ReturnObject getShopAdvanceSale(Long shopId, Long id) {
+        ReturnObject<ShopInfoVO> shopVoReturnObject= shopService.getShop(shopId);
+        if (shopVoReturnObject.getCode() == null) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
+        }
+        OnSaleVo onSaleVo = getOnSale(shopId,id);
+        if (onSaleVo == null) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "找不到对应的销售信息");
+        }
+        ReturnObject returnObject = advanceSaleDao.getShopAdvanceSale(shopId, id);
+        AdvanceSale advanceSaleBo = (AdvanceSale) returnObject.getData();
+        if (advanceSaleBo == null) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "查询预售活动信息失败");
+        }
+        AdvanceSaleRetVo advanceSaleSpecificRetVo = (AdvanceSaleRetVo) Common.cloneVo(onSaleVo, AdvanceSaleRetVo.class);
+        advanceSaleSpecificRetVo.setId(advanceSaleBo.getId());
+        advanceSaleSpecificRetVo.setName(advanceSaleBo.getName());
+        advanceSaleSpecificRetVo.setPayTime(advanceSaleBo.getPayTime());
+        advanceSaleSpecificRetVo.setState(advanceSaleBo.getState());
+        return new ReturnObject(advanceSaleSpecificRetVo);
+    }
+
+    /**
+     * 跨模块调接口：调Onsale接口
+     * 根据活动id找onsale
+     * @param id
+     * @return
+     */
+    public OnSaleVo getOnSale(Long shopId,Long id) {
+        SimpleOnSaleVo simpleOnSaleVo = new SimpleOnSaleVo();
+        //AdvanceSale与OnSale是一对一关系，所以根据预售活动id只会查到一个OnSale
+        ReturnObject<PageInfo<SimpleOnSaleVo>> pageInfoReturnObject=goodsService.getShopOnsaleInfo(shopId,id,null,null,null,1,10);
+        if (pageInfoReturnObject.getData().getList() != null) {
+            simpleOnSaleVo = pageInfoReturnObject.getData().getList().get(0);
+        }
+        ReturnObject<OnSaleVo> returnObject=goodsService.getOnSale(simpleOnSaleVo.getId());
+        return returnObject.getData();
+    }
+
+    /**
+     * 跨模块调接口：新增onsale
+     * @param productId
+     * @param advanceSaleVo
+     * @return
+     */
+    public ReturnObject<SimpleOnSaleInfoVo> addOnsale(Long shopId,Long productId, AdvanceSaleVo advanceSaleVo) {
+        OnSaleCreatedVo onSaleCreatedVo = (OnSaleCreatedVo) Common.cloneVo(advanceSaleVo, OnSaleCreatedVo.class);
+        //设置Onsale的type为预售类型3
+        onSaleCreatedVo.setType(String.valueOf(3));
+        return goodsService.addOnsale(shopId,productId,onSaleCreatedVo);
+    }
+
+
 }

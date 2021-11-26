@@ -1,10 +1,8 @@
 package cn.edu.xmu.oomall.activity.microservice;
 
-import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.*;
 import cn.edu.xmu.oomall.activity.model.vo.PageInfoVo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVO;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageVo;
@@ -13,6 +11,8 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import com.github.pagehelper.PageInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDateTime;
 
 /**
  * @author Gao Yanfeng
@@ -56,4 +56,28 @@ public interface GoodsService {
 
     @DeleteMapping("/internal/activities/{id}/onsales")
     SimpleReturnObject deleteOnsale(@PathVariable(value="id") Long activityId);
+
+    @PostMapping("/internal/shops/{did}/products/{id}/onsales")
+    ReturnObject addOnsale(@PathVariable(value="did")Long shopId, @PathVariable(value = "id")Long productId, @RequestBody OnSaleCreatedVo vo);
+
+    @GetMapping("/internal/onsales")
+    ReturnObject getAllOnsale(@RequestParam Long shopId,
+                              @RequestParam Long productId,
+                              @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
+                              @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime endTime,
+                              @RequestParam Integer page,
+                              @RequestParam Integer pageSize);
+
+    @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
+    ReturnObject getShopOnsaleInfo(@PathVariable("shopId")Long did,
+                               @PathVariable("id")Long id,
+                               @RequestParam("state")Byte state,
+                               @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
+                               @RequestParam("endTime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
+                               @RequestParam("page") Integer page,
+                               @RequestParam("pageSize") Integer pageSize);
+
+    @GetMapping("/internal/onsales/{id}")
+    ReturnObject<OnSaleInfoVo> getOnSaleById(@PathVariable("id")Long id);
+
 }

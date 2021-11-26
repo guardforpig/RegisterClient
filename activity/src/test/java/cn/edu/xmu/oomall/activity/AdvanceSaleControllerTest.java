@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 //事务回滚(测试的时候不会产生脏数据)
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = AdvancesaleApplication.class)
+@SpringBootTest(classes = ActivityApplication.class)
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
