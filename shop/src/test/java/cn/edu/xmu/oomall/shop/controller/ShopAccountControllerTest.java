@@ -1,6 +1,6 @@
 package cn.edu.xmu.oomall.shop.controller;
 
-import cn.edu.xmu.privilegegateway.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopAccountVo;
 import org.junit.jupiter.api.Test;

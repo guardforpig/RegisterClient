@@ -1,8 +1,8 @@
 package cn.edu.xmu.oomall.comment.controller;
 
 import cn.edu.xmu.oomall.comment.model.vo.CommentConclusionVo;
-import cn.edu.xmu.privilegegateway.util.JacksonUtil;
-import cn.edu.xmu.privilegegateway.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
