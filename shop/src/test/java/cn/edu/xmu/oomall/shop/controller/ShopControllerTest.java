@@ -5,7 +5,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.microservice.PaymentService;
 import cn.edu.xmu.oomall.shop.microservice.ReconciliationService;
 import cn.edu.xmu.oomall.shop.microservice.vo.RefundDepositVo;
-import cn.edu.xmu.privilegegateway.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -118,8 +118,7 @@ public class ShopControllerTest {
         String responseString = this.mvc.perform(post("/shops").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse()
-                .getContentAsString();
+                .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"data\":{\"name\":\"我的商铺\",\"deposit\":0,\"depositThreshold\":null,\"state\":0},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, false);
     }

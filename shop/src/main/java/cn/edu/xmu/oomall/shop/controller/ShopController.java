@@ -9,10 +9,10 @@ import cn.edu.xmu.oomall.shop.model.vo.ShopConclusionVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopVo;
 import cn.edu.xmu.oomall.shop.service.ShopService;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Depart;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.Depart;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,18 +90,16 @@ public class ShopController {
     @ApiResponses(value = {
             @ApiResponse(code = 969, message = "用户已经有店铺"),
             @ApiResponse(code = 200, message = "成功") })
-    @Audit(departName = " ")
+    @Audit(departName = "shops")
     @PostMapping(value = "/shops")
     public Object addShop(@Validated @RequestBody ShopVo shopvo, BindingResult bindingResult, @Depart Long shopid, @LoginUser Long loginUser, @LoginName String loginUsername){
-
         Object obj = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != obj) {
             return obj;
         }
 
-        if(shopid == -1)
+        if(shopid.equals(-1L))
         {
-
             var ret = shopService.newShop(shopvo,loginUser,loginUsername);
             if(ret.getCode().equals(ReturnNo.OK))httpServletResponse.setStatus(HttpStatus.OK.value());
             return Common.decorateReturnObject(ret);
