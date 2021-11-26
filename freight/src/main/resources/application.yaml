@@ -30,7 +30,7 @@ cloud:
       server-addr: 172.16.4.136:8848
 
   datasource:
-    url: jdbc:mysql://172.16.1.254:3306/oomall?serverTimezone=GMT%2B8
+    url: jdbc:mysql://172.16.1.254:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     username: dbuser
@@ -41,7 +41,7 @@ cloud:
       #最小连接池数量
       min-idle: 3
       #最大连接池数量
-      max-active: 100
+      max-active: 10
       #获取连接时最大等待时间
       max-wait: 60000
       filter:
