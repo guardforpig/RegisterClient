@@ -145,7 +145,7 @@
                 <version>3.0.0-M5</version>
                 <configuration>
                     <includes>
-                        <include>**/ShopControllerTest.java</include>
+                        <include>**/*Test.java</include>
                     </includes>
 <!--                    <skip>true</skip>-->
                 </configuration>
@@ -156,7 +156,7 @@
     <distributionManagement>
         <site>
             <id>siteserver</id>
-            <url>dav:http://172.16.4.192/webdav/shopservice</url>
+            <url>dav:http://172.16.4.1/webdav/oomall/shop-service</url>
         </site>
     </distributionManagement>
 
