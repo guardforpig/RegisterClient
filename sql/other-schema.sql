@@ -29,7 +29,7 @@ CREATE TABLE `oomall_address` (
   `detail` varchar(500) DEFAULT NULL,
   `consignee` varchar(128) DEFAULT NULL,
   `mobile` varchar(128) DEFAULT NULL,
-  `default` tinyint(4) DEFAULT NULL,
+  `be_default` tinyint(4) DEFAULT NULL,
   `creator_id` bigint(20) DEFAULT NULL,
   `creator_name` varchar(128) DEFAULT NULL,
   `modifier_id` bigint(20) DEFAULT NULL,

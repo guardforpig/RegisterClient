@@ -7,11 +7,13 @@ import cn.edu.xmu.oomall.shop.model.bo.Category;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryVo;
 import cn.edu.xmu.oomall.shop.service.CategoryService;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
+
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +25,11 @@ import javax.validation.Valid;
  * 商品分类Controller
  *
  * @author Zhiliang Li 22920192204235
- * @date 2021/11/22
+ * @date 2021/11/25
  */
 @Api(value = "商品类别API", tags = "商品类别API")
 @RestController
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class CategoryController {
     @Autowired

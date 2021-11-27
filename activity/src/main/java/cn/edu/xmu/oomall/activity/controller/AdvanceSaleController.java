@@ -5,12 +5,13 @@ import cn.edu.xmu.oomall.activity.model.vo.AdvanceSaleModifyVo;
 import cn.edu.xmu.oomall.activity.service.AdvanceSaleService;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RestController
 @Slf4j
+@RefreshScope
 public class AdvanceSaleController {
     @Autowired
     AdvanceSaleService advanceSaleService;

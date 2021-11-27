@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.shop.model.vo;
 
 import cn.edu.xmu.oomall.shop.model.bo.Category;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,8 +28,10 @@ public class CategoryRetVo {
     @ApiModelProperty(value = "修改人")
     private SimpleUserRetVo modifier;
     @ApiModelProperty(value = "创建时间")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd'T'HH:mm:ss.SSS" ,timezone = "GMT+8")
     private LocalDateTime gmtCreate;
     @ApiModelProperty(value = "修改时间")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd'T'HH:mm:ss.SSS" ,timezone = "GMT+8")
     private LocalDateTime gmtModified;
 
     public CategoryRetVo(Category category) {

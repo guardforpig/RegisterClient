@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.microservice.PaymentService;
 import cn.edu.xmu.oomall.shop.microservice.ReconciliationService;
 import cn.edu.xmu.oomall.shop.microservice.vo.RefundDepositVo;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -30,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ShopControllerTest {
     private static String adminToken = "0";
     private static String shopToken = "0";
+    private static JwtHelper jwtHelper = new JwtHelper();
 
     @Autowired
     private MockMvc mvc;
@@ -78,11 +80,13 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void getAllShop() throws Exception {
-        String responseString = this.mvc.perform(get("/shops/0/shops"))
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
+        String responseString = this.mvc.perform(get("/shops/0/shops?page=1&pageSize=3").contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"data\":{\"total\":3,\"pages\":1,\"pageSize\":3,\"page\":1,\"list\":[{\"id\":1,\"name\":\"OOMALL自营商铺\",\"deposit\":5000000,\"depositThreshold\":1000000,\"state\":0,\"createdBy\":{},\"modifiedBy\":{}},{\"id\":2,\"name\":\"甜蜜之旅\",\"deposit\":5000000,\"depositThreshold\":1000000,\"state\":0,\"createdBy\":{},\"modifiedBy\":{}},{\"id\":3,\"name\":\"向往时刻\",\"deposit\":5000000,\"depositThreshold\":1000000,\"state\":0,\"createdBy\":{},\"modifiedBy\":{}}]},\"errmsg\":\"成功\"}";
+        String expected="{\"code\":\"OK\",\"data\":{\"total\":3,\"pages\":1,\"pageSize\":3,\"page\":1,\"list\":[{\"id\":1,\"name\":\"OOMALL自营商铺\",\"deposit\":5000000,\"depositThreshold\":1000000,\"state\":0,\"creator\":{},\"modifier\":{}},{\"id\":2,\"name\":\"甜蜜之旅\",\"deposit\":5000000,\"depositThreshold\":1000000,\"state\":0,\"creator\":{},\"modifier\":{}},{\"id\":3,\"name\":\"向往时刻\",\"deposit\":5000000,\"depositThreshold\":1000000,\"state\":0,\"creator\":{},\"modifier\":{}}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
     /**
@@ -92,7 +96,8 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void getAllShopIdErro() throws Exception {
-        String responseString = this.mvc.perform(get("/shops/1/shops"))
+        adminToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
+        String responseString = this.mvc.perform(get("/shops/1/shops").header("authorization", adminToken))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -108,12 +113,12 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void applyShop() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",-1L,1, 3600);
         String requestJson = "{\"name\": \"我的商铺\"}";
-        String responseString = this.mvc.perform(post("/shops").header("authorization", shopToken).contentType("application/json;charset=UTF-8").content(requestJson))
+        String responseString = this.mvc.perform(post("/shops").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse()
-                .getContentAsString();
+                .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"data\":{\"name\":\"我的商铺\",\"deposit\":0,\"depositThreshold\":null,\"state\":0},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
@@ -126,8 +131,9 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void applyShop_null() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",-1L,1, 3600);
         String requestJson = "{\"name\": \"\"}";
-        String responseString = this.mvc.perform(post("/shops").header("authorization", shopToken).contentType("application/json;charset=UTF-8").content(requestJson))
+        String responseString = this.mvc.perform(post("/shops").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -144,8 +150,9 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void applyShop_space() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",-1L,1, 3600);
         String requestJson = "{\"name\": \"  \"}";
-        String responseString = this.mvc.perform(post("/shops").header("authorization", shopToken).contentType("application/json;charset=UTF-8").content(requestJson))
+        String responseString = this.mvc.perform(post("/shops").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -162,8 +169,9 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void auditShop() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
         String requestJson = "{\"conclusion\": true}";
-        String responseString = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
+        String responseString = this.mvc.perform(put("/shops/0/newshops/1/audit").contentType("application/json;charset=UTF-8").header("authorization", adminToken).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -175,6 +183,7 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void auditShop_false() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
         String requestJson = "{\"conclusion\": false}";
         String responseString = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
@@ -193,8 +202,9 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void modifyShop() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
         String requestJson = "{\"name\": \"修改后的名称\"}";
-        String responseString = this.mvc.perform(put("/shops/1").header("authorization", shopToken).contentType("application/json;charset=UTF-8").content(requestJson))
+        String responseString = this.mvc.perform(put("/shops/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -206,8 +216,9 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void modifyShop_null() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
         String requestJson = "{\"name\": \"\"}";
-        String responseString = this.mvc.perform(put("/shops/1").header("authorization", shopToken).contentType("application/json;charset=UTF-8").content(requestJson))
+        String responseString = this.mvc.perform(put("/shops/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -224,8 +235,9 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void modifyShop_ID() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
         String requestJson = "{\"name\": \"修改后的店铺名称\",\"id\":\"123\"}";
-        String responseString = this.mvc.perform(put("/shops/1").header("authorization", shopToken).contentType("application/json;charset=UTF-8").content(requestJson))
+        String responseString = this.mvc.perform(put("/shops/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -242,6 +254,7 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void onAndOffshelfShop() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
         String requestJson = "{\"conclusion\": true}";
         String responseString_audit = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
@@ -277,6 +290,7 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void deleteShop() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
         String requestJson = "{\"conclusion\": true}";
         String responseString_audit = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
@@ -309,6 +323,8 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void deleteShop_online() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
+        shopToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
         String requestJson = "{\"conclusion\": true}";
         String responseString_audit = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
@@ -346,6 +362,8 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void deleteShop_isNotSettled() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
+        shopToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
         String requestJson = "{\"conclusion\": true}";
         String responseString_audit = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
@@ -374,8 +392,10 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void deleteShop_isNotPay() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
+        shopToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
         String requestJson = "{\"conclusion\": true}";
-        String responseString_audit = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
+        String responseString_audit = this.mvc.perform(put("/shops/0/newshops/1/audit").contentType("application/json;charset=UTF-8").header("authorization", adminToken).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -389,7 +409,7 @@ public class ShopControllerTest {
         Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new ReturnObject(false));
         ReturnObject returnObject = new ReturnObject(ReturnNo.AUTH_INVALID_JWT, "错了");
         Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(returnObject);
-        String responseString = this.mvc.perform(delete("/shops/1").header("authorization", adminToken, shopToken))
+        String responseString = this.mvc.perform(delete("/shops/1").contentType("application/json;charset=UTF-8").header("authorization", adminToken, shopToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -400,6 +420,8 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void modifyShopForbid() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
+        shopToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
         String requestJson = "{\"conclusion\": true}";
         String responseString_audit = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
@@ -440,6 +462,8 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void auditShop_forbid() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
+        shopToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
         String requestJson = "{\"conclusion\": true}";
         String responseString_audit = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
@@ -476,6 +500,8 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void onshelfShop_forbid() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
+        shopToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
         String requestJson = "{\"conclusion\": true}";
         String responseString_audit = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
@@ -515,6 +541,8 @@ public class ShopControllerTest {
     @Test
     @Transactional
     public void offshelfShop_forbid() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L,1, 3600);
+        shopToken =jwtHelper.createToken(1L,"admin",1L,1, 3600);
         String requestJson = "{\"conclusion\": true}";
         String responseString_audit = this.mvc.perform(put("/shops/0/newshops/1/audit").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
