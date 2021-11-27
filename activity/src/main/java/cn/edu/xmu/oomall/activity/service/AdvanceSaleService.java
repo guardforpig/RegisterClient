@@ -211,7 +211,7 @@ public class AdvanceSaleService {
     public ReturnObject getAllAdvanceSale(Long shopId, Long productId, Byte state, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize) {
         //判断shop是否存在
         if (shopId != null) {
-            ReturnObject<ShopInfoVO> shopVoReturnObject= shopService.getShop(shopId);
+            ReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
             if (shopVoReturnObject.getData() == null) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
             }
@@ -276,7 +276,7 @@ public class AdvanceSaleService {
         advanceSaleBo.setState(AdvanceSaleStates.DRAFT.getCode());
 
         //判断商铺是否存在
-        ReturnObject<ShopInfoVO> shopVoReturnObject= shopService.getShop(shopId);
+        ReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
         if (shopVoReturnObject.getData() == null) {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
         }
@@ -322,7 +322,7 @@ public class AdvanceSaleService {
      */
     @Transactional(readOnly = true,rollbackFor = Exception.class)
     public ReturnObject getShopAdvanceSaleInfo(Long shopId, Long id) {
-        ReturnObject<ShopInfoVO> shopVoReturnObject= shopService.getShop(shopId);
+        ReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
         if (shopVoReturnObject.getData() == null) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
         }

@@ -77,7 +77,7 @@ public class AdvanceSaleControllerTest {
         vo2.setActivityId(11L);
         list2.add(vo2);
 
-        OnSaleInfoVo vo3=new OnSaleInfoVo(3L,new ShopInfoVO(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
+        OnSaleInfoVo vo3=new OnSaleInfoVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
                 20L,LocalDateTime.parse("2021-06-21T17:38:20.001Z",df),
                 LocalDateTime.parse("2021-12-29T17:38:20.001Z",df),
                 10L,"3",1L,1L,new SimpleAdminUserVo(1L,"zheng5d"),
@@ -85,7 +85,7 @@ public class AdvanceSaleControllerTest {
                 new SimpleAdminUserVo(1L,"zheng5d"));
         list3.add(vo3);
 
-        OnSaleInfoVo vo4=new OnSaleInfoVo(3L,new ShopInfoVO(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
+        OnSaleInfoVo vo4=new OnSaleInfoVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
                 20L,LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),
                 LocalDateTime.parse("2021-12-29T17:38:20.000Z",df),
                 10L,"3",11L,1L,new SimpleAdminUserVo(1L,"zheng5d"),
@@ -136,7 +136,7 @@ public class AdvanceSaleControllerTest {
     @Test
     @Transactional
     public void getAllOnlineAdvanceSale3() throws Exception {
-        Mockito.when(shopService.getShop(1L)).thenReturn(new ReturnObject<>(new ShopInfoVO(1L,"OOMALL自营商铺")));
+        Mockito.when(shopService.getShop(1L)).thenReturn(new ReturnObject<>(new ShopInfoVo(1L,"OOMALL自营商铺")));
         String responseString = mvc.perform(get("/advancesales?shopId=1")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect((status().isOk()))
@@ -283,7 +283,7 @@ public class AdvanceSaleControllerTest {
     @Transactional
     public void getShopAdvanceSaleTest1() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVO(4L,"努力向前")));
+        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVo(4L,"努力向前")));
         ReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new ReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.getAllOnsale(4L,1552L,LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),LocalDateTime.parse("2021-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
         String responseString = mvc.perform(get("/shops/4/advancesales?productId=1552&beginTime=2021-06-21T17:38:20.000Z&endTime=2021-12-29T17:38:20.000Z")
@@ -365,7 +365,7 @@ public class AdvanceSaleControllerTest {
     @Transactional
     public void addAdvanceSaleTest1() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVO(1L,"努力向前")));
+        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVo(1L,"努力向前")));
         ReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new ReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.getAllOnsale(4L,1552L,LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),LocalDateTime.parse("2021-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
         String requestJson="{\"price\": 156,\"beginTime\": \"2021-06-21 17:38:20.000\",\"endTime\": \"2021-12-29 17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2021-06-22 17:38:20.000\",\"advancePayPrice\": 140}";
@@ -448,7 +448,7 @@ public class AdvanceSaleControllerTest {
     @Transactional
     public void addAdvanceSaleTest6() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVO(1L,"努力向前")));
+        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVo(1L,"努力向前")));
         ReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new ReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.addOnsale(4L,1552L,new OnSaleCreatedVo(156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,"3",null))).thenReturn(new ReturnObject());
         Mockito.when(goodsService.getAllOnsale(4L,1552L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
@@ -468,7 +468,7 @@ public class AdvanceSaleControllerTest {
     @Transactional
     public void addAdvanceSaleTest7() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVO(1L,"努力向前")));
+        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVo(1L,"努力向前")));
         ReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new ReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.addOnsale(4L,1552L,new OnSaleCreatedVo(156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,"3",null)))
                 .thenReturn(new ReturnObject(new SimpleOnSaleInfoVo(10000L,156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,11L,"3")));
@@ -509,7 +509,7 @@ public class AdvanceSaleControllerTest {
     @Test
     public void getShopAdvanceSaleInfoTest1() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVO(1L,"OOMALL自营商铺")));
+        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVo(1L,"OOMALL自营商铺")));
         ReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject1=new ReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.getShopOnsaleInfo(4L,1L,null,null,null,1,10)).thenReturn(pageInfoReturnObject1);
         ReturnObject<OnSaleInfoVo> returnObject=new ReturnObject<>(list3.get(0));
@@ -543,7 +543,7 @@ public class AdvanceSaleControllerTest {
     @Test
     public void getShopAdvanceSaleInfoTest3() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVO(1L,"OOMALL自营商铺")));
+        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVo(1L,"OOMALL自营商铺")));
         ReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject1=new ReturnObject<>(new PageInfo<>());
         Mockito.when(goodsService.getShopOnsaleInfo(4L,2L,null,null,null,1,10)).thenReturn(pageInfoReturnObject1);
         String responseString = mvc.perform(get("/shops/4/advancesales/2")
@@ -560,7 +560,7 @@ public class AdvanceSaleControllerTest {
     @Test
     public void getShopAdvanceSaleInfoTest4() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVO(1L,"OOMALL自营商铺")));
+        Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVo(1L,"OOMALL自营商铺")));
         ReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject1=new ReturnObject<>(new PageInfo<>(list2));
         Mockito.when(goodsService.getShopOnsaleInfo(4L,11L,null,null,null,1,10)).thenReturn(pageInfoReturnObject1);
         ReturnObject<OnSaleInfoVo> returnObject=new ReturnObject<>(list3.get(0));

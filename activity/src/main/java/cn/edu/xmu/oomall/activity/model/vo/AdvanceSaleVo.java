@@ -23,14 +23,12 @@ public class AdvanceSaleVo{
     @NotNull(message = "价格不能为空")
     private Long price;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @ApiModelProperty(value = "开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
     @NotNull(message = "开始时间不能为空")
     private LocalDateTime beginTime;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
     @ApiModelProperty(value = "结束时间")
     @NotNull(message = "结束时间不能为空")
     private LocalDateTime endTime;
@@ -45,8 +43,7 @@ public class AdvanceSaleVo{
     private String name;
 
     @ApiModelProperty(value = "支付尾款时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
     @NotNull(message = "尾款支付时间不能为空")
     private LocalDateTime payTime;
 

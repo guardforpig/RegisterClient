@@ -124,7 +124,6 @@ public class AdvanceSaleController {
     @ApiResponses(value = {
             @ApiResponse(code = 0, message = "成功")})
     @GetMapping(value = "/advancesales")
-    @Audit(departName = "shops")
     public Object queryAllOnlineAdvanceSales(
             @RequestParam(name = "shopId", required = false) Long shopId,
             @RequestParam(name = "productId", required = false) Long productId,
@@ -157,7 +156,6 @@ public class AdvanceSaleController {
     @ApiResponses(value = {
             @ApiResponse(code = 0, message = "成功")})
     @GetMapping(value = "/advancesales/{id}")
-    @Audit(departName = "shops")
     public Object queryOnlineAdvanceSaleInfo(
             @PathVariable(name = "id") Long id) {
         ReturnObject ret=advanceSaleService.getOnlineAdvanceSaleInfo(id);
