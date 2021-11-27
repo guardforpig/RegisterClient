@@ -15,7 +15,6 @@ import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSaleStates;
 import cn.edu.xmu.oomall.activity.microservice.vo.*;
 import com.github.pagehelper.PageInfo;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

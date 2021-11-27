@@ -9,6 +9,7 @@ import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
  */
 @RestController
 @Slf4j
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class AdvanceSaleController {
     @Autowired

@@ -1,8 +1,10 @@
 package cn.edu.xmu.oomall.activity.model.vo;
 
+import cn.edu.xmu.oomall.activity.model.po.AdvanceSalePo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.validation.constraints.Min;

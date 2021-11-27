@@ -1,8 +1,8 @@
 package cn.edu.xmu.oomall.activity.model.bo;
 
-import cn.edu.xmu.oomall.activity.model.vo.ShopVo;
 import lombok.Data;
 
+import cn.edu.xmu.oomall.activity.model.vo.ShopVo;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
