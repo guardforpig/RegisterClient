@@ -1,50 +1,63 @@
 #|bin/bash
 ## 将文件结尾从CRLF改为LF，解决了cd 错误问题
-cd /home/mingqiu/oomall
-git checkout --
-git pull
-mvn clean
-
-cd ../privilegegateway
-git checkout --
-git pull
-mvn clean
-
 time=$(date "+%Y-%m-%d-%H-%M-%S")
-
 origin_dir='oomall-testreport'
 daily_dir='daily-report/'$time
 echo $daily_dir
 
-cd annotation
+echo '-------------------building annotation-------------------------'
+cd /home/mingqiu/privilegegateway/annotation
+git checkout pom.xml
+git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn install site:site site:deploy
 
-cd ../../oomall/core
+echo '-------------------building core-------------------------'
+cd /home/mingqiu/oomall/core
+git checkout pom.xml
+git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn install site:site site:deploy
 
-cd ../activity
+echo '-------------------building activity-------------------------'
+cd /home/mingqiu/oomall/activity
+git checkout pom.xml
+git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn test site:site site:deploy
 
-cd ../comment
+echo '-------------------building comment-------------------------'
+cd /home/mingqiu/oomall/comment
+git checkout pom.xml
+git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn test site:site site:deploy
 
-cd ../freight
+echo '-------------------building feight-------------------------'
+cd /home/mingqiu/oomall/freight
+git checkout pom.xml
+git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn test site:site site:deploy
 
-cd ../shop
+echo '-------------------building shop-------------------------'
+cd /home/mingqiu/oomall/shop
+git checkout pom.xml
+git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn test site:site site:deploy
 
-cd ../goods
+echo '-------------------building goods-------------------------'
+cd /home/mingqiu/oomall/goods
+git checkout pom.xml
+git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn test site:site site:deploy
 
-cd ../coupon
+echo '-------------------building coupon-------------------------'
+cd /home/mingqiu/oomall/coupon
+git checkout pom.xml
+git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn test site:site site:deploy
 
