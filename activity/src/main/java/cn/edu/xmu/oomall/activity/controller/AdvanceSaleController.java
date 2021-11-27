@@ -101,6 +101,11 @@ public class AdvanceSaleController {
     }
 
     /**
+     * @author Jiawei Zheng
+     * @date 2021-11-26
+     */
+
+    /**
      * 获得预售活动的所有状态
      * @return
      */

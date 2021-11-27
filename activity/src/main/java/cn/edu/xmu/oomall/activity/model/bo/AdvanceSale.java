@@ -8,6 +8,11 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Jiawei Zheng
+ * @date 2021-11-26
+ */
+
 @Data
 public class AdvanceSale implements Serializable {
 

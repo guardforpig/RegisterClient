@@ -33,6 +33,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * @author Jiawei Zheng
+ * @date 2021-11-27
+ */
+
 @SpringBootTest(classes = ActivityApplication.class)
 @AutoConfigureMockMvc
 @Rollback(value = true)

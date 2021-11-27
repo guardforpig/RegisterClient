@@ -1,6 +1,10 @@
 package cn.edu.xmu.oomall.activity.model.bo;
 
 
+/**
+ * @author Jiawei Zheng
+ * @date 2021-11-26
+ */
 public enum AdvanceSaleStates {
     /**
      * DRAFT活动在草稿状态

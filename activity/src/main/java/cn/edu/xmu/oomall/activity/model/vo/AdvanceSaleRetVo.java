@@ -6,7 +6,10 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-
+/**
+ * @author Jiawei Zheng
+ * @date 2021-11-26
+ */
 @Data
 public class AdvanceSaleRetVo{
     @ApiModelProperty(value = "预售活动id")
