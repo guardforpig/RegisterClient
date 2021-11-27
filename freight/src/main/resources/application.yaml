@@ -24,10 +24,10 @@ spring:
       enabled: true
       #最大请求文件的大小
       max-request-size: 10MB
-cloud:
-  nacos:
-    discovery:
-      server-addr: 172.16.4.136:8848
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.4.136:8848
 
   datasource:
     url: jdbc:mysql://172.16.1.254:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
