@@ -47,3 +47,5 @@ cd ../coupon
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn test site:site site:deploy
 
+curl --user ooad_javaee:12345678 -T /home/mingqiu/logs/daily_test.log http://172.16.4.1/webdav/daily-report/$time/console.log
+
