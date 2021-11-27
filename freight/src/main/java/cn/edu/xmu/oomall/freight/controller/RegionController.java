@@ -9,6 +9,7 @@ import cn.edu.xmu.oomall.freight.model.vo.RegionRetVo;
 import cn.edu.xmu.oomall.freight.model.vo.RegionVo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -28,6 +29,7 @@ import static cn.edu.xmu.oomall.core.util.Common.*;
  */
 @Api(value = "地区API", tags = "地区API")
 @RestController
+@RefreshScope
 @RequestMapping(value = "/freight", produces = "application/json;charset=UTF-8")
 public class RegionController {
 

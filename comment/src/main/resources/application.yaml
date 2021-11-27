@@ -11,15 +11,12 @@ server:
       max: 500
 
 spring:
-application:
-  name: comment-service
-cloud:
-  loadbalancer:
-    ribbon:
-      enable: true
-  nacos:
-    discovery:
-      server-addr: 172.16.4.136:8848
+  application:
+    name: comment-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.4.136:8848
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
