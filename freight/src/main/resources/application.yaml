@@ -10,8 +10,6 @@ server:
     threads:
       max: 500
 
-
-
 spring:
   main:
     allow-bean-definition-overriding: true

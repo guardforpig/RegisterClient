@@ -11,6 +11,7 @@ import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import static cn.edu.xmu.oomall.core.util.Common.*;
  */
 @Api(value = "件数运费模板API", tags = "件数运费模板API")
 @RestController
+@RefreshScope
 @RequestMapping(value = "", produces = "application/json;charset=UTF-8")
 public class PieceFreightController {
     @Autowired
