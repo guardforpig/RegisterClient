@@ -14,7 +14,6 @@ server:
 
 spring:
   main:
-    # 解决Bean重复定义问题
     allow-bean-definition-overriding: true
   application:
     name: freight-service
@@ -30,11 +29,11 @@ spring:
         server-addr: 172.16.4.136:8848
 
   datasource:
-    url: jdbc:mysql://172.16.1.254:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://172.16.1.254:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
     username: dbuser
     password: 12345678
+    type: com.alibaba.druid.pool.DruidDataSource
     druid:
       #初始化时建立物理连接的个数
       initial-size: 3
@@ -44,6 +43,13 @@ spring:
       max-active: 10
       #获取连接时最大等待时间
       max-wait: 60000
+
+      stat-view-servlet:
+        login-username: admin
+        login-password: 123456
+        enabled: true
+        url-pattern: /druid/*
+
       filter:
         stat:
           #是否开启慢sql查询监控
