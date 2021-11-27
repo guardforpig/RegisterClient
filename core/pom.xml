@@ -135,4 +135,11 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <site>
+            <id>siteserver</id>
+            <url>dav:http://172.16.4.1/webdav/oomall/oomall-core</url>
+        </site>
+    </distributionManagement>
+
 </project>

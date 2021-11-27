@@ -54,9 +54,9 @@ class FreightModelControllerTest {
 
     @Test
     void addFreightModel() throws Exception{
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L,0, 3600);
         //以下是正常情况返回的
-        FreightModelInfoVo freightModelInfo = new FreightModelInfoVo("modelname",666,(byte)0,null);
+        FreightModelInfoVo freightModelInfo = new FreightModelInfoVo("modelname",666,(byte)0,(byte)0);
         String json = JacksonUtil.toJson(freightModelInfo);
         String responseString = this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/0/freightmodels")
                 .header("authorization",token)
@@ -86,7 +86,7 @@ class FreightModelControllerTest {
         JSONAssert.assertEquals(expectedString,responseString,false);
 
         //body字段不合法
-        FreightModelInfoVo freightModelInfo2 = new FreightModelInfoVo(null,666,(byte)0,null);
+        FreightModelInfoVo freightModelInfo2 = new FreightModelInfoVo(null,666,(byte)0,(byte)0);
         String json2 = JacksonUtil.toJson(freightModelInfo2);
         String responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/0/freightmodels")
                 .header("authorization",token)
@@ -114,7 +114,7 @@ class FreightModelControllerTest {
     @Test
     void showFreightModel() throws Exception {
         //name字段存在
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         String responseString;
         responseString = this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/0/freightmodels")
                 .header("authorization",token)
@@ -133,7 +133,7 @@ class FreightModelControllerTest {
         JSONAssert.assertEquals(expectedString,responseString,true);
 
         //name字段不存在
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         String responseString2;
         responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/0/freightmodels")
                 .header("authorization",token)
@@ -148,7 +148,7 @@ class FreightModelControllerTest {
 
     @Test
     void cloneFreightModel() throws Exception {
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         Mockito.when(redisUtil.get("freightModel_"+1L)).thenReturn(null);
         //以下是正常情况返回的,没过redis
         String responseString;
@@ -207,7 +207,7 @@ class FreightModelControllerTest {
     void showDefaultFreightModel() throws Exception {
         //正常情况
         FreightModel freightModel=new FreightModel(2L,"piece model/2",(byte)1,(byte)1,2,1L,"admin",null,null,null,null);
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(freightModel);
         //以下是正常情况返回的,过redis
         String responseString;
@@ -234,7 +234,7 @@ class FreightModelControllerTest {
 
 
         //正常情况
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(null);
         FreightModelPo freightModelPo=new FreightModelPo();
         freightModelPo.setGmtCreate(LocalDateTime.of(2021,11,20,2,51));
@@ -260,7 +260,7 @@ class FreightModelControllerTest {
     @Test
     void showFreightModelById() throws Exception {
         //正常情况
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         //以下是正常情况返回的,不过redis
         String responseString2;
         responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/1/freightmodels/2")
@@ -276,7 +276,7 @@ class FreightModelControllerTest {
 
         //正常情况
         FreightModel freightModel=new FreightModel(2L,"piece model/2",(byte)0,(byte)1,2,1L,"admin",null,null,null,null);
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         Mockito.when(redisUtil.get("freightModel_"+2L)).thenReturn(freightModel);
         //以下是正常情况返回的,过redis
         String responseString;
@@ -292,7 +292,7 @@ class FreightModelControllerTest {
 
         //查不到，返回默认模板
         FreightModel freightDefaultModel=new FreightModel(2L,"piece model/2",(byte)1,(byte)1,2,1L,"admin",null,null,null,null);
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(freightDefaultModel);
         //以下是正常情况返回的,过redis
         String responseString3;
@@ -307,7 +307,7 @@ class FreightModelControllerTest {
         JSONAssert.assertEquals(expectedResponseString3,responseString3,true);
 
         //查不到，查默认模板,默认模板再查不到,返回404
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(null);
         //以下是正常情况返回的,过redis
         String responseString4;
@@ -325,7 +325,7 @@ class FreightModelControllerTest {
     @Test
     void updateFreightModel() throws Exception {
         //body字段不合法
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         FreightModelInfoVo freightModelInfo0 = new FreightModelInfoVo("modelname",-1,null,null);
         String json0 = JacksonUtil.toJson(freightModelInfo0);
         String responseString0= this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/0/freightmodels/1")
@@ -342,7 +342,7 @@ class FreightModelControllerTest {
         FreightModelInfoVo freightModelInfo = new FreightModelInfoVo("modelname",666,null,(byte) 0);
         //如果更新的不是默认模板（默认模板id为2）
         FreightModel freightModel1=new FreightModel(2L,"piece model/2",(byte)0,(byte)1,2,1L,"admin",null,null,null,null);
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(freightModel1);
         String json = JacksonUtil.toJson(freightModelInfo);
         String responseString1;
@@ -359,7 +359,7 @@ class FreightModelControllerTest {
 
         //如果更新的是默认模板,此测试将修改id为1为默认模板,之前没有默认模板
         freightModelInfo.setDefaultModel((byte)1);
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         json = JacksonUtil.toJson(freightModelInfo);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(null);
         String responseStringNoDefault;
@@ -377,7 +377,7 @@ class FreightModelControllerTest {
         //如果更新的是默认模板,此测试将修改id为1为默认模板,通过redis找到旧的模板
         freightModelInfo.setDefaultModel((byte)1);
         FreightModel freightModel2=new FreightModel(2L,"piece model/2",(byte)1,(byte)1,2,1L,"admin",null,null,null,null);
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         json = JacksonUtil.toJson(freightModelInfo);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(freightModel2);
         String responseString2;
@@ -393,7 +393,7 @@ class FreightModelControllerTest {
         JSONAssert.assertEquals(expectedResponseString2,responseString2,true);
 
         //如果非管理员
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         String responseString3;
         responseString3 = this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/4/freightmodels/2")
                 .header("authorization",token)
@@ -411,7 +411,7 @@ class FreightModelControllerTest {
         //如果更新的id不存在 404
         freightModelInfo.setDefaultModel((byte)0);
         FreightModel freightModel4=new FreightModel(2L,"piece model/2",(byte)1,(byte)1,2,1L,"admin",null,null,null,null);
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         json = JacksonUtil.toJson(freightModelInfo);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(freightModel4);
         String responseString4;
@@ -430,7 +430,7 @@ class FreightModelControllerTest {
     @Test
     void deleteFreightModel() throws Exception {
         //正常情况
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(null);
         String responseString3;
         responseString3 = this.mockMvc.perform(MockMvcRequestBuilders.delete("/shops/0/freightmodels/1")
@@ -445,7 +445,7 @@ class FreightModelControllerTest {
 
         //如果删除的是默认模板
         FreightModel freightModel=new FreightModel(2L,"piece model/2",(byte)1,(byte)1,2,1L,"admin",null,null,null,null);
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(freightModel);
         String responseString1;
         responseString1 = this.mockMvc.perform(MockMvcRequestBuilders.delete("/shops/0/freightmodels/2")
@@ -458,7 +458,7 @@ class FreightModelControllerTest {
         JSONAssert.assertEquals(expectedResponseString1,responseString1,true);
 
         //非管理员
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         String responseString2;
         responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.delete("/shops/1/freightmodels/2")
                 .header("authorization",token)
@@ -474,7 +474,7 @@ class FreightModelControllerTest {
 
         //如果删除的id不存在 404
         FreightModel freightModel4=new FreightModel(2L,"piece model/2",(byte)1,(byte)1,2,1L,"admin",null,null,null,null);
-        token=jwtHelper.createToken(1L,"admin",0L, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
         Mockito.when(redisUtil.get("defaultFrightModel")).thenReturn(freightModel4);
         String responseString4;
         responseString4 = this.mockMvc.perform(MockMvcRequestBuilders.delete("/shops/0/freightmodels/6666666")

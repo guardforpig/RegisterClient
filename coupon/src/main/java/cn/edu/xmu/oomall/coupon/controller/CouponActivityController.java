@@ -6,7 +6,6 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.service.CouponActivityService;
-import
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;

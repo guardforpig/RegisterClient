@@ -12,20 +12,17 @@ server:
 
 spring:
   application:
-    name: ShopService
+    name: shop-service
   cloud:
-    loadbalancer:
-      ribbon:
-        enable: true
     nacos:
       discovery:
-        server-addr: 192.168.31.241:8848
+        server-addr: 172.16.4.1:8848
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://81.68.173.165:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
-    username: dbdata
-    password: 123456
+    url: jdbc:mysql://172.16.1.254:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
+    username: dbuser
+    password: 12345678
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       #初始化时建立物理连接的个数
@@ -33,7 +30,7 @@ spring:
       #最小连接池数量
       min-idle: 3
       #最大连接池数量
-      max-active: 100
+      max-active: 10
       #获取连接时最大等待时间
       max-wait: 60000
       #配置监控页面访问登录名及密码
@@ -55,7 +52,7 @@ spring:
     # Redis数据库索引（默认为0）
     database: 0
     # Redis服务器地址
-    host: localhost
+    host: 172.16.2.172
     # Redis服务器连接端口
     port: 6379
     # Redis服务器连接密码
@@ -93,8 +90,6 @@ mybatis:
 #pagehelper分页插件配置
 pagehelper:
   helper-dialect: mysql
-
-
 
 oomall:
   shop:

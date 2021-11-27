@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.shop.controller;
 
 import cn.edu.xmu.oomall.shop.ShopApplication;
-import cn.edu.xmu.privilegegateway.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * 商品分类测试类
  *
  * @author Zhiliang Li
- * @date 2021/11/22
+ * @date 2021/11/25
  */
 @SpringBootTest(classes = ShopApplication.class)
 @AutoConfigureMockMvc
