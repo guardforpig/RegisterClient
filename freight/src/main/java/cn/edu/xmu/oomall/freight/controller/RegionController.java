@@ -30,7 +30,7 @@ import static cn.edu.xmu.oomall.core.util.Common.*;
 @Api(value = "地区API", tags = "地区API")
 @RestController
 @RefreshScope
-@RequestMapping(value = "/freight", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class RegionController {
 
     @Autowired
