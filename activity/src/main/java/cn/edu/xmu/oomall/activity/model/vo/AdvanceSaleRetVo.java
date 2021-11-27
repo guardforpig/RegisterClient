@@ -46,9 +46,11 @@ public class AdvanceSaleRetVo{
     private SimpleAdminUserVo creator;
 
     @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
     private LocalDateTime gmtCreate;
 
     @ApiModelProperty(value = "修改时间")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
     private LocalDateTime gmtModified;
 
     @ApiModelProperty(value = "修改者")

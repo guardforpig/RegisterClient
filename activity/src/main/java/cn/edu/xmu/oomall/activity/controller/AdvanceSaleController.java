@@ -188,12 +188,6 @@ public class AdvanceSaleController {
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
         //输入参数合法性检查
-        if (shopId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "shopId不能为负数"));
-        }
-        if (productId!=null&&productId < 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "productId不能为负数"));
-        }
         if(beginTime!=null&&endTime!=null) {
             if(beginTime.isAfter(endTime)) {
                 return  Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
@@ -262,9 +256,6 @@ public class AdvanceSaleController {
             @LoginUser Long loginUserId, @LoginName String loginUserName,
             @PathVariable(name = "shopId") Long shopId,
             @PathVariable(name = "id") Long id) {
-        if(shopId<=0){
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "shopId不能为负数"));
-        }
         ReturnObject ret= advanceSaleService.getShopAdvanceSaleInfo(shopId, id);
         return Common.decorateReturnObject(ret);
 

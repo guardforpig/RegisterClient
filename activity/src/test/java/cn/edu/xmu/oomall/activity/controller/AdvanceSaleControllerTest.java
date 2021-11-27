@@ -230,7 +230,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect((status().isOk()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":3,\"name\":\"预售活动2\",\"shop\":null,\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12 15:04:04.000Z\",\"beginTime\":\"2021-06-21 17:38:20.001Z\",\"endTime\":\"2021-12-29 17:38:20.001Z\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"zheng5d\"},\"gmtCreate\":\"2021-06-21T17:38:20\",\"gmtModified\":\"2021-06-21T17:38:20\",\"modifier\":{\"id\":1,\"name\":\"zheng5d\"},\"state\":1},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":3,\"name\":\"预售活动2\",\"shop\":null,\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"zheng5d\"},\"gmtCreate\":\"2021-06-21T17:38:20.000\",\"gmtModified\":\"2021-06-21T17:38:20.000\",\"modifier\":{\"id\":1,\"name\":\"zheng5d\"},\"state\":1},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -312,40 +312,10 @@ public class AdvanceSaleControllerTest {
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
-    //3.输入shopId不合法
+    //3.输入BeginTime大于endTime不合法
     @Test
     @Transactional
     public void getShopAdvanceSaleTest3() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",-1L, 1,3600);
-        String responseString = mvc.perform(get("/shops/-1/advancesales")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
-                .andExpect((status().isBadRequest()))
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":503,\"errmsg\":\"shopId不能为负数\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
-    }
-
-    //4.输入productId不合法
-    @Test
-    @Transactional
-    public void getShopAdvanceSaleTest4() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",1L, 1,3600);
-        String responseString = mvc.perform(get("/shops/1/advancesales?productId=-1")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
-                .andExpect((status().isBadRequest()))
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":503,\"errmsg\":\"productId不能为负数\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
-    }
-
-    //5.输入BeginTime大于endTime不合法
-    @Test
-    @Transactional
-    public void getShopAdvanceSaleTest5() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",1L, 1,3600);
         String responseString = mvc.perform(get("/shops/1/advancesales?beginTime=2021-12-29T17:38:20.000Z&endTime=2021-06-21T17:38:20.000Z")
                 .header("authorization", adminToken)
@@ -368,7 +338,7 @@ public class AdvanceSaleControllerTest {
         Mockito.when(shopService.getShop(4L)).thenReturn(new ReturnObject<>(new ShopInfoVo(1L,"努力向前")));
         ReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new ReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.getAllOnsale(4L,1552L,LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),LocalDateTime.parse("2021-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
-        String requestJson="{\"price\": 156,\"beginTime\": \"2021-06-21 17:38:20.000\",\"endTime\": \"2021-12-29 17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2021-06-22 17:38:20.000\",\"advancePayPrice\": 140}";
+        String requestJson="{\"price\": 156,\"beginTime\": \"2021-06-21T17:38:20.000\",\"endTime\": \"2021-12-29T17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2021-06-22T17:38:20.000\",\"advancePayPrice\": 140}";
         String responseString = mvc.perform(post("/shops/4/products/1552/advanceSale")
                 .header("authorization", adminToken)
                 .content(requestJson)
@@ -384,7 +354,7 @@ public class AdvanceSaleControllerTest {
     @Transactional
     public void addAdvanceSaleTest2() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        String requestJson="{\"price\": -1,\"beginTime\": \"2021-06-21 17:38:20.000\",\"endTime\": \"2021-12-29 17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2021-06-22 17:38:20.000\",\"advancePayPrice\": 140}";
+        String requestJson="{\"price\": -1,\"beginTime\": \"2021-06-21T17:38:20.000\",\"endTime\": \"2021-12-29T17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2021-06-22T17:38:20.000\",\"advancePayPrice\": 140}";
         String responseString = mvc.perform(post("/shops/4/products/1552/advanceSale")
                 .header("authorization", adminToken)
                 .content(requestJson)
@@ -400,7 +370,7 @@ public class AdvanceSaleControllerTest {
     @Transactional
     public void addAdvanceSaleTest3() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        String requestJson="{\"price\": 156,\"beginTime\": \"2021-12-29 17:38:20.000\",\"endTime\":\"2021-06-21 17:38:20.000\" ,\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2021-06-22 17:38:20.000\",\"advancePayPrice\": 140}";
+        String requestJson="{\"price\": 156,\"beginTime\": \"2021-12-29T17:38:20.000\",\"endTime\":\"2021-06-21T17:38:20.000\" ,\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2021-06-22T17:38:20.000\",\"advancePayPrice\": 140}";
         String responseString = mvc.perform(post("/shops/4/products/1552/advanceSale")
                 .header("authorization", adminToken)
                 .content(requestJson)
@@ -416,7 +386,7 @@ public class AdvanceSaleControllerTest {
     @Transactional
     public void addAdvanceSaleTest4() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        String requestJson="{\"price\": 156,\"beginTime\": \"2021-06-21 17:38:20.000\",\"endTime\":\"2021-12-29 17:38:20.000\" ,\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2023-06-22 17:38:20.000\",\"advancePayPrice\": 140}";
+        String requestJson="{\"price\": 156,\"beginTime\": \"2021-06-21T17:38:20.000\",\"endTime\":\"2021-12-29T17:38:20.000\" ,\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2023-06-22T17:38:20.000\",\"advancePayPrice\": 140}";
         String responseString = mvc.perform(post("/shops/4/products/1552/advanceSale")
                 .header("authorization", adminToken)
                 .content(requestJson)
@@ -432,7 +402,7 @@ public class AdvanceSaleControllerTest {
     @Transactional
     public void addAdvanceSaleTest5() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        String requestJson="{\"price\": 156,\"beginTime\": \"2021-06-21 17:38:20.000\",\"endTime\":\"2021-12-29 17:38:20.000\" ,\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2020-06-22 17:38:20.000\",\"advancePayPrice\": 140}";
+        String requestJson="{\"price\": 156,\"beginTime\": \"2021-06-21T17:38:20.000\",\"endTime\":\"2021-12-29T17:38:20.000\" ,\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2020-06-22T17:38:20.000\",\"advancePayPrice\": 140}";
         String responseString = mvc.perform(post("/shops/4/products/1552/advanceSale")
                 .header("authorization", adminToken)
                 .content(requestJson)
@@ -452,7 +422,7 @@ public class AdvanceSaleControllerTest {
         ReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new ReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.addOnsale(4L,1552L,new OnSaleCreatedVo(156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,"3",null))).thenReturn(new ReturnObject());
         Mockito.when(goodsService.getAllOnsale(4L,1552L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
-        String requestJson="{\"price\": 156,\"beginTime\": \"2022-06-21 17:38:20.000\",\"endTime\": \"2022-12-29 17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2022-06-22 17:38:20.000\",\"advancePayPrice\": 140}";
+        String requestJson="{\"price\": 156,\"beginTime\": \"2022-06-21T17:38:20.000\",\"endTime\": \"2022-12-29T17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2022-06-22T17:38:20.000\",\"advancePayPrice\": 140}";
         String responseString = mvc.perform(post("/shops/4/products/1552/advanceSale")
                 .header("authorization", adminToken)
                 .content(requestJson)
@@ -473,7 +443,7 @@ public class AdvanceSaleControllerTest {
         Mockito.when(goodsService.addOnsale(4L,1552L,new OnSaleCreatedVo(156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,"3",null)))
                 .thenReturn(new ReturnObject(new SimpleOnSaleInfoVo(10000L,156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,11L,"3")));
         Mockito.when(goodsService.getAllOnsale(4L,1552L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
-        String requestJson="{\"price\": 156,\"beginTime\": \"2022-06-21 17:38:20.000\",\"endTime\": \"2022-12-29 17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2022-06-22 17:38:20.000\",\"advancePayPrice\": 140}";
+        String requestJson="{\"price\": 156,\"beginTime\": \"2022-06-21T17:38:20.000\",\"endTime\": \"2022-12-29T17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2022-06-22T17:38:20.000\",\"advancePayPrice\": 140}";
         String responseString = mvc.perform(post("/shops/4/products/1552/advanceSale")
                 .header("authorization", adminToken)
                 .content(requestJson)
@@ -490,7 +460,7 @@ public class AdvanceSaleControllerTest {
     public void addAdvanceSaleTest8() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",11L, 1,3600);
         Mockito.when(shopService.getShop(11L)).thenReturn(new ReturnObject<>());
-        String requestJson="{\"price\": 1,\"beginTime\": \"2021-06-21 17:38:20.000\",\"endTime\": \"2021-12-29 17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2021-06-22 17:38:20.000\",\"advancePayPrice\": 140}";
+        String requestJson="{\"price\": 1,\"beginTime\": \"2021-06-21T17:38:20.000\",\"endTime\": \"2021-12-29T17:38:20.000\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2021-06-22T17:38:20.000\",\"advancePayPrice\": 140}";
         String responseString = mvc.perform(post("/shops/11/products/1552/advanceSale")
                 .header("authorization", adminToken)
                 .content(requestJson)
@@ -520,7 +490,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect((status().isOk()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"data\":{\"id\":3,\"name\":\"预售活动1\",\"shop\":null,\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12 15:04:04.000Z\",\"beginTime\":\"2021-06-21 17:38:20.001Z\",\"endTime\":\"2021-12-29 17:38:20.001Z\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"zheng5d\"},\"gmtCreate\":\"2021-06-21T17:38:20\",\"gmtModified\":\"2021-06-21T17:38:20\",\"modifier\":{\"id\":1,\"name\":\"zheng5d\"},\"state\":1},\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":0,\"data\":{\"id\":3,\"name\":\"预售活动1\",\"shop\":null,\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"zheng5d\"},\"gmtCreate\":\"2021-06-21T17:38:20.000\",\"gmtModified\":\"2021-06-21T17:38:20.000\",\"modifier\":{\"id\":1,\"name\":\"zheng5d\"},\"state\":1},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
 
@@ -575,17 +545,4 @@ public class AdvanceSaleControllerTest {
         JSONAssert.assertEquals(expected, responseString, false);
     }
 
-    //5.shopId不合法
-    @Test
-    public void getShopAdvanceSaleInfoTest5() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        String responseString = mvc.perform(get("/shops/-1/advancesales/1")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
-                .andExpect((status().isBadRequest()))
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":503,\"errmsg\":\"shopId不能为负数\"}";
-        JSONAssert.assertEquals(expected, responseString, false);
-    }
 }

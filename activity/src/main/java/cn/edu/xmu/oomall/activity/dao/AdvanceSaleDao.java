@@ -143,7 +143,6 @@ public class AdvanceSaleDao {
     public ReturnObject getOnlineAdvanceSaleInfo(Long id){
         String key = "advanceSale_" + id;
         try {
-            System.out.println(redisUtil.get(key));
             //先查redis
             AdvanceSale advanceSale = (AdvanceSale) redisUtil.get(key);
             if(advanceSale!=null) {
