@@ -62,9 +62,10 @@ public class Comment{
     private String creatorName;
     private Long modifierId;
     private String modifierName;
-    private SimpleUserRetVo author;
-    private SimpleUserRetVo auditedBy;
+    private SimpleUserRetVo post;
+    private SimpleUserRetVo audit;
     private LocalDateTime postTime;
+    private LocalDateTime auditTime;
     private LocalDateTime gmtCreated;
     private LocalDateTime gmtModified;
 }

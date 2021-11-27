@@ -7,11 +7,10 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.mapper.FreightModelPoMapper;
 import cn.edu.xmu.oomall.freight.mapper.PieceFreightPoMapper;
 import cn.edu.xmu.oomall.freight.model.bo.PieceFreight;
-import cn.edu.xmu.oomall.freight.model.po.FreightModelPo;
-import cn.edu.xmu.oomall.freight.model.po.PieceFreightPo;
-import cn.edu.xmu.oomall.freight.model.po.PieceFreightPoExample;
+import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
+import cn.edu.xmu.oomall.freight.model.po.*;
 import cn.edu.xmu.oomall.freight.model.vo.PieceFreightRetVo;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -92,6 +91,29 @@ public class PieceFreightDao {
         }
     }
 
+    /**
+     * 店家或管理员通过默认模板id删除Freight Items
+     *
+     * @param freightModelId
+     * @return ReturnObject
+     */
+    public ReturnObject deletePieceItemsByFreightModelId(Long freightModelId) {
+        try {
+
+            PieceFreightPoExample example=new PieceFreightPoExample();
+            PieceFreightPoExample.Criteria criteria=example.createCriteria();
+            criteria.andFreightModelIdEqualTo(freightModelId);
+            List<PieceFreightPo> pieceFreightPoList = pieceFreightPoMapper.selectByExample(example);
+            List<PieceFreight> pieceFreightBoList = new ArrayList<>();
+            for (PieceFreightPo wfPo : pieceFreightPoList) {
+                deletePieceFreight(wfPo.getId());
+            }
+            return new ReturnObject(ReturnNo.OK);
+        } catch (Exception e) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
+    }
+    
     /**
      * 店家或管理员删掉件数运费模板明细
      *
