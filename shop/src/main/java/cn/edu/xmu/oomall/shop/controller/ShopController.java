@@ -16,6 +16,7 @@ import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @Api(value = "店铺", tags = "shop")
 @RestController /*Restful的Controller对象*/
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 @Component
 public class ShopController {

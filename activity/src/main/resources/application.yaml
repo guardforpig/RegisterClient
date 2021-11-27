@@ -16,6 +16,10 @@ spring:
     allow-bean-definition-overriding: true
   application:
     name: activity-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.4.136:8848
   servlet:
     multipart:
       #是否使用http上传
@@ -69,10 +73,6 @@ spring:
     #连接超时时间（毫秒）
     timeout: 5000
 
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 172.16.4.136:8848
 
 mybatis:
   #po对象的包

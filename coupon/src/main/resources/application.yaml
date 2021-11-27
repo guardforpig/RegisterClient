@@ -12,6 +12,8 @@ server:
 
 
 spring:
+  application:
+    name: coupon-service
   cloud:
     nacos:
       discovery:

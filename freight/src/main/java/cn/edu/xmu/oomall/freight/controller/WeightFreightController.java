@@ -13,6 +13,7 @@ import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -29,6 +30,7 @@ import static cn.edu.xmu.oomall.core.util.Common.processFieldErrors;
  */
 @Api(value = "重量运费模板API", tags = "重量运费模板API")
 @RestController
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class WeightFreightController {
 

@@ -13,6 +13,7 @@ import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +30,7 @@ import javax.validation.Valid;
  **/
 @Api(value = "评论服务", tags = "comment")
 @RestController /*Restful的Controller对象*/
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class CommentController {
 

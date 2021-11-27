@@ -15,6 +15,7 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +31,7 @@ import static cn.edu.xmu.oomall.core.util.Common.*;
  */
 @Api(value = "货品销售情况", tags = "goods")
 @RestController
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class OnSaleController {
 

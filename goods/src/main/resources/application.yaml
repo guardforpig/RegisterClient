@@ -16,8 +16,6 @@ spring:
     allow-bean-definition-overriding: true
   application:
     name: goods-service
-  profiles:
-    active: dev
   servlet:
     multipart:
       #是否使用http上传
