@@ -59,7 +59,6 @@ public class FreightModelController {
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "操作的资源id不是自己的对象"), HttpStatus.FORBIDDEN);
         }
         ReturnObject ret=freightModelService.addFreightModel(freightModelInfo, userId, userName);
-        ret = Common.getRetVo(ret, FreightModelRetVo.class);
         return Common.decorateReturnObject(ret);
     }
 
@@ -79,7 +78,6 @@ public class FreightModelController {
                                    @RequestParam(required = false,defaultValue = "1") Integer page,
                                    @RequestParam(required = false,defaultValue = "5") Integer pageSize) {
         ReturnObject ret=freightModelService.showFreightModel(name, page, pageSize);
-        ret = Common.getPageRetVo(ret, FreightModelRetVo.class);
         return Common.decorateReturnObject(ret);
     }
 

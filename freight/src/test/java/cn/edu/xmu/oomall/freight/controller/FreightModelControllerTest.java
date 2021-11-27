@@ -42,9 +42,6 @@ class FreightModelControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    ResourceLoader resourceLoader;
-
     @MockBean
     private RedisUtil redisUtil;
 
@@ -54,7 +51,7 @@ class FreightModelControllerTest {
 
     @Test
     void addFreightModel() throws Exception{
-        token=jwtHelper.createToken(1L,"admin",0L,0, 3600);
+        token=jwtHelper.createToken(1L,"admin",0L,1, 3600);
         //以下是正常情况返回的
         FreightModelInfoVo freightModelInfo = new FreightModelInfoVo("modelname",666,(byte)0,(byte)0);
         String json = JacksonUtil.toJson(freightModelInfo);
@@ -64,25 +61,7 @@ class FreightModelControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedString = "{\"errno\": 0," +
-                "\"data\":{" +
-                "\"id\": null,"+
-                "\"name\": \"modelname\"," +
-                "\"defaultModel\": 0," +
-                "\"type\": 0," +
-                "\"unit\": 666," +
-                "\"creator\":{" +
-                "\"id\": 1," +
-                "\"name\": \"admin\"" +
-                "}," +
-                "\"modifier\":{" +
-                "\"id\": null," +
-                "\"name\": null" +
-                "}," +
-                "\"gmtModified\": null" +
-                "}," +
-                "\"errmsg\": \"成功\"" +
-                "}";
+        String expectedString = "{\"errno\":0,\"data\":{\"name\":\"modelname\",\"type\":0,\"unit\":666,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedString,responseString,false);
 
         //body字段不合法
@@ -123,13 +102,7 @@ class FreightModelControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedString = "{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":1,\"page\":1," +
-                "\"list\":[{\"id\":1,\"name\":\"freight model/100g\"," +
-                "\"defaultModel\":0,\"type\":0,\"unit\":100,\"" +
-                "creator\":{\"id\":1,\"name\":\"admin\"}," +
-                "\"modifier\":{\"id\":null,\"name\":null}," +
-                "\"gmtCreate\":\"2020-12-02 20:33:08.000\"," +
-                "\"gmtModified\":\"2020-12-02 20:33:08.000\"}]},\"errmsg\":\"成功\"}";
+        String expectedString = "{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"name\":\"freight model/100g\",\"type\":0,\"unit\":100,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2020-12-02T20:33:08.000\",\"gmtModified\":\"2020-12-02T20:33:08.000\",\"modifier\":{\"id\":null,\"name\":null}}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedString,responseString,true);
 
         //name字段不存在
@@ -142,7 +115,7 @@ class FreightModelControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedString2 = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":2,\"page\":1,\"list\":[{\"id\":1,\"name\":\"freight model/100g\",\"type\":0,\"unit\":100,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2020-12-02 20:33:08.000\",\"gmtModified\":\"2020-12-02 20:33:08.000\",\"modifier\":{\"id\":null,\"name\":null}},{\"id\":2,\"name\":\"piece model/2\",\"type\":1,\"unit\":2,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2020-12-02 20:33:08.000\",\"gmtModified\":\"2020-12-02 20:33:08.000\",\"modifier\":{\"id\":null,\"name\":null}}]},\"errmsg\":\"成功\"}";
+        String expectedString2 = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"name\":\"freight model/100g\",\"type\":0,\"unit\":100,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2020-12-02T20:33:08.000\",\"gmtModified\":\"2020-12-02T20:33:08.000\",\"modifier\":{\"id\":null,\"name\":null}},{\"id\":2,\"name\":\"piece model/2\",\"type\":1,\"unit\":2,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2020-12-02T20:33:08.000\",\"gmtModified\":\"2020-12-02T20:33:08.000\",\"modifier\":{\"id\":null,\"name\":null}}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedString2,responseString2,true);
     }
 
@@ -158,7 +131,7 @@ class FreightModelControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedString = "{\"errno\":0,\"data\":{\"id\":null,\"type\":0,\"unit\":100,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
+        String expectedString = "{\"errno\":0,\"data\":{\"type\":0,\"unit\":100,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedString,responseString,false);
 
         FreightModel freightModel=new FreightModel(2L,"piece model/2",(byte)0,(byte)1,2,1L,"admin",null,null,null,null);
@@ -171,7 +144,7 @@ class FreightModelControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedStringR = "{\"errno\":0,\"data\":{\"id\":null,\"type\":0,\"unit\":2,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
+        String expectedStringR = "{\"errno\":0,\"data\":{\"type\":0,\"unit\":2,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedStringR,responseStringR,false);
 
         //非管理员返回错误
@@ -253,7 +226,7 @@ class FreightModelControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedResponseString2="{\"errno\":0,\"data\":{\"name\":\"piece model/3\",\"type\":1,\"unit\":3,\"defaultModel\":1,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2021-11-20 02:51:00.000\",\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
+        String expectedResponseString2="{\"errno\":0,\"data\":{\"name\":\"piece model/3\",\"type\":1,\"unit\":3,\"defaultModel\":1,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2021-11-20T02:51:00.000\",\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedResponseString2,responseString2,false);
     }
 
@@ -270,7 +243,7 @@ class FreightModelControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
-        String expectedResponseString2="{\"errno\":0,\"data\":{\"id\":2,\"name\":\"piece model/2\",\"type\":1,\"unit\":2,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2020-12-02 20:33:08.000\",\"gmtModified\":\"2020-12-02 20:33:08.000\",\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
+        String expectedResponseString2="{\"errno\":0,\"data\":{\"id\":2,\"name\":\"piece model/2\",\"type\":1,\"unit\":2,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2020-12-02T20:33:08.000\",\"gmtModified\":\"2020-12-02T20:33:08.000\",\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedResponseString2,responseString2,true);
 
 
@@ -326,7 +299,7 @@ class FreightModelControllerTest {
     void updateFreightModel() throws Exception {
         //body字段不合法
         token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
-        FreightModelInfoVo freightModelInfo0 = new FreightModelInfoVo("modelname",-1,null,null);
+        FreightModelInfoVo freightModelInfo0 = new FreightModelInfoVo("modelname",-1,(byte)1,(byte) 0);
         String json0 = JacksonUtil.toJson(freightModelInfo0);
         String responseString0= this.mockMvc.perform(MockMvcRequestBuilders.put("/shops/0/freightmodels/1")
                 .header("authorization",token)
@@ -339,7 +312,7 @@ class FreightModelControllerTest {
         JSONAssert.assertEquals(expectedString0,responseString0,true);
 
 
-        FreightModelInfoVo freightModelInfo = new FreightModelInfoVo("modelname",666,null,(byte) 0);
+        FreightModelInfoVo freightModelInfo = new FreightModelInfoVo("modelname",666,(byte)1,(byte) 0);
         //如果更新的不是默认模板（默认模板id为2）
         FreightModel freightModel1=new FreightModel(2L,"piece model/2",(byte)0,(byte)1,2,1L,"admin",null,null,null,null);
         token=jwtHelper.createToken(1L,"admin",0L, 0,3600);
