@@ -12,7 +12,7 @@ mvn clean
 time=$(date "+%Y-%m-%d-%H-%M-%S")
 
 origin_dir='oomall-testreport'
-daily_dir='daily_report/'$time
+daily_dir='daily-report/'$time
 echo $daily_dir
 
 cd annotation
