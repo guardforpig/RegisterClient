@@ -14,6 +14,17 @@
     <packaging>jar</packaging>
 
     <dependencies>
+
+        <dependency>
+            <groupId>cn.edu.xmu.privilegegateway</groupId>
+            <artifactId>annotation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.edu.xmu.oomall</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -102,22 +113,15 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>cn.edu.xmu.oomall</groupId>
-            <artifactId>core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-openfeign-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
@@ -127,6 +131,38 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-openfeign-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -142,7 +178,7 @@
                 <version>3.0.0-M5</version>
                 <configuration>
                     <includes>
-                        <include>**/*ControllerTest.java</include>
+                        <include>**/*Test.java</include>
                     </includes>
                     <!--                    <skip>true</skip>-->
                 </configuration>
@@ -150,5 +186,11 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <site>
+            <id>siteserver</id>
+            <url>dav:http://172.16.4.1/webdav/oomall/coupon-service</url>
+        </site>
+    </distributionManagement>
 
 </project>

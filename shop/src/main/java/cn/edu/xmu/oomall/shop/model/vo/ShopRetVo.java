@@ -18,8 +18,8 @@ public class ShopRetVo {
     private Long deposit;
     private Long depositThreshold;
     private Byte state;
-    private SimpleUserRetVo createdBy;
-    private SimpleUserRetVo modifiedBy;
+    private SimpleUserRetVo creator;
+    private SimpleUserRetVo modifier;
     private String gmtCreated;
     private String gmtModified;
 }

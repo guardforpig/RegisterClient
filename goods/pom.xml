@@ -17,13 +17,11 @@
         <dependency>
             <groupId>cn.edu.xmu.privilegegateway</groupId>
             <artifactId>annotation</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>cn.edu.xmu.oomall</groupId>
             <artifactId>core</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -125,6 +123,12 @@
 
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <exclusions>
                 <exclusion>
@@ -157,7 +161,7 @@
                 <version>3.0.0-M5</version>
                 <configuration>
                     <includes>
-                        <include>**/OnSaleControllerTest.java</include>
+                        <include>**/*Test.java</include>
                     </includes>
                     <!--                    <skip>true</skip>-->
                 </configuration>
@@ -165,6 +169,11 @@
         </plugins>
     </build>
 
-
+    <distributionManagement>
+        <site>
+            <id>siteserver</id>
+            <url>dav:http://172.16.4.1/webdav/oomall-testreport/goods-service</url>
+        </site>
+    </distributionManagement>
 
 </project>

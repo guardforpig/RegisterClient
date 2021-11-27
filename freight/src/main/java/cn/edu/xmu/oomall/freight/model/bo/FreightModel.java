@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.freight.model.bo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class FreightModel implements Serializable {
     private Long id;
     private String name;

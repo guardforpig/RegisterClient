@@ -6,14 +6,16 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.service.CouponActivityService;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -24,6 +26,7 @@ import java.util.List;
  * @author RenJieZheng 22920192204334
  */
 @RestController
+@RefreshScope
 @RequestMapping(value = "/",produces = "application/json;charset=UTF-8")
 public class CouponActivityController {
     @Autowired
@@ -45,15 +48,13 @@ public class CouponActivityController {
      * @param couponActivityVo 优惠券信息
      * @return 插入结果
      */
+    @Audit
     @PostMapping("shops/{shopId}/couponactivities")
     public Object addCouponActivity(@PathVariable Long shopId,
-                                    Long userId,
-                                    String userName,
+                                    @LoginUser Long userId, @LoginName String userName,
                                     @Valid @RequestBody CouponActivityVo couponActivityVo,
                                     HttpServletResponse httpServletResponse,BindingResult bindingResult
                                     ){
-        userId = 1L;
-        userName = "aasdf";
         Object returnObject = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (null != returnObject) {
             return returnObject;
@@ -82,16 +83,14 @@ public class CouponActivityController {
      * @param pageSize 页大小
      * @return 优惠活动列表
      */
+    @Audit
     @GetMapping("shops/{shopId}/couponactivities")
     public Object showOwnInvalidCouponActivities(@PathVariable Long shopId,
-                                                 Long userId,
-                                                 String userName,
+                                                 @LoginUser Long userId, @LoginName String userName,
                                                  @RequestParam(required = false) Byte state,
                                                  @RequestParam(required = false,defaultValue = "1") Integer page,
                                                  @RequestParam(required = false,defaultValue = "5") Integer pageSize
                                                  ){
-        userId = 1L;
-        userName = "aasdf";
 
         return Common.getPageRetObject(couponActivityService.showOwnInvalidCouponActivities(userId,userName,shopId,state,page,pageSize));
     }
@@ -103,15 +102,13 @@ public class CouponActivityController {
      * @param request 请求
      * @return 上传结果
      */
+    @Audit
     @PostMapping("shops/{shopId}/couponactivities/{id}/uploadImg")
     public Object addCouponActivityImageUrl(@PathVariable Long shopId,
                                             @PathVariable Long id,
-                                            Long userId,
-                                            String userName,
+                                            @LoginUser Long userId, @LoginName String userName,
                                             HttpServletRequest request) {
 
-        userId = 1L;
-        userName = "aasdf";
         //对输入数据进行合法性判断
         List<MultipartFile> files = ((MultipartHttpServletRequest) request)
                 .getFiles("file");
@@ -183,13 +180,11 @@ public class CouponActivityController {
      * @param shopId 店铺id
      * @return 优惠活动信息
      */
+    @Audit
     @GetMapping("shops/{shopId}/couponactivities/{id}")
     public Object showOwnCouponActivityInfo(@PathVariable Long shopId,
                                             @PathVariable Long id,
-                                            Long userId,
-                                            String userName){
-        userId = 1L;
-        userName = "aasdf";
+                                            @LoginUser Long userId, @LoginName String userName){
         return Common.decorateReturnObject(couponActivityService.showOwnCouponActivityInfo(userId,userName,id,shopId));
     }
 

@@ -53,10 +53,10 @@ public class Shop {
     private Long deposit;
     private Long depositThreshold;
     private Byte state;
-    private Long createdBy;
-    private String createName;
-    private Long modifiedBy;
-    private String modiName;
+    private Long creatorId;
+    private String creatorName;
+    private Long modifierId;
+    private String modifierName;
     private LocalDateTime gmtCreated;
     private LocalDateTime gmtModified;
 
