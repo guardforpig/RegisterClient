@@ -7,6 +7,9 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.service.RegionService;
 import cn.edu.xmu.oomall.freight.model.vo.RegionRetVo;
 import cn.edu.xmu.oomall.freight.model.vo.RegionVo;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -73,15 +76,13 @@ public class RegionController {
             @ApiResponse(code=504,message = "操作的资源id不存在"),
             @ApiResponse(code=995,message = "地区已废弃")
     })
+    @Audit(departName = "shops")
     @PostMapping("/shops/{did}/regions/{id}/subregions")
-    public Object addRegion(@Validated @RequestBody RegionVo regionVo, @PathVariable("did") Integer did, @PathVariable("id") Long id, Long userId, String userName, BindingResult bindingResult){
+    public Object addRegion(@Validated @RequestBody RegionVo regionVo, @PathVariable("did") Integer did, @PathVariable("id") Long id, @LoginUser Long userId, @LoginName String userName, BindingResult bindingResult){
 
         if(did!=0){
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
         }
-        userId=Long.valueOf(1);
-        userName="admin";
-
         Object object = processFieldErrors(bindingResult, httpServletResponse);
         if (object != null){
             return object;
@@ -104,6 +105,7 @@ public class RegionController {
             @ApiResponse(code=500,message = "服务器内部错误"),
             @ApiResponse(code=504,message = "操作的资源id不存在")
     })
+    @Audit(departName = "shops")
     @GetMapping("/shops/{did}/regions/{id}/subregions")
     public Object adminGetChildRegion(@PathVariable("did") Integer did, @PathVariable("id") Long id) {
 
@@ -148,15 +150,13 @@ public class RegionController {
             @ApiResponse(code=500,message = "服务器内部错误"),
             @ApiResponse(code=504,message = "操作的资源id不存在")
     })
+    @Audit(departName = "shops")
     @PutMapping("/shops/{did}/regions/{id}")
-    public Object modifyRegion(@Validated @RequestBody RegionVo regionVo, @PathVariable("did") Integer did, @PathVariable("id") Long id, Long userId, String userName, BindingResult bindingResult){
+    public Object modifyRegion(@Validated @RequestBody RegionVo regionVo, @PathVariable("did") Integer did, @PathVariable("id") Long id, @LoginUser Long userId, @LoginName String userName, BindingResult bindingResult){
 
         if(did!=0){
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
         }
-        userId=Long.valueOf(1);
-        userName="admin";
-
         Object object = processFieldErrors(bindingResult, httpServletResponse);
         if (null != object){
             return object;
@@ -180,14 +180,13 @@ public class RegionController {
             @ApiResponse(code=504,message = "操作的资源id不存在"),
             @ApiResponse(code=507,message = "当前状态禁止此操作")
     })
+    @Audit(departName = "shops")
     @DeleteMapping("/shops/{did}/regions/{id}")
-    public Object abandonRegion(@PathVariable("did") Integer did, @PathVariable("id") Long id, Long userId, String userName) {
+    public Object abandonRegion(@PathVariable("did") Integer did, @PathVariable("id") Long id, @LoginUser Long userId, @LoginName String userName) {
 
         if(did!=0){
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
         }
-        userId=Long.valueOf(1);
-        userName="admin";
 
         ReturnObject returnObject = regionService.abandonRegion(id, userId, userName);
 
@@ -207,14 +206,13 @@ public class RegionController {
             @ApiResponse(code=504,message = "操作的资源id不存在"),
             @ApiResponse(code=507,message = "当前状态禁止此操作")
     })
+    @Audit(departName = "shops")
     @PutMapping("/shops/{did}/regions/{id}/suspend")
-    public Object suspendRegion(@PathVariable("did") Integer did, @PathVariable("id") Long id, Long userId, String userName) {
+    public Object suspendRegion(@PathVariable("did") Integer did, @PathVariable("id") Long id, @LoginUser Long userId, @LoginName String userName) {
 
         if(did!=0){
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
         }
-        userId=Long.valueOf(1);
-        userName="admin";
 
         ReturnObject returnObject = regionService.suspendRegion(id, userId, userName);
 
@@ -234,14 +232,13 @@ public class RegionController {
             @ApiResponse(code=504,message = "操作的资源id不存在"),
             @ApiResponse(code=507,message = "当前状态禁止此操作")
     })
+    @Audit(departName = "shops")
     @PutMapping("/shops/{did}/regions/{id}/resume")
-    public Object resumeRegion(@PathVariable("did") Integer did, @PathVariable("id") Long id, Long userId, String userName) {
+    public Object resumeRegion(@PathVariable("did") Integer did, @PathVariable("id") Long id, @LoginUser Long userId, @LoginName String userName) {
 
         if(did!=0){
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
         }
-        userId=Long.valueOf(1);
-        userName="admin";
 
         ReturnObject returnObject = regionService.resumeRegion(id, userId, userName);
 

@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.freight.controller;
 
 import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.freight.FreightApplication;
 import cn.edu.xmu.oomall.freight.model.vo.RegionVo;
@@ -34,6 +35,8 @@ public class RegionControllerTest {
     @MockBean
     private RedisUtil redisUtil;
 
+    private static JwtHelper jwtHelper = new JwtHelper();
+    private static String adminToken = jwtHelper.createToken(1L,"admin",0L,1,3600);
 
     @Test
     public void getParentRegionTest() throws Exception {
@@ -84,7 +87,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(post("/shops/0/regions/1599/subregions").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(post("/shops/0/regions/1599/subregions").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -102,7 +105,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(post("/shops/0/regions/4191/subregions").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(post("/shops/0/regions/4191/subregions").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -119,7 +122,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(post("/shops/1/regions/4191/subregions").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(post("/shops/1/regions/4191/subregions").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -137,7 +140,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(post("/shops/0/regions/0/subregions").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(post("/shops/0/regions/0/subregions").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -150,7 +153,7 @@ public class RegionControllerTest {
 
     @Test
     public void adminGetChildRegionTest() throws Exception {
-        String responseString = this.mvc.perform(get("/shops/0/regions/14/subregions"))
+        String responseString = this.mvc.perform(get("/shops/0/regions/14/subregions").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -162,7 +165,7 @@ public class RegionControllerTest {
 
     @Test
     public void adminGetChildRegionTest1() throws Exception {
-        String responseString = this.mvc.perform(get("/shops/0/regions/0/subregions").contentType("application/json;charset=UTF-8"))
+        String responseString = this.mvc.perform(get("/shops/0/regions/0/subregions").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -174,7 +177,7 @@ public class RegionControllerTest {
 
     @Test
     public void adminGetChildRegionTest2() throws Exception {
-        String responseString = this.mvc.perform(get("/shops/1/regions/14/subregions"))
+        String responseString = this.mvc.perform(get("/shops/1/regions/14/subregions").header("authorization", adminToken))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -234,7 +237,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(put("/shops/0/regions/4191").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(put("/shops/0/regions/4191").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -251,7 +254,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(put("/shops/1/regions/4191").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(put("/shops/1/regions/4191").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -269,7 +272,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(put("/shops/0/regions/0").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(put("/shops/0/regions/0").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -282,7 +285,7 @@ public class RegionControllerTest {
 
     @Test   //标识此方法为测试方法
     public void abandonRegionTest() throws Exception {
-        String responseString = this.mvc.perform(put("/shops/0/regions/2/suspend"))
+        String responseString = this.mvc.perform(put("/shops/0/regions/2/suspend").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -291,7 +294,7 @@ public class RegionControllerTest {
 
         JSONAssert.assertEquals(expectedResponse, responseString, true);
 
-        responseString = this.mvc.perform(delete("/shops/0/regions/2"))
+        responseString = this.mvc.perform(delete("/shops/0/regions/2").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -303,7 +306,7 @@ public class RegionControllerTest {
 
     @Test   //标识此方法为测试方法
     public void abandonRegionTest1() throws Exception {
-        String responseString = this.mvc.perform(delete("/shops/0/regions/3"))
+        String responseString = this.mvc.perform(delete("/shops/0/regions/3").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -320,7 +323,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(delete("/shops/1/regions/4191").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(delete("/shops/1/regions/4191").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -338,7 +341,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(delete("/shops/0/regions/0").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(delete("/shops/0/regions/0").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -351,7 +354,7 @@ public class RegionControllerTest {
 
     @Test   //标识此方法为测试方法
     public void suspendRegionTest() throws Exception {
-        String responseString = this.mvc.perform(put("/shops/0/regions/4/suspend"))
+        String responseString = this.mvc.perform(put("/shops/0/regions/4/suspend").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -364,7 +367,7 @@ public class RegionControllerTest {
     @Test   //标识此方法为测试方法
     public void suspendRegionTest1() throws Exception {
 
-        String responseString = this.mvc.perform(put("/shops/0/regions/4191/suspend"))
+        String responseString = this.mvc.perform(put("/shops/0/regions/4191/suspend").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -381,7 +384,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(put("/shops/1/regions/4191/suspend").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(put("/shops/1/regions/4191/suspend").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -399,7 +402,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(put("/shops/0/regions/0/suspend").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(put("/shops/0/regions/0/suspend").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -412,7 +415,7 @@ public class RegionControllerTest {
 
     @Test   //标识此方法为测试方法
     public void resumeRegionTest() throws Exception {
-        String responseString = this.mvc.perform(put("/shops/0/regions/6/suspend"))
+        String responseString = this.mvc.perform(put("/shops/0/regions/6/suspend").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -421,7 +424,7 @@ public class RegionControllerTest {
 
         JSONAssert.assertEquals(expectedResponse, responseString, true);
 
-        responseString = this.mvc.perform(put("/shops/0/regions/6/resume"))
+        responseString = this.mvc.perform(put("/shops/0/regions/6/resume").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -434,7 +437,7 @@ public class RegionControllerTest {
     @Test   //标识此方法为测试方法
     public void resumeRegionTest1() throws Exception {
 
-        String responseString = this.mvc.perform(put("/shops/0/regions/4191/resume"))
+        String responseString = this.mvc.perform(put("/shops/0/regions/4191/resume").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -451,7 +454,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(put("/shops/1/regions/4191/resume").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(put("/shops/1/regions/4191/resume").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -469,7 +472,7 @@ public class RegionControllerTest {
 
         String goodJson = JacksonUtil.toJson(r);
 
-        String responseString = this.mvc.perform(put("/shops/0/regions/0/resume").contentType("application/json;charset=UTF-8").content(goodJson))
+        String responseString = this.mvc.perform(put("/shops/0/regions/0/resume").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(goodJson))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
