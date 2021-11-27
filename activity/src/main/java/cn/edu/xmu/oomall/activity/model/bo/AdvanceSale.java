@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.activity.model.bo;
 
+import cn.edu.xmu.oomall.activity.model.vo.ShopVo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,8 +12,7 @@ import java.util.Map;
 public class AdvanceSale implements Serializable {
 
     private Long id;
-    private Long shopId;
-    private String shopName;
+    private ShopVo shop;
     private String name;
     private LocalDateTime payTime;
     private Long advancePayPrice;

@@ -5,15 +5,15 @@ import cn.edu.xmu.oomall.activity.model.vo.AdvanceSaleModifyVo;
 import cn.edu.xmu.oomall.activity.service.AdvanceSaleService;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSale;
 import cn.edu.xmu.oomall.activity.model.vo.AdvanceSaleVo;
 import javax.validation.Valid;
@@ -127,26 +127,24 @@ public class AdvanceSaleController {
     public Object queryAllAdvanceSales(
             @RequestParam(name = "shopId", required = false) Long shopId,
             @RequestParam(name = "productId", required = false) Long productId,
-            @RequestParam(name = "beginTime", required = false)@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSZ") LocalDateTime beginTime,
-            @RequestParam(name = "endTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")LocalDateTime endTime,
-            @RequestParam(name = "page", required = false,defaultValue = "1") Integer page,
-            @RequestParam(name = "pageSize",  required = false,defaultValue = "10") Integer pageSize) {
+            @RequestParam(name = "beginTime", required = false)@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime beginTime,
+            @RequestParam(name = "endTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")LocalDateTime endTime,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
         //输入参数合法性检查
         if (shopId!=null&&shopId < 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "shopId不能为负数"));
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "shopId不能为负数"));
         }
         if (productId!=null&&productId < 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "productId不能为负数"));
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "productId不能为负数"));
         }
-        if(beginTime!=null&&endTime!=null)
-        {
-            if(beginTime.isAfter(endTime))
-            {
-                return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "开始时间不能晚于结束时间"));
+        if(beginTime!=null&&endTime!=null) {
+            if(beginTime.isAfter(endTime)) {
+                return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
             }
         }
-        ReturnObject onlineAdvanceSale = advanceSaleService.getAllAdvanceSale(shopId,productId, AdvanceSale.state.ONLINE.getCode(), beginTime,endTime,page,pageSize);
-        return Common.decorateReturnObject(onlineAdvanceSale);
+        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId, AdvanceSale.state.ONLINE.getCode(), beginTime,endTime,page,pageSize);
+        return Common.decorateReturnObject(ret);
     }
 
     /**
@@ -160,7 +158,8 @@ public class AdvanceSaleController {
     @GetMapping(value = "/advancesales/{id}")
     public Object queryOnlineAdvanceSaleDetails(
             @PathVariable(name = "id") Long id) {
-        return Common.decorateReturnObject(advanceSaleService.getOnlineAdvanceSaleDetails(id));
+        ReturnObject ret=advanceSaleService.getOnlineAdvanceSaleInfo(id);
+        return Common.decorateReturnObject(ret);
     }
 
     /**
@@ -184,24 +183,24 @@ public class AdvanceSaleController {
             @PathVariable(name = "shopId", required = true) Long shopId,
             @RequestParam(name = "productId", required = false) Long productId,
             @RequestParam(name = "state", required = false) Byte state,
-            @RequestParam(name = "beginTime", required = false)@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime beginTime,
-            @RequestParam(name = "endTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")LocalDateTime endTime,
+            @RequestParam(name = "beginTime", required = false)@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime beginTime,
+            @RequestParam(name = "endTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")LocalDateTime endTime,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
         //输入参数合法性检查
         if (shopId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "shopId错误"));
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "shopId不能为负数"));
         }
         if (productId!=null&&productId < 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "productId错误"));
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "productId不能为负数"));
         }
         if(beginTime!=null&&endTime!=null) {
             if(beginTime.isAfter(endTime)) {
                 return  Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
             }
         }
-        ReturnObject onlineAdvanceSale = advanceSaleService.getAllAdvanceSale(shopId,productId,state,beginTime,endTime,page,pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(onlineAdvanceSale));
+        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId,state,beginTime,endTime,page,pageSize);
+        return Common.decorateReturnObject(ret);
 
     }
 
@@ -240,7 +239,7 @@ public class AdvanceSaleController {
         if (advanceSaleVo.getPayTime().isAfter(advanceSaleVo.getEndTime())) {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_LATE_PAYTIME,"尾款支付时间不能晚于活动结束时间"));
         }
-        //尾款支付时间早于活动开始时间
+        //支付尾款时间早于活动开始时间
         if (advanceSaleVo.getBeginTime().isAfter(advanceSaleVo.getPayTime())) {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_EARLY_PAYTIME,"尾款支付时间不能早于活动开始时间"));
         }
@@ -263,9 +262,11 @@ public class AdvanceSaleController {
             @LoginUser Long loginUserId, @LoginName String loginUserName,
             @PathVariable(name = "shopId") Long shopId,
             @PathVariable(name = "id") Long id) {
-        //输入参数合法性检查
-        ReturnObject returnObject= advanceSaleService.getShopAdvanceSale(shopId, id);
-        return Common.decorateReturnObject(returnObject);
+        if(shopId<=0){
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "shopId不能为负数"));
+        }
+        ReturnObject ret= advanceSaleService.getShopAdvanceSaleInfo(shopId, id);
+        return Common.decorateReturnObject(ret);
 
     }
 }

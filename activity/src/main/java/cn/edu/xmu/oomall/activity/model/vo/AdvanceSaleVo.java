@@ -9,25 +9,27 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.DecimalMin;
-
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AdvanceSaleVo{
     @ApiModelProperty(value = "价格")
     @Min(0)
     @NotNull(message = "价格不能为空")
     private Long price;
 
-    @ApiModelProperty(value = "预售活动名称")
-    @NotBlank(message = "预售活动名称不能为空")
-    private String name;
-
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @ApiModelProperty(value = "开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
     @NotNull(message = "开始时间不能为空")
     private LocalDateTime beginTime;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
     @ApiModelProperty(value = "结束时间")
     @NotNull(message = "结束时间不能为空")
@@ -38,8 +40,13 @@ public class AdvanceSaleVo{
     @NotNull(message = "数量不能为空")
     private Long quantity;
 
+    @ApiModelProperty(value = "预售活动名称")
+    @NotBlank(message = "预售活动名称不能为空")
+    private String name;
+
     @ApiModelProperty(value = "支付尾款时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @NotNull(message = "尾款支付时间不能为空")
     private LocalDateTime payTime;
 

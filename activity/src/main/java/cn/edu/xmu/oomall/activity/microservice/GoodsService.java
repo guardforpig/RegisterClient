@@ -80,4 +80,7 @@ public interface GoodsService {
     @GetMapping("/internal/onsales/{id}")
     ReturnObject<OnSaleInfoVo> getOnSaleById(@PathVariable("id")Long id);
 
+    @GetMapping("/internal/onsales/{id}")
+    ReturnObject<OnSaleInfoVo> getOnSaleInfo(@PathVariable Long id);
+
 }

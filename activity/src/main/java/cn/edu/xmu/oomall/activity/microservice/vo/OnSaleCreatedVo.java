@@ -3,10 +3,14 @@ package cn.edu.xmu.oomall.activity.microservice.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OnSaleCreatedVo {
     @ApiModelProperty(value = "价格")
     private Long price;

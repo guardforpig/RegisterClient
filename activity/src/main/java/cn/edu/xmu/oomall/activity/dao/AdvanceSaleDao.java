@@ -98,39 +98,6 @@ public class AdvanceSaleDao {
      * 1-10
      */
 
-    public ReturnObject getOnlineAdvanceSaleInfo(Long id){
-        String key = "advanceSale_" + id;
-        try {
-            //先查redis
-            AdvanceSale advanceSale = (AdvanceSale) redisUtil.get(key);
-            if(advanceSale!=null) {
-                if(!advanceSale.getState().equals(AdvanceSaleStates.ONLINE.getCode())) {
-                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"该预售活动没有上线");
-                }
-                return new ReturnObject(advanceSale);
-            }
-            AdvanceSalePo po = advanceSalePoMapper.selectByPrimaryKey(id);
-            if(po==null) {
-                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }
-            if(!po.getState().equals(AdvanceSaleStates.ONLINE))
-            {
-                AdvanceSale advanceSaleBo = (AdvanceSale) Common.cloneVo(po, AdvanceSale.class);
-                redisUtil.set(key, JacksonUtil.toJson(advanceSaleBo), categoryTimeout);
-                return new ReturnObject(advanceSaleBo);
-            }
-            else
-            {
-                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"该预售活动没有上线");
-            }
-        }
-        catch (Exception e) {
-            logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
-        }
-    }
-
-
     /**
      * 查询所有预售活动
      * 此方法复用：查询所有上线的预售活动，管理员查询特定商铺所有预售活动都可用此方法
@@ -158,20 +125,45 @@ public class AdvanceSaleDao {
         try {
             PageHelper.startPage(page, pageSize);
             List<AdvanceSalePo> poList = advanceSalePoMapper.selectByExample(example);
-            if(poList==null)
-            {
+            if(poList.size()==0) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "没有满足条件的预售活动");
             }
-//            List<AdvanceSale> advanceSaleBos=new ArrayList<>();
-
-//            for(AdvanceSalePo advanceSalePo:poList) {
-//                advanceSaleBos.add((AdvanceSale) Common.cloneVo(advanceSalePo, AdvanceSale.class));
-//            }
             PageInfo<AdvanceSalePo> pageInfo = new PageInfo<>(poList);
             ReturnObject returnObject = new ReturnObject(pageInfo);
-//            PageInfo<AdvanceSaleRetVo> pageInfoRet=new PageInfo<>(advanceSaleBos);
             return Common.getPageRetVo(returnObject, SimpleAdvanceSaleRetVo.class);
 
+        }
+        catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+
+    public ReturnObject getOnlineAdvanceSaleInfo(Long id){
+        String key = "advanceSale_" + id;
+        try {
+            System.out.println(redisUtil.get(key));
+            //先查redis
+            AdvanceSale advanceSale = (AdvanceSale) redisUtil.get(key);
+            if(advanceSale!=null) {
+                if(!advanceSale.getState().equals(AdvanceSaleStates.ONLINE.getCode())) {
+                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"该预售活动没有上线");
+                }
+                return new ReturnObject(advanceSale);
+            }
+            AdvanceSalePo po = advanceSalePoMapper.selectByPrimaryKey(id);
+            if(po==null) {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"活动不存在");
+            }
+            if(po.getState().equals(AdvanceSaleStates.ONLINE.getCode())) {
+                AdvanceSale advanceSaleBo = (AdvanceSale) Common.cloneVo(po, AdvanceSale.class);
+                redisUtil.set(key, JacksonUtil.toJson(advanceSaleBo), categoryTimeout);
+                return new ReturnObject(advanceSaleBo);
+            }
+            else {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"该预售活动没有上线");
+            }
         }
         catch (Exception e) {
             logger.error(e.getMessage());
@@ -192,8 +184,7 @@ public class AdvanceSaleDao {
             criteria.andShopIdEqualTo(shopId);
             criteria.andIdEqualTo(activityId);
             List<AdvanceSalePo> list = advanceSalePoMapper.selectByExample(example);
-            if(list==null)
-            {
+            if(list.size()==0) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"没有满足条件的预售活动");
             }
             //根据预售活动id去查询，因为是一对一的，所以List里只有一个advanceSalePo
@@ -218,9 +209,9 @@ public class AdvanceSaleDao {
         Common.setPoModifiedFields(advanceSalePo,adminId,adminName);
         try {
             if (advanceSalePoMapper.insert(advanceSalePo) == 1) {
-                AdvanceSale advanceSaleBo1 = (AdvanceSale) Common.cloneVo(advanceSalePo, AdvanceSale.class);
-                return new ReturnObject(advanceSaleBo1);
-            } else {
+                return new ReturnObject(Common.cloneVo(advanceSalePo, AdvanceSale.class));
+            }
+            else {
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID, "新增预售活动失败");
             }
         }

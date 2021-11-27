@@ -2,8 +2,12 @@ package cn.edu.xmu.oomall.activity.microservice.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductVo{
     @ApiModelProperty(value = "货品id")
     private Long productId;
