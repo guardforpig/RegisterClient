@@ -14,7 +14,7 @@ mvn site:site site:deploy
 
 cd /home/mingqiu/oomall/sql
 echo '-------------------initializing database-------------------------'
-mysql -h 172.16.1.254 -u dbuser -p 12345678 -D oomall < goods-batch.sql
+mysql -h 172.16.1.254 -udbuser -p12345678 -D oomall < goods-batch.sql
 
 echo '-------------------building core-------------------------'
 cd /home/mingqiu/oomall/core
