@@ -60,7 +60,7 @@ public class FreightModelDao {
             }
             return new ReturnObject(defaultFreightModel);
         } catch (Exception e) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,e.getMessage());
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"操作的资源id不存在");
         }
     }
 
@@ -98,7 +98,8 @@ public class FreightModelDao {
         try {
             FreightModelPo freightModelPo = (FreightModelPo) Common.cloneVo(freightModel, FreightModelPo.class);
             freightModelPoMapper.insertSelective(freightModelPo);
-            return new ReturnObject(freightModel);
+            FreightModelRetVo freightModelRetVo= (FreightModelRetVo) Common.cloneVo(freightModelPo,FreightModelRetVo.class);
+            return new ReturnObject(freightModelRetVo);
         } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
@@ -119,12 +120,9 @@ public class FreightModelDao {
             FreightModelPoExample.Criteria criteria = example.createCriteria();
             criteria.andNameEqualTo(name);
             freightModelPoList = freightModelPoMapper.selectByExample(example);
-            List<FreightModel> freightModelList = new ArrayList<>();
-            for (FreightModelPo fmPo : freightModelPoList) {
-                freightModelList.add((FreightModel) Common.cloneVo(fmPo, FreightModel.class));
-            }
-            PageInfo<FreightModel> pageInfo = new PageInfo<>(freightModelList);
-            return new ReturnObject<>(pageInfo);
+            PageInfo<FreightModelPo> pageInfo=new PageInfo<>(freightModelPoList);
+            ReturnObject returnObject=new ReturnObject<>(pageInfo);
+            return Common.getPageRetVo(returnObject, FreightModelRetVo.class);
         } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
