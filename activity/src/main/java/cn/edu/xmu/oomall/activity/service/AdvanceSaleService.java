@@ -220,11 +220,11 @@ public class AdvanceSaleService {
         List<Long> activityIdList=new ArrayList<>();
         if(productId!=null) {
             //跨模块调接口，根据shopId,productId，beginTime，endTime获取OnSale列表
-            ReturnObject<PageInfo<SimpleOnSaleInfoVo>> OnSaleList1 = goodsService.getAllOnsale(shopId, productId, beginTime, endTime, 1, 1);
-            if (OnSaleList1.getData().getList() != null) {
-                long total = OnSaleList1.getData().getTotal();
-                ReturnObject<PageInfo<SimpleOnSaleInfoVo>> OnSaleList2 = goodsService.getAllOnsale(shopId, productId, beginTime, endTime, 1, (int) total);
-                activityIdList=OnSaleList2.getData().getList().stream().map(SimpleOnSaleInfoVo::getActivityId).collect(Collectors.toList());
+            ReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1 = goodsService.getAllOnsale(shopId, productId, beginTime, endTime, 1, 1);
+            if (onSaleList1.getData().getList() != null) {
+                long total = onSaleList1.getData().getTotal();
+                ReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList2 = goodsService.getAllOnsale(shopId, productId, beginTime, endTime, 1, (int) total);
+                activityIdList=onSaleList2.getData().getList().stream().map(SimpleOnSaleInfoVo::getActivityId).collect(Collectors.toList());
             }
         }
         ReturnObject pageInfoReturnObject = advanceSaleDao.getAllAdvanceSale(shopId, state, activityIdList, page, pageSize);
@@ -283,12 +283,12 @@ public class AdvanceSaleService {
         advanceSaleBo.setShop(new ShopVo(shopId,shopVoReturnObject.getData().getName()));
 
         //跨模块调接口，根据shopId,productId，beginTime，endTime获取OnSale列表,判断要加入的活动的时间是否和已有product的预售活动时间冲突
-        ReturnObject<PageInfo<SimpleOnSaleInfoVo>> OnSaleList1=goodsService.getAllOnsale(shopId,id,advanceSaleVo.getBeginTime(),advanceSaleVo.getEndTime(),1,1);
+        ReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1=goodsService.getAllOnsale(shopId,id,advanceSaleVo.getBeginTime(),advanceSaleVo.getEndTime(),1,1);
         List<SimpleOnSaleInfoVo> list=new ArrayList<>();
-        if(OnSaleList1.getData().getList()!=null) {
-            long total = OnSaleList1.getData().getTotal();
-            ReturnObject<PageInfo<SimpleOnSaleInfoVo>> OnSaleList2 = goodsService.getAllOnsale(shopId, id, advanceSaleVo.getBeginTime(), advanceSaleVo.getEndTime(), 1, (int) total);
-            list=OnSaleList2.getData().getList();
+        if(onSaleList1.getData().getList()!=null) {
+            long total = onSaleList1.getData().getTotal();
+            ReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList2 = goodsService.getAllOnsale(shopId, id, advanceSaleVo.getBeginTime(), advanceSaleVo.getEndTime(), 1, (int) total);
+            list=onSaleList2.getData().getList();
         }
         if (advanceSaleVo.getBeginTime() != null && advanceSaleVo.getEndTime() != null) {
             for (SimpleOnSaleInfoVo vo : list) {
