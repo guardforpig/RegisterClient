@@ -2,13 +2,10 @@ package cn.edu.xmu.oomall.activity;
 
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.model.vo.*;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
-import com.github.pagehelper.Page;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -33,8 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 //事务回滚(测试的时候不会产生脏数据)
 @Rollback
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = AdvancesaleApplication.class)
+@SpringBootTest(classes = ActivityApplication.class)
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
@@ -50,7 +45,7 @@ public class AdvanceSaleControllerTest {
 
     final Charset charset=Charset.forName("UTF-8");
 
-    @Before
+    @BeforeEach
     public void init() {
         mvc = MockMvcBuilders.webAppContextSetup(wac).build();  //初始化MockMvc对象
     }
