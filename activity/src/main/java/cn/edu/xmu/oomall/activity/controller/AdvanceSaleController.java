@@ -124,7 +124,8 @@ public class AdvanceSaleController {
     @ApiResponses(value = {
             @ApiResponse(code = 0, message = "成功")})
     @GetMapping(value = "/advancesales")
-    public Object queryAllAdvanceSales(
+    @Audit(departName = "shops")
+    public Object queryAllOnlineAdvanceSales(
             @RequestParam(name = "shopId", required = false) Long shopId,
             @RequestParam(name = "productId", required = false) Long productId,
             @RequestParam(name = "beginTime", required = false)@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime beginTime,
@@ -156,7 +157,8 @@ public class AdvanceSaleController {
     @ApiResponses(value = {
             @ApiResponse(code = 0, message = "成功")})
     @GetMapping(value = "/advancesales/{id}")
-    public Object queryOnlineAdvanceSaleDetails(
+    @Audit(departName = "shops")
+    public Object queryOnlineAdvanceSaleInfo(
             @PathVariable(name = "id") Long id) {
         ReturnObject ret=advanceSaleService.getOnlineAdvanceSaleInfo(id);
         return Common.decorateReturnObject(ret);
@@ -178,7 +180,7 @@ public class AdvanceSaleController {
             @ApiResponse(code = 0, message = "成功")})
     @GetMapping(value = "/shops/{shopId}/advancesales")
     @Audit(departName = "shops")
-    public Object queryShopAdvanceSale(
+    public Object queryAllShopAdvanceSale(
             @LoginUser Long loginUserId, @LoginName String loginUserName,
             @PathVariable(name = "shopId", required = true) Long shopId,
             @RequestParam(name = "productId", required = false) Long productId,
@@ -257,7 +259,7 @@ public class AdvanceSaleController {
     @ApiResponses(value = {
             @ApiResponse(code = 0, message = "成功")})
     @GetMapping(value = "/shops/{shopId}/advancesales/{id}")
-    @Audit
+    @Audit(departName = "shops")
     public Object queryShopAdvanceSaleInfo(
             @LoginUser Long loginUserId, @LoginName String loginUserName,
             @PathVariable(name = "shopId") Long shopId,
