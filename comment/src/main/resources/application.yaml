@@ -16,7 +16,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 172.16.4.1:8848
+        server-addr: 172.16.4.136:8848
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -79,7 +79,7 @@ mybatis:
   #po对象的包
   type-aliases-package: cn.edu.xmu.oomall.comment.model
   #mapper.xml所在的位置
-  mapper-locations: classpath*:cn.edu.xmu.oomall,comment.mapper/*.xml
+  mapper-locations: classpath*:cn.edu.xmu.oomall.comment.mapper/*.xml
   #自动将SQL中查出来的带下划线的字段，转换为驼峰标志，再去匹配类中的属性
   configuration:
     #输出产生的SQL
@@ -90,6 +90,7 @@ mybatis:
 #pagehelper分页插件配置
 pagehelper:
   helper-dialect: mysql
+
 
 oomall:
   shop:
