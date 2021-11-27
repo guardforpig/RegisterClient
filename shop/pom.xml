@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.edu.xmu.oomall</groupId>
-    <artifactId>comment</artifactId>
+    <artifactId>shop</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
