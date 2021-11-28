@@ -42,6 +42,10 @@ public class GroupActivityDao {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
+        if(g1==null)
+        {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
         GroupOnActivity groupOnActivity = (GroupOnActivity) Common.cloneVo(g1,GroupOnActivity.class);
         return new ReturnObject<GroupOnActivity>(groupOnActivity);
     }
@@ -79,10 +83,9 @@ public class GroupActivityDao {
      */
     public ReturnObject modifyGroupOnActivity(GroupOnActivity groupOnActivity)
     {
-        ReturnObject<Object> retObj = null;
+        ReturnObject retObj;
         GroupOnActivityPo groupOnActivityPo = (GroupOnActivityPo) Common.cloneVo(groupOnActivity,GroupOnActivityPo.class);
-        Common.setPoModifiedFields(groupOnActivityPo,groupOnActivity.getModifiedBy(),groupOnActivity.getModiName());
-        groupOnActivityPo.setGmtModified(LocalDateTime.now());
+        Common.setPoModifiedFields(groupOnActivityPo,groupOnActivity.getModifierId(),groupOnActivity.getModifierName());
         int ret;
         try
         {
@@ -91,14 +94,14 @@ public class GroupActivityDao {
         catch(Exception e)
         {
             logger.error(e.getMessage());
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
 
         if (ret == 0){
             retObj = new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         } else {
 
-            retObj = new ReturnObject();
+            retObj = new ReturnObject(ReturnNo.OK);
         }
         return retObj;
     }

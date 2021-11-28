@@ -6,6 +6,9 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ResponseUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +47,7 @@ public class GroupActivityController {
     @Audit(departName = "shops")
     @PutMapping(value="/shops/{shopId}/products/{pid}/groupons/{id}/onsale")
     public Object addGrouponProduct(@PathVariable("shopId") long shopId, @PathVariable("pid") long pid,
-                             @PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername)
+                                    @PathVariable("id") long id, @LoginUser Long loginUser, @LoginName String loginUsername)
     {
         ReturnObject<Object> returnObject = groupOnActivityService.addOnsaleToGroupOn(shopId,pid,id,loginUser,loginUsername);
         return Common.decorateReturnObject(returnObject);

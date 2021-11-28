@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.activity.microservice;
 
 import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageInfoVo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
@@ -73,5 +74,5 @@ public interface GoodsService {
      */
     @PostMapping("/shops/{shopId}/products/{id}/onsales")
     ReturnObject addOnsale(@PathVariable("shopId") long shopId,@PathVariable("id") long id,
-                           @RequestBody SimpleSaleInfoVO simpleSaleInfoVo);
+                           @RequestBody SimpleSaleInfoVo simpleSaleInfoVo);
 }

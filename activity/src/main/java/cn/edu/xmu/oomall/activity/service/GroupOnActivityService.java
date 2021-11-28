@@ -4,7 +4,7 @@ package cn.edu.xmu.oomall.activity.service;
 import cn.edu.xmu.oomall.activity.constant.GroupOnState;
 import cn.edu.xmu.oomall.activity.dao.GroupActivityDao;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVO;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
 import cn.edu.xmu.oomall.activity.model.bo.GroupOnActivity;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.Common;
@@ -43,6 +43,10 @@ public class GroupOnActivityService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject delGroupon(long id) {
         ReturnObject<GroupOnActivity> groupOnActivity= groupActivityDao.getGroupOnActivity(id);
+        if(!groupOnActivity.getCode().equals(ReturnNo.OK))
+        {
+            return groupOnActivity;
+        }
         if(!groupOnActivity.getData().getState().equals(GroupOnState.DRAFT)) {
             return new ReturnObject<>(ReturnNo.STATENOTALLOW);
         }
@@ -204,7 +208,6 @@ public class GroupOnActivityService {
         if(!result.getCode().equals(ReturnNo.OK)) {
             return result;
         }
-
         return obj;
     }
 
@@ -218,7 +221,6 @@ public class GroupOnActivityService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject addOnsaleToGroupOn(long shopId, long pid, long id,long loginUser,String loginUsername)
     {
-        Byte onSaleState = 0;
         ReturnObject<GroupOnActivity> obj = groupActivityDao.getGroupOnActivity(id);
         if(!obj.getCode().equals(ReturnNo.OK))
         {
@@ -228,12 +230,12 @@ public class GroupOnActivityService {
         {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        if(obj.getData().getState().equals(GroupOnState.DRAFT)) {
+        if(!obj.getData().getState().equals(GroupOnState.DRAFT)) {
             return new ReturnObject<>(ReturnNo.STATENOTALLOW);
         }
 
 
-        SimpleSaleInfoVO simpleOnSaleInfoVo = new SimpleSaleInfoVO();
+        SimpleSaleInfoVo simpleOnSaleInfoVo = new SimpleSaleInfoVo();
         LocalDateTime nowTime = LocalDateTime.now();
         LocalDateTime beginTime = obj.getData().getBeginTime();
         LocalDateTime endTime = obj.getData().getEndTime();
