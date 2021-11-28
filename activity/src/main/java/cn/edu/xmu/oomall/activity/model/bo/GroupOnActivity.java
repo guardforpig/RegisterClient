@@ -26,10 +26,10 @@ public class GroupOnActivity implements Serializable {
     private List<GroupOnStrategyVo> strategy;
     private LocalDateTime beginTime;
     private LocalDateTime endTime;
-    private Long creatorId;
-    private String creatorName;
-    private Long modifierId;
-    private String modifierName;
+    private Long createdBy;
+    private String createName;
+    private Long modifiedBy;
+    private String modiName;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
     private Byte state;
