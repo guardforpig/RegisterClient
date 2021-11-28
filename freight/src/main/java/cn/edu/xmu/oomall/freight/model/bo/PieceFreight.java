@@ -1,36 +1,38 @@
 package cn.edu.xmu.oomall.freight.model.bo;
 
-import lombok.AllArgsConstructor;
+
+import cn.edu.xmu.oomall.freight.model.vo.SimpleUserRetVo;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 import java.time.LocalDateTime;
-
 /**
- * @author Gao Yanfeng
- * @date 2021/11/22
+ * @author 高艺桐 22920192204199
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class PieceFreight extends FreightItem implements Serializable {
-    private Long id;
-    private Long freightModelId;
-    private Long regionId;
-    private Integer firstItems;
-    private Long firstItemFreight;
-    private Integer additionalItems;
-    private Long additionalItemsPrice;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
-    private Long createdBy;
-    private String createName;
-    private Long modifiedBy;
-    private String modiName;
+public class PieceFreight {
 
-    @Override
-    public Long calculate(Integer quantity, Integer unit) {
-        return firstItemFreight + calculatePart(firstItems, null, quantity, unit, additionalItemsPrice);
-    }
+    @ApiModelProperty(value = "主键")
+    private Long id;
+    @ApiModelProperty(value = "运输模板id")
+    private Long freightModelId;
+    @ApiModelProperty(value = "抵达地区码")
+    private Long regionId;
+    @ApiModelProperty(value = "首件数")
+    private Integer firstItems;
+    @ApiModelProperty(value = "首费")
+    private Long firstItemFreight;
+    @ApiModelProperty(value = "续件数")
+    private Integer additionalItems;
+    @ApiModelProperty(value = "续费")
+    private Long additionalItemsPrice;
+    @ApiModelProperty(value = "创建时间")
+    private LocalDateTime gmtCreate;
+    @ApiModelProperty(value = "修改时间")
+    private LocalDateTime gmtModified;
+    private Long creatorId;
+    private String creatorName;
+    private Long modifierId;
+    private String modifierName;
 }

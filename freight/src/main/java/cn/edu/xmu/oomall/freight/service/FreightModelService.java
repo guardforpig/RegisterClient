@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.dao.FreightModelDao;
 import cn.edu.xmu.oomall.freight.dao.PieceFreightDao;
+import cn.edu.xmu.oomall.freight.dao.PieceFreightDao;
 import cn.edu.xmu.oomall.freight.dao.RegionDao;
 import cn.edu.xmu.oomall.freight.dao.WeightFreightDao;
 import cn.edu.xmu.oomall.freight.model.bo.*;
@@ -117,27 +118,6 @@ public class FreightModelService {
         //克隆的不是默认模板
         freightModelToBeCloned.setType((byte)0);
 
-        ReturnObject returnObject1=weightFreightDao.getAllWeightItems(id);
-
-        //克隆freightItem
-        if (returnObject1.getCode().equals(ReturnNo.OK))
-        {
-            List<WeightFreight> weightFreightList= (List<WeightFreight>) returnObject1.getData();
-            for (WeightFreight weightFreight:weightFreightList)
-            {
-                //设置创建人
-                Common.setPoCreatedFields(weightFreight,userId,userName);
-                //将置空id
-                weightFreight.setId(null);
-                weightFreight.setFreightModelId(freightModelToBeCloned.getId());
-                //模板修改时间,修改人信息置空
-                weightFreight.setGmtModified(null);
-                weightFreight.setModifierId(null);
-                weightFreight.setModifierName(null);
-                weightFreightDao.addWeightItems((WeightFreightPo) Common.cloneVo(weightFreight, WeightFreightPo.class),userId,userName);
-            }
-        }
-
         //插入
         return freightModelDao.addFreightModel(freightModelToBeCloned);
     }
@@ -203,16 +183,13 @@ public class FreightModelService {
             return new ReturnObject(ReturnNo.FREIGHT_NOTDELETED);
         }
 
-        ReturnObject returnObject1=weightFreightDao.getAllWeightItems(id);
+        ReturnObject returnObject1=weightFreightDao.deleteWeightItemsByFreightModelId(id);
+        ReturnObject returnObject2=pieceFreightDao.deletePieceItemsByFreightModelId(id);
 
         //删除freightItem
-        if (returnObject1.getCode().equals(ReturnNo.OK))
+        if (!returnObject1.getCode().equals(ReturnNo.OK)||!returnObject2.getCode().equals(ReturnNo.OK))
         {
-            List<WeightFreight> weightFreightList= (List<WeightFreight>) returnObject1.getData();
-            for (WeightFreight weightFreight:weightFreightList)
-            {
-                weightFreightDao.deleteWeightItems(weightFreight.getId());
-            }
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
         return freightModelDao.deleteFreightModel(id);
     }

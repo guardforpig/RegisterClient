@@ -5,20 +5,22 @@ management:
         include: "*"
 
 server:
-  port: 8081
+  port: 8084
   tomcat:
     threads:
       max: 500
 
 
 spring:
-  boot:
-    admin:
-      client:
-        url: http://localhost:8081
+  application:
+    name: coupon-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.4.136:8848
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8
+    url: jdbc:mysql://172.16.1.254:3306/oomall?serverTimezone=GMT%2B8
     username: dbuser
     password: 12345678
     type: com.alibaba.druid.pool.DruidDataSource
@@ -47,11 +49,11 @@ spring:
       validation-query: select 1
     sql-script-encoding: UTF-8
   redis:
-    # Redis数据库索引（默认为0）
+    #Redis数据库索引（默认为0）
     database: 0
-    # Redis服务器地址
-    host: 172.16.0.206
-    # Redis服务器连接端口
+    #Redis服务器地址
+    host: 172.16.2.172
+    #Redis服务器连接端口
     port: 6379
     # Redis服务器连接密码
     password: 123456
@@ -67,8 +69,6 @@ spring:
         max-wait: -1
     # 连接超时时间（毫秒）
     timeout: 5000
-
-
 
 mybatis:
   #domain对象的包
@@ -88,7 +88,7 @@ pagehelper:
 webdav:
   user: DELL
   password: zrj2714
-  baseurl: http://localhost/webdav/
+  baseurl: http://172.16.4.1/webdav/test/
 
 
 

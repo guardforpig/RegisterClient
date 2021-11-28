@@ -8,11 +8,12 @@ import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
 import cn.edu.xmu.oomall.freight.model.vo.WeightFreightRetVo;
 import cn.edu.xmu.oomall.freight.model.vo.WeightFreightVo;
 import cn.edu.xmu.oomall.freight.service.WeightFreightService;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -29,7 +30,8 @@ import static cn.edu.xmu.oomall.core.util.Common.processFieldErrors;
  */
 @Api(value = "重量运费模板API", tags = "重量运费模板API")
 @RestController
-@RequestMapping(value = "/freight", produces = "application/json;charset=UTF-8")
+@RefreshScope
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class WeightFreightController {
 
     @Autowired
@@ -91,10 +93,6 @@ public class WeightFreightController {
     @Audit(departName = "shops")
     @GetMapping("/shops/{shopId}/freightmodels/{id}/weightItems")
     public Object getWeightItems(@PathVariable("shopId") Integer shopId, @PathVariable("id") Long id, @RequestParam(name = "page", required = false, defaultValue = "1") Integer page, @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-
-        if(shopId!=0){
-            return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
-        }
 
         ReturnObject returnObject = weightFreightService.getWeightItems(id, page, pageSize);
         returnObject = Common.getPageRetVo(returnObject,WeightFreightRetVo.class);

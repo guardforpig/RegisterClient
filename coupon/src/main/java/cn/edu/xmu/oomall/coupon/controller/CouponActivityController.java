@@ -6,16 +6,16 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.service.CouponActivityService;
-import
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -26,6 +26,7 @@ import java.util.List;
  * @author RenJieZheng 22920192204334
  */
 @RestController
+@RefreshScope
 @RequestMapping(value = "/",produces = "application/json;charset=UTF-8")
 public class CouponActivityController {
     @Autowired

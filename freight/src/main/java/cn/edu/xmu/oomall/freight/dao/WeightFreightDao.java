@@ -81,7 +81,8 @@ public class WeightFreightDao {
                 weightFreightBoList.add((WeightFreight) Common.cloneVo(wfPo,WeightFreight.class));
             }
 
-            PageInfo<WeightFreight> pageInfo = PageInfo.of(weightFreightBoList);
+            PageInfo pageInfo = PageInfo.of(weightFreightPoList);
+            pageInfo.setList(weightFreightBoList);
             return new ReturnObject(pageInfo);
         } catch (Exception e) {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
@@ -89,12 +90,12 @@ public class WeightFreightDao {
     }
 
     /**
-     * 店家或管理员查询某个重量运费模板的明细,不分页
+     * 店家或管理员通过默认模板id删除Freight Items
      *
      * @param freightModelId
      * @return ReturnObject
      */
-    public ReturnObject getAllWeightItems(Long freightModelId) {
+    public ReturnObject deleteWeightItemsByFreightModelId(Long freightModelId) {
         try {
 
             WeightFreightPoExample example=new WeightFreightPoExample();
@@ -103,9 +104,9 @@ public class WeightFreightDao {
             List<WeightFreightPo> weightFreightPoList = weightFreightPoMapper.selectByExample(example);
             List<WeightFreight> weightFreightBoList = new ArrayList<>();
             for (WeightFreightPo wfPo : weightFreightPoList) {
-                weightFreightBoList.add((WeightFreight) Common.cloneVo(wfPo,WeightFreight.class));
+                deleteWeightItems(wfPo.getId());
             }
-            return new ReturnObject(weightFreightBoList);
+            return new ReturnObject(ReturnNo.OK);
         } catch (Exception e) {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }

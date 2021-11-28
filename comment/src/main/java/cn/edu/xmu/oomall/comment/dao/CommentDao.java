@@ -108,8 +108,7 @@ public class CommentDao {
     /**
      * 修改评论状态
      */
-    public ReturnObject updateCommentState(Comment comment){
-        CommentPo commentPo = (CommentPo) Common.cloneVo(comment, CommentPo.class);
+    public ReturnObject updateCommentState(CommentPo commentPo){
         int ret;
         try{
             ret=commentPoMapper.updateByPrimaryKeySelective(commentPo);

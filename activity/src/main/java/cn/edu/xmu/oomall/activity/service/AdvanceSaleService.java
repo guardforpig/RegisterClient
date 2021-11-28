@@ -43,7 +43,7 @@ public class AdvanceSaleService {
                 po.setState((byte) 1);
                 Common.setPoModifiedFields(po,adminId,adminName);
                 advanceSaleDao.updateAdvanceSale(po);
-                SimpleReturnObject retObject=goodsService.onlineOnsale(advancesaleId);
+                SimpleReturnObject retObject=goodsService.onlineOnsale(shopId,advancesaleId);
                 //抛出异常是为了回滚
                 if(retObject.getErrno()!=0){
                     returnObject=new ReturnObject(ReturnNo.getByCode(retObject.getErrno()),retObject.getErrmsg());
@@ -77,7 +77,7 @@ public class AdvanceSaleService {
                 po.setState((byte) 2);
                 Common.setPoModifiedFields(po,adminId,adminName);
                 advanceSaleDao.updateAdvanceSale(po);
-                SimpleReturnObject retObject=goodsService.offlineOnsale(advancesaleId);
+                SimpleReturnObject retObject=goodsService.offlineOnsale(shopId,advancesaleId);
                 if(retObject.getErrno()!=0){
                     returnObject=new ReturnObject(ReturnNo.getByCode(retObject.getErrno()),retObject.getErrmsg());
                 }else{
@@ -107,13 +107,13 @@ public class AdvanceSaleService {
                     advanceSaleDao.updateAdvanceSale(po);
 
                     //调用内部API，查onsale信息
-                    SimpleReturnObject<PageVo<OnsaleVo>> retObj = goodsService.getOnsale(advancesaleId,1,1,10);
+                    SimpleReturnObject<PageVo<OnsaleVo>> retObj = goodsService.getOnsale(shopId,advancesaleId,1,1,10);
                     Long onsaleId=null;
                     //确定有需要修改的onsale目标
                     if(retObj.getErrno()==0&&retObj.getData().getTotal()>0){
                         onsaleId=retObj.getData().getList().get(0).getId();
                         OnsaleModifyVo onsaleModifyVo=(OnsaleModifyVo)Common.cloneVo(advanceSaleModifyVo,OnsaleModifyVo.class);
-                        SimpleReturnObject result=goodsService.modifyOnsale(onsaleId,onsaleModifyVo);
+                        SimpleReturnObject result=goodsService.modifyOnsale(shopId,onsaleId,onsaleModifyVo);
                         if(result.getErrno()!=0){
                             returnObject=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
                         }else{
@@ -154,7 +154,7 @@ public class AdvanceSaleService {
                 if(po.getState()==0){
                     advanceSaleDao.deleteAdvanceSale(advancesaleId);
                     //内部API物理删除onsale
-                    SimpleReturnObject retObj=goodsService.deleteOnsale(advancesaleId);
+                    SimpleReturnObject retObj=goodsService.deleteOnsale(shopId,advancesaleId);
                     //预售活动草稿态，那么onsale不是草稿态就是系统的问题，失败只有一种可能就是onsale服务没有运行
                     if(retObj.getErrno()!=0){
                         returnObject=new ReturnObject(ReturnNo.getByCode(retObj.getErrno()),retObj.getErrmsg());

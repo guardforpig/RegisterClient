@@ -14,6 +14,7 @@ import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -30,6 +31,7 @@ import java.util.List;
  */
 @Api(value = "运费模板", tags = "运费模板")
 @RestController
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class FreightModelController {
 
@@ -63,7 +65,6 @@ public class FreightModelController {
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "操作的资源id不是自己的对象"), HttpStatus.FORBIDDEN);
         }
         ReturnObject ret=freightModelService.addFreightModel(freightModelInfo, userId, userName);
-        ret = Common.getRetVo(ret, FreightModelRetVo.class);
         return Common.decorateReturnObject(ret);
     }
 
@@ -83,7 +84,6 @@ public class FreightModelController {
                                    @RequestParam(required = false,defaultValue = "1") Integer page,
                                    @RequestParam(required = false,defaultValue = "5") Integer pageSize) {
         ReturnObject ret=freightModelService.showFreightModel(name, page, pageSize);
-        ret = Common.getPageRetVo(ret, FreightModelRetVo.class);
         return Common.decorateReturnObject(ret);
     }
 

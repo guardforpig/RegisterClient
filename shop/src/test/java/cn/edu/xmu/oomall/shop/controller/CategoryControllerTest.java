@@ -1,11 +1,16 @@
 package cn.edu.xmu.oomall.shop.controller;
 
 import cn.edu.xmu.oomall.shop.ShopApplication;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,20 +24,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * 商品分类测试类
  *
  * @author Zhiliang Li
- * @date 2021/11/19
+ * @date 2021/11/27
  */
-@SpringBootTest(classes = ShopApplication.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 public class CategoryControllerTest {
+    private static String adminToken;
+
     @Autowired
     private MockMvc mvc;
+
+    @MockBean
+    private RedisUtil redisUtil;
+
+    @BeforeAll
+    private static void login() {
+        JwtHelper jwtHelper = new JwtHelper();
+        adminToken = jwtHelper.createToken(1L, "admin", 0L, 1, 3600);
+    }
 
     @Test
     @Transactional
     public void addCategory() throws Exception {
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
+
         // 命名重复
         String requestJson = "{\"name\": \"女装男装\"}";
-        String responseString = this.mvc.perform(post("/shops/0/categories/0/subcategories").contentType("application/json;charset=UTF-8").content(requestJson))
+        String responseString = this.mvc.perform(post("/shops/0/categories/0/subcategories")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -40,7 +62,10 @@ public class CategoryControllerTest {
 
         // 找不到
         requestJson = "{\"name\": \"女装男装\"}";
-        responseString = this.mvc.perform(post("/shops/0/categories/500/subcategories").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(post("/shops/0/categories/500/subcategories")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -48,7 +73,10 @@ public class CategoryControllerTest {
 
         // 成功插入，二级目录
         requestJson = "{\"name\": \"童装a\"}";
-        responseString = this.mvc.perform(post("/shops/0/categories/1/subcategories").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(post("/shops/0/categories/1/subcategories")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -56,7 +84,10 @@ public class CategoryControllerTest {
 
         // 成功插入，一级目录
         requestJson = "{\"name\": \"军械\"}";
-        responseString = this.mvc.perform(post("/shops/0/categories/0/subcategories").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(post("/shops/0/categories/0/subcategories")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -64,7 +95,10 @@ public class CategoryControllerTest {
 
         // 不能插入成为三级目录
         requestJson = "{\"name\": \"手机游戏\"}";
-        responseString = this.mvc.perform(post("/shops/0/categories/277/subcategories").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(post("/shops/0/categories/277/subcategories")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -72,7 +106,10 @@ public class CategoryControllerTest {
 
         // 传参错误
         requestJson = "{\"name\": \"\"}";
-        responseString = this.mvc.perform(post("/shops/0/categories/277/subcategories").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(post("/shops/0/categories/277/subcategories")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -80,7 +117,10 @@ public class CategoryControllerTest {
 
         // 服务器错误
         requestJson = "{\"name\":\"conditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditioncondition\"}";
-        responseString = this.mvc.perform(post("/shops/0/categories/0/subcategories").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(post("/shops/0/categories/0/subcategories")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -88,7 +128,10 @@ public class CategoryControllerTest {
 
         // id小于0
         requestJson = "{\"name\": \"t1\"}";
-        responseString = this.mvc.perform(post("/shops/0/categories/-1/subcategories").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(post("/shops/0/categories/-1/subcategories")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -98,6 +141,9 @@ public class CategoryControllerTest {
     @Test
     @Transactional
     public void getCategory() throws Exception {
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
+
         String responseString;
 
         // 有子分类
@@ -139,9 +185,16 @@ public class CategoryControllerTest {
     @Test
     @Transactional
     public void modifyCategory() throws Exception {
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
+        Mockito.doNothing().when(redisUtil).del(Mockito.anyString());
+
         // 可以修改
         String requestJson = "{\"name\": \"test\"}";
-        String responseString = this.mvc.perform(put("/shops/0/categories/313").contentType("application/json;charset=UTF-8").content(requestJson))
+        String responseString = this.mvc.perform(put("/shops/0/categories/313")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -149,14 +202,20 @@ public class CategoryControllerTest {
 
         // 重名
         requestJson = "{\"name\": \"童装\"}";
-        responseString = this.mvc.perform(put("/shops/0/categories/313").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(put("/shops/0/categories/313")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         assertEquals("{\"errno\":901,\"errmsg\":\"类目名称已存在\"}", responseString);
 
         // 找不到资源
-        responseString = this.mvc.perform(put("/shops/0/categories/500").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(put("/shops/0/categories/500")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -164,7 +223,10 @@ public class CategoryControllerTest {
 
         // 传参错误
         requestJson = "{\"name\": \"\"}";
-        responseString = this.mvc.perform(put("/shops/0/categories/313").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(put("/shops/0/categories/313")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -172,7 +234,10 @@ public class CategoryControllerTest {
 
         // 服务器错误
         requestJson = "{\"name\":\"conditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditioncondition\"}";
-        responseString = this.mvc.perform(put("/shops/0/categories/313").contentType("application/json;charset=UTF-8").content(requestJson))
+        responseString = this.mvc.perform(put("/shops/0/categories/313")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", adminToken)
+                        .content(requestJson))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -183,29 +248,37 @@ public class CategoryControllerTest {
     @Test
     @Transactional
     public void deleteCategory() throws Exception {
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
+        Mockito.doNothing().when(redisUtil).del(Mockito.anyString());
+
         // 删有子类别的
-        String responseString = this.mvc.perform(delete("/shops/0/categories/1"))
+        String responseString = this.mvc.perform(delete("/shops/0/categories/1")
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString);
 
         // 删单独的
-        responseString = this.mvc.perform(delete("/shops/0/categories/277"))
+        responseString = this.mvc.perform(delete("/shops/0/categories/277")
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString);
 
         // 找不到
-        responseString = this.mvc.perform(delete("/shops/0/categories/500"))
+        responseString = this.mvc.perform(delete("/shops/0/categories/500")
+                        .header("authorization", adminToken))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString);
 
         // 删为0或-1的
-        responseString = this.mvc.perform(delete("/shops/0/categories/0"))
+        responseString = this.mvc.perform(delete("/shops/0/categories/0")
+                        .header("authorization", adminToken))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
