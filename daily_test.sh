@@ -24,14 +24,6 @@ sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean install
 mvn site:site site:deploy
 
-echo '-------------------building activity-------------------------'
-cd /home/mingqiu/oomall/activity
-git checkout pom.xml
-git pull
-sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
-mvn clean test
-site:site site:deploy
-
 echo '-------------------building comment-------------------------'
 cd /home/mingqiu/oomall/comment
 git checkout pom.xml
@@ -72,5 +64,12 @@ sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean test
 site:site site:deploy
 
+echo '-------------------building activity-------------------------'
+cd /home/mingqiu/oomall/activity
+git checkout pom.xml
+git pull
+sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
+mvn clean test
+site:site site:deploy
 curl --user ooad_javaee:12345678 -T /home/mingqiu/logs/daily_test.log http://172.16.4.1/webdav/daily-report/$time/console.log
 
