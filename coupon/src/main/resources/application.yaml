@@ -95,9 +95,6 @@ oomall:
     bo:
     # Bo在Redis中失效秒数
       expiretime: 600
-    couponactivity:
-    # 对象在Redis中失效秒数
-      expiretime: 600
     coupononsalelist:
       # 对象在Redis中失效秒数
       expiretime: 300
