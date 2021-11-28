@@ -10,7 +10,7 @@ import cn.edu.xmu.oomall.freight.model.bo.PieceFreight;
 import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
 import cn.edu.xmu.oomall.freight.model.po.*;
 import cn.edu.xmu.oomall.freight.model.vo.PieceFreightRetVo;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;

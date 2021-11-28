@@ -1,13 +1,13 @@
 package cn.edu.xmu.oomall.freight.controller;
 
-import cn.edu.xmu.privilegegateway.util.JacksonUtil;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.freight.FreightApplication;
 import cn.edu.xmu.oomall.freight.mapper.FreightModelPoMapper;
 import cn.edu.xmu.oomall.freight.model.bo.FreightModel;
 import cn.edu.xmu.oomall.freight.model.po.FreightModelPo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelInfoVo;
-import cn.edu.xmu.privilegegateway.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
