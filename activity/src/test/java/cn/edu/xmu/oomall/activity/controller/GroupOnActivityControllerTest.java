@@ -189,10 +189,10 @@ public class GroupOnActivityControllerTest {
                 .andExpect(jsonPath("$.data.gmtCreate").value("2021-11-11 14:58:24.000"))
                 .andExpect(jsonPath("$.data.gmtModified").isEmpty())
                 .andExpect(jsonPath("$.data.state").value(1))
-                .andExpect(jsonPath("$.data.createdBy.id").value(1))
-                .andExpect(jsonPath("$.data.createdBy.name").value("admin"))
-                .andExpect(jsonPath("$.data.modifiedBy.id").isEmpty())
-                .andExpect(jsonPath("$.data.modifiedBy.name").isEmpty())
+                .andExpect(jsonPath("$.data.creator.id").value(1))
+                .andExpect(jsonPath("$.data.creator.name").value("admin"))
+                .andExpect(jsonPath("$.data.modifier.id").isEmpty())
+                .andExpect(jsonPath("$.data.modifier.name").isEmpty())
                 ;
     }
 
