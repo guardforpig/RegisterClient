@@ -211,7 +211,7 @@ public class AdvanceSaleService {
     public ReturnObject getAllAdvanceSale(Long shopId, Long productId, Byte state, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize) {
         //判断shop是否存在
         if (shopId != null) {
-            ReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
+            InternalReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
             if (shopVoReturnObject.getData() == null) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
             }
@@ -276,7 +276,7 @@ public class AdvanceSaleService {
         advanceSaleBo.setState(AdvanceSaleStates.DRAFT.getCode());
 
         //判断商铺是否存在
-        ReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
+        InternalReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
         if (shopVoReturnObject.getData() == null) {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
         }
@@ -300,8 +300,11 @@ public class AdvanceSaleService {
         }
 
         //新增记录到OnSale表
-        addOnSale(shopId,id, advanceSaleVo);
-
+        InternalReturnObject internalReturnObject=addOnSale(shopId,id, advanceSaleVo);
+        //新增OnSale表失败
+        if(internalReturnObject.getData()==null){
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,internalReturnObject.getErrmsg());
+        }
         //新增记录到AdvanceSale表
         ReturnObject returnObject = advanceSaleDao.addAdvanceSale(loginUserId, loginUerName, advanceSaleBo);
         if(returnObject.getData()==null){
@@ -319,7 +322,7 @@ public class AdvanceSaleService {
      */
     @Transactional(readOnly = true,rollbackFor = Exception.class)
     public ReturnObject getShopAdvanceSaleInfo(Long shopId, Long id) {
-        ReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
+        InternalReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
         if (shopVoReturnObject.getData() == null) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
         }
