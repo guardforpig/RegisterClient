@@ -4,6 +4,11 @@ time=$(date "+%Y-%m-%d-%H-%M-%S")
 origin_dir='oomall-testreport'
 daily_dir='daily-report/'$time
 echo $daily_dir
+
+echo '-------------------initializing oomall database-------------------------'
+cd /home/mingqiu/privilegegateway/sql
+mysql -h 172.16.1.254 -udbuser -p12345678 -D privilegegateway < privilegegateway-batch.sql
+
 echo '-------------------building annotation-------------------------'
 cd /home/mingqiu/privilegegateway/annotation
 git checkout pom.xml
@@ -12,8 +17,16 @@ sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean install
 mvn site:site site:deploy
 
+echo '-------------------building comment-------------------------'
+cd /home/mingqiu/privilegegateway/privilegeservice
+git checkout pom.xml
+git pull
+sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
+mvn clean test
+mvn site:site site:deploy
+
+echo '-------------------initializing oomall database-------------------------'
 cd /home/mingqiu/oomall/sql
-echo '-------------------initializing database-------------------------'
 mysql -h 172.16.1.254 -udbuser -p12345678 -D oomall < goods-batch.sql
 
 echo '-------------------building core-------------------------'
