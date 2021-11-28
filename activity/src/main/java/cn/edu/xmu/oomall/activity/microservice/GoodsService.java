@@ -7,7 +7,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageVo;
-import cn.edu.xmu.oomall.core.util.InternalReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +26,7 @@ public interface GoodsService {
     ReturnObject<OnSaleVo> getOnSale(@PathVariable Long id);
 
     @GetMapping("/internal/onsales")
-    ReturnObject getOnSalesByProductId(@RequestParam("shopId") Long shopId,
+    InternalReturnObject getOnSalesByProductId(@RequestParam("shopId") Long shopId,
                                        @RequestParam("productId")Long productId,
                                        @RequestParam("beginTime") LocalDateTime beginTime,
                                        @RequestParam("endTime")LocalDateTime endTime,
