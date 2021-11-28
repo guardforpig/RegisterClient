@@ -1,11 +1,10 @@
 package cn.edu.xmu.oomall.shop.controller;
 
-import cn.edu.xmu.oomall.core.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.microservice.PaymentService;
 import cn.edu.xmu.oomall.shop.microservice.ReconciliationService;
 import cn.edu.xmu.oomall.shop.microservice.vo.RefundDepositVo;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
