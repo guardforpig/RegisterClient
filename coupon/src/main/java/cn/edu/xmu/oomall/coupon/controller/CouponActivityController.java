@@ -7,9 +7,9 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.service.CouponActivityService;
-import com.github.pagehelper.PageInfo;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,9 +18,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
-import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -64,7 +61,7 @@ public class CouponActivityController {
     public Object addCouponActivity(@PathVariable Long shopId,
                                     @LoginUser Long userId, @LoginName String userName,
                                     @Valid @RequestBody CouponActivityVo couponActivityVo,
-                                    HttpServletResponse httpServletResponse,BindingResult bindingResult
+                                    HttpServletResponse httpServletResponse, BindingResult bindingResult
                                     ){
         Object returnObject = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (null != returnObject) {
@@ -102,7 +99,6 @@ public class CouponActivityController {
                                                  @RequestParam(required = false,defaultValue = "1") Integer page,
                                                  @RequestParam(required = false,defaultValue = "5") Integer pageSize
                                                  ){
-
         return Common.getPageRetObject(couponActivityService.showOwnInvalidCouponActivities(userId,userName,shopId,state,page,pageSize));
     }
 
