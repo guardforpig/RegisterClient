@@ -77,7 +77,7 @@ public class CommentControllerTest {
         requestJSON = "{\"type\":0 ,\"content\":\"这个真不错\",\"shopId\":\"1\"}";
         responseString = this.mvc.perform(post("/internal/products/5/comments").contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken).content(requestJSON))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":0,\"data\":{\"type\":0,\"content\":\"这个真不错\",\"state\":0},\"errmsg\":\"成功\"}";

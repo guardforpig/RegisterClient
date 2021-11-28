@@ -15,8 +15,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 
 /**
- * @author jiyuan lin
- * @date 2021/11/14
+ * @author Lin Jiyuan
+ * @sn 30320192200032
  */
 @Repository
 public class GroupActivityDao {
