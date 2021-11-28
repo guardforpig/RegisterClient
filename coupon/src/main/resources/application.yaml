@@ -5,35 +5,33 @@ management:
         include: "*"
 
 server:
-  port: 8084
+  port: 8081
   tomcat:
     threads:
       max: 500
 
 
 spring:
-  application:
-    name: coupon-service
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 172.16.4.136:8848
+  boot:
+    admin:
+      client:
+        url: http://localhost:8081
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.16.1.254:3306/oomall?serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8
     username: dbuser
     password: 12345678
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
-      #åˆå§‹åŒ–æ—¶å»ºç«‹ç‰©ç†è¿æ¥çš„ä¸ªæ•°
+      #³õÊ¼»¯Ê±½¨Á¢ÎïÀíÁ¬½ÓµÄ¸öÊı
       initial-size: 3
-      #æœ€å°è¿æ¥æ± æ•°é‡
+      #×îĞ¡Á¬½Ó³ØÊıÁ¿
       min-idle: 3
-      #æœ€å¤§è¿æ¥æ± æ•°é‡
+      #×î´óÁ¬½Ó³ØÊıÁ¿
       max-active: 100
-      #è·å–è¿æ¥æ—¶æœ€å¤§ç­‰å¾…æ—¶é—´
+      #»ñÈ¡Á¬½ÓÊ±×î´óµÈ´ıÊ±¼ä
       max-wait: 60000
-      #é…ç½®ç›‘æ§é¡µé¢è®¿é—®ç™»å½•ååŠå¯†ç 
+      #ÅäÖÃ¼à¿ØÒ³Ãæ·ÃÎÊµÇÂ¼Ãû¼°ÃÜÂë
       stat-view-servlet:
         login-username: admin
         login-password: 123456
@@ -42,53 +40,56 @@ spring:
 
       filter:
         stat:
-          #æ˜¯å¦å¼€å¯æ…¢sqlæŸ¥è¯¢ç›‘æ§
+          #ÊÇ·ñ¿ªÆôÂısql²éÑ¯¼à¿Ø
           log-slow-sql: true
-          #æ…¢SQLæ‰§è¡Œæ—¶é—´
+          #ÂıSQLÖ´ĞĞÊ±¼ä
           slow-sql-millis: 100
       validation-query: select 1
     sql-script-encoding: UTF-8
   redis:
-    #Redisæ•°æ®åº“ç´¢å¼•ï¼ˆé»˜è®¤ä¸º0ï¼‰
+    # RedisÊı¾İ¿âË÷Òı£¨Ä¬ÈÏÎª0£©
     database: 0
-    #RedisæœåŠ¡å™¨åœ°å€
-    host: 172.16.2.172
-    #RedisæœåŠ¡å™¨è¿æ¥ç«¯å£
+    # Redis·şÎñÆ÷µØÖ·
+    host: 121.36.20.33
+    # Redis·şÎñÆ÷Á¬½Ó¶Ë¿Ú
     port: 6379
-    # RedisæœåŠ¡å™¨è¿æ¥å¯†ç 
     password: 123456
-    #è¿æ¥æ± æœ€å¤§è¿æ¥æ•°ï¼ˆä½¿ç”¨è´Ÿå€¼è¡¨ç¤ºæ²¡æœ‰é™åˆ¶ï¼‰
+    #Á¬½Ó³Ø×î´óÁ¬½ÓÊı£¨Ê¹ÓÃ¸ºÖµ±íÊ¾Ã»ÓĞÏŞÖÆ£©
     lettuce:
       pool:
         max-active: 100
-        # è¿æ¥æ± ä¸­çš„æœ€å¤§ç©ºé—²è¿æ¥
+        # Á¬½Ó³ØÖĞµÄ×î´ó¿ÕÏĞÁ¬½Ó
         max-idle: 100
-        # è¿æ¥æ± ä¸­çš„æœ€å°ç©ºé—²è¿æ¥
+        # Á¬½Ó³ØÖĞµÄ×îĞ¡¿ÕÏĞÁ¬½Ó
         min-idle: 0
-        #è¿æ¥æ± æœ€å¤§é˜»å¡ç­‰å¾…æ—¶é—´ï¼ˆä½¿ç”¨è´Ÿå€¼è¡¨ç¤ºæ²¡æœ‰é™åˆ¶ï¼‰
+        #Á¬½Ó³Ø×î´ó×èÈûµÈ´ıÊ±¼ä£¨Ê¹ÓÃ¸ºÖµ±íÊ¾Ã»ÓĞÏŞÖÆ£©
         max-wait: -1
-    # è¿æ¥è¶…æ—¶æ—¶é—´ï¼ˆæ¯«ç§’ï¼‰
+    # Á¬½Ó³¬Ê±Ê±¼ä£¨ºÁÃë£©
     timeout: 5000
 
+
+
 mybatis:
-  #domainå¯¹è±¡çš„åŒ…
+  #domain¶ÔÏóµÄ°ü
   type-aliases-package: cn.edu.xmu.oomall.coupon.model.po
-  #mapper.xmlæ‰€åœ¨çš„ä½ç½®
+  #mapper.xmlËùÔÚµÄÎ»ÖÃ
   mapper-locations: classpath*:mapper/*.xml
-  #è‡ªåŠ¨å°†SQLä¸­æŸ¥å‡ºæ¥çš„å¸¦ä¸‹åˆ’çº¿çš„å­—æ®µï¼Œè½¬æ¢ä¸ºé©¼å³°æ ‡å¿—ï¼Œå†å»åŒ¹é…ç±»ä¸­çš„å±æ€§
+  #×Ô¶¯½«SQLÖĞ²é³öÀ´µÄ´øÏÂ»®ÏßµÄ×Ö¶Î£¬×ª»»ÎªÍÕ·å±êÖ¾£¬ÔÙÈ¥Æ¥ÅäÀàÖĞµÄÊôĞÔ
   configuration:
-    #è¾“å‡ºäº§ç”Ÿçš„SQL
+    #Êä³ö²úÉúµÄSQL
     #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 
-#pagehelperåˆ†é¡µæ’ä»¶é…ç½®
+#pagehelper·ÖÒ³²å¼şÅäÖÃ
 pagehelper:
   helper-dialect: mysql
 
 webdav:
-  user: DELL
-  password: zrj2714
-  baseurl: http://172.16.4.1/webdav/test/
+  user: other
+  password: 123456
+  baseurl: http://106.52.203.83/webdav/
+
+
 
 
 
