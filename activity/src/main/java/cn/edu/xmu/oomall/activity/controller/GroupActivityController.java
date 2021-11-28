@@ -66,7 +66,7 @@ public class GroupActivityController {
     public Object delGroupon(@PathVariable("id") long id,@PathVariable("shopId") long shopId) {
         if(shopId!=0){
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
-        ReturnObject<Object> returnObject = groupOnActivityService.delGroupon(id);
+        ReturnObject<Object> returnObject = groupOnActivityService.delGroupon(shopId,id);
         return Common.decorateReturnObject(returnObject);
     }
 

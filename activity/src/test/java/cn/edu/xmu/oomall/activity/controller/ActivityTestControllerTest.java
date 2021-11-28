@@ -5,11 +5,9 @@ import cn.edu.xmu.oomall.activity.mapper.GroupOnActivityPoMapper;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
 import cn.edu.xmu.oomall.activity.model.po.GroupOnActivityPo;
-import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityVo;
-import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
-import cn.edu.xmu.oomall.activity.model.vo.OnsaleVo;
-import cn.edu.xmu.oomall.activity.model.vo.PageVo;
+import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.activity.service.GroupOnActivityService;
+import cn.edu.xmu.oomall.core.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
@@ -57,7 +55,7 @@ public class ActivityTestControllerTest {
     public void offlineGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.offlineOnsale(Mockito.anyLong(),
-                Mockito.anyLong())).thenReturn(new ReturnObject(true));
+                Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/0/groupons/1/offline").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -73,7 +71,7 @@ public class ActivityTestControllerTest {
     public void noRightOfflineGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.offlineOnsale(Mockito.anyLong(),
-                Mockito.anyLong())).thenReturn(new ReturnObject(true));
+                Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/1/groupons/1/offline").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isForbidden())
@@ -89,7 +87,7 @@ public class ActivityTestControllerTest {
     public void notFoundGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.offlineOnsale(Mockito.anyLong(),
-                Mockito.anyLong())).thenReturn(new ReturnObject(true));
+                Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/0/groupons/1000/offline").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isNotFound())
@@ -105,7 +103,7 @@ public class ActivityTestControllerTest {
     public void failureOfflineGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.offlineOnsale(Mockito.anyLong(),
-                Mockito.anyLong())).thenReturn(new ReturnObject(true));
+                Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/0/groupons/2/offline").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -123,7 +121,7 @@ public class ActivityTestControllerTest {
 
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.onlineOnsale(Mockito.anyLong(),
-                Mockito.anyLong())).thenReturn(new ReturnObject(ReturnNo.OK));
+                Mockito.anyLong())).thenReturn(new InternalReturnObject(ReturnNo.OK));
         String responseString = this.mvc.perform(put("/shops/0/groupons/2/online").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -140,7 +138,7 @@ public class ActivityTestControllerTest {
 
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.onlineOnsale(Mockito.anyLong(),
-                Mockito.anyLong())).thenReturn(new ReturnObject(ReturnNo.OK));
+                Mockito.anyLong())).thenReturn(new InternalReturnObject(ReturnNo.OK));
         String responseString = this.mvc.perform(put("/shops/1/groupons/2/online").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isForbidden())
@@ -157,7 +155,7 @@ public class ActivityTestControllerTest {
 
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.onlineOnsale(Mockito.anyLong(),
-                Mockito.anyLong())).thenReturn(new ReturnObject(ReturnNo.OK));
+                Mockito.anyLong())).thenReturn(new InternalReturnObject(ReturnNo.OK));
         String responseString = this.mvc.perform(put("/shops/0/groupons/1/online").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -172,7 +170,7 @@ public class ActivityTestControllerTest {
     @Test   //删除成功
     public void deleteGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
-        Mockito.when(goodsService.deleteOnsale(Mockito.anyLong())).thenReturn(new ReturnObject(true));
+        Mockito.when(goodsService.deleteOnsale(Mockito.anyLong(),Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(delete("/shops/0/groupons/3")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -188,7 +186,7 @@ public class ActivityTestControllerTest {
     @Test   //删除失败,非管理员无权操作
     public void noRightDeleteGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
-        Mockito.when(goodsService.deleteOnsale(Mockito.anyLong())).thenReturn(new ReturnObject(true));
+        Mockito.when(goodsService.deleteOnsale(Mockito.anyLong(),Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(delete("/shops/1/groupons/3")
                 .header("authorization", adminToken))
                 .andExpect(status().isForbidden())
@@ -204,7 +202,7 @@ public class ActivityTestControllerTest {
     @Test   //删除失败，非草稿态
     public void failureDeleteGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
-        Mockito.when(goodsService.deleteOnsale(Mockito.anyLong())).thenReturn(new ReturnObject(true));
+        Mockito.when(goodsService.deleteOnsale(Mockito.anyLong(),Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(delete("/shops/0/groupons/1")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -220,7 +218,7 @@ public class ActivityTestControllerTest {
     @Test   //删除失败，404错误
     public void notFoundDeleteGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
-        Mockito.when(goodsService.deleteOnsale(Mockito.anyLong())).thenReturn(new ReturnObject(true));
+        Mockito.when(goodsService.deleteOnsale(Mockito.anyLong(),Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(delete("/shops/0/groupons/10000")
                 .header("authorization", adminToken))
                 .andExpect(status().isNotFound())
@@ -248,8 +246,8 @@ public class ActivityTestControllerTest {
         list.add(o2);
         list.add(o3);
         PageVo<OnsaleVo> po = new PageVo<>(1,5,5,5,list);
-        Mockito.when(goodsService.getOnsale(Mockito.anyLong(),Mockito.anyInt(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new ReturnObject(po));
-        Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new ReturnObject(true));
+        Mockito.when(goodsService.getOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.anyInt(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject<>(po));
+        Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/0/groupons/3").contentType("application/json;charset=UTF-8").content(requestJson)
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -278,8 +276,8 @@ public class ActivityTestControllerTest {
         list.add(o2);
         list.add(o3);
         PageVo<OnsaleVo> po = new PageVo<>(1,5,5,5,list);
-        Mockito.when(goodsService.getOnsale(Mockito.anyLong(),Mockito.anyInt(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new ReturnObject(po));
-        Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new ReturnObject(true));
+        Mockito.when(goodsService.getOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.anyInt(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject<>(po));
+        Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/1/groupons/3").contentType("application/json;charset=UTF-8").content(requestJson)
                 .header("authorization", adminToken))
                 .andExpect(status().isForbidden())
@@ -307,8 +305,8 @@ public class ActivityTestControllerTest {
         list.add(o2);
         list.add(o3);
         PageVo<OnsaleVo> po = new PageVo<>(1,5,5,5,list);
-        Mockito.when(goodsService.getOnsale(Mockito.anyLong(),Mockito.anyInt(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new ReturnObject(po));
-        Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new ReturnObject(true));
+        Mockito.when(goodsService.getOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.anyInt(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject<>(po));
+        Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/0/groupons/1").contentType("application/json;charset=UTF-8").content(requestJson)
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -325,7 +323,7 @@ public class ActivityTestControllerTest {
     @Test//修改成功
     public void addOnSaleToGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
-        Mockito.when(goodsService.addOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(SimpleSaleInfoVo.class))).thenReturn(new ReturnObject(true));
+        Mockito.when(goodsService.addOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(SimpleSaleInfoVo.class))).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/0/products/2/groupons/3/onsale").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -341,7 +339,7 @@ public class ActivityTestControllerTest {
     @Test//修改失败，当前状态禁止此操作
     public void failureAddOnSaleToGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
-        Mockito.when(goodsService.addOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(SimpleSaleInfoVo.class))).thenReturn(new ReturnObject(true));
+        Mockito.when(goodsService.addOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(SimpleSaleInfoVo.class))).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/0/products/2/groupons/1/onsale").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
