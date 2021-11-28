@@ -92,8 +92,8 @@ webdav:
 
 oomall:
   coupon:
-    coupononsale:
-    # 对象在Redis中失效秒数
+    bo:
+    # Bo在Redis中失效秒数
       expiretime: 600
     couponactivity:
     # 对象在Redis中失效秒数

@@ -56,11 +56,9 @@ public class CouponActivityDao {
     @Value("${webdav.baseurl}")
     String baseUrl;
 
-    @Value("${oomall.coupon.coupononsale.expiretime}")
-    private long couponOnsaleTimeout;
+    @Value("${oomall.coupon.bo.expiretime}")
+    private long boTimeout;
 
-    @Value("${oomall.coupon.couponactivity.expiretime}")
-    private long couponActivityTimeout;
 
 
     private static final Logger logger = LoggerFactory.getLogger(CouponActivityDao.class);
@@ -228,7 +226,7 @@ public class CouponActivityDao {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             CouponActivity couponActivity = (CouponActivity) Common.cloneVo(po, CouponActivity.class);
-            redisUtils.set(key, couponActivity, couponActivityTimeout);
+            redisUtils.set(key, couponActivity, boTimeout);
             return new ReturnObject<>(couponActivity);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -248,7 +246,7 @@ public class CouponActivityDao {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             CouponOnsale couponOnsale = (CouponOnsale) Common.cloneVo(po, CouponOnsale.class);
-            redisUtils.set(key, couponOnsale, couponOnsaleTimeout);
+            redisUtils.set(key, couponOnsale, boTimeout);
             return new ReturnObject<>(couponOnsale);
         } catch (Exception e) {
             logger.error(e.getMessage());
