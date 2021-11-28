@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping(value = "", produces = "application/json;charset=UTF-8")
 /**
- * @author jiyuan lin
- * @date 2021/11/14
+ * @author Lin Jiyuan
+ * @sn 30320192200032
  */
 public class GroupActivityController {
 

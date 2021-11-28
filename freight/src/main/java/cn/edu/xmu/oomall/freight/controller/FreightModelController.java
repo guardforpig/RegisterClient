@@ -4,9 +4,11 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ResponseUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.freight.model.vo.FreightCalculatingPostVo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelInfoVo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelRetVo;
 import cn.edu.xmu.oomall.freight.service.FreightModelService;
+import cn.edu.xmu.oomall.freight.util.ValidList;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
@@ -20,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author xucangbai
@@ -192,4 +196,25 @@ public class FreightModelController {
     }
 
 
+    @ApiOperation(value = "计算一批商品的运费", produces = "application/json;charset=UTF-8")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "rid", value = "地区id", required = true),
+            @ApiImplicitParam(paramType = "body", dataType = "ValidList", name = "items", value = "订单商品的订货详情", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 500, message = "服务器内部错误")
+    })
+    @Audit
+    @PostMapping("/regions/{rid}/price")
+    public Object calculateFreight(@PathVariable Long rid, @Validated @RequestBody ValidList<FreightCalculatingPostVo> items,
+                                   BindingResult bindingResult) {
+        Object fieldErrors = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if (fieldErrors != null) {
+            return fieldErrors;
+        }
+        ReturnObject ret = freightModelService.calculateFreight(rid, items);
+        return Common.decorateReturnObject(ret);
+    }
 }

@@ -7,9 +7,11 @@ import cn.edu.xmu.oomall.freight.mapper.WeightFreightPoMapper;
 import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
 import cn.edu.xmu.oomall.freight.model.po.WeightFreightPo;
 import cn.edu.xmu.oomall.freight.model.po.WeightFreightPoExample;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -24,6 +26,14 @@ public class WeightFreightDao {
 
     @Autowired
     private WeightFreightPoMapper weightFreightPoMapper;
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Value("${oomall.freight.model.expiretime}")
+    private long timeout;
+
+    public final static String WEIGHT_FREIGHT_REGION_KEY = "weightfreight_%d_region_%d";
 
     /**
      * 管理员新增重量模板明细
@@ -153,4 +163,28 @@ public class WeightFreightDao {
         }
     }
 
+    public ReturnObject getWeightItem(Long fid, List<Long> regionIds) {
+        try {
+            var regionId = regionIds.get(regionIds.size() - 1);
+            var redisRet = redisUtil.get(String.format(WEIGHT_FREIGHT_REGION_KEY, fid, regionId));
+            if (redisRet != null) {
+                return new ReturnObject(redisRet);
+            }
+            for (int i = regionIds.size() - 1; i >= 0; --i) {
+                var example = new WeightFreightPoExample();
+                var criteria = example.createCriteria();
+                criteria.andFreightModelIdEqualTo(fid).andRegionIdEqualTo(regionIds.get(i));
+                var poList = weightFreightPoMapper.selectByExample(example);
+                if (!poList.isEmpty()) {
+                    var bo = (WeightFreight) Common.cloneVo(poList.get(0), WeightFreight.class);
+                    redisUtil.set(String.format(WEIGHT_FREIGHT_REGION_KEY, fid, regionId), bo, timeout);
+                    return new ReturnObject(bo);
+                }
+            }
+        } catch (Exception e) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+        // TODO 没有找到合适的错误码
+        return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "根据指定地区和运费模板未找到需要的运费模板明细");
+    }
 }
