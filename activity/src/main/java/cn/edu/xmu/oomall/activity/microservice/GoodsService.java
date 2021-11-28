@@ -2,7 +2,8 @@ package cn.edu.xmu.oomall.activity.microservice;
 
 import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
-import cn.edu.xmu.oomall.activity.model.vo.PageInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
+import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleVo;
@@ -26,7 +27,7 @@ public interface GoodsService {
     ReturnObject<OnSaleVo> getOnSale(@PathVariable Long id);
 
     @GetMapping("/internal/onsales")
-    ReturnObject getOnSalesByProductId(@RequestParam("shopId") Long shopId,
+    InternalReturnObject getOnSalesByProductId(@RequestParam("shopId") Long shopId,
                                        @RequestParam("productId")Long productId,
                                        @RequestParam("beginTime") LocalDateTime beginTime,
                                        @RequestParam("endTime")LocalDateTime endTime,
@@ -52,4 +53,9 @@ public interface GoodsService {
 
     @DeleteMapping("/internal/shops/{did}/activities/{id}/onsales")
     InternalReturnObject deleteOnsale(@PathVariable(value="did") Long shopId, @PathVariable(value="id") Long activityId);
+
+
+    @PostMapping("/shops/{shopId}/products/{id}/onsales")
+    InternalReturnObject addOnsale(@PathVariable("shopId") long shopId, @PathVariable("id") long id,
+                                 @RequestBody SimpleSaleInfoVo simpleSaleInfoVo);
 }

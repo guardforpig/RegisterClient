@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.activity.util;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,9 +14,9 @@ import java.util.Map;
  * @date 2021/11/13 15:00
  */
 public class CreateObject {
-    public static ReturnObject createOnSaleInfoDTO(Long id) {
+    public static InternalReturnObject createOnSaleInfoDTO(Long id) {
         if(id<=0){
-            return new ReturnObject();
+            return new InternalReturnObject();
         }
         List<SimpleSaleInfoVo> list = new ArrayList<>();
         SimpleSaleInfoVo simpleSaleInfoVO = new SimpleSaleInfoVo();
@@ -36,14 +37,14 @@ public class CreateObject {
         Map<String,Object> map = new HashMap<>();
         map.put("list",list);
         map.put("total",10);
-        return new ReturnObject(map);
+        return new InternalReturnObject(map);
     }
 
-    public static ReturnObject<ShopInfoVo> createShopInfoDTO(Long id) {
+    public static InternalReturnObject<ShopInfoVo> createShopInfoDTO(Long id) {
         if(id<=0){
-            return new ReturnObject();
+            return new InternalReturnObject();
         }
-        return new ReturnObject<>(new ShopInfoVo(id,"良耳的商铺"));
+        return new InternalReturnObject<>(new ShopInfoVo(id,"良耳的商铺"));
     }
 
 }
