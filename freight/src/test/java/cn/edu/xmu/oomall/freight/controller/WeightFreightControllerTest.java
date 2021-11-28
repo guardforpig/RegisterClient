@@ -79,7 +79,7 @@ public class WeightFreightControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errno\":997,\"errmsg\":\"该运费模板中该地区已经定义\"}";
+        String expectedResponse = "{\"errno\":997,\"errmsg\":\"该运费模板中该地区已经定义\",\"data\":null}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
@@ -124,7 +124,7 @@ public class WeightFreightControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedResponse = "{\"errno\":996,\"errmsg\":\"该运费模板类型与内容不符\"}";
+        String expectedResponse = "{\"errno\":996,\"errmsg\":\"该运费模板类型与内容不符\",\"data\":null}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
@@ -239,7 +239,7 @@ public class WeightFreightControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errno\":999,\"errmsg\":\"运费模板中该地区已经定义\"}";
+        String expectedResponse = "{\"errno\":999,\"errmsg\":\"运费模板中该地区已经定义\",\"data\":null}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 

@@ -5,9 +5,9 @@ import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
 import cn.edu.xmu.oomall.activity.util.CreateObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -60,17 +60,17 @@ public class ShareActivityControllerTest {
     @BeforeEach
     public void init() throws Exception {
         //生成一个 onsale对象
-        ReturnObject<Map<String, Object>> onSaleInfoDTO = CreateObject.createOnSaleInfoDTO(1L);
-        ReturnObject<Map<String, Object>> onSaleInfoDTO1 = CreateObject.createOnSaleInfoDTO(-1L);
+        InternalReturnObject<Map<String, Object>> onSaleInfoDTO = CreateObject.createOnSaleInfoDTO(1L);
+        InternalReturnObject<Map<String, Object>> onSaleInfoDTO1 = CreateObject.createOnSaleInfoDTO(-1L);
         Mockito.when(goodsService.getOnSalesByProductId(2L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
         Mockito.when(goodsService.getOnSalesByProductId(null, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
         Mockito.when(goodsService.getOnSalesByProductId(1L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
         Mockito.when(goodsService.getOnSalesByProductId(2L, -1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
         Mockito.when(goodsService.getOnSalesByProductId(11111L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
         //生成一个shop对象
-        ReturnObject<ShopInfoVo> shopInfoDTO = CreateObject.createShopInfoDTO(1L);
-        ReturnObject<ShopInfoVo> shopInfoDTO2 = CreateObject.createShopInfoDTO(2L);
-        ReturnObject<ShopInfoVo> shopInfoDTO1 = CreateObject.createShopInfoDTO(-1L);
+        InternalReturnObject<ShopInfoVo> shopInfoDTO = CreateObject.createShopInfoDTO(1L);
+        InternalReturnObject<ShopInfoVo> shopInfoDTO2 = CreateObject.createShopInfoDTO(2L);
+        InternalReturnObject<ShopInfoVo> shopInfoDTO1 = CreateObject.createShopInfoDTO(-1L);
         Mockito.when(shopService.getShop(1L)).thenReturn(shopInfoDTO);
         Mockito.when(shopService.getShop(2L)).thenReturn(shopInfoDTO2);
         Mockito.when(shopService.getShop(11L)).thenReturn(shopInfoDTO1);

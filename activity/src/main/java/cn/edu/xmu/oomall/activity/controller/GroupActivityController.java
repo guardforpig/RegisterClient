@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping(value = "", produces = "application/json;charset=UTF-8")
 /**
- * @author jiyuan lin
- * @date 2021/11/14
+ * @author Lin Jiyuan
+ * @sn 30320192200032
  */
 public class GroupActivityController {
 
@@ -66,7 +66,7 @@ public class GroupActivityController {
     public Object delGroupon(@PathVariable("id") long id,@PathVariable("shopId") long shopId) {
         if(shopId!=0){
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
-        ReturnObject<Object> returnObject = groupOnActivityService.delGroupon(id);
+        ReturnObject<Object> returnObject = groupOnActivityService.delGroupon(shopId,id);
         return Common.decorateReturnObject(returnObject);
     }
 

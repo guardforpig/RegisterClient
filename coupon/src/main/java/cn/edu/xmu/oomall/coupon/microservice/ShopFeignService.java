@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.coupon.microservice;
 
-
-import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.core.util.InternalReturnObject;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
@@ -20,5 +19,5 @@ public interface ShopFeignService {
      * @return
      */
     @GetMapping(value = "/internal/shop/{id}")
-    ReturnObject<Shop> getShopById(@PathVariable Long id);
+    InternalReturnObject<Shop> getShopById(@PathVariable Long id);
 }

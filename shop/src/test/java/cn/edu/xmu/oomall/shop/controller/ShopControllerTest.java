@@ -1,10 +1,10 @@
 package cn.edu.xmu.oomall.shop.controller;
 
 import cn.edu.xmu.oomall.core.util.ReturnNo;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.microservice.PaymentService;
 import cn.edu.xmu.oomall.shop.microservice.ReconciliationService;
 import cn.edu.xmu.oomall.shop.microservice.vo.RefundDepositVo;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -305,13 +305,13 @@ public class ShopControllerTest {
         refundDepositVo.setType(Byte.valueOf((byte) 0));
         refundDepositVo.setName("测试");
 
-        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new ReturnObject(true));
-        Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(new ReturnObject());
+        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new InternalReturnObject(true));
+        Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(new InternalReturnObject());
         String responseString_delete = this.mvc.perform(delete("/shops/1").header("authorization", adminToken, shopToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":0,\"data\":true,\"errmsg\":\"成功\"}";
+        expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString_delete, true);
     }
 
@@ -344,14 +344,14 @@ public class ShopControllerTest {
         refundDepositVo.setAccount("11111111");
         refundDepositVo.setType(Byte.valueOf((byte) 0));
         refundDepositVo.setName("测试");
-        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new ReturnObject(true));
-        Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(new ReturnObject());
+        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new InternalReturnObject(true));
+        Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(new InternalReturnObject());
         String responseString = this.mvc.perform(delete("/shops/1").header("authorization", adminToken, shopToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     /**
@@ -374,8 +374,8 @@ public class ShopControllerTest {
         refundDepositVo.setAccount("11111111");
         refundDepositVo.setType(Byte.valueOf((byte) 0));
         refundDepositVo.setName("测试");
-        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new ReturnObject(false));
-        Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(new ReturnObject());
+        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new InternalReturnObject(false));
+        Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(new InternalReturnObject());
         String responseString = this.mvc.perform(delete("/shops/1").header("authorization", adminToken, shopToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -406,14 +406,14 @@ public class ShopControllerTest {
         refundDepositVo.setAccount("11111111");
         refundDepositVo.setType(Byte.valueOf((byte) 0));
         refundDepositVo.setName("测试");
-        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new ReturnObject(false));
-        ReturnObject returnObject = new ReturnObject(ReturnNo.AUTH_INVALID_JWT, "错了");
+        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new InternalReturnObject(false));
+        InternalReturnObject returnObject = new InternalReturnObject(Integer.valueOf(ReturnNo.AUTH_INVALID_JWT.getCode()), "错了");
         Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(returnObject);
         String responseString = this.mvc.perform(delete("/shops/1").contentType("application/json;charset=UTF-8").header("authorization", adminToken, shopToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":0,\"data\":false,\"errmsg\":\"成功\"}";
+        expected = "{\"errno\":968,\"data\":null,\"errmsg\":\"店铺尚有支付未清算完毕\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -433,15 +433,15 @@ public class ShopControllerTest {
         refundDepositVo.setAccount("11111111");
         refundDepositVo.setType(Byte.valueOf((byte) 0));
         refundDepositVo.setName("测试");
-        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new ReturnObject(false));
-        ReturnObject returnObject = new ReturnObject();
+        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new InternalReturnObject(true));
+        InternalReturnObject returnObject = new InternalReturnObject();
         Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(returnObject);
         String responseString_delete = this.mvc.perform(delete("/shops/1").header("authorization", adminToken, shopToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        expected = "{\"errno\":0,\"data\":false,\"errmsg\":\"成功\"}";
+        expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString_delete, true);
 
         String requestJson2 = "{\"name\": \"修改后\"}";
@@ -449,7 +449,7 @@ public class ShopControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
+        expected = "{\"errno\":507,\"data\":null,\"errmsg\":\"商铺处于关闭态\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -476,14 +476,14 @@ public class ShopControllerTest {
         refundDepositVo.setAccount("11111111");
         refundDepositVo.setType(Byte.valueOf((byte) 0));
         refundDepositVo.setName("测试");
-        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new ReturnObject(false));
-        ReturnObject returnObject = new ReturnObject();
+        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new InternalReturnObject(true));
+        InternalReturnObject returnObject = new InternalReturnObject();
         Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(returnObject);
         String responseString_delete = this.mvc.perform(delete("/shops/1").header("authorization", adminToken, shopToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":0,\"data\":false,\"errmsg\":\"成功\"}";
+        expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString_delete, true);
 
 
@@ -493,7 +493,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 //
 
@@ -514,21 +514,21 @@ public class ShopControllerTest {
         refundDepositVo.setAccount("11111111");
         refundDepositVo.setType(Byte.valueOf((byte) 0));
         refundDepositVo.setName("测试");
-        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new ReturnObject(false));
-        ReturnObject returnObject = new ReturnObject();
+        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new InternalReturnObject(true));
+        InternalReturnObject returnObject = new InternalReturnObject();
         Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(returnObject);
         String responseString_delete = this.mvc.perform(delete("/shops/1").header("authorization", adminToken, shopToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":0,\"data\":false,\"errmsg\":\"成功\"}";
+        expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString_delete, true);
 
         String responseString = this.mvc.perform(put("/shops/1/online").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
+        expected = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -555,15 +555,15 @@ public class ShopControllerTest {
         refundDepositVo.setAccount("11111111");
         refundDepositVo.setType(Byte.valueOf((byte) 0));
         refundDepositVo.setName("测试");
-        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new ReturnObject(false));
-        ReturnObject returnObject = new ReturnObject();
+        Mockito.when(reconciliationService.isClean(Long.valueOf(1))).thenReturn(new InternalReturnObject(true));
+        InternalReturnObject returnObject = new InternalReturnObject();
         Mockito.when(paymentService.refund(refundDepositVo)).thenReturn(returnObject);
 
         String responseString_delete = this.mvc.perform(delete("/shops/1").header("authorization", adminToken, shopToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":0,\"data\":false,\"errmsg\":\"成功\"}";
+        expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString_delete, true);
 
         String responseString = this.mvc.perform(put("/shops/1/offline").header("authorization", adminToken))
@@ -571,7 +571,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
 

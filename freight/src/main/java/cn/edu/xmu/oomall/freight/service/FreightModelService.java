@@ -5,17 +5,22 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.dao.FreightModelDao;
 import cn.edu.xmu.oomall.freight.dao.PieceFreightDao;
+import cn.edu.xmu.oomall.freight.dao.PieceFreightDao;
+import cn.edu.xmu.oomall.freight.dao.RegionDao;
 import cn.edu.xmu.oomall.freight.dao.WeightFreightDao;
-import cn.edu.xmu.oomall.freight.model.bo.FreightModel;
-import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
+import cn.edu.xmu.oomall.freight.model.bo.*;
 import cn.edu.xmu.oomall.freight.model.po.WeightFreightPo;
+import cn.edu.xmu.oomall.freight.model.vo.FreightCalculatingPostVo;
+import cn.edu.xmu.oomall.freight.model.vo.FreightCalculatingRetVo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * @author xucangbai
@@ -26,13 +31,17 @@ public class FreightModelService {
 
 
     @Autowired
-    FreightModelDao freightModelDao;
+    private FreightModelDao freightModelDao;
 
     @Autowired
-    WeightFreightDao weightFreightDao;
+    private WeightFreightDao weightFreightDao;
 
     @Autowired
-    PieceFreightDao pieceFreightDao;
+    private PieceFreightDao pieceFreightDao;
+
+    @Autowired
+    private RegionDao regionDao;
+
     /**
      * 管理员定义运费模板
      * @param freightModelInfo 运费模板资料
@@ -47,7 +56,7 @@ public class FreightModelService {
         //新建,不为默认
 
         //如果是默认模板需要把原来默认模板改为非默认
-        if(freightModel.getDefaultModel().equals((byte)1))
+        if(Objects.equals(freightModel.getDefaultModel(), 1))
         {
             freightModelDao.deleteDefaultFreight();
         }
@@ -183,5 +192,62 @@ public class FreightModelService {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
         return freightModelDao.deleteFreightModel(id);
+    }
+
+
+    /**
+     * 计算一批货品的运费
+     *
+     * @param rid   地区id
+     * @param items 要计算的货品的信息
+     * @return ReturnObject
+     */
+    @Transactional(readOnly = true)
+    public ReturnObject calculateFreight(Long rid, List<FreightCalculatingPostVo> items) {
+        Long freightPrice = 0L;
+        Long productId = 0L;
+        ReturnObject regionsRet = regionDao.getParentRegion(rid);
+        if (!regionsRet.getCode().equals(ReturnNo.OK)) {
+            return regionsRet;
+        }
+        var regions = (List<Region>) regionsRet.getData();
+        var regionIds = regions.stream().map(Region::getId).collect(Collectors.toList());
+        regionIds.add(rid);
+
+        int sumQuantity = 0;
+        int sumWeight = 0;
+        for (var item : items) {
+            sumQuantity += item.getQuantity();
+            sumWeight += item.getWeight() * item.getQuantity();
+        }
+
+        for (var item : items) {
+            Long fid = item.getFreightId();
+            ReturnObject freightRet = showFreightModelById(fid);
+            if (!freightRet.getCode().equals(ReturnNo.OK)) {
+                return freightRet;
+            }
+            var freightModel = (FreightModel) freightRet.getData();
+            ReturnObject freightItemRet;
+            Integer amount;
+            if (freightModel.getType() == 0) {
+                freightItemRet =  weightFreightDao.getWeightItem(fid, regionIds);
+                amount = sumWeight;
+            } else {
+                freightItemRet = pieceFreightDao.getPieceItem(fid, regionIds);
+                amount = sumQuantity;
+            }
+            if (!freightItemRet.getCode().equals(ReturnNo.OK)) {
+                return freightItemRet;
+            }
+            var freightItem = (FreightItem)freightItemRet.getData();
+            Long newPrice = freightItem.calculate(amount, freightModel.getUnit());
+            if (newPrice > freightPrice) {
+                freightPrice = newPrice;
+                productId = item.getProductId();
+            }
+
+        }
+        return new ReturnObject(new FreightCalculatingRetVo(freightPrice, productId));
     }
 }

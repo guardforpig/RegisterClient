@@ -9,6 +9,7 @@ import cn.edu.xmu.oomall.activity.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityStatesBo;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.Common;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,15 +77,15 @@ public class ShareActivityService {
         List<Long> shareActivityIds = new ArrayList<>();
         if (productId != null) {
             //TODO:openfeign获得分享活动id
-            ReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, 10);
+            InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, 10);
             if (onSalesByProductId.getData() == null) {
-                return onSalesByProductId;
+                return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,onSalesByProductId.getErrmsg());
             }
             int total = (int) onSalesByProductId.getData().get("total");
             if (total != 0) {
                 onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, total > 500 ? 500 : total);
                 if (onSalesByProductId.getData() == null) {
-                    return onSalesByProductId;
+                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,onSalesByProductId.getErrmsg());
                 }
                 List<SimpleSaleInfoVo> list = (List<SimpleSaleInfoVo>) onSalesByProductId.getData().get("list");
                 for (SimpleSaleInfoVo simpleSaleInfoVO : list) {
@@ -93,7 +94,7 @@ public class ShareActivityService {
                     }
                 }
             }else {
-                return onSalesByProductId;
+                return new ReturnObject(ReturnNo.OK,onSalesByProductId.getErrmsg(),onSalesByProductId.getData());
             }
         }
         ReturnObject shareByShopId = shareActivityDao.getShareByShopId(bo, shareActivityIds, page, pageSize);
@@ -119,7 +120,7 @@ public class ShareActivityService {
         shareActivityBo.setState(ShareActivityStatesBo.DRAFT.getCode());
         shareActivityBo.setShopId(shopId);
         //TODO:通过商铺id弄到商铺名称
-        ReturnObject<ShopInfoVo> shop = shopService.getShop(shopId);
+        InternalReturnObject<ShopInfoVo> shop = shopService.getShop(shopId);
         if (shop.getData() == null) {
             return new ReturnObject<>(ReturnNo.FIELD_NOTVALID, "不存在该商铺");
         }
