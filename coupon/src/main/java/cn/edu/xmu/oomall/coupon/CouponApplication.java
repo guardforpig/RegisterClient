@@ -11,14 +11,14 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * @author RenJieZheng 22920192204334
  */
-@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core", "cn.edu.xmu.oomall.coupon","cn.edu.xmu.privilegegateway"})
+@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core.*", "cn.edu.xmu.oomall.coupon.*","cn.edu.xmu.privilegegateway.annotation"})
 @EnableConfigurationProperties
 @MapperScan("cn.edu.xmu.oomall.coupon.mapper")
 @EnableFeignClients(basePackages = "cn.edu.xmu.oomall.coupon.microservice")
 public class CouponApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CouponApplication.class, args);
+            SpringApplication.run(CouponApplication.class, args);
     }
 
 }

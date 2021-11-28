@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.coupon.service;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
+import cn.edu.xmu.oomall.core.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
@@ -112,10 +113,7 @@ public class CouponActivityService {
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addCouponActivity(Long userId, String userName, Long shopId, CouponActivityVo couponActivityVo){
-        ReturnObject<Shop>returnObject = shopFeignService.getShopById(shopId);
-        if(!returnObject.getCode().equals(ReturnNo.OK)){
-            return returnObject;
-        }
+        InternalReturnObject<Shop> returnObject = shopFeignService.getShopById(shopId);
         Shop shop = returnObject.getData();
         CouponActivity couponActivity = (CouponActivity) Common.cloneVo(couponActivityVo,CouponActivity.class);
         couponActivity.setShopId(shopId);
