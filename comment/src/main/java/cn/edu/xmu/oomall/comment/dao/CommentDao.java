@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.comment.model.bo.Comment;
 import cn.edu.xmu.oomall.comment.model.po.CommentPo;
 import cn.edu.xmu.oomall.comment.model.po.CommentPoExample;
 import cn.edu.xmu.oomall.core.util.Common;
+import cn.edu.xmu.oomall.core.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 
@@ -49,15 +50,15 @@ public class CommentDao {
      * @param commentPo
      * @return
      */
-    public ReturnObject insertComment(CommentPo commentPo){
+    public InternalReturnObject insertComment(CommentPo commentPo){
         try{
             int ret=commentPoMapper.insertSelective(commentPo);
             if(ret==0){
-                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+                return new InternalReturnObject(ReturnNo.FIELD_NOTVALID);
             }
-            return new ReturnObject(commentPo);
+            return new InternalReturnObject(commentPo);
         }catch (Exception e){
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
+            return new InternalReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
     }
 

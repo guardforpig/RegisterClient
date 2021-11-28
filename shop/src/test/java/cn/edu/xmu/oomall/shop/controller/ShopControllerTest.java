@@ -351,7 +351,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     /**
@@ -493,7 +493,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 //
 
@@ -571,7 +571,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
 
