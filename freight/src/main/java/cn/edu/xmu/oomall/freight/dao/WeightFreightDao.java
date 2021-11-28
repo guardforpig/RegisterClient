@@ -33,6 +33,8 @@ public class WeightFreightDao {
     @Value("${oomall.freight.model.expiretime}")
     private long timeout;
 
+    public final static String WEIGHT_FREIGHT_REGION_KEY = "weightfreight_%d_region_%d";
+
     /**
      * 管理员新增重量模板明细
      * @param weightFreightPo,userId,userName
@@ -164,7 +166,7 @@ public class WeightFreightDao {
     public ReturnObject getWeightItem(Long fid, List<Long> regionIds) {
         try {
             var regionId = regionIds.get(regionIds.size() - 1);
-            var redisRet = redisUtil.get("region_" + regionId.toString());
+            var redisRet = redisUtil.get(String.format(WEIGHT_FREIGHT_REGION_KEY, fid, regionId));
             if (redisRet != null) {
                 return new ReturnObject(redisRet);
             }
@@ -175,7 +177,7 @@ public class WeightFreightDao {
                 var poList = weightFreightPoMapper.selectByExample(example);
                 if (!poList.isEmpty()) {
                     var bo = (WeightFreight) Common.cloneVo(poList.get(0), WeightFreight.class);
-                    redisUtil.set("region_" + regionId.toString(), bo, timeout);
+                    redisUtil.set(String.format(WEIGHT_FREIGHT_REGION_KEY, fid, regionId), bo, timeout);
                     return new ReturnObject(bo);
                 }
             }
