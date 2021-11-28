@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.goods.controller;
 
-import cn.edu.xmu.privilegegateway.util.JwtHelper;
+import cn.edu.xmu.oomall.goods.GoodsApplication;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -8,7 +9,6 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @description
  * @createTime 2021/11/13 06:06
  **/
-@SpringBootTest
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Transactional
+@SpringBootTest(classes = GoodsApplication.class)
 public class OnSaleGetControllerTest {
     private static JwtHelper jwtHelper = new JwtHelper();
     private static String adminToken = jwtHelper.createToken(1L, "admin", 0L, 1, 3600);
@@ -41,7 +41,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"price\":53295,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":26,\"activityId\":null,\"shareActId\":null,\"type\":0}]},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"price\":53295,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"quantity\":26,\"activityId\":null,\"shareActId\":null,\"type\":0}]},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -55,7 +55,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"id\":5,\"price\":3280,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":67},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"id\":5,\"price\":3280,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"quantity\":67},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -95,7 +95,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":18,\"price\":56179,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":96,\"activityId\":3,\"shareActId\":3,\"type\":3}]},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":18,\"price\":56179,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"quantity\":96,\"activityId\":3,\"shareActId\":3,\"type\":3}]},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -140,7 +140,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":33,\"price\":6035,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":21,\"activityId\":9,\"shareActId\":7,\"type\":3}]},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":33,\"price\":6035,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"quantity\":21,\"activityId\":9,\"shareActId\":7,\"type\":3}]},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -159,6 +159,20 @@ public class OnSaleGetControllerTest {
 
     @Test
     @Transactional
+    public void selectFullOnsales_noRedis() throws Exception {
+        //正常情况
+        String responseJson=this.mvc.perform(get("/internal/onsales/1")
+                .header("authorization", adminToken)
+                .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":26,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"type\":0,\"activityId\":null,\"gmtCreate\":\"2021-11-11T14:38:20.000Z\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"shareAct\":null,\"createdBy\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}\n";
+        JSONAssert.assertEquals(expectedJson, responseJson, false);
+    }
+
+    @Test
+    @Transactional
     public void selectFullOnsales() throws Exception {
         //正常情况
         String responseJson=this.mvc.perform(get("/internal/onsales/1")
@@ -167,7 +181,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":26,\"beginTime\":\"2021-11-11T14:38:20\",\"endTime\":\"2022-02-19T14:38:20\",\"type\":0,\"activityId\":null,\"gmtCreate\":\"2021-11-11T14:38:20\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"shareAct\":null,\"createdBy\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}\n";
+        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":26,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"type\":0,\"activityId\":null,\"gmtCreate\":\"2021-11-11T14:38:20.000Z\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"shareAct\":null,\"createdBy\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -181,7 +195,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":9,\"price\":6985,\"beginTime\":\"2021-11-11 14:38:20.000\",\"endTime\":\"2022-02-19 14:38:20.000\",\"quantity\":78,\"activityId\":4,\"shareActId\":1,\"type\":3}]},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":9,\"price\":6985,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"quantity\":78,\"activityId\":4,\"shareActId\":1,\"type\":3}]},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 

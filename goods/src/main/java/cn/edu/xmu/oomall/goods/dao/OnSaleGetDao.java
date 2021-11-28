@@ -1,15 +1,14 @@
 package cn.edu.xmu.oomall.goods.dao;
 
-import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.OnSalePoMapper;
-import cn.edu.xmu.oomall.goods.model.bo.OnSale;
+import cn.edu.xmu.oomall.goods.model.bo.OnSaleGetBo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
-import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
 import cn.edu.xmu.oomall.goods.model.vo.SimpleOnSaleRetVo;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,15 +31,26 @@ public class OnSaleGetDao {
     @Autowired
     private OnSalePoMapper onSalePoMapper;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Value("${oomall.goods.onsale.expiretime}")
+    private long onsaleTimeout;
+
     private static final Logger logger = LoggerFactory.getLogger(OnSaleDao.class);
 
+    /**
+     * 无redis的onsale查询
+     * @param id
+     * @return
+     */
     public ReturnObject selectOnSale(Long id){
         try {
             OnSalePo onSalePo=onSalePoMapper.selectByPrimaryKey(id);
             if(onSalePo==null){
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }else{
-                OnSale onSale=(OnSale) Common.cloneVo(onSalePo, OnSale.class);
+                OnSaleGetBo onSale=(OnSaleGetBo) Common.cloneVo(onSalePo, OnSaleGetBo.class);
                 return new ReturnObject(onSale);
             }
         }catch (Exception e){
@@ -50,6 +59,40 @@ public class OnSaleGetDao {
         }
     }
 
+    /**
+     * 有redis的onsale查询
+     * @param id
+     * @return
+     */
+    public ReturnObject selectOnSaleRedis(Long id){
+        try {
+            OnSaleGetBo onSale=(OnSaleGetBo) redisUtil.get("o_"+id);
+            if(null!=onSale){
+                return new ReturnObject(onSale);
+            }else{
+                OnSalePo onSalePo=onSalePoMapper.selectByPrimaryKey(id);
+                if(onSalePo==null){
+                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+                }else{
+                    OnSaleGetBo onSaleGetBo=(OnSaleGetBo) Common.cloneVo(onSalePo, OnSaleGetBo.class);
+                    redisUtil.set("o_"+id,onSaleGetBo,onsaleTimeout);
+                    return new ReturnObject(onSaleGetBo);
+                }
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
+    }
+
+    /**
+     * 根据poexample返回pageinfo
+     * @param onSalePoExample
+     * @param voClass
+     * @param page
+     * @param pageSize
+     * @return
+     */
     private ReturnObject selectOnsaleByExampleWithPageInfo(OnSalePoExample onSalePoExample,Class voClass,
                                                            Integer page,Integer pageSize){
         try{
@@ -69,7 +112,7 @@ public class OnSaleGetDao {
         OnSalePoExample.Criteria criteria = onSalePoExample.createCriteria();
         criteria.andShopIdEqualTo(shopId);
         criteria.andProductIdEqualTo(id);
-        List<Byte> types = Arrays.asList(OnSale.Type.NOACTIVITY.getCode(),OnSale.Type.SECKILL.getCode());
+        List<Byte> types = Arrays.asList(OnSaleGetBo.Type.NOACTIVITY.getCode(),OnSaleGetBo.Type.SECKILL.getCode());
         criteria.andTypeIn(types);
         ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample,SimpleOnSaleRetVo.class, page, pageSize);
         return returnObject;
@@ -82,7 +125,7 @@ public class OnSaleGetDao {
         OnSalePoExample.Criteria criteria=onSalePoExample.createCriteria();
         criteria.andActivityIdEqualTo(id);
         criteria.andShopIdEqualTo(did);
-        List<Byte>types=Arrays.asList(OnSale.Type.GROUPON.getCode(),OnSale.Type.PRESALE.getCode());
+        List<Byte>types=Arrays.asList(OnSaleGetBo.Type.GROUPON.getCode(),OnSaleGetBo.Type.PRESALE.getCode());
         criteria.andTypeIn(types);
         if(state!=null){
             criteria.andStateEqualTo(state);

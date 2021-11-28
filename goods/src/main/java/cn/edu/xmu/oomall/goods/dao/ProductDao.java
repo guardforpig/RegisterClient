@@ -3,11 +3,11 @@ package cn.edu.xmu.oomall.goods.dao;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.oomall.goods.model.bo.SimpleProductBo;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.ProductPo;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,14 +69,25 @@ public class ProductDao {
 
     }
 
+    /**
+     * 该方法用于频繁查询onsale详情的api中，故使用redis
+     * @param id
+     * @return 返回的是Product类型
+     */
     public ReturnObject getProductInfo(Long id){
         try{
-            ProductPo productPo = productMapper.selectByPrimaryKey(id);
-            if(productPo==null){
-                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }else{
-                SimpleProductBo simpleProductBo = (SimpleProductBo) Common.cloneVo(productPo, SimpleProductBo.class);
-                return new ReturnObject(simpleProductBo);
+            Product product=(Product) redisUtil.get("p_"+id);
+            if(null!=product){
+                return new ReturnObject(product);
+            }else {
+                ProductPo productPo = productMapper.selectByPrimaryKey(id);
+                if (productPo == null) {
+                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+                } else {
+                    Product pro=(Product) Common.cloneVo(productPo,Product.class);
+                    redisUtil.set("p_"+id,pro,productTimeout);
+                    return new ReturnObject(pro);
+                }
             }
         }catch (Exception e){
             logger.error(e.getMessage());

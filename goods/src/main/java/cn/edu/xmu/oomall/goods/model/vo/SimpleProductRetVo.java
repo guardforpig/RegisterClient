@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.goods.model.bo;
+package cn.edu.xmu.oomall.goods.model.vo;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
 import lombok.Data;
@@ -13,18 +13,8 @@ import java.io.Serializable;
  **/
 @Data
 @NoArgsConstructor
-public class SimpleProductBo implements VoObject, Serializable {
+public class SimpleProductRetVo {
     private Long id;
     private String name;
     private String imageUrl;
-
-    @Override
-    public Object createVo() {
-        return this;
-    }
-
-    @Override
-    public Object createSimpleVo() {
-        return this;
-    }
 }

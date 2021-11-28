@@ -1,9 +1,9 @@
 package cn.edu.xmu.oomall.goods.model.vo;
 
-import cn.edu.xmu.oomall.core.model.VoObject;
+import cn.edu.xmu.oomall.goods.constant.Constants;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShareActBo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopBo;
-import cn.edu.xmu.oomall.goods.model.bo.SimpleProductBo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,30 +16,24 @@ import java.time.LocalDateTime;
  **/
 @Data
 @NoArgsConstructor
-public class OnSaleRetVo implements VoObject {
+public class OnSaleRetVo{
     private Long id;
     private Long price;
     private Integer quantity;
+    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime beginTime;
+    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime endTime;
     private Byte type;
     private Long activityId;
+    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime gmtCreate;
+    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime gmtModified;
 
-    private SimpleProductBo product;
+    private SimpleProductRetVo product;
     private SimpleShopBo shop;
     private SimpleShareActBo shareAct;
     private SimpleAdminUserBo createdBy;
     private SimpleAdminUserBo modifiedBy;
-
-    @Override
-    public Object createVo() {
-        return this;
-    }
-
-    @Override
-    public Object createSimpleVo() {
-        return this;
-    }
 }

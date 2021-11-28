@@ -16,8 +16,6 @@ spring:
     allow-bean-definition-overriding: true
   application:
     name: goods-service
-  profiles:
-    active: dev
   servlet:
     multipart:
       #是否使用http上传
@@ -25,9 +23,9 @@ spring:
       #最大请求文件的大小
       max-request-size: 10MB
   cloud:
-    loadbalancer:
-      ribbon:
-        enable: true
+    nacos:
+      discovery:
+        server-addr: 172.16.4.136:8848
 
 
   datasource:
@@ -77,12 +75,7 @@ spring:
         max-wait: -1
     # 连接超时时间（毫秒）
     timeout: 5000
-  sql:
-    init:
-      mode: always
-      encoding: UTF-8
-      username: dbuser
-      password: 12345678
+    host: localhost
 
 mybatis:
   #po对象的包

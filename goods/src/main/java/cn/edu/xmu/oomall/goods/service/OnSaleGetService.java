@@ -1,25 +1,21 @@
 package cn.edu.xmu.oomall.goods.service;
 
-import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.OnSaleGetDao;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
-import cn.edu.xmu.oomall.goods.model.bo.OnSale;
-import cn.edu.xmu.oomall.goods.model.bo.SimpleProductBo;
+import cn.edu.xmu.oomall.goods.model.bo.OnSaleGetBo;
+import cn.edu.xmu.oomall.goods.model.bo.Product;
+import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
-import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
 import cn.edu.xmu.oomall.goods.model.vo.OnSaleRetVo;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Zijun Min 22920192204257
@@ -61,9 +57,9 @@ OnSaleGetService {
         if(!returnObject.getCode().equals(ReturnNo.OK)) {
             return returnObject;
         }
-        OnSale onSale=(OnSale) returnObject.getData();
+        OnSaleGetBo onSale=(OnSaleGetBo) returnObject.getData();
         OnSalePo onSalePo=(OnSalePo) Common.cloneVo(onSale,OnSalePo.class);
-        if(onSalePo.getType().equals(OnSale.Type.NOACTIVITY.getCode())||onSalePo.getType().equals(OnSale.Type.SECKILL.getCode())){
+        if(onSalePo.getType().equals(OnSaleGetBo.Type.NOACTIVITY.getCode())||onSalePo.getType().equals(OnSaleGetBo.Type.SECKILL.getCode())){
             NewOnSaleRetVo onSaleRetVo=(NewOnSaleRetVo)Common.cloneVo(onSalePo, NewOnSaleRetVo.class);
             return new ReturnObject(onSaleRetVo);
         }else{
@@ -99,23 +95,23 @@ OnSaleGetService {
     }
 
     /**
-     * 内部API- 查询特定价格浮动的详情
+     * 内部API- 查询特定价格浮动的详情，该方法加入redis
      * @param id
      * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject selectFullOnsale(Long id){
-        ReturnObject returnObject=onSaleDao.selectOnSale(id);
+        ReturnObject returnObject=onSaleDao.selectOnSaleRedis(id);
         if(!returnObject.getCode().equals(ReturnNo.OK)) {
             return returnObject;
         }
-        OnSale onSale=(OnSale) returnObject.getData();
-        OnSalePo onSalePo=(OnSalePo) Common.cloneVo(onSale,OnSalePo.class);
-        OnSaleRetVo onSaleRetVo=(OnSaleRetVo)Common.cloneVo(onSalePo,OnSaleRetVo.class);
-        ReturnObject returnObjectProduct=productDao.getProductInfo(onSalePo.getProductId());
+        OnSaleGetBo onSale=(OnSaleGetBo) returnObject.getData();
+        OnSaleRetVo onSaleRetVo=(OnSaleRetVo)Common.cloneVo(onSale,OnSaleRetVo.class);
+        ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
         if(returnObjectProduct.getCode().equals(ReturnNo.OK)){
-            SimpleProductBo simpleProductBo=(SimpleProductBo) returnObjectProduct.getData();
-            onSaleRetVo.setProduct(simpleProductBo);
+            Product product=(Product) returnObjectProduct.getData();
+            SimpleProductRetVo simpleProduct=(SimpleProductRetVo)Common.cloneVo(product,SimpleProductRetVo.class);
+            onSaleRetVo.setProduct(simpleProduct);
         }
         return new ReturnObject(onSaleRetVo);
     }

@@ -11,17 +11,7 @@ import lombok.NoArgsConstructor;
  **/
 @Data
 @NoArgsConstructor
-public class SimpleAdminUserBo implements VoObject {
+public class SimpleAdminUserBo {
     private Long id;
     private String userName;
-
-    @Override
-    public Object createVo() {
-        return this;
-    }
-
-    @Override
-    public Object createSimpleVo() {
-        return this;
-    }
 }

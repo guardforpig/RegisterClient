@@ -4,17 +4,17 @@ import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.goods.constant.Constants;
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
+import cn.edu.xmu.oomall.goods.model.bo.OnSaleGetBo;
 import cn.edu.xmu.oomall.goods.service.OnSaleGetService;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import com.github.pagehelper.PageInfo;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
  * @createTime 2021/11/13 02:44
  **/
 @RestController
+@RefreshScope
 @RequestMapping(produces = "application/json;charset=UTF-8")
 public class OnSaleGetController {
 
@@ -41,13 +42,13 @@ public class OnSaleGetController {
      * @param pageSize
      * @return
      */
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("shops/{shopId}/products/{id}/onsales")
     public Object selectCertainOnsale(@LoginUser Long loginUser, @LoginName String loginUsername,
                                       @PathVariable("shopId")Long shopId, @PathVariable("id")Long id,
                                       @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                       @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
-        ReturnObject<PageInfo<VoObject>> returnObject=onSaleService.selectCertainOnsale(shopId,id,page,pageSize);
+        ReturnObject returnObject=onSaleService.selectCertainOnsale(shopId,id,page,pageSize);
         return Common.decorateReturnObject(returnObject);
     }
 
@@ -59,7 +60,7 @@ public class OnSaleGetController {
      * @param id
      * @return 只返回普通和秒杀，其他类型出403，返回的是完整订单
      */
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("shops/{shopId}/onsales/{id}")
     public Object selectOnsale(@LoginUser Long loginUser,@LoginName String loginUsername,
                                @PathVariable("shopId")Long shopId, @PathVariable("id")Long id){
@@ -75,7 +76,7 @@ public class OnSaleGetController {
      * @param pageSize
      * @return
      */
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("internal/shops/{did}/activities/{id}/onsales")
     public Object selectActivities(@LoginUser Long loginUser, @LoginName String loginUsername,
                                    @PathVariable("did")Long did, @PathVariable("id")Long id, @RequestParam(required = false) Byte state,
@@ -84,7 +85,7 @@ public class OnSaleGetController {
                                    @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                    @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
         if(state!=null){
-            if(state< OnSale.State.DRAFT.getCode()||state>OnSale.State.OFFLINE.getCode()){
+            if(state< OnSaleGetBo.State.DRAFT.getCode()||state>OnSaleGetBo.State.OFFLINE.getCode()){
                 ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.FIELD_NOTVALID);
                 return Common.decorateReturnObject(returnObjectNotValid);
             }
@@ -105,14 +106,14 @@ public class OnSaleGetController {
      * @param pageSize
      * @return
      */
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("internal/shops/{did}/shareactivities/{id}/onsales")
     public Object selectShareActivities(@LoginUser Long loginUser,@LoginName String loginUsername,
                                         @PathVariable("did")Long did, @PathVariable("id")Long id,@RequestParam(required = false) Byte state,
                                         @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                         @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
         if(state!=null){
-            if(state< OnSale.State.DRAFT.getCode()||state>OnSale.State.OFFLINE.getCode()){
+            if(state< OnSaleGetBo.State.DRAFT.getCode()||state>OnSaleGetBo.State.OFFLINE.getCode()){
                 ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.FIELD_NOTVALID);
                 return Common.decorateReturnObject(returnObjectNotValid);
             }
@@ -122,11 +123,11 @@ public class OnSaleGetController {
     }
 
     /**
-     * 内部API- 查询特定价格浮动的详情
+     * 内部API- 查询特定价格浮动的详情，该方法加入redis
      * @param id
      * @return 所有类型都会返回
      */
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping( "internal/onsales/{id}")
     public Object selectFullOnsale(@LoginUser Long loginUser,@LoginName String loginUsername,@PathVariable("id")Long id) {
         ReturnObject returnObject = onSaleService.selectFullOnsale(id);
@@ -145,7 +146,7 @@ public class OnSaleGetController {
      * @param pageSize
      * @return
      */
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("internal/onsales")
     public Object selectAnyOnsale(@LoginUser Long loginUser, @LoginName String loginUsername,
                                   @RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
