@@ -209,7 +209,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect((status().isOk()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":3,\"name\":\"预售活动2\",\"shop\":null,\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"zheng5d\"},\"gmtCreate\":\"2021-06-21T17:38:20.000\",\"gmtModified\":\"2021-06-21T17:38:20.000\",\"modifier\":{\"id\":1,\"name\":\"zheng5d\"},\"state\":1},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":3,\"name\":\"预售活动2\",\"shop\":{\"id\":5,\"name\":\"坚持就是胜利\"},\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"zheng5d\"},\"gmtCreate\":\"2021-06-21T17:38:20.000\",\"gmtModified\":\"2021-06-21T17:38:20.000\",\"modifier\":{\"id\":1,\"name\":\"zheng5d\"},\"state\":1},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -469,7 +469,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect((status().isOk()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"data\":{\"id\":3,\"name\":\"预售活动1\",\"shop\":null,\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"zheng5d\"},\"gmtCreate\":\"2021-06-21T17:38:20.000\",\"gmtModified\":\"2021-06-21T17:38:20.000\",\"modifier\":{\"id\":1,\"name\":\"zheng5d\"},\"state\":1},\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":0,\"data\":{\"id\":3,\"name\":\"预售活动1\",\"shop\":{\"id\":4,\"name\":\"努力向前\"},\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"zheng5d\"},\"gmtCreate\":\"2021-06-21T17:38:20.000\",\"gmtModified\":\"2021-06-21T17:38:20.000\",\"modifier\":{\"id\":1,\"name\":\"zheng5d\"},\"state\":1},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
 

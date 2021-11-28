@@ -257,6 +257,7 @@ public class AdvanceSaleService {
         advanceSaleDetailsRetVo.setPayTime(advanceSaleBo.getPayTime());
         advanceSaleDetailsRetVo.setAdvancePayPrice(advanceSaleBo.getAdvancePayPrice());
         advanceSaleDetailsRetVo.setState(advanceSaleBo.getState());
+        advanceSaleDetailsRetVo.setShop(new ShopVo(advanceSaleBo.getShopId(),advanceSaleBo.getShopName()));
         return new ReturnObject(advanceSaleDetailsRetVo);
     }
 
@@ -280,7 +281,8 @@ public class AdvanceSaleService {
         if (shopVoReturnObject.getData() == null) {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
         }
-        advanceSaleBo.setShop(new ShopVo(shopId,shopVoReturnObject.getData().getName()));
+        advanceSaleBo.setShopId(shopId);
+        advanceSaleBo.setShopName(shopVoReturnObject.getData().getName());
 
         //调用goodsservice，根据shopId,productId，beginTime，endTime获取OnSale列表,判断要加入的活动的时间是否和已有product的预售活动时间冲突
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1=goodsService.getAllOnsale(shopId,id,advanceSaleVo.getBeginTime(),advanceSaleVo.getEndTime(),1,1);
@@ -340,6 +342,7 @@ public class AdvanceSaleService {
         advanceSaleDetailsRetVo.setPayTime(advanceSaleBo.getPayTime());
         advanceSaleDetailsRetVo.setAdvancePayPrice(advanceSaleBo.getAdvancePayPrice());
         advanceSaleDetailsRetVo.setState(advanceSaleBo.getState());
+        advanceSaleDetailsRetVo.setShop(new ShopVo(advanceSaleBo.getShopId(),advanceSaleBo.getShopName()));
         return new ReturnObject(advanceSaleDetailsRetVo);
     }
 

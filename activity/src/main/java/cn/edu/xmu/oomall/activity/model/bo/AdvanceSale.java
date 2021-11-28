@@ -16,15 +16,17 @@ import java.util.Map;
 @Data
 public class AdvanceSale implements Serializable {
 
+
     private Long id;
-    private ShopVo shop;
+    private Long shopId;
+    private String shopName;
     private String name;
     private LocalDateTime payTime;
     private Long advancePayPrice;
     private Long creatorId;
-    private String createName;
+    private String creatorName;
     private Long modifierId;
-    private String modiName;
+    private String modifierName;
     private Byte state;
 
     public enum state {
