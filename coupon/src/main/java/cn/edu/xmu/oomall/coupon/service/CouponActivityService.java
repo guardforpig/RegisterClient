@@ -270,14 +270,11 @@ public class CouponActivityService {
             }
             onsaleIdList = new ArrayList<>(onsaleIdSet);
 
-            // 对于这种情况，需要存在redis里
-            if (pageNumber * pageSize <= 100) {
-                // 将couponOnsale列表存在redis里
-                redisUtils.set(key, (Serializable) couponOnsaleList, couponOnsaleListTimeout);
-                // 由于在redis中插入了新的数据，所以需要手动更新total、pages
-                totalOfApi1 =  (long) onsaleIdList.size() ;
-                pagesOfApi1 = (onsaleIdList.size()  - 1 ) / pageSize + 1;
-            }
+            // 将couponOnsale列表存在redis里
+            redisUtils.set(key, (Serializable) couponOnsaleList, couponOnsaleListTimeout);
+            // 由于在redis中插入了新的数据，所以需要手动更新total、pages
+            totalOfApi1 =  (long) onsaleIdList.size() ;
+            pagesOfApi1 = (onsaleIdList.size()  - 1 ) / pageSize + 1;
         }
 
         // 由于去重了，因此需要手动分页

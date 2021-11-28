@@ -99,7 +99,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 字段不合法
@@ -201,7 +201,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
     }
 
@@ -246,7 +246,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
     }
 
@@ -327,7 +327,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
     }
@@ -386,7 +386,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
     }
@@ -428,7 +428,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 活动和店铺不对应
@@ -470,7 +470,8 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
+
         JSONAssert.assertEquals(expectString, responseString, true);
     }
 }

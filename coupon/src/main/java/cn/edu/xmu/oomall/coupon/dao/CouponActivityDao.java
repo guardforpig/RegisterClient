@@ -59,8 +59,6 @@ public class CouponActivityDao {
     @Value("${oomall.coupon.bo.expiretime}")
     private long boTimeout;
 
-
-
     private static final Logger logger = LoggerFactory.getLogger(CouponActivityDao.class);
 
     public final static String COUPONACTIVITYKEY = "couponactivity_%d";
