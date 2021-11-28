@@ -110,7 +110,7 @@ public class RegionControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedResponse = "{\"errno\":995,\"errmsg\":\"地区已废弃\",\"data\":null}";
+        String expectedResponse = "{\"errno\":995,\"errmsg\":\"地区已废弃\"}";
 
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
@@ -224,7 +224,7 @@ public class RegionControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedResponse = "{\"errno\":995,\"errmsg\":\"地区已废弃\",\"data\":null}";
+        String expectedResponse = "{\"errno\":995,\"errmsg\":\"地区已废弃\"}";
 
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
@@ -283,7 +283,7 @@ public class RegionControllerTest {
 
     }
 
-    @Test
+    @Test   //标识此方法为测试方法
     public void abandonRegionTest() throws Exception {
         String responseString = this.mvc.perform(put("/shops/0/regions/2/suspend").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -304,7 +304,7 @@ public class RegionControllerTest {
         JSONAssert.assertEquals(expectedResponse, responseString, false);
     }
 
-    @Test
+    @Test   //标识此方法为测试方法
     public void abandonRegionTest1() throws Exception {
         String responseString = this.mvc.perform(delete("/shops/0/regions/3").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -352,7 +352,7 @@ public class RegionControllerTest {
 
     }
 
-    @Test
+    @Test   //标识此方法为测试方法
     public void suspendRegionTest() throws Exception {
         String responseString = this.mvc.perform(put("/shops/0/regions/4/suspend").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -364,7 +364,7 @@ public class RegionControllerTest {
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
-    @Test
+    @Test   //标识此方法为测试方法
     public void suspendRegionTest1() throws Exception {
 
         String responseString = this.mvc.perform(put("/shops/0/regions/4191/suspend").header("authorization", adminToken))
@@ -372,7 +372,7 @@ public class RegionControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedResponse = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\",\"data\":null}";
+        String expectedResponse = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
 
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
@@ -413,7 +413,7 @@ public class RegionControllerTest {
 
     }
 
-    @Test
+    @Test   //标识此方法为测试方法
     public void resumeRegionTest() throws Exception {
         String responseString = this.mvc.perform(put("/shops/0/regions/6/suspend").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -434,7 +434,7 @@ public class RegionControllerTest {
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
-    @Test
+    @Test   //标识此方法为测试方法
     public void resumeRegionTest1() throws Exception {
 
         String responseString = this.mvc.perform(put("/shops/0/regions/4191/resume").header("authorization", adminToken))
@@ -442,7 +442,7 @@ public class RegionControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedResponse = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\",\"data\":null}";
+        String expectedResponse = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
 
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
