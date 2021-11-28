@@ -98,6 +98,9 @@ public class CreateObject {
     public static ReturnObject<OnsaleVo> createOnsaleVo2() {
         OnsaleVo onsaleVo = new OnsaleVo();
         ShopVo shopVo = new ShopVo();
+        ProductVo productVo = new ProductVo();
+        productVo.setId(10L);
+        onsaleVo.setProduct(productVo);
         shopVo.setId(3L);
         onsaleVo.setId(1L);
         onsaleVo.setShop(shopVo);

@@ -63,10 +63,7 @@ public class CouponActivityService {
     private Integer pagesOfApi2;
 
     // 活动查couponOnsale的key
-    public final static String COUPONONSALELISTKEY1 = "coupononsalelist1_%d";
-
-    // 商品查couponOnsale的key，key是productId
-    public final static String COUPONONSALELISTKEY2 = "coupononsalelist2_%d";
+    public final static String COUPONONSALELISTKEY = "coupononsalelist_%d";
 
     // 商品查couponActivityId的key，key是productId
     public final static String COUPONACTIVITYIDLISTKEY = "couponactivityidlist_%d";
@@ -241,7 +238,7 @@ public class CouponActivityService {
         // 当dao层增删改couponsale时，会删除对应acitivtyId的redis键值对
         // 获得活动对应的couponOnsale列表
         List<CouponOnsale> couponOnsaleList;
-        String key = String.format(COUPONONSALELISTKEY1, couponActivityId);
+        String key = String.format(COUPONONSALELISTKEY, couponActivityId);
         Serializable serializable = null;
         serializable = redisUtils.get(key);
 
@@ -332,15 +329,15 @@ public class CouponActivityService {
             }
 
             // 根据OnsaleId列表，找出所有对应的CouponOnsale
-            List<CouponOnsale> couponOnsaleList = new ArrayList<>();
             ReturnObject<PageInfo<CouponOnsale>> retCouponOnsaleListPage =
                     couponActivityDao.listCouponOnsaleByOnsaleIdList(onsaleIdList, 1, ((pageNumber * pageSize) / 100 + 1) * 100);
-            if (retCouponOnsaleListPage.getCode().equals(ReturnNo.OK)) {
-                Map<String, Object> retCouponOnsaleMap = (Map<String, Object>) retCouponOnsaleListPage.getData();
-                couponOnsaleList = (List<CouponOnsale>) retCouponOnsaleMap.get("list");
+            if (!retCouponOnsaleListPage.getCode().equals(ReturnNo.OK)) {
+                return retCouponOnsaleListPage;
             }
 
             // 从couponOnsale中获得couponActivityId，并去重
+            Map<String, Object> retCouponOnsaleMap = (Map<String, Object>) retCouponOnsaleListPage.getData();
+            List<CouponOnsale>  couponOnsaleList = (List<CouponOnsale>) retCouponOnsaleMap.get("list");
             Set<Long> couponActivityIdSet = new HashSet<>();
             for (CouponOnsale couponOnsale : couponOnsaleList) {
                 couponActivityIdSet.add(couponOnsale.getActivityId());
@@ -348,8 +345,8 @@ public class CouponActivityService {
             List<Long> couponActivityIdList = new ArrayList<>(couponActivityIdSet);
 
             // 由于找的是上线的CouponActivity，目前的couponActivityIdList还不知道状态
-            // 需要用example判断一下，获得total、pages
-            // 当redis中有数据时，就直接用之前的total、pages就行
+            // 需要用example判断一下，获得total、pages和有效的上线活动列表
+            // 当redis中有数据时，就直接用之前的total、pages、有效的上线活动列表就行
 
             // 根据CouponActivityId的列表，找出所有上线的CouponActivity
             ReturnObject<PageInfo<CouponActivity>> retOnlineCouponActivityListPage =
@@ -368,11 +365,6 @@ public class CouponActivityService {
             totalOfApi2 =  (long) onlineCouponActivityList.size() ;
             pagesOfApi2 = (onlineCouponActivityList.size()  - 1 ) / pageSize + 1;
             redisUtils.set(key, (Serializable) onlineCouponActivityIdList, listTimeout);
-        }
-
-        // 若有效活动列表为空，则返回资源不存在
-        if (onlineCouponActivityIdList.size() == 0) {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
 
         // 由于当前couponActivityList不是分页的结果，所以需要手动分页
@@ -426,9 +418,8 @@ public class CouponActivityService {
             Common.setPoModifiedFields(newCouponActivity, userId, userName);
 
             return couponActivityDao.updateCouponActivity(newCouponActivity);
-        } else
-        // 修改的是状态
-        {
+        } else {
+            // 修改的是状态
             switch (newState) {
                 case ONLINE: {
                     // 修改为Online，需判断状态是不是在下线态
@@ -448,7 +439,6 @@ public class CouponActivityService {
                     Common.setPoModifiedFields(formerCouponActivity, userId, userName);
                     ReturnObject returnObject = couponActivityDao.updateCouponActivity(formerCouponActivity);
                     return returnObject;
-
                     // TODO: 将已发行未用的优惠卷一并下线
                     // 数据库好像没有优惠券，暂时先放着
                 }
@@ -507,11 +497,12 @@ public class CouponActivityService {
             return returnObject;
         }
 
-        // 由于插入了couponOnsale，所以需要找到onsale对应的productId
+        // 插入couponOnsale，需要删除活动查商品这个API的redis中activityId, List<CouponSale>的缓存数据
+        redisUtils.del(String.format(COUPONONSALELISTKEY, couponActivityId));
+
+        // 由于插入了couponOnsale，所以商品查活动这个API的redis缓存需要删除，所以需要找到onsale对应的productId
         // 然后删除1-5第二个api建立的redis索引
-        ReturnObject<OnsaleVo> retOnsaleVo1 = goodsService.getOnsaleById(onsaleId);
-        Long productId = retOnsaleVo1.getData().getProduct().getId();
-        redisUtils.del(String.format(COUPONACTIVITYIDLISTKEY, productId));
+        redisUtils.del(String.format(COUPONACTIVITYIDLISTKEY, retOnsaleVo.getData().getProduct().getId()));
 
         return new ReturnObject<>(ReturnNo.OK);
     }
@@ -546,7 +537,6 @@ public class CouponActivityService {
                 deleteCouponOnsale(userId, userName, shopId, couponOnsale.getId());
             }
         }
-
         // 将优惠活动删除
         return couponActivityDao.deleteCouponActivityById(couponActivityId);
     }
@@ -582,11 +572,13 @@ public class CouponActivityService {
             return returnObject;
         }
 
-        // 由于删除了couponOnsale，所以需要找到onsale对应的productId
+        // 删除couponOnsale，需要删除活动查商品这个API的redis中activityId, List<CouponSale>的缓存数据
+        redisUtils.del(String.format(COUPONONSALELISTKEY, retCouponOnsale.getData().getActivityId()));
+
+        // 由于删除了couponOnsale，所以商品查活动这个API的redis缓存需要删除，所以需要找到onsale对应的productId
         // 然后删除1-5第二个api建立的redis索引
-        ReturnObject<OnsaleVo> retOnsaleVo1 = goodsService.getOnsaleById(retCouponOnsale.getData().getOnsaleId());
-        Long productId = retOnsaleVo1.getData().getProduct().getId();
-        redisUtils.del(String.format(COUPONACTIVITYIDLISTKEY, productId));
+        ReturnObject<OnsaleVo> tempOnsaleVo = goodsService.getOnsaleById(retCouponOnsale.getData().getOnsaleId());
+        redisUtils.del(String.format(COUPONACTIVITYIDLISTKEY, tempOnsaleVo.getData().getProduct().getId()));
 
         return new ReturnObject<>(ReturnNo.OK);
     }

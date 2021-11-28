@@ -53,6 +53,8 @@ public class CouponControllerTest {
         ReturnObject<OnsaleVo> OnsaleVo2 = CreateObject.createOnsaleVo(10L);
         Mockito.when(goodsService.getOnsaleById(3L)).thenReturn(OnsaleVo1);
         Mockito.when(goodsService.getOnsaleById(4L)).thenReturn(OnsaleVo2);
+        Mockito.when(goodsService.getOnsaleById(21L)).thenReturn(OnsaleVo2);
+        Mockito.when(goodsService.getOnsaleById(3914L)).thenReturn(OnsaleVo2);
 
         // 返回OnsaleVoList
         ReturnObject<List<OnsaleVo>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
@@ -209,7 +211,7 @@ public class CouponControllerTest {
     @Transactional(rollbackFor = Exception.class)
     public void testDeleteCouponActivity() throws Exception {
         // 正常
-        String responseString = mvc.perform(delete("/shops/1/couponactivities/3").header("authorization", adminToken))
+        String responseString = mvc.perform(delete("/shops/1/couponactivities/15").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -272,7 +274,7 @@ public class CouponControllerTest {
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1,3600);
         // 活动不存在
-        responseString = mvc.perform(post("/shops/2/couponactivities/15/onsales/1").header("authorization", adminToken))
+        responseString = mvc.perform(post("/shops/2/couponactivities/16/onsales/1").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -317,7 +319,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"errmsg\":\"该onsale已经参与了该活动\"}";
+        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"该onsale已经参与了该活动\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
@@ -415,7 +417,7 @@ public class CouponControllerTest {
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
         // 活动不存在
-        responseString = mvc.perform(put("/shops/2/couponactivities/15/online").header("authorization", adminToken))
+        responseString = mvc.perform(put("/shops/2/couponactivities/16/online").header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
