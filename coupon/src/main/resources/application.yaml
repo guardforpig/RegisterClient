@@ -86,8 +86,8 @@ pagehelper:
   helper-dialect: mysql
 
 webdav:
-  user: DELL
-  password: zrj2714
+  user: ooad_javaee
+  password: 12345678
   baseurl: http://172.16.4.1/webdav/test/
 
 oomall:
@@ -98,5 +98,8 @@ oomall:
     list:
       # 对象在Redis中失效秒数
       expiretime: 300
+
+
+
 
 
