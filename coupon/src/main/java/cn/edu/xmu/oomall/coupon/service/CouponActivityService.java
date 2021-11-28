@@ -68,9 +68,6 @@ public class CouponActivityService {
     // 商品查couponOnsale的key，存的是productId
     public final static String COUPONONSALELISTKEY2 = "coupononsalelist2_%d";
 
-    // couponOnsale查couponActivity的key，存的是couponOnsaleId
-    public final static String COUPONACTIVITYLISTKEY = "coupononactivitylist_%d";
-
 
 
     /**
@@ -242,13 +239,12 @@ public class CouponActivityService {
         List<CouponOnsale> couponOnsaleList;
         String key = String.format(COUPONONSALELISTKEY1, couponActivityId);
         Serializable serializable = null;
-        // 途径1：先查redis缓存，默认在redis中存100个couponOnsaleId，所以判断是否有超出100
-        if (pageNumber * pageSize <= 100) {
-            serializable = redisUtils.get(key);
-        }
+        serializable = redisUtils.get(key);
+
 
         List<Long> onsaleIdList;
-        if (serializable != null) {
+        // 途径1：先查redis缓存，判断有没有超出上一次的查询总数totalOfApi1
+        if (serializable != null && pageNumber * pageSize <= totalOfApi1) {
             couponOnsaleList = (List<CouponOnsale>) serializable;
             Set<Long> onsaleIdSet = new HashSet<>();
             for (CouponOnsale couponOnsale : couponOnsaleList) {
@@ -318,7 +314,8 @@ public class CouponActivityService {
         Serializable serializable = redisUtils.get(key);
 
         List<CouponOnsale> couponOnsaleList;
-        if (serializable != null) {
+        // 先查redis缓存，判断有没有超出上一次的查询总数totalOfApi2
+        if (serializable != null && pageNumber * pageSize <= totalOfApi2) {
            couponOnsaleList = (List<CouponOnsale>) serializable;
         } else {
             // 找到Product对应的所有OnsaleVo，这里goods模块会缓存在redis，已降低负载
@@ -344,7 +341,6 @@ public class CouponActivityService {
             }
             // 将productId对应的couponOnsale列表存在redis里，降低负载
             redisUtils.set(key, (Serializable) couponOnsaleList, couponOnsaleListTimeout);
-
         }
 
         // 去重
