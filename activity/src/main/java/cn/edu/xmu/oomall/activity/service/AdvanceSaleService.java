@@ -53,7 +53,7 @@ public class AdvanceSaleService {
                 po.setState((byte) 1);
                 Common.setPoModifiedFields(po,adminId,adminName);
                 advanceSaleDao.updateAdvanceSale(po);
-                SimpleReturnObject retObject=goodsService.onlineOnsale(advancesaleId);
+                SimpleReturnObject retObject=goodsService.onlineOnsale(shopId,advancesaleId);
                 //抛出异常是为了回滚
                 if(retObject.getErrno()!=0){
                     returnObject=new ReturnObject(ReturnNo.getByCode(retObject.getErrno()),retObject.getErrmsg());
@@ -87,7 +87,7 @@ public class AdvanceSaleService {
                 po.setState((byte) 2);
                 Common.setPoModifiedFields(po,adminId,adminName);
                 advanceSaleDao.updateAdvanceSale(po);
-                SimpleReturnObject retObject=goodsService.offlineOnsale(advancesaleId);
+                SimpleReturnObject retObject=goodsService.offlineOnsale(shopId,advancesaleId);
                 if(retObject.getErrno()!=0){
                     returnObject=new ReturnObject(ReturnNo.getByCode(retObject.getErrno()),retObject.getErrmsg());
                 }else{
@@ -117,13 +117,13 @@ public class AdvanceSaleService {
                     advanceSaleDao.updateAdvanceSale(po);
 
                     //调用内部API，查onsale信息
-                    SimpleReturnObject<PageVo<OnsaleVo>> retObj = goodsService.getOnsale(advancesaleId,1,1,10);
+                    SimpleReturnObject<PageVo<OnsaleVo>> retObj = goodsService.getOnsale(shopId,advancesaleId,1,1,10);
                     Long onsaleId=null;
                     //确定有需要修改的onsale目标
                     if(retObj.getErrno()==0&&retObj.getData().getTotal()>0){
                         onsaleId=retObj.getData().getList().get(0).getId();
                         OnsaleModifyVo onsaleModifyVo=(OnsaleModifyVo)Common.cloneVo(advanceSaleModifyVo,OnsaleModifyVo.class);
-                        SimpleReturnObject result=goodsService.modifyOnsale(onsaleId,onsaleModifyVo);
+                        SimpleReturnObject result=goodsService.modifyOnsale(shopId,onsaleId,onsaleModifyVo);
                         if(result.getErrno()!=0){
                             returnObject=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
                         }else{
@@ -164,7 +164,7 @@ public class AdvanceSaleService {
                 if(po.getState()==0){
                     advanceSaleDao.deleteAdvanceSale(advancesaleId);
                     //内部API物理删除onsale
-                    SimpleReturnObject retObj=goodsService.deleteOnsale(advancesaleId);
+                    SimpleReturnObject retObj=goodsService.deleteOnsale(shopId,advancesaleId);
                     //预售活动草稿态，那么onsale不是草稿态就是系统的问题，失败只有一种可能就是onsale服务没有运行
                     if(retObj.getErrno()!=0){
                         returnObject=new ReturnObject(ReturnNo.getByCode(retObj.getErrno()),retObj.getErrmsg());
@@ -281,7 +281,7 @@ public class AdvanceSaleService {
         }
         advanceSaleBo.setShop(new ShopVo(shopId,shopVoReturnObject.getData().getName()));
 
-        //跨模块调接口，根据shopId,productId，beginTime，endTime获取OnSale列表,判断要加入的活动的时间是否和已有product的预售活动时间冲突
+        //调用goodsservice，根据shopId,productId，beginTime，endTime获取OnSale列表,判断要加入的活动的时间是否和已有product的预售活动时间冲突
         ReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1=goodsService.getAllOnsale(shopId,id,advanceSaleVo.getBeginTime(),advanceSaleVo.getEndTime(),1,1);
         List<SimpleOnSaleInfoVo> list=new ArrayList<>();
         if(onSaleList1.getData().getList()!=null) {
@@ -344,7 +344,7 @@ public class AdvanceSaleService {
 
     /**
      * 调用goodsservice
-     * 根据商铺号shopid和活动id找onsale
+     * 根据商铺号shopId和活动id找onsale
      * @param shopId
      * @param id
      * @return
@@ -364,14 +364,15 @@ public class AdvanceSaleService {
     }
 
     /**
-     * 跨模块调接口：新增onsale
+     * 调用goodsservice新增onsale
+     * @param shopId
      * @param productId
      * @param advanceSaleVo
      * @return
      */
     public ReturnObject<SimpleOnSaleInfoVo> addOnsale(Long shopId,Long productId, AdvanceSaleVo advanceSaleVo) {
         OnSaleCreatedVo onSaleCreatedVo = (OnSaleCreatedVo) Common.cloneVo(advanceSaleVo, OnSaleCreatedVo.class);
-        //设置Onsale的type为预售类型3
+        //设置Onsale的type为3,表示预售类型
         onSaleCreatedVo.setType(String.valueOf(3));
         return goodsService.addOnsale(shopId,productId,onSaleCreatedVo);
     }

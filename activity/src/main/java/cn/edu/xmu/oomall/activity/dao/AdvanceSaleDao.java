@@ -101,9 +101,8 @@ public class AdvanceSaleDao {
 
     /**
      * 查询所有预售活动
-     * 此方法复用：查询所有上线的预售活动，管理员查询特定商铺所有预售活动都可用此方法
-     * 查询所有上线的预售活动使用此方法时传入的state为上线
      * @param shopId
+     * @param state
      * @param activityIdList
      * @param page
      * @param pageSize
@@ -139,7 +138,6 @@ public class AdvanceSaleDao {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
-
 
     public ReturnObject getOnlineAdvanceSaleInfo(Long id){
         String key = "advanceSale_" + id;
@@ -200,6 +198,8 @@ public class AdvanceSaleDao {
 
     /**
      * 管理员新增预售
+     * @param adminId
+     * @param adminName
      * @param advanceSaleBo
      * @return
      */
@@ -220,9 +220,4 @@ public class AdvanceSaleDao {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
-
-
-
-
-
 }

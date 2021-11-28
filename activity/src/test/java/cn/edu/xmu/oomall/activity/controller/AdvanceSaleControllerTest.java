@@ -165,33 +165,7 @@ public class AdvanceSaleControllerTest {
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
-    //5.输入shopId不合法
-    @Test
-    @Transactional
-    public void getAllOnlineAdvanceSale5() throws Exception {
-        String responseString = mvc.perform(get("/advancesales?shopId=-1")
-                .contentType("application/json;charset=UTF-8"))
-                .andExpect((status().isBadRequest()))
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":503,\"errmsg\":\"shopId不能为负数\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
-    }
-
-    //6.输入productId不合法
-    @Test
-    @Transactional
-    public void getAllOnlineAdvanceSale6() throws Exception {
-        String responseString = mvc.perform(get("/advancesales?productId=-1")
-                .contentType("application/json;charset=UTF-8"))
-                .andExpect((status().isBadRequest()))
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":503,\"errmsg\":\"productId不能为负数\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
-    }
-
-    //7.输入BeginTime大于endTime不合法
+    //7.输入BeginTime大于endTime
     @Test
     @Transactional
     public void getAllOnlineAdvanceSale7() throws Exception {
@@ -398,7 +372,7 @@ public class AdvanceSaleControllerTest {
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect((status().isBadRequest()))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":948,\"errmsg\":\"尾款支付时间不能晚于活动结束时间\"}";
+        String expected = "{\"errno\":948,\"errmsg\":\"尾款支付时间晚于活动结束时间\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -414,7 +388,7 @@ public class AdvanceSaleControllerTest {
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect((status().isBadRequest()))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":949,\"errmsg\":\"尾款支付时间不能早于活动开始时间\"}";
+        String expected = "{\"errno\":949,\"errmsg\":\"尾款支付时间早于于活动开始时间\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 

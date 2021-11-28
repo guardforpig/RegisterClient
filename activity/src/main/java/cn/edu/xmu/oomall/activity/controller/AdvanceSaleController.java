@@ -117,6 +117,7 @@ public class AdvanceSaleController {
         ReturnObject returnObject=advanceSaleService.getAdvanceSaleState();
         return Common.decorateReturnObject(returnObject);
     }
+
     /**
      * 查询所有上线的预售活动
      * @param shopId
@@ -128,6 +129,14 @@ public class AdvanceSaleController {
      * @return
      */
     @ApiOperation(value = "查询所有上线的预售活动")
+    @ApiImplicitParams(value={
+            @ApiImplicitParam(name = "shopId",dataType = "Long",value = "商铺id",required = false),
+            @ApiImplicitParam(name = "productId",dataType = "Long",value = "货品id",required = false),
+            @ApiImplicitParam(name = "beginTime",dataType = "LocalDateTime",value = "开始时间",required = false),
+            @ApiImplicitParam(name = "endTime",dataType = "LocalDateTime",value = "结束时间",required = false),
+            @ApiImplicitParam(name="page",dataType = "Integer",value = "页数",required = false),
+            @ApiImplicitParam(name="pageSize",dataType = "Integer",value = "页大小",required = false)
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 0, message = "成功")})
     @GetMapping(value = "/advancesales")
@@ -139,12 +148,6 @@ public class AdvanceSaleController {
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
         //输入参数合法性检查
-        if (shopId!=null&&shopId < 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "shopId不能为负数"));
-        }
-        if (productId!=null&&productId < 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "productId不能为负数"));
-        }
         if(beginTime!=null&&endTime!=null) {
             if(beginTime.isAfter(endTime)) {
                 return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
@@ -160,6 +163,9 @@ public class AdvanceSaleController {
      * @return
      */
     @ApiOperation(value = "查询上线预售活动的详细信息")
+    @ApiImplicitParams(value={
+            @ApiImplicitParam(paramType = "path",name = "id",dataType = "Long",value = "预售活动id",required = false)
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 0, message = "成功")})
     @GetMapping(value = "/advancesales/{id}")
@@ -181,13 +187,24 @@ public class AdvanceSaleController {
      * @return
      */
     @ApiOperation(value = "管理员查询特定商铺所有预售活动")
+    @ApiImplicitParams(value={
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "token", value = "用户的token", required = true),
+            @ApiImplicitParam(paramType = "path",name = "shopId",dataType = "Long",value = "商铺id",required = false),
+            @ApiImplicitParam(name = "productId",dataType = "Long",value = "货品id",required = false),
+            @ApiImplicitParam(name = "state",dataType = "Byte",value = "活动状态",required = false),
+            @ApiImplicitParam(name = "beginTime",dataType = "LocalDateTime",value = "开始时间",required = false),
+            @ApiImplicitParam(name = "endTime",dataType = "LocalDateTime",value = "结束时间",required = false),
+            @ApiImplicitParam(name="page",dataType = "Integer",value = "页数",required = false),
+            @ApiImplicitParam(name="pageSize",dataType = "Integer",value = "页大小",required = false)
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 0, message = "成功")})
     @GetMapping(value = "/shops/{shopId}/advancesales")
     @Audit(departName = "shops")
     public Object queryAllShopAdvanceSale(
-            @LoginUser Long loginUserId, @LoginName String loginUserName,
-            @PathVariable(name = "shopId", required = true) Long shopId,
+            @LoginUser Long loginUserId,
+            @LoginName String loginUserName,
+            @PathVariable("shopId") Long shopId,
             @RequestParam(name = "productId", required = false) Long productId,
             @RequestParam(name = "state", required = false) Byte state,
             @RequestParam(name = "beginTime", required = false)@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime beginTime,
@@ -202,7 +219,6 @@ public class AdvanceSaleController {
         }
         ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId,state,beginTime,endTime,page,pageSize);
         return Common.decorateReturnObject(ret);
-
     }
 
     /**
@@ -216,17 +232,27 @@ public class AdvanceSaleController {
      * @return
      */
     @ApiOperation(value = "管理员新增预售")
-    @ApiImplicitParam(name = "authorization", value = "Token", required = true, dataType = "String", paramType = "header")
+    @ApiImplicitParams(value={
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "token", value = "用户的token", required = true),
+            @ApiImplicitParam(paramType = "path",name = "shopId",dataType = "Long",value = "商铺id",required = true),
+            @ApiImplicitParam(paramType = "path",name = "id",dataType = "Long",value = "货品id",required = true),
+            @ApiImplicitParam(paramType = "body", dataType = "Object", name = "body", value ="新增的预售活动信息" ,required = true)
+    })
     @ApiResponses(value = {
-            @ApiResponse(code = 0, message = "成功")})
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 902,message = "商铺销售时间冲突"),
+            @ApiResponse(code = 947, message = "开始时间不能晚于结束时间"),
+            @ApiResponse(code = 948, message = "尾款支付时间晚于活动结束时间"),
+            @ApiResponse(code = 949, message = "尾款支付时间早于于活动开始时间")
+    })
     @PostMapping(value = "/shops/{shopId}/products/{id}/advanceSale")
     @Audit(departName = "shops")
     public Object addAdvanceSale(
             @LoginUser Long loginUserId,
             @LoginName String loginUserName,
-            @ApiParam(value = "店铺id", required = true) @PathVariable("shopId") Long shopId,
-            @ApiParam(value = "货品id", required = true) @PathVariable("id") Long id,
-            @ApiParam(value = "可修改的预售活动信息", required = true) @Valid @RequestBody AdvanceSaleVo advanceSaleVo,
+            @PathVariable("shopId") Long shopId,
+            @PathVariable("id") Long id,
+            @Valid @RequestBody AdvanceSaleVo advanceSaleVo,
             BindingResult bindingResult) {
         Object fieldErrors = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (fieldErrors!=null) {
@@ -238,11 +264,11 @@ public class AdvanceSaleController {
         }
         //支付尾款时间晚于活动结束时间
         if (advanceSaleVo.getPayTime().isAfter(advanceSaleVo.getEndTime())) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_LATE_PAYTIME,"尾款支付时间不能晚于活动结束时间"));
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_LATE_PAYTIME,"尾款支付时间晚于活动结束时间"));
         }
         //支付尾款时间早于活动开始时间
         if (advanceSaleVo.getBeginTime().isAfter(advanceSaleVo.getPayTime())) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_EARLY_PAYTIME,"尾款支付时间不能早于活动开始时间"));
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_EARLY_PAYTIME,"尾款支付时间早于于活动开始时间"));
         }
         ReturnObject ret = advanceSaleService.addAdvanceSale(loginUserId,loginUserName, shopId,id, advanceSaleVo);
         return Common.decorateReturnObject(ret);
@@ -250,21 +276,28 @@ public class AdvanceSaleController {
 
     /**
      * 管理员查询商铺的特定预售活动
+     * @param loginUserId
+     * @param loginUserName
      * @param shopId
      * @param id
      * @return
      */
     @ApiOperation(value = "管理员查询商铺的特定预售活动")
+    @ApiImplicitParams(value={
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "token", value = "用户的token", required = true),
+            @ApiImplicitParam(paramType = "path",name = "shopId",dataType = "Long",value = "商铺id",required = true),
+            @ApiImplicitParam(paramType = "path",name = "shopId",dataType = "Long",value = "商铺id",required = true)
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 0, message = "成功")})
     @GetMapping(value = "/shops/{shopId}/advancesales/{id}")
     @Audit(departName = "shops")
     public Object queryShopAdvanceSaleInfo(
-            @LoginUser Long loginUserId, @LoginName String loginUserName,
+            @LoginUser Long loginUserId,
+            @LoginName String loginUserName,
             @PathVariable(name = "shopId") Long shopId,
             @PathVariable(name = "id") Long id) {
         ReturnObject ret= advanceSaleService.getShopAdvanceSaleInfo(shopId, id);
         return Common.decorateReturnObject(ret);
-
     }
 }
