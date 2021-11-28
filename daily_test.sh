@@ -24,21 +24,13 @@ sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean install
 mvn site:site site:deploy
 
-echo '-------------------building activity-------------------------'
-cd /home/mingqiu/oomall/activity
-git checkout pom.xml
-git pull
-sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
-mvn clean test
-site:site site:deploy
-
 echo '-------------------building comment-------------------------'
 cd /home/mingqiu/oomall/comment
 git checkout pom.xml
 git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean test
-site:site site:deploy
+mvn site:site site:deploy
 
 echo '-------------------building feight-------------------------'
 cd /home/mingqiu/oomall/freight
@@ -46,7 +38,7 @@ git checkout pom.xml
 git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean test
-site:site site:deploy
+mvn site:site site:deploy
 
 echo '-------------------building shop-------------------------'
 cd /home/mingqiu/oomall/shop
@@ -54,7 +46,7 @@ git checkout pom.xml
 git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean test
-site:site site:deploy
+mvn site:site site:deploy
 
 echo '-------------------building goods-------------------------'
 cd /home/mingqiu/oomall/goods
@@ -62,7 +54,7 @@ git checkout pom.xml
 git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean test
-site:site site:deploy
+mvn site:site site:deploy
 
 echo '-------------------building coupon-------------------------'
 cd /home/mingqiu/oomall/coupon
@@ -70,7 +62,14 @@ git checkout pom.xml
 git pull
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean test
-site:site site:deploy
+mvn site:site site:deploy
 
+echo '-------------------building activity-------------------------'
+cd /home/mingqiu/oomall/activity
+git checkout pom.xml
+git pull
+sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
+mvn clean test
+mvn site:site site:deploy
 curl --user ooad_javaee:12345678 -T /home/mingqiu/logs/daily_test.log http://172.16.4.1/webdav/daily-report/$time/console.log
 
