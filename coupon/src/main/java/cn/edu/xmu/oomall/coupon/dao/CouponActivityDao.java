@@ -13,7 +13,7 @@ import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
 import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePoExample;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVoInfo;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -55,17 +55,25 @@ public class CouponActivityDao {
     @Value("${webdav.baseurl}")
     String baseUrl;
 
-    @Value("${coupon.coupononsale.expiretime}")
+    @Value("${oomall.coupon.coupononsale.expiretime}")
     private long couponOnsaleTimeout;
 
-    @Value("${coupon.couponactivity.expiretime}")
+    @Value("${oomall.coupon.couponactivity.expiretime}")
     private long couponActivityTimeout;
+
+    @Value("${oomall.coupon.productlist.expiretime}")
+    private long productListTimeout;
+
+    @Value("${oomall.coupon.couponactivitylist.expiretime}")
+    private long couponActivityListTimeout;
 
     private static final Logger logger = LoggerFactory.getLogger(CouponActivityDao.class);
 
     public final static String COUPONACTIVITYKEY = "couponactivity_%d";
 
     public final static String COUPONONSALEKEY = "coupononsale_%d";
+
+
 
 
     /**

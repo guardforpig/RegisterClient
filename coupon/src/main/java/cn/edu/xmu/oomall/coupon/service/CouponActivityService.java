@@ -11,7 +11,6 @@ import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
-import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVoInfo;
@@ -25,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -205,6 +203,11 @@ public class CouponActivityService {
         ReturnObject<CouponActivity> retCouponActivity = couponActivityDao.getCouponActivityById(couponActivityId);
         if (!retCouponActivity.getCode().equals(ReturnNo.OK)) {
             return retCouponActivity;
+        }
+
+        // 需判断活动是否是上线态
+        if (!retCouponActivity.getData().getState().equals(CouponActivity.State.ONLINE.getCode())) {
+            return new ReturnObject<>(ReturnNo.STATENOTALLOW);
         }
 
         // 根据活动找出活动对应的CouponOnsale列表
@@ -408,15 +411,14 @@ public class CouponActivityService {
         // 根据活动找出活动对应的CouponOnsale列表
         ReturnObject<PageInfo<CouponOnsale>> retCouponOnsalePageInfo =
                 couponActivityDao.listCouponOnsaleByActivityId(couponActivityId, 1, 0);
-        if (!retCouponOnsalePageInfo.getCode().equals(ReturnNo.OK)) {
-            return retCouponOnsalePageInfo;
-        }
 
-        //将优惠活动关联的商品一并删除
-        Map<String, Object> retOnsaleMap = (Map<String, Object>) retCouponOnsalePageInfo.getData();
-        List<CouponOnsale> couponOnsaleList = (List<CouponOnsale>) retOnsaleMap.get("list");
-        for (CouponOnsale couponOnsale : couponOnsaleList) {
-            couponActivityDao.deleteCouponOnsaleById(couponOnsale.getId());
+        if (retCouponOnsalePageInfo.getCode().equals(ReturnNo.OK)) {
+            //将优惠活动关联的商品一并删除
+            Map<String, Object> retOnsaleMap = (Map<String, Object>) retCouponOnsalePageInfo.getData();
+            List<CouponOnsale> couponOnsaleList = (List<CouponOnsale>) retOnsaleMap.get("list");
+            for (CouponOnsale couponOnsale : couponOnsaleList) {
+                couponActivityDao.deleteCouponOnsaleById(couponOnsale.getId());
+            }
         }
 
         // 将优惠活动删除

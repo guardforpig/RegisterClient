@@ -6,8 +6,7 @@ import cn.edu.xmu.oomall.coupon.model.bo.Shop;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.microservice.ShopFeignService;
 import org.apache.http.entity.ContentType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ import java.time.LocalDateTime;
 /**
  * @author RenJieZheng 22920192204334
  */
-@RunWith(SpringJUnit4ClassRunner.class) //指定测试用例的运行器 这里是指定了Junit4
+
 @SpringBootTest(classes = CouponApplication.class)
 // @WebAppConfiguration        //调用Java Web组件，如自动注入ServletContext Bean等
 @Transactional      //防止脏数据

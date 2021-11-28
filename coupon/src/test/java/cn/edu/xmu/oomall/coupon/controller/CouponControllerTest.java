@@ -5,11 +5,8 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.util.CreateObject;
-import cn.edu.xmu.privilegegateway.util.JwtHelper;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +14,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -30,10 +27,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author qingguo Hu 22920192204208
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @Rollback(value = true)
+@Transactional
 public class CouponControllerTest {
 
     private static String adminToken;
@@ -49,7 +46,7 @@ public class CouponControllerTest {
     @MockBean
     private RedisUtil redisUtil;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         // 返回ProductVo
         ReturnObject<OnsaleVo> OnsaleVo1 = CreateObject.createOnsaleVo(100L);
@@ -132,7 +129,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString = "{\"errno\":0,\"data\":{\"total\":7,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        String expectString = "{\"errno\":0,\"data\":{\"total\":8,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 货品不存在
@@ -165,7 +162,7 @@ public class CouponControllerTest {
     @Transactional(rollbackFor = Exception.class)
     public void testUpdateCouponActivity() throws Exception {
         // 正常
-        String requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11 15:40:45.000\",\"endTime\": \"2021-11-11 15:40:50.000\",\"couponTime\": \"2021-11-10 15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        String requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000+0800\",\"endTime\": \"2021-11-11T15:40:50.000+0800\",\"couponTime\": \"2021-11-10T15:40:45.000+0800\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         String responseString = mvc.perform(put("/shops/1/couponactivities/3").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -174,7 +171,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 字段不合法
-        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-09 15:40:45.000\",\"endTime\": \"2021-11-10 15:40:50.000\",\"couponTime\": \"2021-11-01 15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-09T15:40:45.000+0800\",\"endTime\": \"2021-11-10T15:40:50.000+0800\",\"couponTime\": \"2021-11-01T15:40:45.000+0800\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         responseString = mvc.perform(put("/shops/1/couponactivities/-3").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -183,7 +180,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 开始时间晚于结束时间
-        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11 15:40:45.000\",\"endTime\": \"2021-11-10 15:40:50.000\",\"couponTime\": \"2021-11-10 15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000+0800\",\"endTime\": \"2021-11-10T15:40:50.000+0800\",\"couponTime\": \"2021-11-10T15:40:45.000+0800\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         responseString = mvc.perform(put("/shops/1/couponactivities/3").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -192,7 +189,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 不在草稿态
-        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11 15:40:45.000\",\"endTime\": \"2021-11-11 15:40:50.000\",\"couponTime\": \"2021-11-10 15:40:45.000\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000+0800\",\"endTime\": \"2021-11-11T15:40:50.000+0800\",\"couponTime\": \"2021-11-10T15:40:45.000+0800\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         responseString = mvc.perform(put("/shops/1/couponactivities/6").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -205,7 +202,7 @@ public class CouponControllerTest {
     @Transactional(rollbackFor = Exception.class)
     public void testDeleteCouponActivity() throws Exception {
         // 正常
-        String responseString = mvc.perform(delete("/shops/1/couponactivities/11").header("authorization", adminToken))
+        String responseString = mvc.perform(delete("/shops/1/couponactivities/3").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -234,15 +231,6 @@ public class CouponControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expectString = "{\"errno\":504,\"errmsg\":\"该优惠活动不属于该商店\"}";
-        JSONAssert.assertEquals(expectString, responseString, true);
-
-        adminToken = jwtHelper.createToken(1L,"admin",2L, 1,3600);
-        // 活动没有对应的商品
-        responseString = mvc.perform(delete("/shops/2/couponactivities/12").header("authorization", adminToken))
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1,3600);
