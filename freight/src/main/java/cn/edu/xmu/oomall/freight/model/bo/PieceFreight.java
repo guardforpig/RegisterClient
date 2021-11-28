@@ -5,13 +5,15 @@ import cn.edu.xmu.oomall.freight.model.vo.SimpleUserRetVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 /**
  * @author 高艺桐 22920192204199
  */
 @Data
 @NoArgsConstructor
-public class PieceFreight {
+public class PieceFreight implements Serializable {
 
     @ApiModelProperty(value = "主键")
     private Long id;
