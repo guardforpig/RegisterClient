@@ -9,6 +9,9 @@ import cn.edu.xmu.oomall.activity.service.GroupOnService;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -47,6 +50,7 @@ public class GroupOnActivityController {
     }
 
 
+    @Audit
     @ApiOperation(value = "查询所有上线态团购活动", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token",
@@ -70,6 +74,7 @@ public class GroupOnActivityController {
     }
 
 
+    @Audit
     @ApiOperation(value = "查询上线态团购活动详情", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token",
@@ -89,6 +94,7 @@ public class GroupOnActivityController {
     }
 
 
+    @Audit
     @ApiOperation(value = "管理员查询商铺的所有状态团购活动", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token",
@@ -113,6 +119,7 @@ public class GroupOnActivityController {
     }
 
 
+    @Audit
     @ApiOperation(value = "管理员新增团购活动", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token", required = true),
@@ -125,9 +132,7 @@ public class GroupOnActivityController {
     })
     @PostMapping(value = "/shops/{shopId}/groupons")
     public Object addGroupOnActivity(@PathVariable("shopId") Long shopId, @Valid @RequestBody GroupOnActivityPostVo body,
-                                     BindingResult bindingResult, Long loginUserId, String loginUserName) {
-        loginUserId = 1L;
-        loginUserName = "admin";
+                                     BindingResult bindingResult, @LoginUser Long loginUserId, @LoginName String loginUserName) {
         var fieldErrors = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (fieldErrors != null) {
             return fieldErrors;
@@ -141,6 +146,7 @@ public class GroupOnActivityController {
         return Common.decorateReturnObject(ret);
     }
 
+    @Audit
     @ApiOperation(value = "管理员查看特定团购活动详情", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token",
