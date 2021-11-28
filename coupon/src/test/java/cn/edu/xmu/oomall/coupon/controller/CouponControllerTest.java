@@ -94,6 +94,14 @@ public class CouponControllerTest {
         String expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
+        // 状态不对
+        responseString = mvc.perform(get("/couponactivities/3/products"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
+        JSONAssert.assertEquals(expectString, responseString, true);
+
         // 字段不合法
         responseString = mvc.perform(get("/couponactivities/-1/products"))
                 .andExpect(status().is4xxClientError())
@@ -115,14 +123,13 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":10,\"name\":null,\"imageUrl\":null},{\"id\":100,\"name\":null,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        expectString = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":100,\"name\":null,\"imageUrl\":null},{\"id\":10,\"name\":null,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
     }
 
     @Test
     @Transactional(rollbackFor = Exception.class)
     public void testListCouponActivitiesByProductId() throws Exception {
-
 
         // 正常
         String responseString = mvc.perform(get("/products/1550/couponactivities"))

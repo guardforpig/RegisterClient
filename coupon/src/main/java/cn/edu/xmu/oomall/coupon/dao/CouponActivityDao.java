@@ -13,6 +13,7 @@ import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
 import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePoExample;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVoInfo;
+import cn.edu.xmu.oomall.coupon.service.CouponActivityService;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -61,11 +62,6 @@ public class CouponActivityDao {
     @Value("${oomall.coupon.couponactivity.expiretime}")
     private long couponActivityTimeout;
 
-    @Value("${oomall.coupon.productlist.expiretime}")
-    private long productListTimeout;
-
-    @Value("${oomall.coupon.couponactivitylist.expiretime}")
-    private long couponActivityListTimeout;
 
     private static final Logger logger = LoggerFactory.getLogger(CouponActivityDao.class);
 
@@ -262,7 +258,7 @@ public class CouponActivityDao {
 
     public ReturnObject listCouponOnsaleByActivityId(Long activityId, Integer pageNumber, Integer pageSize) {
         try {
-            PageHelper.startPage(pageNumber, pageSize, true, true, true);
+            PageHelper.startPage(pageNumber, pageSize);
             CouponOnsalePoExample example = new CouponOnsalePoExample();
             example.createCriteria().andActivityIdEqualTo(activityId);
             List<CouponOnsalePo> poList = couponOnsalePoMapper.selectByExample(example);
@@ -278,11 +274,11 @@ public class CouponActivityDao {
         }
     }
 
-    public ReturnObject listCouponOnsaleByIdList(List<Long> onsaleIdList, Integer pageNumber, Integer pageSize) {
+    public ReturnObject listCouponOnsaleByOnsaleId(Long onsaleId, Integer pageNumber, Integer pageSize) {
         try {
-            PageHelper.startPage(pageNumber, pageSize, true, true, true);
+            PageHelper.startPage(pageNumber, pageSize);
             CouponOnsalePoExample example = new CouponOnsalePoExample();
-            example.createCriteria().andOnsaleIdIn(onsaleIdList);
+            example.createCriteria().andOnsaleIdEqualTo(onsaleId);
             List<CouponOnsalePo> poList = couponOnsalePoMapper.selectByExample(example);
             if (poList.size() == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -298,7 +294,7 @@ public class CouponActivityDao {
 
     public ReturnObject listCouponActivityByIdList(List<Long> idList, Integer pageNumber, Integer pageSize) {
         try {
-            PageHelper.startPage(pageNumber, pageSize, true, true, true);
+            PageHelper.startPage(pageNumber, pageSize);
             CouponActivityPoExample example = new CouponActivityPoExample();
             example.createCriteria()
                     .andIdIn(idList)
@@ -318,7 +314,7 @@ public class CouponActivityDao {
 
     public ReturnObject listCouponOnsaleByOnsaleIdAndActivityId(Long onsaleId, Long activityId, Integer pageNumber, Integer pageSize) {
         try {
-            PageHelper.startPage(pageNumber, pageSize, true, true, true);
+            PageHelper.startPage(pageNumber, pageSize);
             CouponOnsalePoExample example = new CouponOnsalePoExample();
             example.createCriteria().andOnsaleIdEqualTo(onsaleId).andActivityIdEqualTo(activityId);
             List<CouponOnsalePo> poList = couponOnsalePoMapper.selectByExample(example);
@@ -356,9 +352,12 @@ public class CouponActivityDao {
 
     public ReturnObject insertCouponOnsale(CouponOnsale couponOnsale) {
         try {
+            // 新增couponOnsale，需要删除1-5中第一个api设置的redis中activityId, List<CouponSale>的数据
+            String key = String.format(CouponActivityService.COUPONONSALELISTKEY1, couponOnsale.getActivityId());
             CouponOnsalePo couponOnsalePo =
                     (CouponOnsalePo) Common.cloneVo(couponOnsale, CouponOnsalePo.class);
             couponOnsalePoMapper.insert(couponOnsalePo);
+            redisUtils.del(key);
             return new ReturnObject<>(ReturnNo.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -368,12 +367,20 @@ public class CouponActivityDao {
 
     public ReturnObject deleteCouponOnsaleById(Long id) {
         try {
-            String key = String.format(COUPONONSALEKEY, id);
+            // 删除couponOnsale，需要删除1-5中第一个api设置的redis中activityId, List<CouponSale>的数据，所以需要先查再删
+            ReturnObject<CouponOnsale> retCouponOnsale = getCouponOnsaleById(id);
+            if (!retCouponOnsale.getCode().equals(ReturnNo.OK)) {
+                return retCouponOnsale;
+            }
+            String key1 = String.format(CouponActivityService.COUPONONSALELISTKEY1,
+                    retCouponOnsale.getData().getActivityId());
+            String key2 = String.format(COUPONONSALEKEY, id);
             int flag = couponOnsalePoMapper.deleteByPrimaryKey(id);
             if (flag == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             } else {
-                redisUtils.del(key);
+                redisUtils.del(key1);
+                redisUtils.del(key2);
                 return new ReturnObject<>(ReturnNo.OK);
             }
         } catch (Exception e) {

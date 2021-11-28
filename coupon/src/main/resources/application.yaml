@@ -90,14 +90,16 @@ webdav:
   password: zrj2714
   baseurl: http://172.16.4.1/webdav/test/
 
-coupon:
-  coupononsale:
+oomall:
+  coupon:
+    coupononsale:
     # 对象在Redis中失效秒数
-    expiretime: 600
-  couponactivity:
+      expiretime: 600
+    couponactivity:
     # 对象在Redis中失效秒数
-    expiretime: 600
-
-
+      expiretime: 600
+    coupononsalelist:
+      # 对象在Redis中失效秒数
+      expiretime: 300
 
 
