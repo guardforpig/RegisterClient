@@ -2,7 +2,7 @@ package cn.edu.xmu.oomall.coupon.service;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.InternalReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
@@ -310,87 +310,68 @@ public class CouponActivityService {
 
     @Transactional(readOnly = true)
     public ReturnObject listCouponActivitiesByProductId(Long productId, Integer pageNumber, Integer pageSize) {
-        // 降低负载，在redis中新增key：productId, value: List<CouponOnsale>的数据
-        String key1 = String.format(COUPONONSALELISTKEY2, productId);
-        Serializable serializable1 = redisUtils.get(key1);
-
-        List<CouponOnsale> couponOnsaleList;
-        // 先查redis缓存，判断有没有超出上一次的查询总数totalOfApi2
-        if (serializable1 != null && pageNumber * pageSize <= totalOfApi2) {
-           couponOnsaleList = (List<CouponOnsale>) serializable1;
+        // 降低负载，在redis中新增key：productId, value: List<couponActivityId>的数据
+        String key = String.format(COUPONACTIVITYIDLISTKEY, productId);
+        List<Long> couponActivityIdList;
+        Serializable serializable = redisUtils.get(key);
+        // 先查redis缓存， 判断有没有超出上一次的查询总数totalOfApi2
+        if (serializable != null && pageNumber * pageSize <= totalOfApi2) {
+            couponActivityIdList = (List<Long>) serializable;
         } else {
-            // 找到Product对应的所有OnsaleVo，这里goods模块会缓存在redis，已降低负载
+            // 找到Product对应的所有OnsaleVo，这里goods模块会缓存在redis
             ReturnObject<List<Object>> retOnsaleVoPageInfo = goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / 100 + 1) * 100);
             if (!retOnsaleVoPageInfo.getCode().equals(ReturnNo.OK)) {
                 return retOnsaleVoPageInfo;
             }
-
+            // 根据OnsaleVo列表，获取OnsaleId列表
             Map<String, Object> retOnsaleMap = (Map<String, Object>) retOnsaleVoPageInfo.getData();
             List<OnsaleVo> onsaleVoList = (List<OnsaleVo>) retOnsaleMap.get("list");
-            couponOnsaleList = new ArrayList<>();
+            List<Long> onsaleIdList = new ArrayList<>();
             for (OnsaleVo onsaleVo : onsaleVoList) {
-                // 根据OnsaleId的，找出所有对应的CouponOnsale
-                ReturnObject<PageInfo<CouponOnsale>> retCouponOnsaleListPage =
-                        couponActivityDao.listCouponOnsaleByOnsaleId(onsaleVo.getId(), 1, ((pageNumber * pageSize) / 100 + 1) * 100);
-                if (retCouponOnsaleListPage.getCode().equals(ReturnNo.OK)) {
-                    Map<String, Object> retCouponOnsaleMap = (Map<String, Object>) retCouponOnsaleListPage.getData();
-                    List<CouponOnsale> temp = (List<CouponOnsale>) retCouponOnsaleMap.get("list");
-                    for (CouponOnsale couponOnsale : temp) {
-                        couponOnsaleList.add(couponOnsale);
-                    }
-                }
+                onsaleIdList.add(onsaleVo.getId());
             }
-            // 将productId对应的couponOnsale列表存在redis里，降低负载
-            redisUtils.set(key1, (Serializable) couponOnsaleList, listTimeout);
+
+            // 根据OnsaleId列表，找出所有对应的CouponOnsale
+            List<CouponOnsale> couponOnsaleList = new ArrayList<>();
+            ReturnObject<PageInfo<CouponOnsale>> retCouponOnsaleListPage =
+                    couponActivityDao.listCouponOnsaleByOnsaleIdList(onsaleIdList, 1, ((pageNumber * pageSize) / 100 + 1) * 100);
+            if (retCouponOnsaleListPage.getCode().equals(ReturnNo.OK)) {
+                Map<String, Object> retCouponOnsaleMap = (Map<String, Object>) retCouponOnsaleListPage.getData();
+                couponOnsaleList = (List<CouponOnsale>) retCouponOnsaleMap.get("list");
+            }
+
+            // 从couponOnsale中获得couponActivityId，并去重
+            Set<Long> couponActivityIdSet = new HashSet<>();
+            for (CouponOnsale couponOnsale : couponOnsaleList) {
+                couponActivityIdSet.add(couponOnsale.getActivityId());
+            }
+
+            // set转为list，并且将couponActivityIdList存入redis
+            couponActivityIdList = new ArrayList<>(couponActivityIdSet);
+            redisUtils.set(key, (Serializable) couponActivityIdList, listTimeout);
+            // 更新total和pages数据
+            totalOfApi1 =  (long) couponActivityIdList.size() ;
+            pagesOfApi1 = (couponActivityIdList.size()  - 1 ) / pageSize + 1;
         }
 
-        // 去重
-        Set<Long> couponActivityIdSet = new HashSet<>();
-        for (CouponOnsale couponOnsale : couponOnsaleList) {
-            couponActivityIdSet.add(couponOnsale.getActivityId());
-        }
-
-        // set转为list
-        List<Long> couponActivityIdList = new ArrayList<>(couponActivityIdSet);
         // 若活动列表为空，则返回资源不存在
         if (couponActivityIdList.size() == 0) {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
 
+        // 由于当前couponActivityList不是分页的结果，所以需要手动分页
+        couponActivityIdList = couponActivityIdList.subList((pageNumber - 1) * pageSize,
+                Math.min(pageNumber * pageSize, couponActivityIdList.size()));
 
-        // 用couponOnsale查couponActivity
-        String key2 = String.format(COUPONACTIVITYIDLISTKEY, productId);
-        List<CouponActivity> couponActivityList;
-        Serializable serializable2 = redisUtils.get(key2);
-        // 先查redis缓存
-        if (serializable2 != null) {
-            couponActivityList = (List<CouponActivity>) serializable2;
-        } else {
-            // 当redis中没有couponOnsaleList数据时，由于找的是上线的CouponActivity，目前的couponActivityIdList还不知道状态
-            // 需要用example判断一下，才能获得total、pages
-            // 当redis中有数据时，就直接用之前的total、pages就行
-            // 根据CouponActivityId的列表，找出所有上线的CouponActivity
-            ReturnObject<PageInfo<Object>> retPageInfo =
-                    couponActivityDao.listCouponActivityByIdList(couponActivityIdList, 1, ((pageNumber * pageSize) / 100 + 1) * 100);
-            if (!retPageInfo.getCode().equals(ReturnNo.OK)) {
-                return retPageInfo;
-            }
-            Map<String, Object> retMap = (Map<String, Object>) retPageInfo.getData();
-            couponActivityList = (List<CouponActivity>) retMap.get("list");
-            totalOfApi2 = (long) retMap.get("total");
-            pagesOfApi2 = (int) retMap.get("pages");
-            redisUtils.set(key2, (Serializable) couponActivityList, listTimeout);
-        }
-
-        // 由于couponActivityList不是分页的结果，所以需要手动分页
-        couponActivityList = couponActivityList.subList((pageNumber - 1) * pageSize,
-                Math.min(pageNumber * pageSize, couponActivityList.size()));
-
-        // 转Vo
+        // 由couponActivityIdList查couponActivityList，并转Vo
         List<Object> couponActivityVoList = new ArrayList<>();
-        for (CouponActivity couponActivity : couponActivityList) {
-            couponActivityVoList.add(Common.cloneVo(couponActivity, CouponActivityRetVo.class));
+        for (Long couponActivityId : couponActivityIdList) {
+            // 这里的查询有redis缓存
+            ReturnObject<CouponActivity> retCouponActivity = couponActivityDao.getCouponActivityById(couponActivityId);
+            if (retCouponActivity.getCode().equals(ReturnNo.OK)) {
+                couponActivityVoList.add(Common.cloneVo(retCouponActivity.getData(), CouponActivityRetVo.class));
             }
+        }
 
         // 这里无法直接使用getPageRetVo封装，需要手动封装PageInfo
         PageInfo<Object> retPageInfo = new PageInfo<>(couponActivityVoList);

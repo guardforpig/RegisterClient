@@ -270,11 +270,11 @@ public class CouponActivityDao {
         }
     }
 
-    public ReturnObject listCouponOnsaleByOnsaleId(Long onsaleId, Integer pageNumber, Integer pageSize) {
+    public ReturnObject listCouponOnsaleByOnsaleIdList(List<Long> onsaleIdList, Integer pageNumber, Integer pageSize) {
         try {
             PageHelper.startPage(pageNumber, pageSize);
             CouponOnsalePoExample example = new CouponOnsalePoExample();
-            example.createCriteria().andOnsaleIdEqualTo(onsaleId);
+            example.createCriteria().andOnsaleIdIn(onsaleIdList);
             List<CouponOnsalePo> poList = couponOnsalePoMapper.selectByExample(example);
             if (poList.size() == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);

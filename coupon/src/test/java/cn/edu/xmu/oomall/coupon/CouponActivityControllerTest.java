@@ -1,6 +1,6 @@
 package cn.edu.xmu.oomall.coupon;
 
-import cn.edu.xmu.oomall.core.util.InternalReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
