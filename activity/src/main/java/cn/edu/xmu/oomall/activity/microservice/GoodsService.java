@@ -1,9 +1,9 @@
 package cn.edu.xmu.oomall.activity.microservice;
 
-import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleCreatedVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleInfoVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageInfoVo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
@@ -36,28 +36,47 @@ public interface GoodsService {
                                        @RequestParam("page") Integer page,
                                        @RequestParam("pageSize") Integer pageSize);
 
+    /**
+     * @modifiedBy Lin Jiyuan
+     */
     @PutMapping("/internal/shops/{did}/activities/{id}/onsales/online")
-    SimpleReturnObject onlineOnsale(@PathVariable(value="did") Long shopId,@PathVariable(value="id") Long activityId);
+    ReturnObject onlineOnsale(@PathVariable(value="did") Long shopId,
+                              @PathVariable(value="id") Long activityId);
 
-    @PutMapping("/internal/shops/{did}/activities/{id}/onsales/offline")
-    SimpleReturnObject offlineOnsale( @PathVariable(value="did") Long shopId,@PathVariable(value="id") Long activityId);
+    /**
+     * @modifiedBy Lin Jiyuan
+     */
+    @PutMapping("/internal/shops/{did}/activities/{id}/onsales/online")
+    ReturnObject offlineOnsale( @PathVariable(value="did") Long shopId,
+                                @PathVariable(value="id") Long activityId);
 
+    /**
+     * @modifiedBy Lin Jiyuan
+     */
+    @GetMapping("/internal/activities/{id}/onsales")
+    ReturnObject<PageVo<OnsaleVo>> getOnsale(@PathVariable(value="id")Long activityId,
+                                             @RequestParam(name="state",required = false)Integer state,
+                                             @RequestParam(name="page",required = false)Integer page,
+                                             @RequestParam(name="pageSize",required = false)Integer pageSize);
 
-    @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
-    SimpleReturnObject<PageVo<OnsaleVo>> getOnsale(@PathVariable(value="did") Long shopId,
-                                                   @PathVariable(value="id")Long activityId,
-                                                   @RequestParam(name="state",required = false)Integer state,
-                                                   @RequestParam(name="page",required = false)Integer page,
-                                                   @RequestParam(name="pageSize",required = false)Integer pageSize);
+    /**
+     * @modifiedBy Lin Jiyuan
+     */
+    @PutMapping("/internal/onsales/{id}")
+    ReturnObject modifyOnsale(@PathVariable(value="id")Long onsaleId,@RequestBody OnsaleModifyVo vo);
 
-    @PutMapping("/internal/shops/{did}/onsales/{id}")
-    SimpleReturnObject modifyOnsale(@PathVariable(value="did") Long shopId,@PathVariable(value="id")Long onsaleId,@RequestBody OnsaleModifyVo vo);
+    /**
+     * @modifiedBy Lin Jiyuan
+     */
+    @DeleteMapping("/internal/activities/{id}/onsales")
+    ReturnObject deleteOnsale(@PathVariable(value="id") Long activityId);
 
-    @DeleteMapping("/internal/shops/{did}/activities/{id}/onsales")
-    SimpleReturnObject deleteOnsale(@PathVariable(value="did") Long shopId,@PathVariable(value="id") Long activityId);
-
-    @PostMapping("/internal/shops/{did}/products/{id}/onsales")
-    ReturnObject addOnsale(@PathVariable(value="did")Long shopId, @PathVariable(value = "id")Long productId, @RequestBody OnSaleCreatedVo vo);
+    /**
+     * @author Lin Jiyuan
+     */
+    @PostMapping("/shops/{shopId}/products/{id}/onsales")
+    ReturnObject addOnsale(@PathVariable("shopId") long shopId,@PathVariable("id") long id,
+                           @RequestBody SimpleSaleInfoVo simpleSaleInfoVo);
 
     @GetMapping("/internal/onsales")
     ReturnObject getAllOnsale(@RequestParam Long shopId,
@@ -69,17 +88,16 @@ public interface GoodsService {
 
     @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
     ReturnObject getShopOnsaleInfo(@PathVariable("shopId")Long did,
-                               @PathVariable("id")Long id,
-                               @RequestParam("state")Byte state,
-                               @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
-                               @RequestParam("endTime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
-                               @RequestParam("page") Integer page,
-                               @RequestParam("pageSize") Integer pageSize);
+                                   @PathVariable("id")Long id,
+                                   @RequestParam("state")Byte state,
+                                   @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
+                                   @RequestParam("endTime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
+                                   @RequestParam("page") Integer page,
+                                   @RequestParam("pageSize") Integer pageSize);
 
     @GetMapping("/internal/onsales/{id}")
     ReturnObject<OnSaleInfoVo> getOnSaleById(@PathVariable("id")Long id);
 
     @GetMapping("/internal/onsales/{id}")
     ReturnObject<OnSaleInfoVo> getOnSaleInfo(@PathVariable Long id);
-
 }

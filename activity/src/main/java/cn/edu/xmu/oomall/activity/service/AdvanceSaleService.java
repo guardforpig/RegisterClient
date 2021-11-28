@@ -371,9 +371,9 @@ public class AdvanceSaleService {
      * @return
      */
     public ReturnObject<SimpleOnSaleInfoVo> addOnsale(Long shopId,Long productId, AdvanceSaleVo advanceSaleVo) {
-        OnSaleCreatedVo onSaleCreatedVo = (OnSaleCreatedVo) Common.cloneVo(advanceSaleVo, OnSaleCreatedVo.class);
+        SimpleSaleInfoVo simpleSaleInfoVo = (SimpleSaleInfoVo) Common.cloneVo(advanceSaleVo, OnSaleCreatedVo.class);
         //设置Onsale的type为3,表示预售类型
-        onSaleCreatedVo.setType(String.valueOf(3));
-        return goodsService.addOnsale(shopId,productId,onSaleCreatedVo);
+        simpleSaleInfoVo.setType(Byte.valueOf("3"));
+        return goodsService.addOnsale(shopId,productId,simpleSaleInfoVo);
     }
 }
