@@ -98,17 +98,18 @@ public class OnSaleDao {
 
     }
 
-    public OnSale getOnSaleById(Long id) {
+    public ReturnObject getOnSaleById(Long id) {
         try {
             OnSalePo po = onSalePoMapper.selectByPrimaryKey(id);
             if (po == null) {
-                return null;
+                OnSale ret=null;
+                return new ReturnObject(ret);
             }
             OnSale ret = (OnSale) cloneVo(po, OnSale.class);
-            return ret;
+            return new ReturnObject(ret);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return null;
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
 
     }
@@ -139,42 +140,40 @@ public class OnSaleDao {
         }
     }
 
-    public boolean onSaleShopMatch(Long id, Long shopId) {
+    public ReturnObject onSaleShopMatch(Long id, Long shopId) {
         try {
-
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andIdEqualTo(id);
             cr.andShopIdEqualTo(shopId);
             List<OnSalePo> l1 = onSalePoMapper.selectByExample(oe);
             if (l1.size() > 0) {
-                return true;
+                return new ReturnObject(true);
             }
-            return false;
+            return new ReturnObject(false);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return false;
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
 
-    public boolean timeCollided(OnSale onsale) {
+    public ReturnObject timeCollided(OnSale onsale) {
         try {
 
             OnSalePoExample oe = new OnSalePoExample();
-
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andProductIdEqualTo(onsale.getProductId());
             cr.andEndTimeGreaterThan(onsale.getBeginTime());
             cr.andBeginTimeLessThan(onsale.getEndTime());
             List<OnSalePo> l1 = onSalePoMapper.selectByExample(oe);
             if (l1.size() > 0) {
-                return true;
+                return new ReturnObject(true);
             }
-            return false;
+            return new ReturnObject(false);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return true;
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
 
     }
