@@ -38,4 +38,16 @@ public class InternalReturnObject<T> implements Serializable {
 
     public InternalReturnObject() {
     }
+
+    public Integer getErrno() {
+        return errno;
+    }
+
+    public String getErrmsg() {
+        return errmsg;
+    }
+
+    public T getData() {
+        return data;
+    }
 }
