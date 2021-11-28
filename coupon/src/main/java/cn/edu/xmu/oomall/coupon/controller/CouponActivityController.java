@@ -10,6 +10,7 @@ import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ import java.util.List;
  * @author RenJieZheng 22920192204334
  */
 @RestController
+@RefreshScope
 @RequestMapping(value = "/",produces = "application/json;charset=UTF-8")
 public class CouponActivityController {
     @Autowired
@@ -81,7 +83,7 @@ public class CouponActivityController {
      * @param pageSize 页大小
      * @return 优惠活动列表
      */
-    @Audit(departName = "shops")
+    @Audit
     @GetMapping("shops/{shopId}/couponactivities")
     public Object showOwnInvalidCouponActivities(@PathVariable Long shopId,
                                                  @LoginUser Long userId, @LoginName String userName,
