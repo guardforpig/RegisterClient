@@ -546,7 +546,7 @@ public class CouponActivityService {
             Map<String, Object> retOnsaleMap = (Map<String, Object>) retCouponOnsalePageInfo.getData();
             List<CouponOnsale> couponOnsaleList = (List<CouponOnsale>) retOnsaleMap.get("list");
             for (CouponOnsale couponOnsale : couponOnsaleList) {
-                couponActivityDao.deleteCouponOnsaleById(couponOnsale.getId());
+                deleteCouponOnsale(userId, userName, shopId, couponOnsale.getId());
             }
         }
 
