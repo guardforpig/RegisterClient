@@ -80,8 +80,9 @@ public class CommentController {
         }
 
         var ret = commentService.newComment(id,commentVo, loginUser,loginUserName);
-        if(ret.getCode().equals(ReturnNo.OK))httpServletResponse.setStatus(HttpStatus.CREATED.value());
-        return Common.decorateReturnObject(ret);
+        if(ret.getErrno().equals(ReturnNo.OK))httpServletResponse.setStatus(HttpStatus.CREATED.value());
+
+        return ret;
     }
 
     /**
