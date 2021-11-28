@@ -1,9 +1,6 @@
 package cn.edu.xmu.oomall.activity.microservice;
 
-import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleInfoVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.*;
 import cn.edu.xmu.oomall.activity.model.vo.PageInfoVo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
@@ -78,6 +75,10 @@ public interface GoodsService {
     ReturnObject addOnsale(@PathVariable("shopId") long shopId,@PathVariable("id") long id,
                            @RequestBody SimpleSaleInfoVo simpleSaleInfoVo);
 
+
+    /**
+     * @author Jiawei Zheng
+     */
     @GetMapping("/internal/onsales")
     ReturnObject getAllOnsale(@RequestParam Long shopId,
                               @RequestParam Long productId,
@@ -100,4 +101,9 @@ public interface GoodsService {
 
     @GetMapping("/internal/onsales/{id}")
     ReturnObject<OnSaleInfoVo> getOnSaleInfo(@PathVariable Long id);
+
+    @PostMapping("/shops/{shopId}/products/{id}/onsales")
+    ReturnObject addOnSale(@PathVariable("shopId") long shopId,
+                           @PathVariable("id") long id,
+                           @RequestBody OnSaleCreatedVo onSaleCreatedVo);
 }

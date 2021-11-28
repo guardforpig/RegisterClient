@@ -31,7 +31,7 @@ public class OnSaleCreatedVo {
     private Long quantity;
 
     @ApiModelProperty(value = "类型")
-    private String type;
+    private Byte type;
 
     @ApiModelProperty(value = "活动id")
     private Long activityId;
