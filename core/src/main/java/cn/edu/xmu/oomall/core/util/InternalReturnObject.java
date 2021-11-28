@@ -16,8 +16,15 @@
 
 package cn.edu.xmu.oomall.core.util;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
+/**
+ * @author GXC 22920192204194
+ * @param <T>
+ */
+@Data
 public class InternalReturnObject<T> implements Serializable {
     private Integer errno=0;
     private String errmsg="成功";
@@ -37,5 +44,17 @@ public class InternalReturnObject<T> implements Serializable {
     }
 
     public InternalReturnObject() {
+    }
+
+    public Integer getErrno() {
+        return errno;
+    }
+
+    public String getErrmsg() {
+        return errmsg;
+    }
+
+    public T getData() {
+        return data;
     }
 }
