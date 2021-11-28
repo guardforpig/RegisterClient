@@ -56,14 +56,6 @@ public class GoodsDao {
         try
         {
             GoodsPo goodsPo=(GoodsPo) Common.cloneVo(goods,GoodsPo.class);
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-            String threeDaysAfter = simpleDateFormat.format(new Date());
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
-            LocalDateTime localDateTime = LocalDateTime.parse(threeDaysAfter, dateTimeFormatter);
-            /*
-                todo:Common完成后使用Common.setFieldGmtCreate
-             */
-            goodsPo.setGmtCreate(localDateTime);
             goodsPoMapper.insert(goodsPo);
             return new ReturnObject((Goods) cloneVo(goodsPo,Goods.class));
         }

@@ -58,25 +58,19 @@ public class GoodsService {
     }
 
     @Transactional(readOnly = true,rollbackFor=Exception.class)
-    public ReturnObject searchById(Long shopId,Long id)
-    {
-        ReturnObject<Goods> ret=goodsDao.searchGoodsById(shopId,id);
-        if(ret.getData()==null) {
+    public ReturnObject searchById(Long shopId,Long id) {
+        ReturnObject<Goods> ret = goodsDao.searchGoodsById(shopId, id);
+        if (ret.getData() == null) {
             return ret;
         }
-        List<Product> temp=ret.getData().getProductList();
-        List<ProductVo> voList=new ArrayList<>();
-        for(Product product:temp){
-            ProductVo productVo=(ProductVo) Common.cloneVo(product,ProductVo.class);
+        List<Product> temp = ret.getData().getProductList();
+        List<ProductVo> voList = new ArrayList<>();
+        for (Product product : temp) {
+            ProductVo productVo = (ProductVo) Common.cloneVo(product, ProductVo.class);
             voList.add(productVo);
         }
-        if(ret.getData()!=null){
-            GoodsVo goodsVo=(GoodsVo)Common.cloneVo(ret.getData(),GoodsVo.class);
-            goodsVo.setProductList(voList);
-            return new ReturnObject(goodsVo);
-        }else{
-            return ret;
-        }
+        GoodsVo goodsVo = (GoodsVo) Common.cloneVo(ret.getData(), GoodsVo.class);
+        goodsVo.setProductList(voList);
+        return new ReturnObject(goodsVo);
     }
-
 }

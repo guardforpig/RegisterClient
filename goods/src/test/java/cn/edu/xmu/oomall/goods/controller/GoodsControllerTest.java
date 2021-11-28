@@ -306,12 +306,12 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void GET_testGoods02() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",10L, 3600,0);
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString=this.mockMvc.perform(get("/shops/4/goods/20000").header("authorization", adminToken))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=utf-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"code\":\"RESOURCE_ID_NOTEXIST\",\"errmsg\":\"操作的资源id不存在\",\"data\":null}";
+        String expected="{\"errno\":\"504\",\"errmsg\":\"商品id不存在\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -319,10 +319,10 @@ class GoodsControllerTest {
     public void GET_testGoods04() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString=this.mockMvc.perform(get("/shops/5/goods/291").header("authorization", adminToken))
-                .andExpect(status().isOk())
+                .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=utf-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"code\":\"RESOURCE_ID_OUTSCOPE\",\"errmsg\":\"该商品不属于该商铺\",\"data\":null}";
+        String expected="{\"errno\":\"505\",\"errmsg\":\"该商品不属于该商铺\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -358,7 +358,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"data\":{\"code\":\"RESOURCE_ID_NOTEXIST\",\"errmsg\":\"操作的资源id不存在\",\"data\":null},\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":0,\"data\":{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -369,7 +369,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"data\":{\"code\":\"RESOURCE_ID_NOTEXIST\",\"errmsg\":\"操作的资源id不存在\",\"data\":null},\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":0,\"data\":{\"code\":\"RESOURCE_ID_NOTEXIST\",\"errmsg\":\"商品id不存在\",\"data\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -380,7 +380,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"data\":{\"code\":\"RESOURCE_ID_NOTEXIST\",\"errmsg\":\"操作的资源id不存在\",\"data\":null},\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":0,\"data\":{\"code\":\"RESOURCE_ID_NOTEXIST\",\"errmsg\":\"商品id不存在\",\"data\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -404,7 +404,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"data\":{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":null},\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":503,\"errmsg\":\"传入的RequestBody参数格式不合法\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test

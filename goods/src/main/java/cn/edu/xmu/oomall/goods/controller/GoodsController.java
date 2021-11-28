@@ -21,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 import static cn.edu.xmu.oomall.core.util.Common.processFieldErrors;
@@ -104,7 +105,7 @@ public class GoodsController {
     })
     @PutMapping("shops/{shopId}/goods/{id}")
     @Audit(departName = "shops")
-    public Object updateGoods(@PathVariable("shopId") Long shopId,@PathVariable("id") Long id,@RequestBody GoodsVo goodsVo,BindingResult bindingResult,@LoginUser Long loginUserId,@LoginName String loginUserName)
+    public Object updateGoods(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @Valid @RequestBody GoodsVo goodsVo, BindingResult bindingResult, @LoginUser Long loginUserId, @LoginName String loginUserName)
     {
         if(bindingResult.hasErrors()){
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID,"传入的RequestBody参数格式不合法"));
@@ -129,7 +130,7 @@ public class GoodsController {
     @Audit(departName = "shops")
     public Object searchGoods(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
-        return Common.decorateReturnObject(goodsService.searchById(shopId,id));
+        return Common.decorateReturnObject(goodsService.searchById(shopId, id));
     }
 
     @ApiOperation(value="删除特定商品集合")
