@@ -26,7 +26,7 @@ public interface GoodsService {
     ReturnObject<OnSaleVo> getOnSale(@PathVariable Long id);
 
     @GetMapping("/internal/onsales")
-    ReturnObject getOnSalesByProductId(@RequestParam("shopId") Long shopId,
+    InternalReturnObject getOnSalesByProductId(@RequestParam("shopId") Long shopId,
                                        @RequestParam("productId")Long productId,
                                        @RequestParam("beginTime") LocalDateTime beginTime,
                                        @RequestParam("endTime")LocalDateTime endTime,
