@@ -10,7 +10,7 @@ public abstract class FreightItem {
 
     abstract public Long calculate(Integer amount, Integer unit);
 
-    static protected Long calculatePart(Integer level, Integer nextLevel, Integer weight, Integer unit, Long price) {
+    protected Long calculatePart(Integer level, Integer nextLevel, Integer weight, Integer unit, Long price) {
         if (weight <= level) {
             return 0L;
         } else if (Objects.isNull(nextLevel) || weight <= nextLevel) {

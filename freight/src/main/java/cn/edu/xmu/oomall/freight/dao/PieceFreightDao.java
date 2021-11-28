@@ -39,6 +39,7 @@ public class PieceFreightDao {
     private long timeout;
 
     public final static String PIECE_FREIGHT_KEY = "piecefreight_%d";
+    public final static String PIECE_FREIGHT_REGION_KEY = "piecefreight_%d_region_%d";
 
     /**
      * 新增件数运费模板
@@ -175,7 +176,7 @@ public class PieceFreightDao {
     public ReturnObject getPieceItem(Long fid, List<Long> regionIds) {
         try {
             var regionId = regionIds.get(regionIds.size() - 1);
-            var redisRet = redisUtil.get("region_" + regionId.toString());
+            var redisRet = redisUtil.get(String.format(PIECE_FREIGHT_REGION_KEY, fid, regionId));
             if (redisRet != null) {
                 return new ReturnObject(redisRet);
             }
@@ -186,7 +187,7 @@ public class PieceFreightDao {
                 var poList = pieceFreightPoMapper.selectByExample(example);
                 if (!poList.isEmpty()) {
                     var bo = (PieceFreight) Common.cloneVo(poList.get(0), PieceFreight.class);
-                    redisUtil.set("region_" + regionId.toString(), bo, timeout);
+                    redisUtil.set(String.format(PIECE_FREIGHT_REGION_KEY, fid, regionId), bo, timeout);
                     return new ReturnObject(bo);
                 }
             }

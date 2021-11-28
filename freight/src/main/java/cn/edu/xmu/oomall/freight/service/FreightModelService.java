@@ -214,12 +214,8 @@ public class FreightModelService {
         var regionIds = regions.stream().map(Region::getId).collect(Collectors.toList());
         regionIds.add(rid);
 
-        Integer sumQuantity = 0;
-        Integer sumWeight = 0;
-        for (var item : items) {
-            sumQuantity += item.getQuantity();
-            sumWeight += item.getWeight() * item.getQuantity();
-        }
+        int sumQuantity = items.stream().mapToInt(item -> item.getQuantity()).sum();
+        int sumWeight = items.stream().mapToInt(item -> item.getQuantity() * item.getWeight()).sum();
         for (var item : items) {
             Long fid = item.getFreightId();
             ReturnObject freightRet = showFreightModelById(fid);
