@@ -113,7 +113,12 @@ public class CouponActivityService {
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addCouponActivity(Long userId, String userName, Long shopId, CouponActivityVo couponActivityVo){
-        InternalReturnObject<Shop> returnObject = shopFeignService.getShopById(shopId);
+        InternalReturnObject<Shop> returnObject;
+        try{
+            returnObject = shopFeignService.getShopById(shopId);
+        }catch(Exception e){
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
         Shop shop = returnObject.getData();
         CouponActivity couponActivity = (CouponActivity) Common.cloneVo(couponActivityVo,CouponActivity.class);
         couponActivity.setShopId(shopId);
