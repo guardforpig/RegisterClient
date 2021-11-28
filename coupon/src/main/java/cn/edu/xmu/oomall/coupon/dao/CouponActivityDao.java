@@ -288,7 +288,7 @@ public class CouponActivityDao {
         }
     }
 
-    public ReturnObject listCouponActivityByIdList(List<Long> idList, Integer pageNumber, Integer pageSize) {
+    public ReturnObject listOnlineCouponActivityByIdList(List<Long> idList, Integer pageNumber, Integer pageSize) {
         try {
             PageHelper.startPage(pageNumber, pageSize);
             CouponActivityPoExample example = new CouponActivityPoExample();
