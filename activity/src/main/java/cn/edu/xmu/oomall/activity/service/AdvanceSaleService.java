@@ -6,7 +6,7 @@ import cn.edu.xmu.oomall.activity.model.bo.AdvanceSale;
 import cn.edu.xmu.oomall.activity.model.po.AdvanceSalePo;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.InternalReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;

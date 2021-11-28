@@ -9,7 +9,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageVo;
-import cn.edu.xmu.oomall.core.util.InternalReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
