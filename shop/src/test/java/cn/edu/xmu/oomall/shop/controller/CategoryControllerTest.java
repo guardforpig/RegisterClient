@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.shop.controller;
 
-import cn.edu.xmu.oomall.shop.ShopApplication;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,8 +17,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * 商品分类测试类
  *
@@ -30,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureMockMvc
 public class CategoryControllerTest {
     private static String adminToken;
+    private static String shopToken;
 
     @Autowired
     private MockMvc mvc;
@@ -41,13 +39,14 @@ public class CategoryControllerTest {
     private static void login() {
         JwtHelper jwtHelper = new JwtHelper();
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 1, 3600);
+        shopToken = jwtHelper.createToken(2L, "shop-1", 1L, 2, 3600);
     }
 
     @Test
     @Transactional
     public void addCategory() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
+        Mockito.when(redisUtil.set(Mockito.anyString(), Mockito.any(), Mockito.anyLong())).thenReturn(true);
 
         // 命名重复
         String requestJson = "{\"name\": \"女装男装\"}";
@@ -58,7 +57,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":901,\"errmsg\":\"类目名称已存在\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":901,\"errmsg\":\"类目名称已存在\"}", responseString, false);
 
         // 找不到
         requestJson = "{\"name\": \"女装男装\"}";
@@ -69,7 +68,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
 
         // 成功插入，二级目录
         requestJson = "{\"name\": \"童装a\"}";
@@ -102,7 +101,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":967,\"errmsg\":\"不允许增加新的下级分类\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":967,\"errmsg\":\"不允许增加新的下级分类\"}", responseString, false);
 
         // 传参错误
         requestJson = "{\"name\": \"\"}";
@@ -113,7 +112,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":503,\"errmsg\":\"分类名不能为空;\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":503,\"errmsg\":\"分类名不能为空;\"}", responseString, false);
 
         // 服务器错误
         requestJson = "{\"name\":\"conditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditioncondition\"}";
@@ -135,14 +134,25 @@ public class CategoryControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
+
+        // 非平台管理员访问
+        requestJson = "{\"name\": \"童装b\"}";
+        responseString = this.mvc.perform(post("/shops/1/categories/1/subcategories")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", shopToken)
+                        .content(requestJson))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        JSONAssert.assertEquals("{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}", responseString, false);
     }
 
     @Test
     @Transactional
     public void getCategory() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
+        Mockito.when(redisUtil.set(Mockito.anyString(), Mockito.any(), Mockito.anyLong())).thenReturn(true);
 
         String responseString;
 
@@ -158,7 +168,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
 
         // 无子分类
         responseString = this.mvc.perform(get("/categories/277/subcategories"))
@@ -172,21 +182,29 @@ public class CategoryControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
 
         // 查所有单独分类
-        responseString = this.mvc.perform(get("/orphoncategories"))
+        responseString = this.mvc.perform(get("/shops/0/orphoncategories")
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\"}", responseString, false);
+
+        responseString = this.mvc.perform(get("/shops/1/orphoncategories")
+                        .header("authorization", shopToken))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        JSONAssert.assertEquals("{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}", responseString, false);
     }
 
     @Test
     @Transactional
     public void modifyCategory() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
+        Mockito.when(redisUtil.set(Mockito.anyString(), Mockito.any(), Mockito.anyLong())).thenReturn(true);
         Mockito.doNothing().when(redisUtil).del(Mockito.anyString());
 
         // 可以修改
@@ -198,7 +216,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString, false);
 
         // 重名
         requestJson = "{\"name\": \"童装\"}";
@@ -209,7 +227,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":901,\"errmsg\":\"类目名称已存在\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":901,\"errmsg\":\"类目名称已存在\"}", responseString, false);
 
         // 找不到资源
         responseString = this.mvc.perform(put("/shops/0/categories/500")
@@ -219,7 +237,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
 
         // 传参错误
         requestJson = "{\"name\": \"\"}";
@@ -230,7 +248,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":503,\"errmsg\":\"分类名不能为空;\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":503,\"errmsg\":\"分类名不能为空;\"}", responseString, false);
 
         // 服务器错误
         requestJson = "{\"name\":\"conditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditioncondition\"}";
@@ -243,13 +261,23 @@ public class CategoryControllerTest {
                 .andReturn().getResponse().getContentAsString();
         JSONAssert.assertEquals("{\"errno\":500}", responseString, false);
 
+        // 非平台管理员访问
+        requestJson = "{\"name\": \"test1\"}";
+        responseString = this.mvc.perform(put("/shops/1/categories/313")
+                        .contentType("application/json;charset=UTF-8")
+                        .header("authorization", shopToken)
+                        .content(requestJson))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        JSONAssert.assertEquals("{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}", responseString, false);
     }
 
     @Test
     @Transactional
     public void deleteCategory() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(redisUtil.set(Mockito.anyString(),Mockito.any(),Mockito.anyLong())).thenReturn(true);
+        Mockito.when(redisUtil.set(Mockito.anyString(), Mockito.any(), Mockito.anyLong())).thenReturn(true);
         Mockito.doNothing().when(redisUtil).del(Mockito.anyString());
 
         // 删有子类别的
@@ -258,7 +286,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString, false);
 
         // 删单独的
         responseString = this.mvc.perform(delete("/shops/0/categories/277")
@@ -266,7 +294,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString, false);
 
         // 找不到
         responseString = this.mvc.perform(delete("/shops/0/categories/500")
@@ -274,7 +302,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
 
         // 删为0或-1的
         responseString = this.mvc.perform(delete("/shops/0/categories/0")
@@ -282,7 +310,14 @@ public class CategoryControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString);
+        JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
 
+        // 非平台管理员访问
+        responseString = this.mvc.perform(delete("/shops/1/categories/2")
+                        .header("authorization", shopToken))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        JSONAssert.assertEquals("{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}", responseString, false);
     }
 }
