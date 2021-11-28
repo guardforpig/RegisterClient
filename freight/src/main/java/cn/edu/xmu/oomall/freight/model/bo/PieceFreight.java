@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-public class PieceFreight implements Serializable {
+public class PieceFreight extends FreightItem implements Serializable {
 
     @ApiModelProperty(value = "主键")
     private Long id;
@@ -37,4 +37,9 @@ public class PieceFreight implements Serializable {
     private String creatorName;
     private Long modifierId;
     private String modifierName;
+
+    @Override
+    public Long calculate(Integer quantity, Integer unit) {
+        return firstItemFreight + calculatePart(firstItems, null, quantity, unit, additionalItemsPrice);
+    }
 }

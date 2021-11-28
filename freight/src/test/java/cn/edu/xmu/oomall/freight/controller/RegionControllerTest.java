@@ -1,8 +1,8 @@
 package cn.edu.xmu.oomall.freight.controller;
 
 import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
-import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.freight.FreightApplication;
 import cn.edu.xmu.oomall.freight.model.vo.RegionVo;
 import org.junit.jupiter.api.Test;
