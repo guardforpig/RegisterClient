@@ -25,7 +25,7 @@ import javax.validation.Valid;
  * 商品分类Controller
  *
  * @author Zhiliang Li 22920192204235
- * @date 2021/11/25
+ * @date 2021/11/28
  */
 @Api(value = "商品类别API", tags = "商品类别API")
 @RestController
@@ -64,10 +64,16 @@ public class CategoryController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 505, message = "操作的资源id不是自己的对象"),
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
-    @GetMapping("/orphoncategories")
-    public Object selectOrphoncategories() {
+    @Audit(departName = "shops")
+    @GetMapping("/shops/{shopId}/orphoncategories")
+    public Object selectOrphoncategories(@PathVariable("shopId") Long shopId) {
+        // 非平台管理员
+        if (shopId != 0) {
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
         return selectSubCategories(-1L);
     }
 
@@ -82,16 +88,22 @@ public class CategoryController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 500, message = "服务器内部错误"),
             @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 505, message = "操作的资源id不是自己的对象"),
             @ApiResponse(code = 901, message = "类目名称已存在"),
             @ApiResponse(code = 967, message = "不允许增加新的下级分类")
     })
     @Audit(departName = "shops")
     @PostMapping("/shops/{shopId}/categories/{id}/subcategories")
     public Object addCategories(@PathVariable("id") Long id,
+                                @PathVariable("shopId") Long shopId,
                                 @LoginUser Long createId,
                                 @LoginName String createName,
                                 @Valid @RequestBody CategoryVo vo,
                                 BindingResult bindingResult) {
+        // 非平台管理员
+        if (shopId != 0) {
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
         // 非法输入
         if (id < 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST));
@@ -124,15 +136,21 @@ public class CategoryController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 500, message = "服务器内部错误"),
             @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 505, message = "操作的资源id不是自己的对象"),
             @ApiResponse(code = 901, message = "类目名称已存在")
     })
     @Audit(departName = "shops")
     @PutMapping("/shops/{shopId}/categories/{id}")
     public Object changeCategories(@PathVariable("id") Long id,
+                                   @PathVariable("shopId") Long shopId,
                                    @LoginUser Long modifyId,
                                    @LoginName String modiName,
                                    @Valid @RequestBody CategoryVo vo,
                                    BindingResult bindingResult) {
+        // 非平台管理员
+        if (shopId != 0) {
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
         // vo合法性检查
         var res = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (res != null) {
@@ -153,11 +171,16 @@ public class CategoryController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 505, message = "操作的资源id不是自己的对象"),
             @ApiResponse(code = 500, message = "服务器内部错误"),
     })
     @Audit(departName = "shops")
     @DeleteMapping("/shops/{shopId}/categories/{id}")
-    public Object deleteCategories(@PathVariable("id") Long id) {
+    public Object deleteCategories(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
+        // 非平台管理员
+        if (shopId != 0) {
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
         // 若id为0或-1时不允许删除
         if (id <= 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST));
