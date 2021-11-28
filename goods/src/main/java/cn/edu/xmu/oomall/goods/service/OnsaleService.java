@@ -40,12 +40,20 @@ public class OnsaleService {
     public ReturnObject createOnSale(Long shopId, Long productId, NewOnSaleVo newOnSaleVO, Long userId, String userName) {
 
         //判断该货品是否存在
-        if (!productDao.hasExist(productId)) {
+        ReturnObject ret=productDao.hasExist(productId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if (!(boolean) ret.getData()) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在。");
         }
 
         // 判断该货品是否该商家的
-        if (!productDao.matchProductShop(productId, shopId)) {
+        ret=productDao.matchProductShop(productId, shopId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if (!(boolean)ret.getData()) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE, "该货品不属于该商铺。");
         }
 
@@ -55,7 +63,7 @@ public class OnsaleService {
         bo.setProductId(productId);
 
         // 判断是否有冲突的销售情况
-        ReturnObject ret= onsaleDao.timeCollided(bo);
+        ret= onsaleDao.timeCollided(bo);
         if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
             return ret;
         }
@@ -69,17 +77,26 @@ public class OnsaleService {
     public ReturnObject createOnSaleWithoutShopId(Long productId, NewOnSaleVo newOnSaleVO, Long userId, String userName) {
 
         //判断该货品是否存在
-        if (!productDao.hasExist(productId)) {
+        ReturnObject ret=productDao.hasExist(productId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if (!(boolean) ret.getData()) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在。");
         }
-        Long shopId = productDao.getShopIdById(productId);
+
+        ret=productDao.getShopIdById(productId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        Long shopId = (Long)ret.getData();
 
         OnSale bo = (OnSale) cloneVo(newOnSaleVO,OnSale.class);
         bo.setShopId(shopId);
         bo.setProductId(productId);
 
         // 判断是否有冲突的销售情况
-        ReturnObject ret= onsaleDao.timeCollided(bo);
+        ret= onsaleDao.timeCollided(bo);
         if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
             return ret;
         }
