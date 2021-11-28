@@ -206,7 +206,7 @@ public class FreightModelController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
-    @Audit(departName = "shops")
+    @Audit
     @PostMapping("/regions/{rid}/price")
     public Object calculateFreight(@PathVariable Long rid, @Validated @RequestBody ValidList<FreightCalculatingPostVo> items,
                                    BindingResult bindingResult) {
