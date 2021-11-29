@@ -34,9 +34,9 @@ public class FullGroupOnActivityVo {
     @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime endTime;
 
-    private SimpleAdminUserVo createdBy;
+    private SimpleAdminUserVo creator;
 
-    private SimpleAdminUserVo modifiedBy;
+    private SimpleAdminUserVo modifier;
 
     @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime gmtCreate;

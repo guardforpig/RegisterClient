@@ -8,9 +8,9 @@ import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
 import cn.edu.xmu.oomall.activity.model.bo.GroupOnActivity;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 /**
- * @author jiyuan lin
- * @date 2021/11/14
+ * @author Lin Jiyuan
+ * @sn 30320192200032
  */
 @Service
 public class GroupOnActivityService {

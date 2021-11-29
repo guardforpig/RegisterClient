@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.freight.dao;
 
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.mapper.FreightModelPoMapper;
@@ -9,6 +8,7 @@ import cn.edu.xmu.oomall.freight.model.bo.FreightModel;
 import cn.edu.xmu.oomall.freight.model.po.FreightModelPo;
 import cn.edu.xmu.oomall.freight.model.po.FreightModelPoExample;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelRetVo;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;

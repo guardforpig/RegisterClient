@@ -48,8 +48,9 @@ public enum ReturnNo {
     ADDRESS_OUTLIMIT(601,"达到地址簿上限"),
 
     ORDERITEM_NOTSHARED(606,"订单明细无分享记录"),
-    ADVERTISEMENT_STATENOTALLOW(608,"广告状态禁止"),
-
+    CUSTOMERID_NOTEXIST(608,"登录用户id不存在"),
+    CUSTOMER_INVALID_ACCOUNT(609, "用户名不存在或者密码错误"),
+    CUSTOMER_FORBIDDEN(610,"用户被禁止登录"),
 
     /***************************************************
      *    订单模块错误码

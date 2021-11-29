@@ -4,13 +4,16 @@ import cn.edu.xmu.oomall.activity.constant.GroupOnState;
 import cn.edu.xmu.oomall.activity.dao.GroupOnActivityDao;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
 import cn.edu.xmu.oomall.activity.model.bo.GroupOnActivity;
 import cn.edu.xmu.oomall.activity.model.po.GroupOnActivityPoExample;
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityPostVo;
+import cn.edu.xmu.oomall.activity.model.vo.PageInfoVo;
 import cn.edu.xmu.oomall.activity.model.vo.StateVo;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,8 +63,8 @@ public class GroupOnService {
     public ReturnObject addActivity(Long shopId, GroupOnActivityPostVo vo, Long createdBy, String createName) {
             var bo = (GroupOnActivity) Common.cloneVo(vo, GroupOnActivity.class);
             var shopInfoRet = shopService.getShopInfo(shopId);
-            if (!shopInfoRet.getCode().equals(ReturnNo.OK)) {
-                return shopInfoRet;
+            if (!shopInfoRet.getErrno().equals(ReturnNo.OK.getCode())) {
+                return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, shopInfoRet.getErrmsg());
             }
             bo.setShopId(shopId);
             bo.setShopName(shopInfoRet.getData().getName());
@@ -128,17 +131,13 @@ public class GroupOnService {
         int pages = -1;
         var list = new ArrayList<Long>();
         do {
-            var onSalesListRet = goodsService.getOnsSalesOfProduct(productId, page, 10);
-            if (!onSalesListRet.getCode().equals(ReturnNo.OK)) {
-                return onSalesListRet;
+            InternalReturnObject<PageInfoVo<SimpleOnSaleVo>> onSalesListRet = goodsService.getOnSales(null, productId, null, null, page, 10);
+            if (!onSalesListRet.getErrno().equals(ReturnNo.OK.getCode())) {
+                return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, onSalesListRet.getErrmsg());
             }
             for (var simpleOnSale : onSalesListRet.getData().getList()) {
-                var onSaleRet = goodsService.getOnSale(simpleOnSale.getId());
-                if (!onSaleRet.getCode().equals(ReturnNo.OK)) {
-                    return onSaleRet;
-                }
-                if (onSaleRet.getData().getType() == 2) {
-                    list.add(onSaleRet.getData().getActivityId());
+                if (simpleOnSale.getType() == 2) {
+                    list.add(simpleOnSale.getActivityId());
                 }
             }
             if (pages == -1) {

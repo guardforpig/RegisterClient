@@ -1,15 +1,11 @@
 package cn.edu.xmu.oomall.activity.controller;
 
 import cn.edu.xmu.oomall.activity.ActivityApplication;
-import cn.edu.xmu.oomall.activity.mapper.GroupOnActivityPoMapper;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
-import cn.edu.xmu.oomall.activity.model.po.GroupOnActivityPo;
 import cn.edu.xmu.oomall.activity.model.vo.*;
-import cn.edu.xmu.oomall.activity.service.GroupOnActivityService;
-import cn.edu.xmu.oomall.core.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -32,7 +28,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+/**
+ * @author Lin Jiyuan
+ * @sn 30320192200032
+ */
 @SpringBootTest(classes = ActivityApplication.class)   //标识本类是一个SpringBootTest
 @AutoConfigureMockMvc    //配置模拟的MVC，这样可以不启动服务器测试
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

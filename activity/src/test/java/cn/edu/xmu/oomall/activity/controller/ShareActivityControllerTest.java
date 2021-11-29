@@ -62,11 +62,11 @@ public class ShareActivityControllerTest {
         //生成一个 onsale对象
         InternalReturnObject<Map<String, Object>> onSaleInfoDTO = CreateObject.createOnSaleInfoDTO(1L);
         InternalReturnObject<Map<String, Object>> onSaleInfoDTO1 = CreateObject.createOnSaleInfoDTO(-1L);
-        Mockito.when(goodsService.getOnSalesByProductId(2L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
-        Mockito.when(goodsService.getOnSalesByProductId(null, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
-        Mockito.when(goodsService.getOnSalesByProductId(1L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
-        Mockito.when(goodsService.getOnSalesByProductId(2L, -1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
-        Mockito.when(goodsService.getOnSalesByProductId(11111L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
+        Mockito.when(goodsService.getOnSales(2L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getOnSales(null, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getOnSales(1L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getOnSales(2L, -1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
+        Mockito.when(goodsService.getOnSales(11111L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
         //生成一个shop对象
         InternalReturnObject<ShopInfoVo> shopInfoDTO = CreateObject.createShopInfoDTO(1L);
         InternalReturnObject<ShopInfoVo> shopInfoDTO2 = CreateObject.createShopInfoDTO(2L);
