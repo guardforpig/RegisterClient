@@ -469,7 +469,7 @@ class GoodsControllerTest {
     @Transactional
     public void ONSHELF_testProduct01() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/4/products/1551/onshelves").header("authorization", adminToken))
+        String responseString = this.mockMvc.perform(put("/shops/3/products/1551/onshelves").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();

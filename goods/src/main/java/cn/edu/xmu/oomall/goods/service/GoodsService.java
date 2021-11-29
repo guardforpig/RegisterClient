@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.goods.service;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.GoodsDao;
+import cn.edu.xmu.oomall.goods.dao.ProductDao;
 import cn.edu.xmu.oomall.goods.model.bo.Goods;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
@@ -28,6 +29,8 @@ import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 public class GoodsService {
     @Autowired
     private GoodsDao goodsDao;
+    @Autowired
+    private ProductDao productDao;
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject insertGoods(Long shopId,GoodsVo goodsVo,Long loginUserId,String loginUserName)
     {
@@ -45,6 +48,8 @@ public class GoodsService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject deleteGoods(Long shopId,Long id)
     {
+        Long defaultValueWhenDel=0L;
+        productDao.resetGoodsIdForProducts(id,defaultValueWhenDel);
         return new ReturnObject(goodsDao.deleteGoodsById(shopId,id));
     }
     @Transactional(rollbackFor=Exception.class)
@@ -63,6 +68,7 @@ public class GoodsService {
         if (ret.getData() == null) {
             return ret;
         }
+        ret.getData().setProductList(productDao.getProductsByGoodsId(id));
         List<Product> temp = ret.getData().getProductList();
         List<ProductVo> voList = new ArrayList<>();
         for (Product product : temp) {
