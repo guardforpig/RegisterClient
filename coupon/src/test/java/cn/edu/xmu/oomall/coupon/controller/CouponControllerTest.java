@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.util.CreateObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.mockito.Mockito;
@@ -49,31 +50,31 @@ public class CouponControllerTest {
     @BeforeEach
     public void init() throws Exception {
         // 返回ProductVo
-        ReturnObject<OnsaleVo> OnsaleVo1 = CreateObject.createOnsaleVo(100L);
-        ReturnObject<OnsaleVo> OnsaleVo2 = CreateObject.createOnsaleVo(10L);
+        InternalReturnObject<OnsaleVo> OnsaleVo1 = CreateObject.createOnsaleVo(100L);
+        InternalReturnObject<OnsaleVo> OnsaleVo2 = CreateObject.createOnsaleVo(10L);
         Mockito.when(goodsService.getOnsaleById(3L)).thenReturn(OnsaleVo1);
         Mockito.when(goodsService.getOnsaleById(4L)).thenReturn(OnsaleVo2);
         Mockito.when(goodsService.getOnsaleById(21L)).thenReturn(OnsaleVo2);
         Mockito.when(goodsService.getOnsaleById(3914L)).thenReturn(OnsaleVo2);
 
         // 返回OnsaleVoList
-        ReturnObject<List<OnsaleVo>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
+        InternalReturnObject<List<OnsaleVo>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
         Mockito.when(goodsService.listOnsale(1550L,1, 100)).thenReturn(onsaleVoList1);
-        ReturnObject<List<OnsaleVo>> onsaleVoList2 = CreateObject.createOnsaleVoList2();
+        InternalReturnObject<List<OnsaleVo>> onsaleVoList2 = CreateObject.createOnsaleVoList2();
         Mockito.when(goodsService.listOnsale(10000L, 1, 100)).thenReturn(onsaleVoList2);
-        ReturnObject<List<OnsaleVo>> onsaleVoList3 = CreateObject.createOnsaleVoList3();
+        InternalReturnObject<List<OnsaleVo>> onsaleVoList3 = CreateObject.createOnsaleVoList3();
         Mockito.when(goodsService.listOnsale(1549L,1, 100)).thenReturn(onsaleVoList3);
-        ReturnObject<List<OnsaleVo>> onsaleVoList4 = CreateObject.createOnsaleVoList4();
+        InternalReturnObject<List<OnsaleVo>> onsaleVoList4 = CreateObject.createOnsaleVoList4();
         Mockito.when(goodsService.listOnsale(1548L, 1, 100)).thenReturn(onsaleVoList4);
 
         // 返回OnsaleVo
-        ReturnObject<OnsaleVo> onsaleVo1 = CreateObject.createOnsaleVo1();
+        InternalReturnObject<OnsaleVo> onsaleVo1 = CreateObject.createOnsaleVo1();
         Mockito.when(goodsService.getOnsaleById(3915L)).thenReturn(onsaleVo1);
-        ReturnObject<OnsaleVo> onsaleVo2 = CreateObject.createOnsaleVo2();
+        InternalReturnObject<OnsaleVo> onsaleVo2 = CreateObject.createOnsaleVo2();
         Mockito.when(goodsService.getOnsaleById(1L)).thenReturn(onsaleVo2);
-        ReturnObject<OnsaleVo> onsaleVo3 = CreateObject.createOnsaleVo3();
+        InternalReturnObject<OnsaleVo> onsaleVo3 = CreateObject.createOnsaleVo3();
         Mockito.when(goodsService.getOnsaleById(2L)).thenReturn(onsaleVo3);
-        ReturnObject<OnsaleVo> onsaleVo4 = CreateObject.createOnsaleVo4();
+        InternalReturnObject<OnsaleVo> onsaleVo4 = CreateObject.createOnsaleVo4();
         Mockito.when(goodsService.getOnsaleById(3912L)).thenReturn(onsaleVo4);
 
 //        Mockito.when(redisUtil.get("couponactivity_11")).thenReturn("{\"id\":11,\"name\":null,\"shopId\":1,\"shopName\":null,\"couponTime\":null,\"beginTime\":null,\"endTime\":null,\"quantity\":null,\"quantityType\":null,\"validTerm\":null,\"imageUrl\":null,\"strategy\":null,\"state\":0,\"creatorId\":null,\"creatorName\":null,\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,17,19,2,20],\"gmtModified\":null}");
@@ -143,10 +144,10 @@ public class CouponControllerTest {
 
         // 货品不存在
         responseString = mvc.perform(get("/products/10000/couponactivities"))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().is5xxServerError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
+        expectString = "{\"errno\":500,\"errmsg\":\"服务器内部错误\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 货品对应的Onsale不在CouponOnsale中
@@ -278,10 +279,10 @@ public class CouponControllerTest {
         adminToken = jwtHelper.createToken(1L,"admin",3L, 1,3600);
         // onsale不存在
         responseString = mvc.perform(post("/shops/3/couponactivities/2/onsales/3915").header("authorization", adminToken))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().is5xxServerError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
+        expectString = "{\"errno\":500,\"errmsg\":\"服务器内部错误\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
 

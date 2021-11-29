@@ -17,12 +17,12 @@ public interface GoodsService {
 
     @ApiOperation(value = "通过Id返回OnsaleVo")
     @GetMapping("/internal/onsales/{id}")
-    ReturnObject getOnsaleById(@PathVariable("id") Long id);
+    InternalReturnObject getOnsaleById(@PathVariable("id") Long id);
 
 
     @ApiOperation(value = "通过productId查OnsaleVo（1对多）")
     @GetMapping("/internal/onsales")
-    ReturnObject listOnsale(@RequestParam("productId") Long productId,
+    InternalReturnObject listOnsale(@RequestParam("productId") Long productId,
                             @RequestParam("page") Integer pageNumber,
                             @RequestParam("pageSize") Integer pageSize);
 

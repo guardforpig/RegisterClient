@@ -6,6 +6,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageInfo;
 
 import java.util.ArrayList;
@@ -16,16 +17,16 @@ import java.util.List;
  */
 public class CreateObject {
 
-    public static ReturnObject<OnsaleVo> createOnsaleVo(Long id) {
+    public static InternalReturnObject createOnsaleVo(Long id) {
         OnsaleVo onsaleVo = new OnsaleVo();
         ProductVo productVo = new ProductVo();
         productVo.setId(id);
         onsaleVo.setProduct(productVo);
         onsaleVo.setState(OnsaleVo.State.ONLINE.getCode());
-        return new ReturnObject<>(onsaleVo);
+        return new InternalReturnObject<>(onsaleVo);
     }
 
-    public static ReturnObject<List<OnsaleVo>> createOnsaleVoList1() {
+    public static InternalReturnObject createOnsaleVoList1() {
         List<OnsaleVo> onSaleVoList = new ArrayList<>();
         OnsaleVo onsaleVo1 = new OnsaleVo();
         onsaleVo1.setId(1L);
@@ -77,39 +78,39 @@ public class CreateObject {
         onSaleVoList.add(onsaleVo12);
 
         ReturnObject ret = new ReturnObject<>(new PageInfo<>(onSaleVoList));
-        return Common.getPageRetVo(ret, OnsaleVo.class);
+        return new InternalReturnObject<>(Common.getPageRetVo(ret, OnsaleVo.class).getData());
     }
 
-    public static ReturnObject<List<OnsaleVo>> createOnsaleVoList2() {
-        return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+    public static InternalReturnObject createOnsaleVoList2() {
+        return new InternalReturnObject<>(1, "NoData");
     }
 
 
-    public static ReturnObject<List<OnsaleVo>> createOnsaleVoList3() {
+    public static InternalReturnObject createOnsaleVoList3() {
         List<OnsaleVo> onSaleVoList = new ArrayList<>();
         OnsaleVo onsaleVo1 = new OnsaleVo();
         onsaleVo1.setId(3913L);
         onsaleVo1.setState(OnsaleVo.State.ONLINE.getCode());
         onSaleVoList.add(onsaleVo1);
         ReturnObject ret = new ReturnObject<>(new PageInfo<>(onSaleVoList));
-        return Common.getPageRetVo(ret, OnsaleVo.class);
+        return new InternalReturnObject<>(Common.getPageRetVo(ret, OnsaleVo.class).getData());
     }
 
-    public static ReturnObject<List<OnsaleVo>> createOnsaleVoList4() {
+    public static InternalReturnObject createOnsaleVoList4() {
         List<OnsaleVo> onSaleVoList = new ArrayList<>();
         OnsaleVo onsaleVo1 = new OnsaleVo();
         onsaleVo1.setId(3914L);
         onsaleVo1.setState(OnsaleVo.State.ONLINE.getCode());
         onSaleVoList.add(onsaleVo1);
         ReturnObject ret = new ReturnObject<>(new PageInfo<>(onSaleVoList));
-        return Common.getPageRetVo(ret, OnsaleVo.class);
+        return new InternalReturnObject<>(Common.getPageRetVo(ret, OnsaleVo.class).getData());
     }
 
-    public static ReturnObject<OnsaleVo> createOnsaleVo1() {
-        return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, ReturnNo.RESOURCE_ID_NOTEXIST.getMessage());
+    public static InternalReturnObject createOnsaleVo1() {
+        return new InternalReturnObject<>(1, "NoData");
     }
 
-    public static ReturnObject<OnsaleVo> createOnsaleVo2() {
+    public static InternalReturnObject createOnsaleVo2() {
         OnsaleVo onsaleVo = new OnsaleVo();
         ShopVo shopVo = new ShopVo();
         ProductVo productVo = new ProductVo();
@@ -119,26 +120,26 @@ public class CreateObject {
         onsaleVo.setId(1L);
         onsaleVo.setShop(shopVo);
         onsaleVo.setState(OnsaleVo.State.ONLINE.getCode());
-        return new ReturnObject<>(onsaleVo);
+        return new InternalReturnObject<>(onsaleVo);
     }
 
-    public static ReturnObject<OnsaleVo> createOnsaleVo3() {
+    public static InternalReturnObject<OnsaleVo> createOnsaleVo3() {
         OnsaleVo onsaleVo = new OnsaleVo();
         ShopVo shopVo = new ShopVo();
         shopVo.setId(2L);
         onsaleVo.setId(2L);
         onsaleVo.setShop(shopVo);
         onsaleVo.setState(OnsaleVo.State.ONLINE.getCode());
-        return new ReturnObject<>(onsaleVo);
+        return new InternalReturnObject<>(onsaleVo);
     }
 
-    public static ReturnObject<OnsaleVo> createOnsaleVo4() {
+    public static InternalReturnObject<OnsaleVo> createOnsaleVo4() {
         OnsaleVo onsaleVo = new OnsaleVo();
         ShopVo shopVo = new ShopVo();
         shopVo.setId(2L);
         onsaleVo.setId(3912L);
         onsaleVo.setShop(shopVo);
         onsaleVo.setState(OnsaleVo.State.ONLINE.getCode());
-        return new ReturnObject<>(onsaleVo);
+        return new InternalReturnObject<>(onsaleVo);
     }
 }

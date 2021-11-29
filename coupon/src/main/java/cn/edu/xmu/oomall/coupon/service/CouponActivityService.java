@@ -274,10 +274,10 @@ public class CouponActivityService {
         int cnt = 0;
         for (int i = (pageNumber - 1) * pageSize; cnt <= pageSize && i < onsaleIdList.size(); i++) {
             // 根据onsaleId查onsale，并获得productVo，这里有redis缓存，已降低负载
-            ReturnObject<OnsaleVo> retOnsaleVo =
+            InternalReturnObject<OnsaleVo> retOnsaleVo =
                     goodsService.getOnsaleById(onsaleIdList.get(i));
             // 再判断数据是否存在，所以即使在数据库中修改Onsale也可以确保一致性
-            if (retOnsaleVo.getCode().equals(ReturnNo.OK)) {
+            if (retOnsaleVo.getErrno().equals(ReturnNo.OK.getCode())) {
                 // 再判断是否是上线状态，可以确保一致性
                 if (retOnsaleVo.getData().getState().equals(OnsaleVo.State.ONLINE.getCode())) {
                     productVoList.add(retOnsaleVo.getData().getProduct());
@@ -309,9 +309,10 @@ public class CouponActivityService {
             couponActivityIdList = (List<Long>) serializable;
         } else {
             // 找到Product对应的所有OnsaleVo，这里goods模块会缓存在redis
-            ReturnObject<List<Object>> retOnsaleVoPageInfo = goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / 100 + 1) * 100);
-            if (!retOnsaleVoPageInfo.getCode().equals(ReturnNo.OK)) {
-                return retOnsaleVoPageInfo;
+            InternalReturnObject<List<Object>> retOnsaleVoPageInfo =
+                    goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / 100 + 1) * 100);
+            if (!retOnsaleVoPageInfo.getErrno().equals(ReturnNo.OK.getCode())) {
+                return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
             }
             // 根据OnsaleVo列表，获取OnsaleId列表，需要判断状态上线的Onsale
             Map<String, Object> retOnsaleMap = (Map<String, Object>) retOnsaleVoPageInfo.getData();
@@ -441,9 +442,9 @@ public class CouponActivityService {
         }
 
         // 判断Onsale是否存在
-        ReturnObject<OnsaleVo> retOnsaleVo = goodsService.getOnsaleById(onsaleId);
-        if (!retOnsaleVo.getCode().equals(ReturnNo.OK)) {
-            return retOnsaleVo;
+        InternalReturnObject<OnsaleVo> retOnsaleVo = goodsService.getOnsaleById(onsaleId);
+        if (!retOnsaleVo.getErrno().equals(ReturnNo.OK.getCode())) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
 
         // 判断couponActivity和onSale是否都属于该shop
@@ -558,7 +559,7 @@ public class CouponActivityService {
         redisUtils.del(String.format(ONSALEIDLISTKEY, retCouponOnsale.getData().getActivityId()));
 
         // 删除couponOnsale，需要删除商品查活动这个API的redis中productId, List<activityId>需要删除，所以需要找到onsale对应的productId
-        ReturnObject<OnsaleVo> tempOnsaleVo = goodsService.getOnsaleById(retCouponOnsale.getData().getOnsaleId());
+        InternalReturnObject<OnsaleVo> tempOnsaleVo = goodsService.getOnsaleById(retCouponOnsale.getData().getOnsaleId());
         redisUtils.del(String.format(COUPONACTIVITYIDLISTKEY, tempOnsaleVo.getData().getProduct().getId()));
 
         return new ReturnObject<>(ReturnNo.OK);
