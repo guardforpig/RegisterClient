@@ -20,19 +20,13 @@ import java.time.LocalDateTime;
  */
 @FeignClient(name = "Goods")
 public interface GoodsService {
-    @GetMapping("/internal/products/{id}/onsales")
-    ReturnObject<PageInfoVo<SimpleOnSaleVo>> getOnsSalesOfProduct(@PathVariable Long id, @RequestParam Integer page, @RequestParam Integer pageSize);
-
-    @GetMapping("/internal/onsales/{id}")
-    ReturnObject<OnSaleVo> getOnSale(@PathVariable Long id);
-
     @GetMapping("/internal/onsales")
-    InternalReturnObject getOnSalesByProductId(@RequestParam("shopId") Long shopId,
-                                       @RequestParam("productId")Long productId,
-                                       @RequestParam("beginTime") LocalDateTime beginTime,
-                                       @RequestParam("endTime")LocalDateTime endTime,
-                                       @RequestParam("page") Integer page,
-                                       @RequestParam("pageSize") Integer pageSize);
+    InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,
+                                    @RequestParam("productId")Long productId,
+                                    @RequestParam("beginTime") LocalDateTime beginTime,
+                                    @RequestParam("endTime")LocalDateTime endTime,
+                                    @RequestParam("page") Integer page,
+                                    @RequestParam("pageSize") Integer pageSize);
 
     @PutMapping("/internal/shops/{did}/activities/{id}/onsales/online")
     InternalReturnObject onlineOnsale(@PathVariable(value="did") Long shopId, @PathVariable(value="id") Long activityId);
