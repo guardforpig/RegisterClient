@@ -101,7 +101,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 字段不合法
@@ -138,7 +138,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString = "{\"errno\":0,\"data\":{\"total\":8,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        String expectString = "{\"errno\":0,\"data\":{\"total\":10,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 货品不存在
@@ -157,13 +157,6 @@ public class CouponControllerTest {
         expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-        // CouponOnsale的活动不存在
-        responseString = mvc.perform(get("/products/1548/couponactivities"))
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
-        JSONAssert.assertEquals(expectString, responseString, true);
 
     }
 
@@ -203,7 +196,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
     }
 
@@ -248,7 +241,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
     }
 
@@ -319,7 +312,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"该onsale已经参与了该活动\"}";
+        expectString = "{\"errno\":507,\"errmsg\":\"该onsale已经参与了该活动\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
@@ -329,7 +322,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
     }
@@ -388,7 +381,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
     }
@@ -430,7 +423,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 活动和店铺不对应
@@ -472,7 +465,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
+        expectString = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
 
         JSONAssert.assertEquals(expectString, responseString, true);
     }

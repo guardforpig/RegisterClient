@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.coupon.microservice;
 
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
