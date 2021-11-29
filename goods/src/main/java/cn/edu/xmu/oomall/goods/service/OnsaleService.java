@@ -40,12 +40,20 @@ public class OnsaleService {
     public ReturnObject createOnSale(Long shopId, Long productId, NewOnSaleVo newOnSaleVO, Long userId, String userName) {
 
         //判断该货品是否存在
-        if (!productDao.hasExist(productId)) {
+        ReturnObject ret=productDao.hasExist(productId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if (!(boolean) ret.getData()) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在。");
         }
 
         // 判断该货品是否该商家的
-        if (!productDao.matchProductShop(productId, shopId)) {
+        ret=productDao.matchProductShop(productId, shopId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if (!(boolean)ret.getData()) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE, "该货品不属于该商铺。");
         }
 
@@ -55,7 +63,11 @@ public class OnsaleService {
         bo.setProductId(productId);
 
         // 判断是否有冲突的销售情况
-        if (onsaleDao.timeCollided(bo)) {
+        ret= onsaleDao.timeCollided(bo);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if ((boolean)ret.getData()) {
             return new ReturnObject(ReturnNo.GOODS_PRICE_CONFLICT, "商品销售时间冲突。");
         }
         return onsaleDao.createOnSale(bo, userId, userName);
@@ -65,32 +77,53 @@ public class OnsaleService {
     public ReturnObject createOnSaleWithoutShopId(Long productId, NewOnSaleVo newOnSaleVO, Long userId, String userName) {
 
         //判断该货品是否存在
-        if (!productDao.hasExist(productId)) {
+        ReturnObject ret=productDao.hasExist(productId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if (!(boolean) ret.getData()) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在。");
         }
-        Long shopId = productDao.getShopIdById(productId);
+
+        ret=productDao.getShopIdById(productId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        Long shopId = (Long)ret.getData();
 
         OnSale bo = (OnSale) cloneVo(newOnSaleVO,OnSale.class);
         bo.setShopId(shopId);
         bo.setProductId(productId);
 
         // 判断是否有冲突的销售情况
-        if (onsaleDao.timeCollided(bo)) {
+        ret= onsaleDao.timeCollided(bo);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if ((boolean)ret.getData()) {
             return new ReturnObject(ReturnNo.GOODS_PRICE_CONFLICT, "商品销售时间冲突。");
         }
         return onsaleDao.createOnSale(bo, userId, userName);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ReturnObject onlineOrOfflineOnSale(Long shopId, Long onsaleId, Long userId, String userName, OnSale.State finalState) {
+    public ReturnObject onlineOrOfflineOnSale(Long shopId, Long id, Long userId, String userName, OnSale.State finalState) {
         //判断OnSale是否存在
-        OnSale onsale = onsaleDao.getOnSaleById(onsaleId);
+        ReturnObject ret=onsaleDao.getOnSaleById(id);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        OnSale onsale = (OnSale) ret.getData();
         if (null == onsale) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该价格浮动");
         }
 
         //判断是否该商家的onsale
-        if(!onsaleDao.onSaleShopMatch(onsaleId,shopId)){
+        ret=onsaleDao.onSaleShopMatch(id,shopId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if(!(boolean)ret.getData()){
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该价格浮动不属于该商铺");
         }
 
@@ -138,13 +171,21 @@ public class OnsaleService {
     public ReturnObject deleteOnSaleNorSec(Long shopId, Long id) {
 
         //判断OnSale是否存在
-        OnSale onsale = onsaleDao.getOnSaleById(id);
+        ReturnObject ret=onsaleDao.getOnSaleById(id);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        OnSale onsale = (OnSale) ret.getData();
         if (null == onsale) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该价格浮动");
         }
 
         //判断是否该商家的onsale
-        if(!onsaleDao.onSaleShopMatch(id,shopId)){
+        ret=onsaleDao.onSaleShopMatch(id,shopId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if(!(boolean)ret.getData()){
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该价格浮动不属于该商铺");
         }
 
@@ -174,7 +215,11 @@ public class OnsaleService {
     public ReturnObject updateOnSale(OnSale bo,Long userId,String userName) {
 
         //判断OnSale是否存在
-        OnSale onsale = onsaleDao.getOnSaleById(bo.getId());
+        ReturnObject ret=onsaleDao.getOnSaleById(bo.getId());
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        OnSale onsale = (OnSale) ret.getData();
         if (null == onsale) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该价格浮动");
         }
@@ -192,7 +237,11 @@ public class OnsaleService {
     public ReturnObject updateOnSaleNorSec(OnSale bo,Long shopId,Long userId,String userName) {
 
         //判断OnSale是否存在
-        OnSale onsale = onsaleDao.getOnSaleById(bo.getId());
+        ReturnObject ret=onsaleDao.getOnSaleById(bo.getId());
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        OnSale onsale = (OnSale) ret.getData();
         if (null == onsale) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该价格浮动");
         }
@@ -212,11 +261,13 @@ public class OnsaleService {
 
         bo.setProductId(onsale.getProductId());
         // 判断是否有冲突的销售情况
-        if (onsaleDao.timeCollided(bo)) {
+        ret= onsaleDao.timeCollided(bo);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if ((boolean)ret.getData()) {
             return new ReturnObject(ReturnNo.GOODS_PRICE_CONFLICT, "商品销售时间冲突。");
         }
-
-
         return onsaleDao.updateOnSale(bo,userId, userName);
 
     }
