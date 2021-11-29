@@ -6,6 +6,7 @@ import cn.edu.xmu.oomall.goods.dao.OnSaleDao;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
 
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
+import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleAllVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,7 @@ public class OnsaleService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ReturnObject createOnSaleWithoutShopId(Long productId, NewOnSaleVo newOnSaleVO, Long userId, String userName) {
+    public ReturnObject createOnSaleWithoutShopId(Long productId, NewOnSaleAllVo newOnSaleAllVo, Long userId, String userName) {
 
         //判断该货品是否存在
         ReturnObject ret=productDao.hasExist(productId);
@@ -91,7 +92,7 @@ public class OnsaleService {
         }
         Long shopId = (Long)ret.getData();
 
-        OnSale bo = (OnSale) cloneVo(newOnSaleVO,OnSale.class);
+        OnSale bo = (OnSale) cloneVo(newOnSaleAllVo,OnSale.class);
         bo.setShopId(shopId);
         bo.setProductId(productId);
 
