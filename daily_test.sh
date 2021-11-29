@@ -7,7 +7,7 @@ echo $daily_dir
 
 echo '-------------------initializing privilege database-------------------------'
 cd /home/mingqiu/privilegegateway/sql
-mysql -h 172.16.1.254 -udbuser -p12345678 -D privilegegateway < privilegegateway-batch.sql
+mysql -h 172.16.1.254 -udbuser -p12345678 -D privilege_gateway < privilegegateway-batch.sql
 
 cd /home/mingqiu/privilegegateway
 git checkout annotation/pom.xml
