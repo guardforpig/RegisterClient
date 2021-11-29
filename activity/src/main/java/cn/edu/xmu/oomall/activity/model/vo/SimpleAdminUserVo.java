@@ -16,4 +16,5 @@ import lombok.NoArgsConstructor;
 public class SimpleAdminUserVo {
     private Long id;
     private String name;
+    private Integer sign;
 }
