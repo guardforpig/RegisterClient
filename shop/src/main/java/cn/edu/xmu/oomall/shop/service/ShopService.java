@@ -11,6 +11,7 @@ import cn.edu.xmu.oomall.shop.model.po.ShopAccountPo;
 import cn.edu.xmu.oomall.shop.model.po.ShopPo;
 import cn.edu.xmu.oomall.shop.model.vo.*;
 import cn.edu.xmu.oomall.shop.microservice.PaymentService;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,6 @@ public class ShopService {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject<PageInfo<Object>> getAllShop(Integer page, Integer pageSize) {
         List<ShopPo> shopPos = (List<ShopPo>) shopDao.getAllShop(page, pageSize).getData();
-
         List<Object> shopRetVos = new ArrayList<>();
         for (ShopPo po : shopPos) {
             shopRetVos.add(po);
@@ -109,9 +109,9 @@ public class ShopService {
 
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject deleteShopById(Long id, Long loginUser, String loginUsername) {
-        ReturnObject ret = reconciliationService.isClean(id);
-        if (!ret.getCode().equals(0)) {
-            return ret;
+        InternalReturnObject ret = reconciliationService.isClean(id);
+        if (!ret.getErrno().equals(0)) {
+            return new ReturnObject(ReturnNo.getByCode(ret.getErrno()),ret.getErrmsg());
         }
 
         Boolean result = (Boolean) ret.getData();
@@ -129,17 +129,16 @@ public class ShopService {
         accountPo.setName("测试");
         /*******************************************/
         RefundDepositVo depositVo = (RefundDepositVo) Common.cloneVo(accountPo, RefundDepositVo.class);
-        ReturnObject refundRet = paymentService.refund(depositVo);
-        if (!refundRet.getCode().equals(0)) {
-            return refundRet;
+        InternalReturnObject refundRet = paymentService.refund(depositVo);
+        if (!refundRet.getErrno().equals(0)) {
+            return new ReturnObject(ReturnNo.getByCode(refundRet.getErrno()),refundRet.getErrmsg());
         }
 
         //退还保证金
         Shop shop = new Shop();
         shop.setId(id.longValue());
         shop.setState(Shop.State.FORBID.getCode().byteValue());
-        shop.setModifiedBy(loginUser);
-        shop.setModiName(loginUsername);
+        Common.setPoModifiedFields(shop, loginUser, loginUsername);
         ReturnObject retUpdate = shopDao.updateShopState(shop);
         return retUpdate;
 

@@ -3,15 +3,15 @@ package cn.edu.xmu.oomall.activity.service;
 import cn.edu.xmu.oomall.activity.dao.ShareActivityDao;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVO;
-import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVO;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityStatesBo;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.Common;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiuchen lang 22920192204222
@@ -76,36 +77,27 @@ public class ShareActivityService {
         List<Long> shareActivityIds = new ArrayList<>();
         if (productId != null) {
             //TODO:openfeign获得分享活动id
-            ReturnObject<PageInfo<SimpleSaleInfoVO>> onSalesByProductId = goodsService.getOnSalesByProductId(productId, 1, 10);
-            if (onSalesByProductId != null) {
-                long total = onSalesByProductId.getData().getTotal();
-                ReturnObject<PageInfo<SimpleSaleInfoVO>> onSalesByProductId2 = goodsService.getOnSalesByProductId(productId, 1, (int) total);
-                List<SimpleSaleInfoVO> list = onSalesByProductId2.getData().getList();
-                for (SimpleSaleInfoVO simpleSaleInfoVO : list) {
+            InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, 10);
+            if (onSalesByProductId.getData() == null) {
+                return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,onSalesByProductId.getErrmsg());
+            }
+            int total = (int) onSalesByProductId.getData().get("total");
+            if (total != 0) {
+                onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, total > 500 ? 500 : total);
+                if (onSalesByProductId.getData() == null) {
+                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,onSalesByProductId.getErrmsg());
+                }
+                List<SimpleSaleInfoVo> list = (List<SimpleSaleInfoVo>) onSalesByProductId.getData().get("list");
+                for (SimpleSaleInfoVo simpleSaleInfoVO : list) {
                     if (simpleSaleInfoVO.getShareActId() != null) {
                         shareActivityIds.add(simpleSaleInfoVO.getShareActId());
                     }
                 }
+            }else {
+                return new ReturnObject(ReturnNo.OK,onSalesByProductId.getErrmsg(),onSalesByProductId.getData());
             }
         }
-
-        ReturnObject<PageInfo<ShareActivityBo>> shareByShopId = shareActivityDao.getShareByShopId(bo, shareActivityIds, page, pageSize);
-        if(shareByShopId.getData()==null){
-            return shareByShopId;
-        }
-        //BO转VO
-        PageInfo<ShareActivityBo> shareByShopIdData = shareByShopId.getData();
-        if (shareByShopIdData != null) {
-            List<RetShareActivityListVo> retShareActivityListVos = new ArrayList<>();
-            for (ShareActivityBo shareActivityBo : shareByShopIdData.getList()) {
-                RetShareActivityListVo rv = (RetShareActivityListVo) Common.cloneVo(shareActivityBo, RetShareActivityListVo.class);
-                retShareActivityListVos.add(rv);
-            }
-            PageInfo<RetShareActivityListVo> p = (PageInfo<RetShareActivityListVo>) Common.cloneVo(shareByShopIdData, new PageInfo<RetShareActivityListVo>().getClass());
-            p.setTotal(shareByShopIdData.getTotal());
-            p.setList(retShareActivityListVos);
-            return new ReturnObject(p);
-        }
+        ReturnObject shareByShopId = shareActivityDao.getShareByShopId(bo, shareActivityIds, page, pageSize);
         return shareByShopId;
     }
 
@@ -128,7 +120,7 @@ public class ShareActivityService {
         shareActivityBo.setState(ShareActivityStatesBo.DRAFT.getCode());
         shareActivityBo.setShopId(shopId);
         //TODO:通过商铺id弄到商铺名称
-        ReturnObject<ShopInfoVO> shop = shopService.getShop(shopId);
+        InternalReturnObject<ShopInfoVo> shop = shopService.getShop(shopId);
         if (shop.getData() == null) {
             return new ReturnObject<>(ReturnNo.FIELD_NOTVALID, "不存在该商铺");
         }
@@ -136,7 +128,7 @@ public class ShareActivityService {
         shareActivityBo.setShopName(shopName);
 
         ReturnObject returnObject = shareActivityDao.addShareAct(shareActivityBo);
-        if(returnObject.getData()==null){
+        if (returnObject.getData() == null) {
             return returnObject;
         }
         ShareActivityBo shareActivityBo1 = (ShareActivityBo) returnObject.getData();
@@ -154,7 +146,7 @@ public class ShareActivityService {
     @Transactional(readOnly = true)
     public ReturnObject getShareActivityById(Long id) {
         ReturnObject returnObject = shareActivityDao.getShareActivityById(id);
-        if(returnObject.getData()==null){
+        if (returnObject.getData() == null) {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
@@ -172,13 +164,15 @@ public class ShareActivityService {
      */
     @Transactional(readOnly = true)
     public ReturnObject getShareActivityByShopIdAndId(Long shopId, Long id) {
-        ReturnObject returnObject = shareActivityDao.getShareActivityByShopIdAndId(shopId,id);
-        if(returnObject.getData()==null){
+        ReturnObject returnObject = shareActivityDao.getShareActivityByShopIdAndId(shopId, id);
+        if (returnObject.getData() == null) {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
         RetShareActivitySpecificInfoVo retShareActivitySpecificInfoVo = (RetShareActivitySpecificInfoVo) Common.cloneVo(shareActivityBo, RetShareActivitySpecificInfoVo.class);
         retShareActivitySpecificInfoVo.setShop(new ShopVo(shareActivityBo.getShopId(), shareActivityBo.getShopName()));
+        retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getCreatorId(), shareActivityBo.getCreatorName()));
+        retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getModifierId(), shareActivityBo.getModifierName()));
         return new ReturnObject(retShareActivitySpecificInfoVo);
     }
 }

@@ -2,7 +2,9 @@ package cn.edu.xmu.oomall.core.util;
 
 
 import cn.edu.xmu.oomall.core.util.bo.Category;
-import cn.edu.xmu.oomall.core.util.vo.CategoryRetVo;
+import cn.edu.xmu.oomall.core.util.bo.CategoryRetVo;
+import cn.edu.xmu.oomall.core.util.bo.Shop;
+import cn.edu.xmu.oomall.core.util.vo.ShopRetVoTest;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -40,8 +42,23 @@ class CloneVoTest {
         assertEquals(categoryRetVo.getCreator().getName(),"CreateName");
         assertEquals(categoryRetVo.getModifier().getId(),3L);
         assertEquals(categoryRetVo.getModifier().getName(),"ModiName");
-        assertEquals(categoryRetVo.getCommissionRate(),null);
         assertEquals(categoryRetVo.getGmtCreate(),gmtCreate);
         assertEquals(categoryRetVo.getGmtModified(),gmtModified);
+    }
+
+    @Test
+    void test2() {
+        Shop shop=new Shop();
+        shop.setState(Shop.State.ONLINE);
+
+        ShopRetVoTest shopRetVoTest = (ShopRetVoTest) Common.cloneVo(shop, ShopRetVoTest.class);
+
+        //枚举转Byte
+        assertEquals(Byte.valueOf("2"),shopRetVoTest.getState());
+
+        //Byte转枚举
+        shopRetVoTest.setState(Byte.valueOf("2"));
+        Shop shop1= (Shop) Common.cloneVo(shopRetVoTest,Shop.class);
+        assertEquals(Shop.State.ONLINE,shop1.getState());
     }
 }

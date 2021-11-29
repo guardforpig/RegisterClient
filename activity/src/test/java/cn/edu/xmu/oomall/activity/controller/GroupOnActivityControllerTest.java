@@ -7,7 +7,7 @@ import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageInfoVo;
-import cn.edu.xmu.privilegegateway.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import org.junit.jupiter.api.MethodOrderer;

@@ -169,7 +169,7 @@ public class GoodsController {
     @Audit(departName = "shops")
     public Object publishProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
-        return Common.decorateReturnObject(productService.pulishProduct(shopId,id));
+        return Common.decorateReturnObject(productService.publishProduct(shopId,id));
     }
 
     @ApiOperation(value="上架货品")

@@ -7,11 +7,13 @@ import cn.edu.xmu.oomall.comment.model.po.CommentPo;
 import cn.edu.xmu.oomall.comment.model.vo.*;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -43,7 +45,7 @@ public class CommentService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public ReturnObject newComment(Long productId, CommentVo commentVo, Long loginUser, String loginUsername) {
+    public InternalReturnObject newComment(Long productId, CommentVo commentVo, Long loginUser, String loginUsername) {
 
         Long shopId = commentVo.getShopId();
         CommentPo commentPo = new CommentPo();
@@ -53,11 +55,14 @@ public class CommentService {
         commentPo.setShopId(shopId);
         commentPo.setType(commentVo.getType().byteValue());
         commentPo.setState(Comment.State.NOT_AUDIT.getCode());
+        commentPo.setPostId(loginUser);
+        commentPo.setPostName(loginUsername);
+        commentPo.setPostTime(LocalDateTime.now());
         Common.setPoCreatedFields(commentPo, loginUser, loginUsername);
-        ReturnObject ret_insert = commentDao.insertComment(commentPo);
-        if (ret_insert.getCode().equals(0)) {
+        InternalReturnObject ret_insert = commentDao.insertComment(commentPo);
+        if (ret_insert.getErrno().equals(0)) {
             CommentRetVo commentRetVo = (CommentRetVo) Common.cloneVo(commentPo, CommentRetVo.class);
-            return new ReturnObject(commentRetVo);
+            return new InternalReturnObject(commentRetVo);
         }
         return ret_insert;
     }
@@ -121,11 +126,14 @@ public class CommentService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject confirmCommnets(Long did, Long id, CommentConclusionVo conclusion, Long loginUser, String loginUserName) {
-        Comment comment = new Comment();
-        comment.setId(id);
-        comment.setState(conclusion.getConclusion() == true ? Comment.State.PASS.getCode() : Comment.State.FORBID.getCode());
-        Common.setPoModifiedFields(comment, loginUser, loginUserName);
-        ReturnObject ret = commentDao.updateCommentState(comment);
+        CommentPo commentPo = new CommentPo();
+        commentPo.setId(id);
+        commentPo.setState(conclusion.getConclusion() == true ? Comment.State.PASS.getCode() : Comment.State.FORBID.getCode());
+        commentPo.setAuditId(loginUser);
+        commentPo.setAuditName(loginUserName);
+        commentPo.setAuditTime(LocalDateTime.now());
+        Common.setPoModifiedFields(commentPo, loginUser, loginUserName);
+        ReturnObject ret = commentDao.updateCommentState(commentPo);
         return ret;
     }
 

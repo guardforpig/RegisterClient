@@ -8,10 +8,14 @@ import cn.edu.xmu.oomall.goods.model.vo.ModifyOnSaleVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
 import cn.edu.xmu.oomall.goods.service.OnsaleService;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +31,7 @@ import static cn.edu.xmu.oomall.core.util.Common.*;
  */
 @Api(value = "货品销售情况", tags = "goods")
 @RestController
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class OnSaleController {
 
@@ -45,18 +50,16 @@ public class OnSaleController {
             @ApiResponse(code = 947, message = "开始时间不能晚于结束时间"),
             @ApiResponse(code = 505, message = "限定秒杀或普通"),
     })
+
+    @Audit(departName = "shops")
     @PostMapping("shops/{shopId}/products/{id}/onsales")
     public Object createNewOnSaleNormalSeckill(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody NewOnSaleVo newOnSaleVo,
-                                               Long loginUserId, String loginUserName, BindingResult bindingResult) {
+                                               @LoginUser Long loginUserId, @LoginName String loginUserName, BindingResult bindingResult) {
 
         Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
         if (null != returnObject) {
             return returnObject;
         }
-
-        loginUserId = 1L;
-        loginUserName = "yujie";
-
 
         // 判断是否秒杀或普通
         if (!newOnSaleVo.getType().equals(OnSale.Type.NOACTIVITY.getCode())
@@ -83,6 +86,7 @@ public class OnSaleController {
 
     }
 
+
     @ApiOperation(value = "管理员上线商品价格浮动，限定普通秒杀")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
@@ -94,10 +98,9 @@ public class OnSaleController {
             @ApiResponse(code = 505, message = "限定只能处理普通和秒杀"),
             @ApiResponse(code = 507, message = "只有草稿态才能上线"),
     })
+    @Audit(departName = "shops")
     @PutMapping("shops/{shopId}/onsales/{id}/online")
-    public Object onlineOnSaleNormalSeckill(@PathVariable Long shopId, @PathVariable Long id, Long loginUserId, String loginUserName) {
-        loginUserId = 1L;
-        loginUserName = "yujie";
+    public Object onlineOnSaleNormalSeckill(@PathVariable Long shopId, @PathVariable Long id,@LoginUser Long loginUserId,@LoginName String loginUserName) {
 
         ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSale(shopId, id, loginUserId, loginUserName, OnSale.State.ONLINE);
         return decorateReturnObject(returnObject1);
@@ -114,10 +117,10 @@ public class OnSaleController {
             @ApiResponse(code = 505, message = "限定只能处理普通和秒杀"),
             @ApiResponse(code = 507, message = "只有上线态才能下线"),
     })
+    @Audit(departName = "shops")
     @PutMapping("shops/{shopId}/onsales/{id}/offline")
-    public Object offlineOnSaleNormalSeckill(@PathVariable Long shopId, @PathVariable Long id, Long loginUserId, String loginUserName) {
-        loginUserId = 1L;
-        loginUserName = "yujie";
+    public Object offlineOnSaleNormalSeckill(@PathVariable Long shopId, @PathVariable Long id,@LoginUser Long loginUserId,@LoginName String loginUserName) {
+
 
         ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSale(shopId, id, loginUserId, loginUserName, OnSale.State.OFFLINE);
         return decorateReturnObject(returnObject1);
@@ -133,10 +136,10 @@ public class OnSaleController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 505, message = "限定只能处理团购和预售"),
     })
+    @Audit
     @PutMapping("internal/activities/{id}/onsales/online")
-    public Object onlineOnSaleGroupPre(@PathVariable Long id, Long loginUserId, String loginUserName) {
-        loginUserId = 1L;
-        loginUserName = "yujie";
+    public Object onlineOnSaleGroupPre(@PathVariable Long id,@LoginUser Long loginUserId,@LoginName String loginUserName) {
+
 
         ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(id, loginUserId, loginUserName, OnSale.State.DRAFT, OnSale.State.ONLINE);
         return decorateReturnObject(returnObject1);
@@ -151,10 +154,9 @@ public class OnSaleController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 505, message = "限定只能处理团购和预售"),
     })
+    @Audit
     @PutMapping("internal/activities/{id}/onsales/offline")
-    public Object offlineOnSaleGroupPre(@PathVariable Long id, Long loginUserId, String loginUserName) {
-        loginUserId = 1L;
-        loginUserName = "yujie";
+    public Object offlineOnSaleGroupPre(@PathVariable Long id,@LoginUser Long loginUserId,@LoginName String loginUserName) {
 
         ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(id, loginUserId, loginUserName, OnSale.State.ONLINE, OnSale.State.OFFLINE);
         return decorateReturnObject(returnObject1);
@@ -166,11 +168,10 @@ public class OnSaleController {
             @ApiResponse(code = 902, message = "商品销售时间冲突"),
             @ApiResponse(code = 947, message = "开始时间不能晚于结束时间"),
     })
+    @Audit
     @PostMapping("internal/products/{id}/onsales")
     public Object createNewOnSale(@PathVariable Long id, @Validated @RequestBody NewOnSaleVo newOnSaleVo,
-                                  Long loginUserId, String loginUserName, BindingResult bindingResult) {
-        loginUserId = 1L;
-        loginUserName = "yujie";
+                                 @LoginUser Long loginUserId,@LoginName String loginUserName, BindingResult bindingResult) {
 
         Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
         if (null != returnObject) {
@@ -204,10 +205,10 @@ public class OnSaleController {
             @ApiResponse(code = 505, message = "限定只能处理普通和秒杀"),
             @ApiResponse(code = 507, message = "只能删除草稿态"),
     })
+    @Audit(departName = "shops")
     @DeleteMapping("shops/{shopId}/onsales/{id}")
-    public Object deleteOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, Long loginUserId, String loginUserName) {
-        loginUserId = 1L;
-        loginUserName = "yujie";
+    public Object deleteOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id,@LoginUser Long loginUserId,@LoginName String loginUserName) {
+
 
         ReturnObject returnObject1 = onsaleService.deleteOnSaleNorSec(shopId, id);
         return decorateReturnObject(returnObject1);
@@ -223,10 +224,10 @@ public class OnSaleController {
             @ApiResponse(code = 505, message = "限定只能处理团购和预售"),
             @ApiResponse(code = 507, message = "只能删除草稿态"),
     })
+    @Audit
     @DeleteMapping("internal/activities/{id}/onsales")
-    public Object deleteOnSaleGroPre(@PathVariable Long id, Long loginUserId, String loginUserName) {
-        loginUserId = 1L;
-        loginUserName = "yujie";
+    public Object deleteOnSaleGroPre(@PathVariable Long id,@LoginUser Long loginUserId,@LoginName String loginUserName) {
+
 
         ReturnObject returnObject1 = onsaleService.deleteOnSaleGroPre(id);
         return decorateReturnObject(returnObject1);
@@ -238,11 +239,9 @@ public class OnSaleController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 507, message = "只有草稿态和下线态才能修改"),
     })
+    @Audit
     @PutMapping("internal/onsales/{id}")
-    public Object modifyOnSale(@PathVariable Long id, @RequestBody ModifyOnSaleVo onSale, Long loginUserId, String loginUserName) {
-        loginUserId = 1L;
-        loginUserName = "yujie";
-
+    public Object modifyOnSale(@PathVariable Long id, @RequestBody ModifyOnSaleVo onSale,@LoginUser Long loginUserId,@LoginName String loginUserName) {
 
         // 判断开始时间是否比结束时间晚
         if (onSale.getBeginTime().isAfter(onSale.getEndTime())) {
@@ -261,10 +260,9 @@ public class OnSaleController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 507, message = "只有草稿态和下线态才能修改"),
     })
+    @Audit(departName = "shops")
     @PutMapping("shops/{shopId}/onsales/{id}")
-    public Object modifyOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale, Long loginUserId, String loginUserName) {
-        loginUserId = 1L;
-        loginUserName = "yujie";
+    public Object modifyOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale,@LoginUser Long loginUserId,@LoginName String loginUserName) {
 
         // 判断开始时间是否比结束时间晚
         if (onSale.getBeginTime().isAfter(onSale.getEndTime())) {

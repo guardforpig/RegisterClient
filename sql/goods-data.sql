@@ -41,6 +41,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `oomall_comment` WRITE;
 /*!40000 ALTER TABLE `oomall_comment` DISABLE KEYS */;
+INSERT INTO `oomall_comment` VALUES (1,1,0,'真不错',0,1,'jxy',NULL,NULL,'2021-11-19 10:07:23',NULL,1,'jxy','2021-11-19 10:07:17',NULL,NULL,NULL,1),(2,1,0,'真不错',0,1,'jxy',NULL,NULL,'2021-11-19 10:07:50',NULL,1,'jxy','2021-11-19 10:07:42',NULL,NULL,NULL,1);
 /*!40000 ALTER TABLE `oomall_comment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70,7 +71,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `oomall_freight_model` WRITE;
 /*!40000 ALTER TABLE `oomall_freight_model` DISABLE KEYS */;
-INSERT INTO `oomall_freight_model` VALUES (1,'freight model/100g',0,0,100,1,'admin',NULL,NULL,'2020-12-02 20:33:08','2020-12-02 20:33:08'),(2,'piece model/2',0,1,2,1,'admin',NULL,NULL,'2020-12-02 20:33:08','2020-12-02 20:33:08');
+INSERT INTO `oomall_freight_model` VALUES (1,'freight model/100g',0,0,100,1,'admin',NULL,NULL,'2020-12-02 20:33:08','2020-12-02 20:33:08'),(2,'piece model/2',0,1,2,1,'admin',NULL,NULL,'2020-12-02 20:33:08','2020-12-02 20:33:08'),(3,'piece model/2',0,1,2,1,'admin',NULL,NULL,'2021-11-22 14:47:21',NULL);
 /*!40000 ALTER TABLE `oomall_freight_model` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -110,6 +111,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `oomall_piece_freight` WRITE;
 /*!40000 ALTER TABLE `oomall_piece_freight` DISABLE KEYS */;
+INSERT INTO `oomall_piece_freight` VALUES (3,2,1,10,2,5,1,1,'admin',NULL,NULL,'2021-11-22 14:47:21',NULL),(4,2,1,10,3,4,2,1,'admin',NULL,NULL,'2021-11-22 14:47:21',NULL);
 /*!40000 ALTER TABLE `oomall_piece_freight` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,4 +193,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-21 13:44:34
+-- Dump completed on 2021-11-27 13:32:01

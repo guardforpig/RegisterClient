@@ -4,8 +4,12 @@ import cn.edu.xmu.oomall.activity.model.bo.ShareActivityStatesBo;
 import cn.edu.xmu.oomall.activity.model.vo.ShareActivityVo;
 import cn.edu.xmu.oomall.activity.service.ShareActivityService;
 import cn.edu.xmu.oomall.core.util.*;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +24,7 @@ import java.time.LocalDateTime;
  */
 @Api(value = "分享活动API", tags = "activity")
 @RestController
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class ShareActivityController {
 
@@ -69,6 +74,7 @@ public class ShareActivityController {
     })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "成功")})
+    @Audit(departName = "shops")
     @GetMapping("/shops/{shopId}/shareactivities")
     public Object getShareByShopId(@PathVariable(name = "shopId", required = true) Long shopId,
                                    @RequestParam(name = "productId", required = false) Long productId,
@@ -83,14 +89,9 @@ public class ShareActivityController {
         if (productId != null && productId <= 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "productId错误"));
         }
-        page = (page == null) ? 1 : page;
-        pageSize = (pageSize == null) ? 10 : pageSize;
-        if (page <= 0 || pageSize <= 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "页数和页数大小应大于0"));
-        }
         ReturnObject shareByShopId = shareActivityService.getShareByShopId(shopId, productId,
                 beginTime, endTime, state, page, pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(shareByShopId));
+        return Common.decorateReturnObject(shareByShopId);
     }
 
     /**
@@ -110,11 +111,10 @@ public class ShareActivityController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "成功")})
     @PostMapping("/shops/{shopId}/shareactivities")
-    public Object addShareAct(String createName, Long createId, @PathVariable(value = "shopId", required = true) Long shopId,
+    @Audit(departName = "shops")
+    public Object addShareAct(@LoginName String createName, @LoginUser Long createId, @PathVariable(value = "shopId", required = true) Long shopId,
                               @Validated @RequestBody ShareActivityVo shareActivityVo,
                               BindingResult bindingResult) {
-        createName = "lxc";
-        createId = 666L;
         Object obj = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (null != obj) {
             return obj;
@@ -152,6 +152,7 @@ public class ShareActivityController {
             @ApiResponse(code = 503, message = "shopId错误"),
             @ApiResponse(code = 503, message = "页数和页数大小应大于0")
     })
+    @Audit(departName = "shops")
     @GetMapping("/shareactivities")
     public Object getShareActivity(@RequestParam(name = "shopId", required = false) Long shopId,
                                    @RequestParam(name = "productId", required = false) Long productId,
@@ -165,14 +166,9 @@ public class ShareActivityController {
         if (productId != null && productId <= 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "productId错误"));
         }
-        page = (page == null) ? 1 : page;
-        pageSize = (pageSize == null) ? 10 : pageSize;
-        if (page <= 0 || pageSize <= 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "页数和页数大小应大于0"));
-        }
         ReturnObject shareByShopId = shareActivityService.getShareByShopId(shopId, productId,
                 beginTime, endTime, ShareActivityStatesBo.ONLINE.getCode(), page, pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(shareByShopId));
+        return Common.decorateReturnObject(shareByShopId);
     }
 
     /**
@@ -188,6 +184,7 @@ public class ShareActivityController {
     })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "成功")})
+    @Audit(departName = "shops")
     @GetMapping("/shareactivities/{id}")
     public Object getShareActivityById(@PathVariable(value = "id", required = true) Long id) {
         return Common.decorateReturnObject(shareActivityService.getShareActivityById(id));
@@ -208,6 +205,7 @@ public class ShareActivityController {
     })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "成功")})
+    @Audit(departName = "shops")
     @GetMapping("/shops/{shopId}/shareactivities/{id}")
     public Object getShareActivityByShopIdAndId(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
         return Common.decorateReturnObject(shareActivityService.getShareActivityByShopIdAndId(shopId, id));

@@ -1,8 +1,9 @@
 package cn.edu.xmu.oomall.activity.microservice;
 
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleShopVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVO;
+import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,6 @@ public interface ShopService {
      * @return
      */
     @GetMapping("/shops/{id}")
-    public ReturnObject<ShopInfoVO> getShop(@PathVariable("id")Long id);
+    InternalReturnObject<ShopInfoVo> getShop(@PathVariable("id")Long id);
 
 }

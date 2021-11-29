@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 8.0.27, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.27, for Win64 (x86_64)
 --
 -- Host: 192.168.31.241    Database: oomall
 -- ------------------------------------------------------
@@ -89,7 +89,7 @@ CREATE TABLE `oomall_comment` (
   `audit_time` datetime DEFAULT NULL,
   `shop_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='评论';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='评论';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,7 +164,7 @@ CREATE TABLE `oomall_freight_model` (
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `gmt_modified` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='运费模板';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='运费模板';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -265,7 +265,7 @@ CREATE TABLE `oomall_piece_freight` (
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `gmt_modified` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='计件运费';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='计件运费';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -465,4 +465,4 @@ CREATE TABLE `oomall_weight_freight` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-19  9:21:16
+-- Dump completed on 2021-11-27 13:31:42

@@ -101,15 +101,6 @@ public class GoodsDao {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE, "该商品不属于该商铺");
             }
             goods = (Goods) cloneVo(goodsPo, Goods.class);
-            ProductPoExample productPoExample = new ProductPoExample();
-            ProductPoExample.Criteria cr = productPoExample.createCriteria();
-            cr.andGoodsIdEqualTo(id);
-            List<ProductPo> products = productPoMapper.selectByExample(productPoExample);
-            List<Product> productList = new ArrayList<>(products.size());
-            for (ProductPo productPo : products) {
-                productList.add((Product) cloneVo(productPo, Product.class));
-            }
-            goods.setProductList(productList);
             return new ReturnObject<>(goods);
         }
         catch (Exception e)
@@ -133,12 +124,6 @@ public class GoodsDao {
             if (!goodsPo.getShopId().equals(shopId)) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该商品不属于该商铺");
             }
-            ProductPoExample productPoExample = new ProductPoExample();
-            ProductPoExample.Criteria cr = productPoExample.createCriteria();
-            cr.andGoodsIdEqualTo(id);
-            ProductPo productPo=new ProductPo();
-            productPo.setGoodsId(0L);
-            productPoMapper.updateByExampleSelective(productPo,productPoExample);
             goodsPoMapper.deleteByPrimaryKey(id);
         } catch (Exception e) {
             logger.error(e.getMessage());

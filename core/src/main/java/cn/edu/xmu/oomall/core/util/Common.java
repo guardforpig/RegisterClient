@@ -251,6 +251,7 @@ public class Common {
                 Field boField=null;
                 try {
                     boField= boClass.getDeclaredField(voField.getName());
+                    boField.setAccessible(true);
                 }
                 //bo中查找不到对应的属性，那就有可能为特殊情况xxx，需要由xxxId与xxxName组装
                 catch (NoSuchFieldException e)
@@ -304,7 +305,32 @@ public class Common {
                 //属性名相同，类型不同
                 else
                 {
-                    voField.set(newVo, null);
+                    boolean boFieldIsIntegerOrByteAndVoFieldIsEnum=("Integer".equals(boFieldType.getSimpleName())||"Byte".equals(boFieldType.getSimpleName()))&&voField.getType().isEnum();
+                    boolean voFieldIsIntegerOrByteAndBoFieldIsEnum=("Integer".equals(voField.getType().getSimpleName())||"Byte".equals(voField.getType().getSimpleName()))&&boFieldType.isEnum();
+                    //整形或Byte转枚举
+                    if(boFieldIsIntegerOrByteAndVoFieldIsEnum)
+                    {
+                        Object newObj=boField.get(bo);
+                        if("Byte".equals(boFieldType.getSimpleName()))
+                        {
+                            newObj=((Byte)newObj).intValue();
+                        }
+                        Object[] enumer=voField.getType().getEnumConstants();
+                        voField.set(newVo,enumer[(int) newObj]);
+                    }
+                    //枚举转整形或Byte
+                    else if(voFieldIsIntegerOrByteAndBoFieldIsEnum)
+                    {
+                        Object value= ((Enum)boField.get(bo)).ordinal();
+                        if("Byte".equals(voField.getType().getSimpleName()))
+                        {
+                            value = ((Integer) value).byteValue();
+                        }
+                        voField.set(newVo,value);
+                    }
+                    else {
+                        voField.set(newVo, null);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -340,7 +366,6 @@ public class Common {
                         HttpStatus.INTERNAL_SERVER_ERROR);
 
             case FIELD_NOTVALID:
-            case RESOURCE_FALSIFY:
             case IMG_FORMAT_ERROR:
             case IMG_SIZE_EXCEED:
             case LATE_BEGINTIME:
@@ -369,7 +394,13 @@ public class Common {
                 }
 
             default:
-                return ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg());
+                data = returnObject.getData();
+                if (data != null){
+                    return ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg(), returnObject.getData());
+                }else{
+                    return ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg());
+                }
+
         }
     }
 
