@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import cn.edu.xmu.oomall.activity.model.bo.AdvanceSaleStates;
+import cn.edu.xmu.oomall.activity.model.bo.AdvanceSaleState;
 import cn.edu.xmu.oomall.activity.model.po.AdvanceSalePoExample;
 import cn.edu.xmu.oomall.activity.model.vo.SimpleAdvanceSaleRetVo;
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
@@ -139,56 +139,30 @@ public class AdvanceSaleDao {
         }
     }
 
-    public ReturnObject getOnlineAdvanceSaleInfo(Long id){
+    public ReturnObject getAdvanceSaleInfo(AdvanceSaleState state,Long id){
         String key = "advanceSale_" + id;
         try {
             //先查redis
             AdvanceSale advanceSale = (AdvanceSale) redisUtil.get(key);
-            if(advanceSale!=null) {
-                if(!advanceSale.getState().equals(AdvanceSaleStates.ONLINE.getCode())) {
-                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"该预售活动没有上线");
+            //redis没有查到
+            if(advanceSale==null) {
+                AdvanceSalePo po = advanceSalePoMapper.selectByPrimaryKey(id);
+                //数据库也查不到
+                if(po==null) {
+                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"活动不存在");
                 }
-                return new ReturnObject(advanceSale);
+                //数据库查到，放入redis
+                else {
+                    advanceSale = (AdvanceSale) Common.cloneVo(po, AdvanceSale.class);
+                    redisUtil.set(key, JacksonUtil.toJson(advanceSale), categoryTimeout);
+                }
             }
-            AdvanceSalePo po = advanceSalePoMapper.selectByPrimaryKey(id);
-            if(po==null) {
-                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"活动不存在");
+            //如果传入状态不为空，判断活动是否为上线状态
+            if (state != null && !advanceSale.getState().equals(state.getCode())) {
+                return new ReturnObject<>(ReturnNo.STATENOTALLOW, "预售活动未上线");
             }
-            if(po.getState().equals(AdvanceSaleStates.ONLINE.getCode())) {
-                AdvanceSale advanceSaleBo = (AdvanceSale) Common.cloneVo(po, AdvanceSale.class);
-                redisUtil.set(key, JacksonUtil.toJson(advanceSaleBo), categoryTimeout);
-                return new ReturnObject(advanceSaleBo);
-            }
-            else {
-                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"该预售活动没有上线");
-            }
-        }
-        catch (Exception e) {
-            logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
-        }
-    }
+            return new ReturnObject(advanceSale);
 
-    /**
-     * 管理员查询商铺的特定预售活动
-     * @param shopId
-     * @param activityId
-     * @return
-     */
-    public  ReturnObject getShopAdvanceSale(Long shopId,Long activityId){
-        try {
-            AdvanceSalePoExample example = new AdvanceSalePoExample();
-            AdvanceSalePoExample.Criteria criteria = example.createCriteria();
-            criteria.andShopIdEqualTo(shopId);
-            criteria.andIdEqualTo(activityId);
-            List<AdvanceSalePo> list = advanceSalePoMapper.selectByExample(example);
-            if(list.size()==0) {
-                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"没有满足条件的预售活动");
-            }
-            //根据预售活动id去查询，因为是一对一的，所以List里只有一个advanceSalePo
-            AdvanceSalePo advanceSalePo=list.get(0);
-            AdvanceSale advanceSaleBo = (AdvanceSale) Common.cloneVo(advanceSalePo, AdvanceSale.class);
-            return new ReturnObject(advanceSaleBo);
         }
         catch (Exception e) {
             logger.error(e.getMessage());

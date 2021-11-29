@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
-import cn.edu.xmu.oomall.activity.model.bo.AdvanceSaleStates;
+import cn.edu.xmu.oomall.activity.model.bo.AdvanceSaleState;
 import cn.edu.xmu.oomall.activity.microservice.vo.*;
 import com.github.pagehelper.PageInfo;
 import java.time.LocalDateTime;
@@ -190,7 +190,7 @@ public class AdvanceSaleService {
      */
     public ReturnObject getAdvanceSaleState() {
         List<RetStatesVo> list = new ArrayList<>();
-        for (AdvanceSaleStates value : AdvanceSaleStates.values()) {
+        for (AdvanceSaleState value : AdvanceSaleState.values()) {
             RetStatesVo retStatesVO = new RetStatesVo(value.getCode(), value.getValue());
             list.add(retStatesVO);
         }
@@ -232,26 +232,36 @@ public class AdvanceSaleService {
     }
 
     /**
-     * 查询上线预售活动的详细信息
+     * 根据条件查询预售活动的详细信息
      * @param id
      * @return
      */
     @Transactional(readOnly = true)
-    public ReturnObject getOnlineAdvanceSaleInfo(Long id) {
-        OnSaleInfoVo onSaleInfoVo=new OnSaleInfoVo();
-        //跨模块调接口，根据预售活动id获得相应Onsale
-        InternalReturnObject<PageInfo<OnSaleInfoVo>> pageInfoReturnObject = goodsService.getShopOnsaleInfo(4L,id,null,null,null,1,10);
-        if(pageInfoReturnObject.getData().getList()!=null){
-            onSaleInfoVo=pageInfoReturnObject.getData().getList().get(0);
-        }
-        else {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "活动不存在");
-        }
-        ReturnObject returnObject = advanceSaleDao.getOnlineAdvanceSaleInfo(id);
+    public ReturnObject getAdvanceSaleInfo(Long id, AdvanceSaleState state,Long shopId) {
+        //先查advanceSale表
+        ReturnObject returnObject = advanceSaleDao.getAdvanceSaleInfo(state,id);
         if (returnObject.getData() == null) {
             return returnObject;
         }
         AdvanceSale advanceSaleBo = (AdvanceSale) returnObject.getData();
+
+        //如果传入shopId为空，表示管理员查询，需要先从advanceBo拿到shopId
+        if(shopId==null) {
+            shopId = advanceSaleBo.getShopId();
+        }
+        //否则需要根据shopId判断商铺是否存在
+        else{
+            InternalReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
+            if (shopVoReturnObject.getData() == null) {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
+            }
+        }
+        //根据商铺号shopId和预售活动id获得Onsale的信息
+        InternalReturnObject internalReturnObject =  getOnSaleInfo(shopId,id);
+        if (internalReturnObject.getData() == null) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "找不到对应的销售信息");
+        }
+        OnSaleInfoVo onSaleInfoVo=(OnSaleInfoVo) internalReturnObject.getData();
         AdvanceSaleRetVo advanceSaleDetailsRetVo = (AdvanceSaleRetVo) Common.cloneVo(onSaleInfoVo, AdvanceSaleRetVo.class);
         advanceSaleDetailsRetVo.setName(advanceSaleBo.getName());
         advanceSaleDetailsRetVo.setPayTime(advanceSaleBo.getPayTime());
@@ -274,7 +284,7 @@ public class AdvanceSaleService {
     public ReturnObject addAdvanceSale(Long loginUserId, String loginUerName, Long shopId, Long id, AdvanceSaleVo advanceSaleVo) {
 
         AdvanceSale advanceSaleBo = (AdvanceSale) Common.cloneVo(advanceSaleVo, AdvanceSale.class);
-        advanceSaleBo.setState(AdvanceSaleStates.DRAFT.getCode());
+        advanceSaleBo.setState(AdvanceSaleState.DRAFT.getCode());
 
         //判断商铺是否存在
         InternalReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
@@ -317,38 +327,9 @@ public class AdvanceSaleService {
     }
 
     /**
-     * 管理员查询商铺的特定预售活动
-     * @param shopId
-     * @param id
-     * @return
-     */
-    @Transactional(readOnly = true,rollbackFor = Exception.class)
-    public ReturnObject getShopAdvanceSaleInfo(Long shopId, Long id) {
-        InternalReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
-        if (shopVoReturnObject.getData() == null) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
-        }
-        OnSaleInfoVo onSaleInfoVo = (OnSaleInfoVo) getOnSaleInfo(shopId,id).getData();
-        if (onSaleInfoVo == null) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "找不到对应的销售信息");
-        }
-        ReturnObject returnObject = advanceSaleDao.getShopAdvanceSale(shopId, id);
-        if (returnObject.getData() == null) {
-            return returnObject;
-        }
-        AdvanceSale advanceSaleBo = (AdvanceSale) returnObject.getData();
-        AdvanceSaleRetVo advanceSaleDetailsRetVo = (AdvanceSaleRetVo) Common.cloneVo(onSaleInfoVo, AdvanceSaleRetVo.class);
-        advanceSaleDetailsRetVo.setName(advanceSaleBo.getName());
-        advanceSaleDetailsRetVo.setPayTime(advanceSaleBo.getPayTime());
-        advanceSaleDetailsRetVo.setAdvancePayPrice(advanceSaleBo.getAdvancePayPrice());
-        advanceSaleDetailsRetVo.setState(advanceSaleBo.getState());
-        advanceSaleDetailsRetVo.setShop(new ShopVo(advanceSaleBo.getShopId(),advanceSaleBo.getShopName()));
-        return new ReturnObject(advanceSaleDetailsRetVo);
-    }
-
-    /**
-     * 调用goodsservice
-     * 根据商铺号shopId和活动id找onsale
+     * 调用GoodsService接口
+     * 先根据商铺号shopId和活动id找SimpleOnsaleInfo，获取Onsale的id
+     * 再根据OnSale的id查找OnSale的详细信息
      * @param shopId
      * @param id
      * @return

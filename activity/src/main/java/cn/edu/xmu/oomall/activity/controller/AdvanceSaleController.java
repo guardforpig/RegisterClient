@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.activity.controller;
 
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
+import cn.edu.xmu.oomall.activity.model.bo.AdvanceSaleState;
 import cn.edu.xmu.oomall.activity.model.vo.AdvanceSaleModifyVo;
 import cn.edu.xmu.oomall.activity.service.AdvanceSaleService;
 import cn.edu.xmu.oomall.core.util.Common;
@@ -171,7 +172,7 @@ public class AdvanceSaleController {
     @GetMapping(value = "/advancesales/{id}")
     public Object queryOnlineAdvanceSaleInfo(
             @PathVariable(name = "id") Long id) {
-        ReturnObject ret=advanceSaleService.getOnlineAdvanceSaleInfo(id);
+        ReturnObject ret=advanceSaleService.getAdvanceSaleInfo(id,AdvanceSaleState.ONLINE,null);
         return Common.decorateReturnObject(ret);
     }
 
@@ -297,7 +298,7 @@ public class AdvanceSaleController {
             @LoginName String loginUserName,
             @PathVariable(name = "shopId") Long shopId,
             @PathVariable(name = "id") Long id) {
-        ReturnObject ret= advanceSaleService.getShopAdvanceSaleInfo(shopId, id);
+        ReturnObject ret= advanceSaleService.getAdvanceSaleInfo(id,null,shopId);
         return Common.decorateReturnObject(ret);
     }
 }

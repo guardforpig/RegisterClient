@@ -203,13 +203,15 @@ public class AdvanceSaleControllerTest {
     @Transactional
     public void getAdvanceSaleDetails() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        InternalReturnObject<PageInfo<OnSaleInfoVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>(list3));
-        Mockito.when(goodsService.getShopOnsaleInfo(4L,2L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
-        String responseString = mvc.perform(get("/advancesales/2"))
+        InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject=new InternalReturnObject<>(new PageInfo<>(list1));
+        Mockito.when(goodsService.getShopOnsaleInfo(4L,1L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
+        InternalReturnObject<OnSaleInfoVo> returnObject=new InternalReturnObject<>(list3.get(0));
+        Mockito.when(goodsService.getOnSaleInfo(pageInfoReturnObject.getData().getList().get(0).getId())).thenReturn(returnObject);
+        String responseString = mvc.perform(get("/advancesales/1"))
                 .andExpect((status().isOk()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":3,\"name\":\"预售活动2\",\"shop\":{\"id\":5,\"name\":\"坚持就是胜利\"},\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"zheng5d\"},\"gmtCreate\":\"2021-06-21T17:38:20.000\",\"gmtModified\":\"2021-06-21T17:38:20.000\",\"modifier\":{\"id\":1,\"name\":\"zheng5d\"},\"state\":1},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":3,\"name\":\"预售活动1\",\"shop\":{\"id\":4,\"name\":\"努力向前\"},\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"zheng5d\"},\"gmtCreate\":\"2021-06-21T17:38:20.000\",\"gmtModified\":\"2021-06-21T17:38:20.000\",\"modifier\":{\"id\":1,\"name\":\"zheng5d\"},\"state\":1},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -459,10 +461,10 @@ public class AdvanceSaleControllerTest {
     public void getShopAdvanceSaleInfoTest1() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
         Mockito.when(shopService.getShop(4L)).thenReturn(new InternalReturnObject<>(new ShopInfoVo(1L,"OOMALL自营商铺")));
-        InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject1=new InternalReturnObject<>(new PageInfo<>(list1));
-        Mockito.when(goodsService.getShopOnsaleInfo(4L,1L,null,null,null,1,10)).thenReturn(pageInfoReturnObject1);
+        InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject=new InternalReturnObject<>(new PageInfo<>(list1));
+        Mockito.when(goodsService.getShopOnsaleInfo(4L,1L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
         InternalReturnObject<OnSaleInfoVo> returnObject=new InternalReturnObject<>(list3.get(0));
-        Mockito.when(goodsService.getOnSaleInfo(pageInfoReturnObject1.getData().getList().get(0).getId())).thenReturn(returnObject);
+        Mockito.when(goodsService.getOnSaleInfo(pageInfoReturnObject.getData().getList().get(0).getId())).thenReturn(returnObject);
         String responseString = mvc.perform(get("/shops/4/advancesales/1")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
@@ -520,7 +522,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect((status().isNotFound()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":504,\"errmsg\":\"没有满足条件的预售活动\"}";
+        String expected="{\"errno\":504,\"errmsg\":\"活动不存在\"}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
 

@@ -17,6 +17,7 @@ import java.util.Map;
 public class AdvanceSale implements Serializable {
 
 
+    private Long id;
     private Long shopId;
     private String shopName;
     private String name;

@@ -5,7 +5,7 @@ package cn.edu.xmu.oomall.activity.model.bo;
  * @author Jiawei Zheng
  * @date 2021-11-26
  */
-public enum AdvanceSaleStates {
+public enum AdvanceSaleState {
     /**
      * DRAFT活动在草稿状态
      * OFFLINE活动在下线状态
@@ -17,7 +17,7 @@ public enum AdvanceSaleStates {
 
     private Byte code;
     private String value;
-    AdvanceSaleStates(Byte code, String value) {
+    AdvanceSaleState(Byte code, String value) {
         this.code=code;
         this.value=value;
     }
