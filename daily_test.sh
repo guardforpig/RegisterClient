@@ -21,6 +21,7 @@ mvn site:site site:deploy
 
 echo '-------------------building comment-------------------------'
 cd /home/mingqiu/privilegegateway/privilegeservice
+git checkout pom.xml
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean test
 mvn site:site site:deploy
