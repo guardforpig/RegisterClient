@@ -490,7 +490,6 @@ public class Common {
         return true;
     }
 
-
     /**
      * 设置所有po对象的modifiedBy, modiName和gmtModify字段属性
      *
