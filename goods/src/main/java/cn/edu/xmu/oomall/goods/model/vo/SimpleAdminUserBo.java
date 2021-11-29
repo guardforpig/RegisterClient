@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.goods.model.vo;
 
-import cn.edu.xmu.oomall.core.model.VoObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

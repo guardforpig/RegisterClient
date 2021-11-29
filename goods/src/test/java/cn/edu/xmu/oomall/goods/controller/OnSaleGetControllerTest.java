@@ -2,9 +2,7 @@ package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.goods.GoodsApplication;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -66,10 +64,10 @@ public class OnSaleGetControllerTest {
         String responseJson=this.mvc.perform(get("/shops/5/onsales/6")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isOk())
+                .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":403,\"errmsg\":\"当前类型禁止此操作\"}";
+        String expectedJson="{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -89,7 +87,7 @@ public class OnSaleGetControllerTest {
     @Transactional
     public void selectActivities() throws Exception {
         //正常情况
-        String responseJson=this.mvc.perform(get("/internal/shops/5/activities/3/onsales?state=1&beginTime=2021-11-10 14:38:20&endTime=2022-02-20 14:38:20&page&pageSize")
+        String responseJson=this.mvc.perform(get("/internal/shops/5/activities/3/onsales?state=1&beginTime=2021-11-10T14:38:20.000Z&endTime=2022-02-20T14:38:20.000Z&page&pageSize")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
@@ -118,8 +116,8 @@ public class OnSaleGetControllerTest {
         //开始时间晚于结束时间
         String responseJson=this.mvc.perform(get("/internal/shops/5/activities/3/onsales")
                 .param("state","")
-                .param("beginTime","2021-11-11 14:38:20")
-                .param("endTime","2021-11-01 14:38:20")
+                .param("beginTime","2021-11-11T14:38:20.000Z")
+                .param("endTime","2021-11-01T14:38:20.000Z")
                 .param("page","1")
                 .param("pageSize","10")
                 .contentType("application/json;charset=UTF-8")
@@ -189,7 +187,7 @@ public class OnSaleGetControllerTest {
     @Transactional
     public void selectAnyOnsale() throws Exception {
         //正常情况
-        String responseJson=this.mvc.perform(get("/internal/onsales?shopId=2&productId=1558&beginTime=2021-11-10 14:38:20&endTime=2022-02-20 14:38:20&page=1&pageSize=10")
+        String responseJson=this.mvc.perform(get("/internal/onsales?shopId=2&productId=1558&beginTime=2021-11-10T14:38:20.000Z&endTime=2022-02-20T14:38:20.000Z&page=1&pageSize=10")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
@@ -205,8 +203,8 @@ public class OnSaleGetControllerTest {
         String responseJson=this.mvc.perform(get("/internal/onsales")
                 .param("shopId","")
                 .param("productId","")
-                .param("beginTime","2021-11-11 14:38:20")
-                .param("endTime","2021-11-01 14:38:20")
+                .param("beginTime","2021-11-11T14:38:20.000Z")
+                .param("endTime","2021-11-01T14:38:20.000Z")
                 .param("page","1")
                 .param("pageSize","10")
                 .header("authorization", adminToken)

@@ -7,10 +7,10 @@ import cn.edu.xmu.oomall.goods.dao.OnSaleGetDao;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
 import cn.edu.xmu.oomall.goods.model.bo.OnSaleGetBo;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
-import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
 import cn.edu.xmu.oomall.goods.model.vo.OnSaleRetVo;
+import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +63,7 @@ OnSaleGetService {
             NewOnSaleRetVo onSaleRetVo=(NewOnSaleRetVo)Common.cloneVo(onSalePo, NewOnSaleRetVo.class);
             return new ReturnObject(onSaleRetVo);
         }else{
-            return new ReturnObject(ReturnNo.TYPENOTALLOW);
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
     }
 
