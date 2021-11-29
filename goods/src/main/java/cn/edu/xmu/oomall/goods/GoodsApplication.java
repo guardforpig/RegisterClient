@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Bean;
 @EnableConfigurationProperties
 @MapperScan("cn.edu.xmu.oomall.goods.mapper")
 public class GoodsApplication {
+
+    
     @Bean("PageAspect")
     public PageAspect initPageAspect(){
         return new PageAspect();

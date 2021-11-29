@@ -1,10 +1,9 @@
 package cn.edu.xmu.oomall.goods.model.bo;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
-import cn.edu.xmu.oomall.goods.model.vo.OnSalesVo;
-import cn.edu.xmu.oomall.goods.model.vo.ProductVo;
-import cn.edu.xmu.oomall.shop.model.bo.Shop;
-import cn.edu.xmu.oomall.shop.model.vo.ShopVo;
+import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
+import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
+import com.alibaba.druid.support.spring.stat.annotation.Stat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,10 +14,9 @@ import java.util.Map;
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 
 @Data
-public class OnSale implements  Serializable {
+public class OnSale  implements  VoObject, Serializable {
 
     private Long id;
-    private Product product;
     private Long shopId;
     private Long productId;
     private Long price;
@@ -58,6 +56,16 @@ public class OnSale implements  Serializable {
         Integer code=state.getCode();
         Byte b=code.byteValue();
         this.state=b;
+    }
+
+    @Override
+    public NewOnSaleRetVo createVo() {
+        return (NewOnSaleRetVo)cloneVo(this,NewOnSaleRetVo.class);
+    }
+
+    @Override
+    public Object createSimpleVo() {
+        return null;
     }
 
 
