@@ -137,9 +137,9 @@ public class OnSaleController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 505, message = "限定只能处理团购和预售"),
     })
-    @Audit
+    @Audit(departName = "shops")
     @PutMapping("internal/shops/{did}/activities/{id}/onsales/online")
-    public Object onlineOnSaleGroupPre(Long did,@PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
+    public Object onlineOnSaleGroupPre(@PathVariable Long did,@PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
 
         ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(id, loginUserId, loginUserName, OnSale.State.DRAFT, OnSale.State.ONLINE);
@@ -155,9 +155,9 @@ public class OnSaleController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 505, message = "限定只能处理团购和预售"),
     })
-    @Audit
+    @Audit(departName = "shops")
     @PutMapping("internal/shops/{did}/activities/{id}/onsales/offline")
-    public Object offlineOnSaleGroupPre(Long did, @PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
+    public Object offlineOnSaleGroupPre(@PathVariable Long did, @PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
         ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(id, loginUserId, loginUserName, OnSale.State.ONLINE, OnSale.State.OFFLINE);
         return decorateReturnObject(returnObject1);
@@ -169,10 +169,10 @@ public class OnSaleController {
             @ApiResponse(code = 902, message = "商品销售时间冲突"),
             @ApiResponse(code = 947, message = "开始时间不能晚于结束时间"),
     })
-    @Audit
+    @Audit(departName = "shops")
     @PostMapping("internal/shops/{did}/products/{id}/onsales")
     public Object createNewOnSale(@PathVariable Long id, @Validated @RequestBody NewOnSaleAllVo newOnSaleAllVo,
-                                  Long did,
+                                  @PathVariable Long did,
                                   @LoginUser Long loginUserId, @LoginName String loginUserName, BindingResult bindingResult) {
 
         Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
@@ -185,7 +185,7 @@ public class OnSaleController {
             return decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME, "开始时间晚于结束时间。"));
         }
 
-        ReturnObject returnObject1 = onsaleService.createOnSaleWithoutShopId(id, newOnSaleAllVo, loginUserId, loginUserName);
+        ReturnObject returnObject1 = onsaleService.createOnSaleAll(did,id, newOnSaleAllVo, loginUserId, loginUserName);
         if (returnObject1.getCode() != ReturnNo.OK) {
             return decorateReturnObject(returnObject1);
         }
@@ -225,9 +225,9 @@ public class OnSaleController {
             @ApiResponse(code = 505, message = "限定只能处理团购和预售"),
             @ApiResponse(code = 507, message = "只能删除草稿态"),
     })
-    @Audit
+    @Audit(departName = "shops")
     @DeleteMapping("internal/shops/{did}/activities/{id}/onsales")
-    public Object deleteOnSaleGroPre(Long did,@PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
+    public Object deleteOnSaleGroPre(@PathVariable Long did,@PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
 
         ReturnObject returnObject1 = onsaleService.deleteOnSaleGroPre(id);
@@ -240,9 +240,9 @@ public class OnSaleController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 507, message = "只有草稿态和下线态才能修改"),
     })
-    @Audit
+    @Audit(departName = "shops")
     @PutMapping("internal/shops/{did}/onsales/{id}")
-    public Object modifyOnSale(Long did,@PathVariable Long id, @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName) {
+    public Object modifyOnSale(@PathVariable Long did,@PathVariable Long id, @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
         // 判断开始时间是否比结束时间晚
         if (onSale.getBeginTime().isAfter(onSale.getEndTime())) {

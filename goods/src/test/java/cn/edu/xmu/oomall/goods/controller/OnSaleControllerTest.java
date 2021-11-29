@@ -308,7 +308,7 @@ public class OnSaleControllerTest {
         vo.setActivityId(5L);
         String s = JacksonUtil.toJson(vo);
 
-        String res = this.mvc.perform(post("/internal/shops/0/products/2532/onsales")
+        String res = this.mvc.perform(post("/internal/shops/3/products/2532/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isCreated()).andReturn()
                 .getResponse().getContentAsString();
@@ -326,7 +326,7 @@ public class OnSaleControllerTest {
         vo.setActivityId(5L);
         s = JacksonUtil.toJson(vo);
 
-        res = this.mvc.perform(post("/internal/shops/0/products/2549/onsales")
+        res = this.mvc.perform(post("/internal/shops/2/products/2549/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isOk()).andReturn()
                 .getResponse().getContentAsString();
@@ -346,7 +346,7 @@ public class OnSaleControllerTest {
         s = JacksonUtil.toJson(vo);
 
 
-        res = this.mvc.perform(post("/internal/shops/0/products/2549/onsales")
+        res = this.mvc.perform(post("/internal/shops/2/products/2549/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isBadRequest()).andReturn()
                 .getResponse().getContentAsString();
@@ -366,7 +366,7 @@ public class OnSaleControllerTest {
         s = JacksonUtil.toJson(vo);
 
 
-        res = this.mvc.perform(post("/internal/shops/0/products/999999/onsales")
+        res = this.mvc.perform(post("/internal/shops/3/products/999999/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isNotFound()).andReturn()
                 .getResponse().getContentAsString();

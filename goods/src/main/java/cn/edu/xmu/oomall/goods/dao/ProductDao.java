@@ -25,12 +25,6 @@ public class ProductDao {
     @Autowired
     private ProductPoMapper productMapper;
 
-    @Autowired
-    private RedisUtil redisUtil;
-
-    @Value("${oomall.goods.product.expiretime}")
-    private long productTimeout;
-
     public ReturnObject hasExist(Long productId) {
         try{
             ProductPo po= productMapper.selectByPrimaryKey(productId);
@@ -42,7 +36,6 @@ public class ProductDao {
         }
 
     }
-
 
     public ReturnObject matchProductShop(Long productId, Long shopId) {
         try{
@@ -56,28 +49,4 @@ public class ProductDao {
 
     }
 
-    public ReturnObject getShopIdById(Long id){
-        try{
-            Product ret=(Product) redisUtil.get("p_"+id);
-            if(null!=ret){
-                return new ReturnObject(ret.getId());
-            }
-            ProductPo po= productMapper.selectByPrimaryKey(id);
-
-            if(po == null) {
-                Long shopId=null;
-                return new ReturnObject(shopId);
-            }
-            Product pro=(Product)cloneVo(po,Product.class);
-            redisUtil.set("p_"+pro.getId(),pro,productTimeout);
-
-            return new ReturnObject(pro.getId());
-        }
-        catch(Exception e){
-            logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
-
-
-    }
 }

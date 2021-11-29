@@ -75,10 +75,11 @@ public class OnsaleService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ReturnObject createOnSaleWithoutShopId(Long productId, NewOnSaleAllVo newOnSaleAllVo, Long userId, String userName) {
+    public ReturnObject createOnSaleAll(Long shopId,Long productId, NewOnSaleAllVo newOnSaleAllVo, Long userId, String userName) {
 
         //判断该货品是否存在
         ReturnObject ret=productDao.hasExist(productId);
+
         if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
             return ret;
         }
@@ -86,11 +87,14 @@ public class OnsaleService {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在。");
         }
 
-        ret=productDao.getShopIdById(productId);
+        // 判断该货品是否该商家的
+        ret=productDao.matchProductShop(productId, shopId);
         if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
             return ret;
         }
-        Long shopId = (Long)ret.getData();
+        if (!(boolean)ret.getData()) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE, "该货品不属于该商铺。");
+        }
 
         OnSale bo = (OnSale) cloneVo(newOnSaleAllVo,OnSale.class);
         bo.setShopId(shopId);
