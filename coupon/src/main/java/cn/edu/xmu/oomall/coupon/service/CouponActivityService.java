@@ -483,8 +483,7 @@ public class CouponActivityService {
         // 插入couponOnsale，需要删除活动查商品这个API的redis中activityId, List<onsaleId>的缓存数据
         redisUtils.del(String.format(ONSALEIDLISTKEY, couponActivityId));
 
-        // 插入couponOnsale，需要删除商品查活动这个API的redis中productId, List<activityId>的缓存需要删除，所以需要找到onsale对应的productId
-        // 然后删除1-5第二个api建立的redis索引
+        // 插入couponOnsale，需要删除商品查活动这个API的redis中productId, List<activityId>的缓存需要删除
         redisUtils.del(String.format(COUPONACTIVITYIDLISTKEY, retOnsaleVo.getData().getProduct().getId()));
 
         return new ReturnObject<>(ReturnNo.OK);
