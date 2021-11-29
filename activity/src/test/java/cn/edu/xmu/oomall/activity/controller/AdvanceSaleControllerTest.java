@@ -113,7 +113,7 @@ public class AdvanceSaleControllerTest {
     //1.不添加任何查询条件
     @Test
     @Transactional
-    public void getAllOnlineAdvanceSale1() throws Exception {
+    public void getAllOnlineAdvanceSaleTest1() throws Exception {
         String responseString = this.mvc.perform(get("/advancesales"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -125,7 +125,7 @@ public class AdvanceSaleControllerTest {
     //2.根据productId,beginTime,endTime查询
     @Test
     @Transactional
-    public void getAllOnlineAdvanceSale2() throws Exception {
+    public void getAllOnlineAdvanceSaleTest2() throws Exception {
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new InternalReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.getAllOnsale(null,1L,LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),LocalDateTime.parse("2021-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
         String responseString = mvc.perform(get("/advancesales?productId=1&beginTime=2021-06-21T17:38:20.000Z&endTime=2021-12-29T17:38:20.000Z")
@@ -140,7 +140,7 @@ public class AdvanceSaleControllerTest {
     // 3.根据shopId查询(shopId存在)
     @Test
     @Transactional
-    public void getAllOnlineAdvanceSale3() throws Exception {
+    public void getAllOnlineAdvanceSaleTest3() throws Exception {
         Mockito.when(shopService.getShop(1L)).thenReturn(new InternalReturnObject<>(new ShopInfoVo(1L,"OOMALL自营商铺")));
         String responseString = mvc.perform(get("/advancesales?shopId=1")
                 .contentType("application/json;charset=UTF-8"))
@@ -154,7 +154,7 @@ public class AdvanceSaleControllerTest {
     // 4.根据shopId查询(shopId不存在)
     @Test
     @Transactional
-    public void getAllOnlineAdvanceSale4() throws Exception {
+    public void getAllOnlineAdvanceSaleTest4() throws Exception {
         Mockito.when(shopService.getShop(1L)).thenReturn(new InternalReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST.getCode(),"找不到该商铺"));
         String responseString = mvc.perform(get("/advancesales?shopId=1")
                 .contentType("application/json;charset=UTF-8"))
@@ -165,10 +165,10 @@ public class AdvanceSaleControllerTest {
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
-    //7.输入BeginTime大于endTime
+    //5.输入BeginTime大于endTime
     @Test
     @Transactional
-    public void getAllOnlineAdvanceSale7() throws Exception {
+    public void getAllOnlineAdvanceSaleTest5() throws Exception {
         String responseString = mvc.perform(get("/advancesales?beginTime=2021-12-29T17:38:20.000Z&endTime=2021-06-21T17:38:20.000Z")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect((status().isBadRequest()))
@@ -178,10 +178,10 @@ public class AdvanceSaleControllerTest {
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
-    //8.根据productId,beginTime,endTime查询，没有查到
+    //6.根据productId,beginTime,endTime查询，没有查到
     @Test
     @Transactional
-    public void getAllOnlineAdvanceSale8() throws Exception {
+    public void getAllOnlineAdvanceSaleTest6() throws Exception {
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new InternalReturnObject<>(new PageInfo<>(list2));
         Mockito.when(goodsService.getAllOnsale(null,1L,LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),LocalDateTime.parse("2021-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
         String responseString = mvc.perform(get("/advancesales?productId=1&beginTime=2021-06-21T17:38:20.000Z&endTime=2021-12-29T17:38:20.000Z")
@@ -201,7 +201,7 @@ public class AdvanceSaleControllerTest {
     //1.查询activityid为1的预售活动的详细信息，成功查到
     @Test
     @Transactional
-    public void getAdvanceSaleDetails() throws Exception {
+    public void getOnlineAdvanceSaleInfoTest1() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject=new InternalReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.getShopOnsaleInfo(4L,1L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
@@ -218,7 +218,7 @@ public class AdvanceSaleControllerTest {
     //2.查询activityid为1的预售活动的详细信息，OnSale中找不到
     @Test
     @Transactional
-    public void getAdvanceSaleDetails2() throws Exception {
+    public void getOnlineAdvanceSaleInfoTest2() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
         InternalReturnObject<PageInfo<OnSaleInfoVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>());
         Mockito.when(goodsService.getShopOnsaleInfo(4L,11L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
@@ -233,7 +233,7 @@ public class AdvanceSaleControllerTest {
     //3.查询activityid为1的预售活动的详细信息，OnSale表查到，advanceSale表查不到
     @Test
     @Transactional
-    public void getAdvanceSaleDetails3() throws Exception {
+    public void getOnlineAdvanceSaleInfoTest3() throws Exception {
         InternalReturnObject<PageInfo<OnSaleInfoVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>(list4));
         Mockito.when(goodsService.getShopOnsaleInfo(4L,11L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
         String responseString = mvc.perform(get("/advancesales/11"))
@@ -246,7 +246,7 @@ public class AdvanceSaleControllerTest {
 
     //4.查询activityid为1的预售活动的详细信息，在redis中查到advancesale，该活动已下线
     @Test
-    public void getAdvanceSaleDetailsTest4() throws Exception {
+    public void getOnlineAdvanceSaleInfoTest4() throws Exception {
         Mockito.when(redisUtil.get("advanceSale_11")).thenReturn("{\"@class\":\"cn.edu.xmu.oomall.activity.model.bo.AdvanceSale\",\"id\":11,\"shop\":null,\"name\":\"预售活动11\",\"payTime\":\"2021-11-12 15:04:04.000\",\"advancePayPrice\":100,\"creatorId\":1,\"createName\":\"zheng5d\",\"modifierId\":1,\"modiName\":\"zheng5d\",\"state\":2}");
         InternalReturnObject<PageInfo<OnSaleInfoVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>(list3));
         Mockito.when(goodsService.getShopOnsaleInfo(4L,11L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
@@ -525,5 +525,4 @@ public class AdvanceSaleControllerTest {
         String expected="{\"errno\":504,\"errmsg\":\"活动不存在\"}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
-
 }
