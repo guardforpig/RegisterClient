@@ -413,7 +413,7 @@ public class ShopControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":968,\"data\":null,\"errmsg\":\"店铺尚有支付未清算完毕\"}";
+        expected = "{\"errno\":968,\"errmsg\":\"店铺尚有支付未清算完毕\"}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
 
@@ -449,7 +449,7 @@ public class ShopControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":507,\"data\":null,\"errmsg\":\"商铺处于关闭态\"}";
+        expected = "{\"errno\":507,\"errmsg\":\"商铺处于关闭态\"}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
 
@@ -528,7 +528,7 @@ public class ShopControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
+        expected = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
         JSONAssert.assertEquals(expected, responseString, false);
     }
 
