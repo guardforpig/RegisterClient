@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.goods.GoodsApplication;
 import cn.edu.xmu.oomall.goods.constant.Constants;
+import cn.edu.xmu.oomall.goods.dao.OnSaleDao;
 import cn.edu.xmu.oomall.goods.model.vo.ModifyOnSaleVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleAllVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest(classes = GoodsApplication.class)
 public class OnSaleControllerTest {
+    private Logger logger = LoggerFactory.getLogger(OnSaleControllerTest.class);
 
     @Autowired
     protected WebApplicationContext wac;
