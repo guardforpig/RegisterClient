@@ -50,7 +50,7 @@ public class GroupOnActivityController {
     }
 
 
-    @Audit
+    @Audit(departName = "shops")
     @ApiOperation(value = "查询所有上线态团购活动", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token",
@@ -74,7 +74,7 @@ public class GroupOnActivityController {
     }
 
 
-    @Audit
+    @Audit(departName = "shops")
     @ApiOperation(value = "查询上线态团购活动详情", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token",
@@ -94,7 +94,7 @@ public class GroupOnActivityController {
     }
 
 
-    @Audit
+    @Audit(departName = "shops")
     @ApiOperation(value = "管理员查询商铺的所有状态团购活动", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token",
@@ -119,7 +119,7 @@ public class GroupOnActivityController {
     }
 
 
-    @Audit
+    @Audit(departName = "shops")
     @ApiOperation(value = "管理员新增团购活动", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token", required = true),
@@ -146,7 +146,7 @@ public class GroupOnActivityController {
         return Common.decorateReturnObject(ret);
     }
 
-    @Audit
+    @Audit(departName = "shops")
     @ApiOperation(value = "管理员查看特定团购活动详情", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token",
