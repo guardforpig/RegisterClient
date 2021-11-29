@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 @ApiModel(value = "Shop视图")
 public class ShopVo {
-    private Long id;
     @NotBlank(message = "商铺名不能为空")
     @ApiModelProperty(value = "shop名称")
     private String name;
