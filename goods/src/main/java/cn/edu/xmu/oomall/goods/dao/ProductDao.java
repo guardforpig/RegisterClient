@@ -42,20 +42,28 @@ import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
  */
 @Repository
 public class ProductDao {
-    private static final Logger logger = LoggerFactory.getLogger(ProductDao.class);
+    private Logger logger = LoggerFactory.getLogger(OnSaleDao.class);
+
     @Autowired
-    private ProductPoMapper productPoMapper;
-    @Autowired
-    private ProductDraftPoMapper productDraftPoMapper;
+    private ProductPoMapper productMapper;
+
     @Autowired
     private RedisUtil redisUtil;
+
     @Value("${oomall.goods.product.expiretime}")
     private long productTimeout;
+
+    
+    
+   
+    @Autowired
+    private ProductDraftPoMapper productDraftPoMapper;
+   
     public final static String GOODSKEY="goods_%d";
 
     public ReturnObject hasExist(Long productId) {
         try{
-            ProductPo po= productPoMapper.selectByPrimaryKey(productId);
+            ProductPo po= productMapper.selectByPrimaryKey(productId);
             return new ReturnObject(null != po) ;
         }
         catch(Exception e){
@@ -68,7 +76,7 @@ public class ProductDao {
 
     public ReturnObject matchProductShop(Long productId, Long shopId) {
         try{
-            ProductPo productPo=productPoMapper.selectByPrimaryKey(productId);
+            ProductPo productPo=productMapper.selectByPrimaryKey(productId);
             return new ReturnObject(shopId.equals(productPo.getShopId())) ;
         }
         catch (Exception e) {
@@ -84,7 +92,7 @@ public class ProductDao {
             if(null!=ret){
                 return new ReturnObject(ret.getId());
             }
-            ProductPo po= productPoMapper.selectByPrimaryKey(id);
+            ProductPo po= productMapper.selectByPrimaryKey(id);
 
             if(po == null) {
                 Long shopId=null;
@@ -117,7 +125,7 @@ public class ProductDao {
             ProductPoExample productPoExample = new ProductPoExample();
             ProductPoExample.Criteria cr = productPoExample.createCriteria();
             cr.andFreightIdEqualTo(fid);
-            List<ProductPo> products = productPoMapper.selectByExample(productPoExample);
+            List<ProductPo> products = productMapper.selectByExample(productPoExample);
             List<ProductVo> productList = new ArrayList<>(products.size());
             for (ProductPo productPo : products) {
                 ProductVo productVo = (ProductVo) cloneVo(productPo, ProductVo.class);
@@ -144,7 +152,7 @@ public class ProductDao {
                 }
             }if(ifValid){
                 productPo.setState(targetState);
-                productPoMapper.updateByPrimaryKeySelective(productPo);
+                productMapper.updateByPrimaryKeySelective(productPo);
                 return new ReturnObject(productPo);
             }else{
                 return new ReturnObject(ReturnNo.STATENOTALLOW,"当前货品状态不支持进行该操作");
@@ -167,10 +175,10 @@ public class ProductDao {
             ProductPo productPo = (ProductPo) cloneVo(productDraftPo, ProductPo.class);
             if (productDraftPo.getProductId() == 0) {
                 productPo.setId(null);
-                productPoMapper.insert(productPo);
+                productMapper.insert(productPo);
             } else {
                 productPo.setId(productDraftPo.getProductId());
-                productPoMapper.updateByPrimaryKey(productPo);
+                productMapper.updateByPrimaryKey(productPo);
             }
             String key = String.format(GOODSKEY, productPo.getGoodsId());
             redisUtil.del(key);
@@ -185,7 +193,7 @@ public class ProductDao {
         ProductPoExample productPoExample = new ProductPoExample();
         ProductPoExample.Criteria cr = productPoExample.createCriteria();
         cr.andGoodsIdEqualTo(id);
-        List<ProductPo> products = productPoMapper.selectByExample(productPoExample);
+        List<ProductPo> products = productMapper.selectByExample(productPoExample);
         List<Product> productList = new ArrayList<>(products.size());
         for (ProductPo productPo : products) {
             productList.add((Product) cloneVo(productPo, Product.class));
@@ -198,10 +206,10 @@ public class ProductDao {
         cr.andGoodsIdEqualTo(id);
         ProductPo productPo=new ProductPo();
         productPo.setGoodsId(newId);
-        return productPoMapper.updateByExampleSelective(productPo,productPoExample);
+        return productMapper.updateByExampleSelective(productPo,productPoExample);
     }
     public Product getProduct(Long id){
-        ProductPo productPo=productPoMapper.selectByPrimaryKey(id);
+        ProductPo productPo=productMapper.selectByPrimaryKey(id);
         return (Product) Common.cloneVo(productPo,Product.class);
     }
     public ProductDraftPo getProductDraft(Long id){
