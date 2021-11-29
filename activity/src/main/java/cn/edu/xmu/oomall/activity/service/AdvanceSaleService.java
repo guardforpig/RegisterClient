@@ -286,7 +286,7 @@ public class AdvanceSaleService {
         AdvanceSale advanceSaleBo = (AdvanceSale) Common.cloneVo(advanceSaleVo, AdvanceSale.class);
         advanceSaleBo.setState(AdvanceSaleState.DRAFT.getCode());
 
-        //判断商铺是否存在
+        //先判断商铺是否存在
         InternalReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
         if (shopVoReturnObject.getData() == null) {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
@@ -302,9 +302,9 @@ public class AdvanceSaleService {
             InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList2 = goodsService.getAllOnsale(shopId, id, advanceSaleVo.getBeginTime(), advanceSaleVo.getEndTime(), 1, (int) total);
             list=onSaleList2.getData().getList();
         }
+        //判断是否有销售时间和预售活动时间冲突的OnSale
         if (advanceSaleVo.getBeginTime() != null && advanceSaleVo.getEndTime() != null) {
             for (SimpleOnSaleInfoVo vo : list) {
-                //若活动的结束时间早于Onsale的开始时间，或者活动的开始时间晚于Onsale的结束时间，则时间不冲突。否则时间冲突。
                 if (!(advanceSaleVo.getEndTime().isBefore(vo.getBeginTime()) || advanceSaleVo.getBeginTime().isAfter(vo.getEndTime()))) {
                     return new ReturnObject<>(ReturnNo.GOODS_PRICE_CONFLICT,"商品销售时间冲突");
                 }
@@ -313,10 +313,12 @@ public class AdvanceSaleService {
 
         //新增记录到OnSale表
         InternalReturnObject internalReturnObject=addOnSale(shopId,id, advanceSaleVo);
+
         //新增OnSale表失败
         if(internalReturnObject.getData()==null){
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,internalReturnObject.getErrmsg());
         }
+
         //新增记录到AdvanceSale表
         ReturnObject returnObject = advanceSaleDao.addAdvanceSale(loginUserId, loginUerName, advanceSaleBo);
         if(returnObject.getData()==null){
@@ -328,7 +330,7 @@ public class AdvanceSaleService {
 
     /**
      * 调用GoodsService接口
-     * 先根据商铺号shopId和活动id找SimpleOnsaleInfo，获取Onsale的id
+     * 先根据商铺号shopId和活动id找SimpleOnSaleInfo，获取OnSale的id
      * 再根据OnSale的id查找OnSale的详细信息
      * @param shopId
      * @param id
@@ -336,11 +338,12 @@ public class AdvanceSaleService {
      */
     public InternalReturnObject getOnSaleInfo(Long shopId,Long id) {
         SimpleOnSaleInfoVo simpleOnSaleInfoVo = new SimpleOnSaleInfoVo();
-        //AdvanceSale与OnSale是一对一关系，所以根据预售活动id只会查到一个OnSale
+        //根据shopId和预售活动id查找OnSale表，由于预售活动和OnSale是一对一关系，最大只会查到一条OnSale记录
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject=goodsService.getShopOnsaleInfo(shopId,id,null,null,null,1,10);
         if (pageInfoReturnObject.getData().getList() != null) {
             simpleOnSaleInfoVo = pageInfoReturnObject.getData().getList().get(0);
         }
+        //OnSale表中查不到
         else{
             return new InternalReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST.getCode(), "活动不存在");
         }
