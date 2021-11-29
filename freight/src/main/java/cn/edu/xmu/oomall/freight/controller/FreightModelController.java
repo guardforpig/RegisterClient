@@ -4,14 +4,17 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ResponseUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.freight.model.vo.FreightCalculatingPostVo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelInfoVo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelRetVo;
 import cn.edu.xmu.oomall.freight.service.FreightModelService;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
+import cn.edu.xmu.oomall.freight.util.ValidList;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author xucangbai
@@ -26,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Api(value = "运费模板", tags = "运费模板")
 @RestController
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class FreightModelController {
 
@@ -59,7 +65,6 @@ public class FreightModelController {
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "操作的资源id不是自己的对象"), HttpStatus.FORBIDDEN);
         }
         ReturnObject ret=freightModelService.addFreightModel(freightModelInfo, userId, userName);
-        ret = Common.getRetVo(ret, FreightModelRetVo.class);
         return Common.decorateReturnObject(ret);
     }
 
@@ -79,7 +84,6 @@ public class FreightModelController {
                                    @RequestParam(required = false,defaultValue = "1") Integer page,
                                    @RequestParam(required = false,defaultValue = "5") Integer pageSize) {
         ReturnObject ret=freightModelService.showFreightModel(name, page, pageSize);
-        ret = Common.getPageRetVo(ret, FreightModelRetVo.class);
         return Common.decorateReturnObject(ret);
     }
 
@@ -192,4 +196,25 @@ public class FreightModelController {
     }
 
 
+    @ApiOperation(value = "计算一批商品的运费", produces = "application/json;charset=UTF-8")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "rid", value = "地区id", required = true),
+            @ApiImplicitParam(paramType = "body", dataType = "ValidList", name = "items", value = "订单商品的订货详情", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 500, message = "服务器内部错误")
+    })
+    @Audit
+    @PostMapping("/regions/{rid}/price")
+    public Object calculateFreight(@PathVariable Long rid, @Validated @RequestBody ValidList<FreightCalculatingPostVo> items,
+                                   BindingResult bindingResult) {
+        Object fieldErrors = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if (fieldErrors != null) {
+            return fieldErrors;
+        }
+        ReturnObject ret = freightModelService.calculateFreight(rid, items);
+        return Common.decorateReturnObject(ret);
+    }
 }

@@ -11,6 +11,7 @@ import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVoInfo;
 import cn.edu.xmu.oomall.coupon.microservice.ShopFeignService;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,9 +113,11 @@ public class CouponActivityService {
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addCouponActivity(Long userId, String userName, Long shopId, CouponActivityVo couponActivityVo){
-        ReturnObject<Shop>returnObject = shopFeignService.getShopById(shopId);
-        if(!returnObject.getCode().equals(ReturnNo.OK)){
-            return returnObject;
+        InternalReturnObject<Shop> returnObject;
+        try{
+            returnObject = shopFeignService.getShopById(shopId);
+        }catch(Exception e){
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
         Shop shop = returnObject.getData();
         CouponActivity couponActivity = (CouponActivity) Common.cloneVo(couponActivityVo,CouponActivity.class);

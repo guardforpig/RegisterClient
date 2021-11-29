@@ -1,12 +1,8 @@
 package cn.edu.xmu.oomall.goods.dao;
 
-import cn.edu.xmu.oomall.core.model.VoObject;
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
-import cn.edu.xmu.oomall.goods.model.bo.Goods;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.ProductDraftPo;
@@ -51,34 +47,52 @@ public class ProductDao {
     private RedisUtil redisUtil;
     @Value("${oomall.goods.product.expiretime}")
     private long productTimeout;
-    public final static String GOODSKEY="goods_%d";
-    public boolean hasExist(Long productId) {
-        return null != productPoMapper.selectByPrimaryKey(productId);
-    }
-    public boolean matchProductShop(Long productId, Long shopId) {
 
-        ProductPo productPo=productPoMapper.selectByPrimaryKey(productId);
-        return shopId.equals(productPo.getShopId());
+    public ReturnObject hasExist(Long productId) {
+        try{
+            ProductPo po= productMapper.selectByPrimaryKey(productId);
+            return new ReturnObject(null != po) ;
+        }
+        catch(Exception e){
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
+
     }
-    public Long getShopIdById(Long id){
+
+
+    public ReturnObject matchProductShop(Long productId, Long shopId) {
+        try{
+            ProductPo productPo=productMapper.selectByPrimaryKey(productId);
+            return new ReturnObject(shopId.equals(productPo.getShopId())) ;
+        }
+        catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
+
+    }
+
+    public ReturnObject getShopIdById(Long id){
         try{
             Product ret=(Product) redisUtil.get("p_"+id);
             if(null!=ret){
-                return ret.getId();
+                return new ReturnObject(ret.getId());
             }
-
-            ProductPo po= productPoMapper.selectByPrimaryKey(id);
+            ProductPo po= productMapper.selectByPrimaryKey(id);
 
             if(po == null) {
-                return null;
+                Long shopId=null;
+                return new ReturnObject(shopId);
             }
             Product pro=(Product)cloneVo(po,Product.class);
             redisUtil.set("p_"+pro.getId(),pro,productTimeout);
 
-            return pro.getId();
+            return new ReturnObject(pro.getId());
         }
         catch(Exception e){
-            return null;
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
 
 

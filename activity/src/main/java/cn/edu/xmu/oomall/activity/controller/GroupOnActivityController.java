@@ -11,6 +11,7 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
  */
 @Api(value = "团购活动API")
 @RestController
+@RefreshScope
 @RequestMapping(produces = "application/json;charset=UTF-8")
 public class GroupOnActivityController {
 

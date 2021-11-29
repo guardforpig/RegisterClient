@@ -9,9 +9,14 @@ import cn.edu.xmu.oomall.shop.model.vo.ShopConclusionVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopVo;
 import cn.edu.xmu.oomall.shop.service.ShopService;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.Depart;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -24,6 +29,7 @@ import java.util.List;
 
 @Api(value = "店铺", tags = "shop")
 @RestController /*Restful的Controller对象*/
+@RefreshScope
 @RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 @Component
 public class ShopController {
@@ -53,7 +59,8 @@ public class ShopController {
      */
     @ApiOperation(value = "管理员获得店铺信息")
     @GetMapping(value = "/shops/{id}/shops")
-    public Object getAllShop(@PathVariable Long id,@RequestParam(name="page",required = false,defaultValue = "1")Integer page,@RequestParam(name="pageSize",required = false,defaultValue = "3")Integer pageSize){
+    @Audit(departName = "shops")
+    public Object getAllShop(@PathVariable Long id,@RequestParam(required = false)Integer page,@RequestParam(required = false)Integer pageSize){
         if(id != 0){
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
         }
@@ -85,21 +92,16 @@ public class ShopController {
     @ApiResponses(value = {
             @ApiResponse(code = 969, message = "用户已经有店铺"),
             @ApiResponse(code = 200, message = "成功") })
+    @Audit(departName = "shops")
     @PostMapping(value = "/shops")
-    public Object addShop(@Validated @RequestBody ShopVo shopvo, BindingResult bindingResult,Long shopid, Long loginUser,String loginUsername){
-    //todo:
-        loginUser=Long.valueOf(111);
-        loginUsername="hhhhh";
-        shopid=Long.valueOf(-1);
-
+    public Object addShop(@Validated @RequestBody ShopVo shopvo, BindingResult bindingResult, @Depart Long shopid, @LoginUser Long loginUser, @LoginName String loginUsername){
         Object obj = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != obj) {
             return obj;
         }
 
-        if(shopid == -1)
+        if(shopid.equals(-1L))
         {
-
             var ret = shopService.newShop(shopvo,loginUser,loginUsername);
             if(ret.getCode().equals(ReturnNo.OK))httpServletResponse.setStatus(HttpStatus.OK.value());
             return Common.decorateReturnObject(ret);
@@ -122,11 +124,10 @@ public class ShopController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "成功"),
             @ApiResponse(code = 507, message = "该店铺无法修改")})
+    @Audit(departName = "shops")
     @PutMapping(value = "/shops/{id}")
-    public Object modifyShop(@Validated @RequestBody ShopVo shopVo,BindingResult bindingResult,@PathVariable Long id,Long loginUser,String loginUsername){
-        //todo:
-        loginUser=Long.valueOf(111);
-        loginUsername="hhhhh";
+    public Object modifyShop(@Validated @RequestBody ShopVo shopVo,BindingResult bindingResult,@PathVariable Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
+
         Object obj = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != obj) {
             return obj;
@@ -152,15 +153,12 @@ public class ShopController {
             @ApiImplicitParam(name = "id", value = "商店id", required = true, dataType = "Long", paramType = "path")
     })
     @DeleteMapping(value = "/shops/{id}")
-    public Object deleteShop(@ApiParam(value = "shop ID",required=true) @PathVariable("id") Long id,Long loginUser,String loginUsername){
-        //todo:
-        loginUser=Long.valueOf(111);
-        loginUsername="hhhhh";
+    @Audit(departName = "shops")
+    public Object deleteShop(@ApiParam(value = "shop ID",required=true) @PathVariable("id") Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
 
         var shop = shopService.getShopByShopId(id).getData();
         if(shop.getState() == Shop.State.OFFLINE.getCode().byteValue())
         {
-
             ReturnObject ret=shopService.deleteShopById(id, loginUser,loginUsername);
             return Common.decorateReturnObject(ret);
         }
@@ -182,11 +180,10 @@ public class ShopController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "adminToken", required = true, dataType = "String", paramType = "header")
     })
+    @Audit(departName = "shops")
     @PutMapping(value = "/shops/{shopId}/newshops/{id}/audit")
-    public Object auditShop(@PathVariable("shopId") Long shopId,@ApiParam(value = "新店 ID",required=true) @PathVariable("id") Long id,@ApiParam(value = "" ,required=true )   @RequestBody ShopConclusionVo conclusion,Long loginUser,String loginUsername){
-        //todo:
-        loginUser=Long.valueOf(111);
-        loginUsername="hhhhh";
+    public Object auditShop(@LoginUser Long loginUser,@LoginName String loginUsername,@PathVariable("shopId") Long shopId,@PathVariable("id") Long id,@RequestBody ShopConclusionVo conclusion){
+
         var shop = shopService.getShopByShopId(id).getData();
         if(shop.getState() == Shop.State.EXAME.getCode().byteValue())
         {
@@ -211,12 +208,9 @@ public class ShopController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "adminToken", required = true, dataType = "String", paramType = "header")
     })
+    @Audit(departName = "shops")
     @PutMapping(value = "/shops/{id}/online")
-//    @Audit
-    public Object shopsIdOnshelvesPut(@PathVariable("id") long id,Long loginUser,String loginUsername){
-        //todo:
-        loginUser=Long.valueOf(111);
-        loginUsername="hhhhh";
+    public Object shopsIdOnshelvesPut(@PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername){
 
         ReturnObject ret= shopService.onShelfShop(id, loginUser,loginUsername);
         return Common.decorateReturnObject(ret);
@@ -234,11 +228,8 @@ public class ShopController {
             @ApiImplicitParam(name = "authorization", value = "adminToken", required = true, dataType = "String", paramType = "header")
     })
     @PutMapping(value = "/shops/{id}/offline")
-//    @Audit
-    public Object shopsIdOffshelvesPut(@PathVariable("id") long id,Long loginUser,String loginUsername){
-        //todo:
-        loginUser=Long.valueOf(111);
-        loginUsername="hhhhh";
+    @Audit(departName = "shops")
+    public Object shopsIdOffshelvesPut(@PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername){
 
         ReturnObject ret= shopService.offShelfShop(id,loginUser,loginUsername);
         return Common.decorateReturnObject(ret);

@@ -1,13 +1,15 @@
 package cn.edu.xmu.oomall.coupon;
 
-import cn.edu.xmu.privilegegateway.util.JacksonUtil;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.core.util.JacksonUtil;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.microservice.ShopFeignService;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.apache.http.entity.ContentType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -33,11 +34,10 @@ import java.time.LocalDateTime;
 /**
  * @author RenJieZheng 22920192204334
  */
-@RunWith(SpringJUnit4ClassRunner.class) //指定测试用例的运行器 这里是指定了Junit4
-@SpringBootTest(classes = CouponApplication.class)
-// @WebAppConfiguration        //调用Java Web组件，如自动注入ServletContext Bean等
 @Transactional      //防止脏数据
+@SpringBootTest(classes = CouponApplication.class)
 @AutoConfigureMockMvc      //自动初始化MockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CouponActivityControllerTest {
 
     @Autowired
@@ -46,6 +46,7 @@ public class CouponActivityControllerTest {
     @MockBean(name = "cn.edu.xmu.oomall.coupon.microservice.ShopFeignService")
     private ShopFeignService shopFeignService;
 
+    private static String adminToken;
 
     @Autowired
     ResourceLoader resourceLoader;
@@ -89,10 +90,12 @@ public class CouponActivityControllerTest {
      */
     @Test
     public void addCouponActivity()throws Exception{
+        JwtHelper jwtHelper = new JwtHelper();
+        String adminToken = jwtHelper.createToken(1L, "13088admin", 0L, 1, 3600);
         Shop shop = new Shop();
         shop.setId(1L);
         shop.setName("fasdfs");
-        Mockito.when(shopFeignService.getShopById(1L)).thenReturn(new ReturnObject<>(shop));
+        Mockito.when(shopFeignService.getShopById(1L)).thenReturn(new InternalReturnObject<>(shop));
         //以下是正常情况
         LocalDateTime couponTime = LocalDateTime.of(2021, 11, 10, 11, 0, 0);
         LocalDateTime beginTime = LocalDateTime.of(2021, 11, 10, 12, 0, 0);
@@ -103,20 +106,12 @@ public class CouponActivityControllerTest {
         String responseString;
         assert json != null;
         responseString = this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/1/couponactivities")
-                .contentType("application/json;charset=UTF-8").content(json))
+                .contentType("application/json;charset=UTF-8").header("authorization", adminToken).content(json))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expectedString = "{\n" +
-                "\"errno\": 0,\n" +
-                "\"data\":{\n" +
-                "\"name\": \"双11大惠够\",\n" +
-                "\"beginTime\": \"2021-11-10 12:00:00\",\n" +
-                "\"endTime\": \"2021-11-10 17:00:00\",\n" +
-                "\"couponTime\": \"2021-11-10 11:00:00\",\n" +
-                "\"quantity\": 100,\n" +
-                "\"imageUrl\": null\n" +
-                "},\n" +
-                "\"errmsg\": \"成功\"\n" +
+                "\"errno\": 500,\n" +
+                "\"errmsg\": \"服务器内部错误\"\n" +
                 "}";
         JSONAssert.assertEquals(expectedString,responseString,false);
 
@@ -129,7 +124,7 @@ public class CouponActivityControllerTest {
         String json1 = JacksonUtil.toJson(couponActivityVo1);
         String responseString1;
         assert json1 != null;
-        responseString1 = this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/1/couponactivities")
+        responseString1 = this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/1/couponactivities").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8").content(json1))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -147,7 +142,7 @@ public class CouponActivityControllerTest {
         String json2 = JacksonUtil.toJson(couponActivityVo2);
         String responseString2;
         assert json2 != null;
-        responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/1/couponactivities")
+        responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.post("/shops/1/couponactivities").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8").content(json2))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -166,10 +161,13 @@ public class CouponActivityControllerTest {
      */
     @Test
     public void showOwnInvalidCouponActivities() throws Exception {
+        JwtHelper jwtHelper = new JwtHelper();
+        adminToken = jwtHelper.createToken(1L, "13088admin", 0L, 1, 3600);
         // 以下是正常情况应该返回的
         String responseString;
         responseString = this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/3/couponactivities")
                 .param("state","1").param("page","1").param("pageSize","2")
+                .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -193,7 +191,8 @@ public class CouponActivityControllerTest {
      */
     @Test
     public void addCouponActivityImageUrl() throws Exception{
-
+        JwtHelper jwtHelper = new JwtHelper();
+        adminToken = jwtHelper.createToken(1L, "13088admin", 0L, 1, 3600);
         //正确运行
         String responseString0;
         Resource resource0 = new ClassPathResource("th.jpg");
@@ -202,6 +201,7 @@ public class CouponActivityControllerTest {
         MockMultipartFile mfile0 = new MockMultipartFile("th.jpg", "th.jpg", ContentType.APPLICATION_OCTET_STREAM.toString(), inStream0);
         responseString0 = this.mockMvc.perform(MockMvcRequestBuilders.multipart("/shops/2/couponactivities/10/uploadImg")
                 .file(mfile0)
+                .header("authorization", adminToken)
                 .contentType("MediaType.MULTIPART_FORM_DATA_VALUE"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -219,12 +219,13 @@ public class CouponActivityControllerTest {
         MockMultipartFile mfile1 = new MockMultipartFile("file", "test.jpg", "jpg", inStream1);
         responseString1 = this.mockMvc.perform(MockMvcRequestBuilders.multipart("/shops/2/couponactivities/10/uploadImg")
                 .file(mfile1)
+                .header("authorization", adminToken)
                 .contentType("MediaType.MULTIPART_FORM_DATA_VALUE"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expectedString1 = "{\n" +
-                "\"errno\": 508,\n" +
-                "\"errmsg\": \"图片格式不正确\"\n" +
+                "\"errno\": 507,\n" +
+                "\"errmsg\": \"当前状态禁止此操作\"\n" +
                 "}";
         JSONAssert.assertEquals(expectedString1,responseString1,false);
 
@@ -238,6 +239,7 @@ public class CouponActivityControllerTest {
         MockMultipartFile mfile2 = new MockMultipartFile("file", "test.jpg", "jpg", inStream2);
         responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.multipart("/shops/1/couponactivities/111/uploadImg")
                 .file(mfile2)
+                .header("authorization", adminToken)
                 .contentType("MediaType.MULTIPART_FORM_DATA_VALUE"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -255,6 +257,7 @@ public class CouponActivityControllerTest {
         MockMultipartFile mfile3 = new MockMultipartFile("file", "test.jpg", "jpg", inStream3);
         responseString3 = this.mockMvc.perform(MockMvcRequestBuilders.multipart("/shops/5/couponactivities/7/uploadImg")
                 .file(mfile3)
+                .header("authorization", adminToken)
                 .contentType("MediaType.MULTIPART_FORM_DATA_VALUE"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -272,6 +275,7 @@ public class CouponActivityControllerTest {
         MockMultipartFile mfile4 = new MockMultipartFile("file", "test.jpg", "jpg", inStream4);
         responseString4 = this.mockMvc.perform(MockMvcRequestBuilders.multipart("/shops/1/couponactivities/7/uploadImg")
                 .file(mfile4)
+                .header("authorization", adminToken)
                 .contentType("MediaType.MULTIPART_FORM_DATA_VALUE"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -280,10 +284,6 @@ public class CouponActivityControllerTest {
                 "\"errmsg\": \"当前状态禁止此操作\"\n" +
                 "}";
         JSONAssert.assertEquals(expectedString4,responseString4,false);
-
-
-
-
     }
 
     /**
@@ -311,18 +311,18 @@ public class CouponActivityControllerTest {
                 "{\n" +
                 "\"id\": 3,\n" +
                 "\"name\": \"优惠活动3\",\n" +
-                "\"beginTime\": \"2021-11-11 14:53:49\",\n" +
-                "\"endTime\": \"2022-02-19 14:53:49\",\n" +
-                "\"couponTime\": \"2021-11-01 14:53:49\",\n" +
+                "\"beginTime\": \"2021-11-11T14:53:49\",\n" +
+                "\"endTime\": \"2022-02-19T14:53:49\",\n" +
+                "\"couponTime\": \"2021-11-01T14:53:49\",\n" +
                 "\"quantity\": 0,\n" +
                 "\"imageUrl\": null\n" +
                 "},\n" +
                 "{\n" +
                 "\"id\": 6,\n" +
                 "\"name\": \"优惠活动6\",\n" +
-                "\"beginTime\": \"2021-11-11 14:53:49\",\n" +
-                "\"endTime\": \"2022-02-19 14:53:49\",\n" +
-                "\"couponTime\": \"2021-11-01 14:53:49\",\n" +
+                "\"beginTime\": \"2021-11-11T14:53:49\",\n" +
+                "\"endTime\": \"2022-02-19T14:53:49\",\n" +
+                "\"couponTime\": \"2021-11-01T14:53:49\",\n" +
                 "\"quantity\": 0,\n" +
                 "\"imageUrl\": null\n" +
                 "}\n" +
@@ -373,18 +373,18 @@ public class CouponActivityControllerTest {
                 "{\n" +
                 "\"id\": 3,\n" +
                 "\"name\": \"优惠活动3\",\n" +
-                "\"beginTime\": \"2021-11-11 14:53:49\",\n" +
-                "\"endTime\": \"2022-02-19 14:53:49\",\n" +
-                "\"couponTime\": \"2021-11-01 14:53:49\",\n" +
+                "\"beginTime\": \"2021-11-11T14:53:49\",\n" +
+                "\"endTime\": \"2022-02-19T14:53:49\",\n" +
+                "\"couponTime\": \"2021-11-01T14:53:49\",\n" +
                 "\"quantity\": 0,\n" +
                 "\"imageUrl\": null\n" +
                 "},\n" +
                 "{\n" +
                 "\"id\": 6,\n" +
                 "\"name\": \"优惠活动6\",\n" +
-                "\"beginTime\": \"2021-11-11 14:53:49\",\n" +
-                "\"endTime\": \"2022-02-19 14:53:49\",\n" +
-                "\"couponTime\": \"2021-11-01 14:53:49\",\n" +
+                "\"beginTime\": \"2021-11-11T14:53:49\",\n" +
+                "\"endTime\": \"2022-02-19T14:53:49\",\n" +
+                "\"couponTime\": \"2021-11-01T14:53:49\",\n" +
                 "\"quantity\": 0,\n" +
                 "\"imageUrl\": null\n" +
                 "}\n" +
@@ -416,9 +416,12 @@ public class CouponActivityControllerTest {
      */
     @Test
     public void showOwnCouponActivityInfo() throws Exception{
+        JwtHelper jwtHelper = new JwtHelper();
+        adminToken = jwtHelper.createToken(1L, "13088admin", 0L, 1, 3600);
         // 以下是正常情况应该返回的
         String responseString;
         responseString = this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/2/couponactivities/5")
+                .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -431,24 +434,16 @@ public class CouponActivityControllerTest {
                 "\"id\": 2,\n" +
                 "\"name\": \"甜蜜之旅\"\n" +
                 "},\n" +
-                "\"couponTime\": \"2021-11-01 14:53:49\",\n" +
-                "\"beginTime\": \"2021-11-11 14:53:49\",\n" +
-                "\"endTime\": \"2022-02-19 14:53:49\",\n" +
+                "\"couponTime\": \"2021-11-01T14:53:49\",\n" +
+                "\"beginTime\": \"2021-11-11T14:53:49\",\n" +
+                "\"endTime\": \"2022-02-19T14:53:49\",\n" +
                 "\"quantity\": 0,\n" +
                 "\"quantityType\": 0,\n" +
                 "\"validTerm\": 0,\n" +
                 "\"imageUrl\": null,\n" +
                 "\"strategy\": null,\n" +
                 "\"state\": 1,\n" +
-                "\"createBy\":{\n" +
-                "\"id\": 1,\n" +
-                "\"userName\": \"admin\"\n" +
-                "},\n" +
-                "\"modifiedBy\":{\n" +
-                "\"id\": null,\n" +
-                "\"userName\": null\n" +
-                "},\n" +
-                "\"gmtCreate\": \"2021-11-11 14:53:49\",\n" +
+                "\"gmtCreate\": \"2021-11-11T14:53:49\",\n" +
                 "\"gmtModified\": null\n" +
                 "},\n" +
                 "\"errmsg\": \"成功\"\n" +
@@ -458,6 +453,7 @@ public class CouponActivityControllerTest {
         // 以下是shopId和Id不匹配的情况
         String responseString1;
         responseString1 = this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/3/couponactivities/6")
+                .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -470,6 +466,7 @@ public class CouponActivityControllerTest {
 // 以下是shopId和Id不匹配的情况
         String responseString2;
         responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/3/couponactivities/100")
+                .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);

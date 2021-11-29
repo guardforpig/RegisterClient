@@ -4,10 +4,10 @@ import cn.edu.xmu.oomall.comment.mapper.CommentPoMapper;
 import cn.edu.xmu.oomall.comment.model.bo.Comment;
 import cn.edu.xmu.oomall.comment.model.po.CommentPo;
 import cn.edu.xmu.oomall.comment.model.po.CommentPoExample;
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -49,15 +49,15 @@ public class CommentDao {
      * @param commentPo
      * @return
      */
-    public ReturnObject insertComment(CommentPo commentPo){
+    public InternalReturnObject insertComment(CommentPo commentPo){
         try{
             int ret=commentPoMapper.insertSelective(commentPo);
             if(ret==0){
-                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+                return new InternalReturnObject(ReturnNo.FIELD_NOTVALID);
             }
-            return new ReturnObject(commentPo);
+            return new InternalReturnObject(commentPo);
         }catch (Exception e){
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
+            return new InternalReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
     }
 
@@ -108,8 +108,7 @@ public class CommentDao {
     /**
      * 修改评论状态
      */
-    public ReturnObject updateCommentState(Comment comment){
-        CommentPo commentPo = (CommentPo) Common.cloneVo(comment, CommentPo.class);
+    public ReturnObject updateCommentState(CommentPo commentPo){
         int ret;
         try{
             ret=commentPoMapper.updateByPrimaryKeySelective(commentPo);

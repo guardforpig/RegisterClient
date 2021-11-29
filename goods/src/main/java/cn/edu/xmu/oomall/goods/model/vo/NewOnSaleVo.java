@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.goods.model.vo;
 
+import cn.edu.xmu.oomall.goods.constant.Constants;
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -21,12 +22,10 @@ public class NewOnSaleVo {
     @Min(0)
     private Long price;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd HH:mm:ss.SSS" )
+    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
     private LocalDateTime beginTime;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd HH:mm:ss.SSS" )
+    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
     private LocalDateTime endTime;
 
     @Min(1)
