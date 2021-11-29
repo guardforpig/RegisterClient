@@ -2,7 +2,6 @@ package cn.edu.xmu.oomall.coupon.service;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
@@ -12,6 +11,7 @@ import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVoInfo;
 import cn.edu.xmu.oomall.coupon.microservice.ShopFeignService;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
