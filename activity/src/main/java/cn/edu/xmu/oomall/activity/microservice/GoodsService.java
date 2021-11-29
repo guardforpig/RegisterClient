@@ -62,7 +62,7 @@ public interface GoodsService {
      * @author Jiawei Zheng
      */
     @GetMapping("/internal/onsales")
-    InternalReturnObject getAllOnsale(@RequestParam Long shopId,
+    InternalReturnObject getAllOnSale(@RequestParam Long shopId,
                                       @RequestParam Long productId,
                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime endTime,
@@ -70,7 +70,7 @@ public interface GoodsService {
                                       @RequestParam Integer pageSize);
 
     @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
-    InternalReturnObject getShopOnsaleInfo(@PathVariable("shopId")Long did,
+    InternalReturnObject getShopOnSaleInfo(@PathVariable("shopId")Long did,
                                            @PathVariable("id")Long id,
                                            @RequestParam("state")Byte state,
                                            @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
