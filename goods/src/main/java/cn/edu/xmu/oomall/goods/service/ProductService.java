@@ -24,6 +24,9 @@ public class ProductService {
     @Transactional(readOnly = true,rollbackFor=Exception.class)
     public ReturnObject listProductsByFreightId(Long shopId,Long fid,Integer pageNumber, Integer pageSize)
     {
+        if(shopId!=0){
+            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
+        }
         return productDao.listProductsByFreightId(shopId,fid,pageNumber,pageSize) ;
     }
     @Transactional(rollbackFor=Exception.class)
@@ -56,8 +59,8 @@ public class ProductService {
         if(product==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
         }
-        if(shopId!=0&&!product.getShopId().equals(shopId)){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有对该商品进行上架的权限");
+        if(shopId!=0){
+            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
         }
         ReturnObject ret=productDao.alterProductStates(product,(byte)Product.ProductState.ONSHELF.getCode(),(byte)Product.ProductState.OFFSHELF.getCode());
         if(ret.getData()!=null){
@@ -73,8 +76,8 @@ public class ProductService {
         if(product==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
         }
-        if(shopId!=0&&product.getShopId().equals(shopId)){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有对该商品进行下架的权限");
+        if(shopId!=0){
+            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
         }
         return productDao.alterProductStates(product,(byte)Product.ProductState.OFFSHELF.getCode(),(byte)Product.ProductState.ONSHELF.getCode());
     }
@@ -85,8 +88,8 @@ public class ProductService {
         if(product==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
         }
-        if(shopId!=0&&product.getShopId().equals(shopId)){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有对该商品进行解禁的权限");
+        if(shopId!=0){
+            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
         }
         return productDao.alterProductStates(product,(byte)Product.ProductState.OFFSHELF.getCode(),(byte)Product.ProductState.BANNED.getCode());
     }
@@ -97,8 +100,8 @@ public class ProductService {
         if(product==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
         }
-        if(shopId!=0&&product.getShopId().equals(shopId)){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有对该商品进行禁售的权限");
+        if(shopId!=0){
+            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
         }
         return productDao.alterProductStates(product,(byte)Product.ProductState.BANNED.getCode(),(byte)Product.ProductState.OFFSHELF.getCode(),(byte)Product.ProductState.ONSHELF.getCode());
     }

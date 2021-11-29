@@ -2,6 +2,10 @@ package cn.edu.xmu.oomall.goods.dao;
 
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
+import cn.edu.xmu.oomall.goods.model.bo.Goods;
+import cn.edu.xmu.privilegegateway.annotation.model.VoObject;
+import cn.edu.xmu.privilegegateway.annotation.util.Common;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
@@ -47,10 +51,11 @@ public class ProductDao {
     private RedisUtil redisUtil;
     @Value("${oomall.goods.product.expiretime}")
     private long productTimeout;
+    public final static String GOODSKEY="goods_%d";
 
     public ReturnObject hasExist(Long productId) {
         try{
-            ProductPo po= productMapper.selectByPrimaryKey(productId);
+            ProductPo po= productPoMapper.selectByPrimaryKey(productId);
             return new ReturnObject(null != po) ;
         }
         catch(Exception e){
@@ -63,7 +68,7 @@ public class ProductDao {
 
     public ReturnObject matchProductShop(Long productId, Long shopId) {
         try{
-            ProductPo productPo=productMapper.selectByPrimaryKey(productId);
+            ProductPo productPo=productPoMapper.selectByPrimaryKey(productId);
             return new ReturnObject(shopId.equals(productPo.getShopId())) ;
         }
         catch (Exception e) {
@@ -79,7 +84,7 @@ public class ProductDao {
             if(null!=ret){
                 return new ReturnObject(ret.getId());
             }
-            ProductPo po= productMapper.selectByPrimaryKey(id);
+            ProductPo po= productPoMapper.selectByPrimaryKey(id);
 
             if(po == null) {
                 Long shopId=null;
@@ -109,9 +114,6 @@ public class ProductDao {
     {
         try {
             PageHelper.startPage(pageNumber, pageSize, true, true, true);
-            if (shopId != 0) {
-                return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE, "此商铺没有发布货品的权限");
-            }
             ProductPoExample productPoExample = new ProductPoExample();
             ProductPoExample.Criteria cr = productPoExample.createCriteria();
             cr.andFreightIdEqualTo(fid);
@@ -171,10 +173,7 @@ public class ProductDao {
                 productPoMapper.updateByPrimaryKey(productPo);
             }
             String key = String.format(GOODSKEY, productPo.getGoodsId());
-            Goods goods = (Goods) redisUtil.get(key);
-            if (goods != null) {
-                redisUtil.del(key);
-            }
+            redisUtil.del(key);
             productDraftPoMapper.deleteByPrimaryKey(id);
             return new ReturnObject<Product>((Product) cloneVo(productPo, Product.class));
         } catch (Exception e) {

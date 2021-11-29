@@ -11,7 +11,7 @@ import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPo;
 import cn.edu.xmu.oomall.goods.model.po.ProductPoExample;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
-import cn.edu.xmu.privilegegateway.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,10 +113,7 @@ public class GoodsDao {
         GoodsPo goodsPo;
         try {
             String key=String.format(GOODSKEY,id);
-            Goods goods = (Goods) redisUtils.get(key);
-            if (goods != null) {
-                redisUtils.del(key);
-            }
+            redisUtils.del(key);
             goodsPo = goodsPoMapper.selectByPrimaryKey(id);
             if (goodsPo == null) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"商品id不存在");

@@ -8,10 +8,9 @@ import cn.edu.xmu.oomall.goods.model.bo.Goods;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.oomall.goods.service.GoodsService;
 import cn.edu.xmu.oomall.goods.service.ProductService;
-import cn.edu.xmu.privilegegateway.annotation.annotation.Audit;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.annotation.LoginUser;
-import cn.edu.xmu.privilegegateway.aop.PageAspect;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.aspectj.lang.JoinPoint;
@@ -53,12 +52,14 @@ public class GoodsController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "资源不存在"),
             @ApiResponse(code=503,message = "字段不合法"),
-            @ApiResponse(code = 500, message = "服务器内部错误")
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+            @ApiResponse(code=505,message = "操作的资源id不是自己的对象")
+
     })
     @GetMapping("shops/{shopId}/freightmodels/{fid}/products")
     @Audit(departName = "shops")
-    public Object getFreightProducts(@PathVariable("shopId") Long shopId,@PathVariable("fid") Long fid,@RequestParam(value = "page", required = false) Integer page,
-                                     @RequestParam(value = "pageSize", required = false) Integer pageSize,@LoginUser Long loginUserId, @LoginName String loginUserName)
+    public Object getFreightProducts(@PathVariable("shopId") Long shopId, @PathVariable("fid") Long fid, @RequestParam(value = "page", required = false) Integer page,
+                                     @RequestParam(value = "pageSize", required = false) Integer pageSize, @LoginUser Long loginUserId, @LoginName String loginUserName)
     {
         ReturnObject<PageInfo<VoObject>> retVoObject =
                 productService.listProductsByFreightId(shopId,fid, page, pageSize);
@@ -163,7 +164,8 @@ public class GoodsController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "资源不存在"),
-            @ApiResponse(code = 500, message = "服务器内部错误")
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+            @ApiResponse(code=505,message = "操作的资源id不是自己的对象")
     })
     @PutMapping(value="shops/{shopId}/products/{id}/publish")
     @Audit(departName = "shops")
@@ -182,7 +184,8 @@ public class GoodsController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "资源不存在"),
-            @ApiResponse(code = 500, message = "服务器内部错误")
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+            @ApiResponse(code=505,message = "操作的资源id不是自己的对象")
     })
     @PutMapping(value="shops/{shopId}/products/{id}/onshelves")
     @Audit(departName = "shops")
@@ -201,7 +204,8 @@ public class GoodsController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "资源不存在"),
-            @ApiResponse(code = 500, message = "服务器内部错误")
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+            @ApiResponse(code=505,message = "操作的资源id不是自己的对象")
     })
     @PutMapping(value="shops/{shopId}/products/{id}/offshelves")
     @Audit(departName = "shops")
@@ -220,7 +224,8 @@ public class GoodsController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "资源不存在"),
-            @ApiResponse(code = 500, message = "服务器内部错误")
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+            @ApiResponse(code=505,message = "操作的资源id不是自己的对象")
     })
     @PutMapping(value="shops/{shopId}/products/{id}/allow")
     @Audit(departName = "shops")
@@ -239,7 +244,8 @@ public class GoodsController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "资源不存在"),
-            @ApiResponse(code = 500, message = "服务器内部错误")
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+            @ApiResponse(code=505,message = "操作的资源id不是自己的对象")
     })
     @PutMapping(value="shops/{shopId}/products/{id}/prohibit")
     @Audit(departName = "shops")
