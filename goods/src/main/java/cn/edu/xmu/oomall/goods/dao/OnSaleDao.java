@@ -213,6 +213,7 @@ public class OnSaleDao {
 
             Random r = new Random();
             int init = r.nextInt(GROUPNUM);
+
             for (int i = 0; i < GROUPNUM; i++) {
                 String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init + i) % GROUPNUM);
                 List<String> keys = Stream.of(key).collect(Collectors.toList());
@@ -232,19 +233,17 @@ public class OnSaleDao {
 
     public ReturnObject increaseOnSaleQuantity(Long id, Integer quantity) {
         try {
+            // load lua script
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
             script.setScriptSource(new ResourceScriptSource(new ClassPathResource(INCREASE_PATH)));
             script.setResultType(Long.class);
 
-            Random r = new Random();
-            int init = r.nextInt(GROUPNUM);
-
-            // 将新增库存平均分到多个桶
+            // 将新增库存尽量平均分到多个桶
             Integer rest = quantity;
             Integer count = 0;
             Integer incr[] = new Integer[GROUPNUM];
             for (int i = 0; i < GROUPNUM && rest > 0; i++) {
-                Integer sub = 0;
+                Integer sub;
                 if (rest < GROUPNUM) {
                     sub = rest;
                 } else {
@@ -254,6 +253,8 @@ public class OnSaleDao {
                 rest -= sub;
             }
 
+            Random r = new Random();
+            int init = r.nextInt(GROUPNUM);
             for (int i = 0; i < count; i++) {
                 String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init + i) % GROUPNUM);
                 List<String> keys = Stream.of(key).collect(Collectors.toList());
