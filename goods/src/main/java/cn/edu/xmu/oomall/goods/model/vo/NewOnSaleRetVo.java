@@ -29,6 +29,12 @@ public class NewOnSaleRetVo {
     @Min(1)
     private Integer quantity;
 
+    private Long activityId;
+
+    private Long shareActId;
+
+    private Byte type;
+
 
 
 }

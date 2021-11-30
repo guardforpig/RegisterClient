@@ -1,15 +1,12 @@
 package cn.edu.xmu.oomall.activity.microservice;
 
-import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
-import cn.edu.xmu.oomall.activity.model.vo.*;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.activity.microservice.vo.*;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -20,19 +17,13 @@ import java.time.LocalDateTime;
  */
 @FeignClient(name = "Goods")
 public interface GoodsService {
-    @GetMapping("/internal/products/{id}/onsales")
-    ReturnObject<PageInfoVo<SimpleOnSaleVo>> getOnsSalesOfProduct(@PathVariable Long id, @RequestParam Integer page, @RequestParam Integer pageSize);
-
-    @GetMapping("/internal/onsales/{id}")
-    ReturnObject<OnSaleVo> getOnSale(@PathVariable Long id);
-
     @GetMapping("/internal/onsales")
-    InternalReturnObject getOnSalesByProductId(@RequestParam("shopId") Long shopId,
-                                       @RequestParam("productId")Long productId,
-                                       @RequestParam("beginTime") LocalDateTime beginTime,
-                                       @RequestParam("endTime")LocalDateTime endTime,
-                                       @RequestParam("page") Integer page,
-                                       @RequestParam("pageSize") Integer pageSize);
+    InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,
+                                    @RequestParam("productId")Long productId,
+                                    @RequestParam("beginTime") LocalDateTime beginTime,
+                                    @RequestParam("endTime")LocalDateTime endTime,
+                                    @RequestParam("page") Integer page,
+                                    @RequestParam("pageSize") Integer pageSize);
 
     @PutMapping("/internal/shops/{did}/activities/{id}/onsales/online")
     InternalReturnObject onlineOnsale(@PathVariable(value="did") Long shopId, @PathVariable(value="id") Long activityId);
@@ -58,4 +49,35 @@ public interface GoodsService {
     @PostMapping("/shops/{shopId}/products/{id}/onsales")
     InternalReturnObject addOnsale(@PathVariable("shopId") long shopId, @PathVariable("id") long id,
                                  @RequestBody SimpleSaleInfoVo simpleSaleInfoVo);
+
+    /**
+     * @author Jiawei Zheng
+     */
+    @GetMapping("/internal/onsales")
+    InternalReturnObject getAllOnSale(@RequestParam Long shopId,
+                                      @RequestParam Long productId,
+                                      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
+                                      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime endTime,
+                                      @RequestParam Integer page,
+                                      @RequestParam Integer pageSize);
+
+    @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
+    InternalReturnObject getShopOnSaleInfo(@PathVariable("shopId")Long did,
+                                           @PathVariable("id")Long id,
+                                           @RequestParam("state")Byte state,
+                                           @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
+                                           @RequestParam("endTime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
+                                           @RequestParam("page") Integer page,
+                                           @RequestParam("pageSize") Integer pageSize);
+
+    @GetMapping("/internal/onsales/{id}")
+    InternalReturnObject<FullOnSaleVo> getOnSaleById(@PathVariable("id")Long id);
+
+    @GetMapping("/internal/onsales/{id}")
+    InternalReturnObject<FullOnSaleVo> getOnSaleInfo(@PathVariable Long id);
+
+    @PostMapping("/shops/{shopId}/products/{id}/onsales")
+    InternalReturnObject addOnSale(@PathVariable("shopId") long shopId,
+                                   @PathVariable("id") long id,
+                                   @RequestBody OnSaleCreatedVo onSaleCreatedVo);
 }

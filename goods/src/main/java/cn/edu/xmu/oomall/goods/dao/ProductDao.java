@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.goods.dao;
 
+import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
@@ -42,6 +43,7 @@ import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 @Repository
 public class ProductDao {
     private Logger logger = LoggerFactory.getLogger(OnSaleDao.class);
+    private final static String PRODUCT_ID="p_%d";
 
     @Autowired
     private ProductPoMapper productMapper;
@@ -72,7 +74,6 @@ public class ProductDao {
 
     }
 
-
     public ReturnObject matchProductShop(Long productId, Long shopId) {
         try{
             ProductPo productPo=productMapper.selectByPrimaryKey(productId);
@@ -85,29 +86,32 @@ public class ProductDao {
 
     }
 
-    public ReturnObject getShopIdById(Long id){
+    /**
+     * 该方法用于频繁查询onsale详情的api中，故使用redis
+     * @author Zijun Min 22920192204257
+     * @param id
+     * @return 返回的是Product类型
+     */
+    public ReturnObject getProductInfo(Long id){
         try{
-            Product ret=(Product) redisUtil.get("p_"+id);
-            if(null!=ret){
-                return new ReturnObject(ret.getId());
+            String key=String key = String.format(PRODUCT_ID,id);
+            Product product=(Product) redisUtil.get(key);
+            if(null!=product){
+                return new ReturnObject(product);
+            }else {
+                ProductPo productPo = productMapper.selectByPrimaryKey(id);
+                if (productPo == null) {
+                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+                } else {
+                    Product pro=(Product) Common.cloneVo(productPo,Product.class);
+                    redisUtil.set(key,pro,productTimeout);
+                    return new ReturnObject(pro);
+                }
             }
-            ProductPo po= productMapper.selectByPrimaryKey(id);
-
-            if(po == null) {
-                Long shopId=null;
-                return new ReturnObject(shopId);
-            }
-            Product pro=(Product)cloneVo(po,Product.class);
-            redisUtil.set("p_"+pro.getId(),pro,productTimeout);
-
-            return new ReturnObject(pro.getId());
-        }
-        catch(Exception e){
+        }catch (Exception e){
             logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
-
-
     }
     /**
      * @author 黄添悦

@@ -1,10 +1,8 @@
 package cn.edu.xmu.oomall.activity.controller;
 
 import cn.edu.xmu.oomall.activity.ActivityApplication;
-import cn.edu.xmu.oomall.activity.mapper.GroupOnActivityPoMapper;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
-import cn.edu.xmu.oomall.activity.model.po.GroupOnActivityPo;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
