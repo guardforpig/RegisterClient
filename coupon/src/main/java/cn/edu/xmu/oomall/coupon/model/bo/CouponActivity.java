@@ -78,4 +78,5 @@ public class CouponActivity implements Serializable {
     private LocalDateTime gmtModified;
 
 
+
 }
