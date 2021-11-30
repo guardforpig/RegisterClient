@@ -125,6 +125,35 @@ public class CouponControllerTest {
 
     @Test
     @Transactional(rollbackFor = Exception.class)
+    public void testListCouponActivitiesByProductId() throws Exception {
+
+        // 正常
+        String responseString = mvc.perform(get("/products/1550/couponactivities"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectString = "{\"errno\":0,\"data\":{\"total\":8,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null},{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        JSONAssert.assertEquals(expectString, responseString, true);
+
+        // 货品不存在
+        responseString = mvc.perform(get("/products/10000/couponactivities"))
+                .andExpect(status().is5xxServerError())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        expectString = "{\"errno\":500,\"errmsg\":\"服务器内部错误\"}";
+        JSONAssert.assertEquals(expectString, responseString, true);
+
+        // 货品对应的Onsale不在CouponOnsale中
+        responseString = mvc.perform(get("/products/1549/couponactivities"))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
+        JSONAssert.assertEquals(expectString, responseString, true);
+    }
+
+    @Test
+    @Transactional(rollbackFor = Exception.class)
     public void testListOnsalesByCouponActivityId() throws Exception {
         adminToken = jwtHelper.createToken(1L,"admin",1L, 1,3600);
         // 活动不存在
@@ -157,41 +186,10 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":10,\"name\":null,\"imageUrl\":null},{\"id\":100,\"name\":null,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        expectString = "{\"errno\":0,\"data\":{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":null,\"shop\":null,\"product\":{\"id\":10,\"name\":null,\"imageUrl\":null},\"price\":null,\"beginTime\":null,\"endTime\":null,\"quantity\":null,\"type\":null,\"state\":1,\"shareAct\":null,\"createdBy\":null,\"gmtCreate\":null,\"gmtModified\":null,\"modifiedBy\":null},{\"id\":null,\"shop\":null,\"product\":{\"id\":100,\"name\":null,\"imageUrl\":null},\"price\":null,\"beginTime\":null,\"endTime\":null,\"quantity\":null,\"type\":null,\"state\":1,\"shareAct\":null,\"createdBy\":null,\"gmtCreate\":null,\"gmtModified\":null,\"modifiedBy\":null}]}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
     }
 
-
-    @Test
-    @Transactional(rollbackFor = Exception.class)
-    public void testListCouponActivitiesByProductId() throws Exception {
-
-        // 正常
-        String responseString = mvc.perform(get("/products/1550/couponactivities"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expectString = "{\"errno\":0,\"data\":{\"total\":8,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null},{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expectString, responseString, true);
-
-        // 货品不存在
-        responseString = mvc.perform(get("/products/10000/couponactivities"))
-                .andExpect(status().is5xxServerError())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":500,\"errmsg\":\"服务器内部错误\"}";
-        JSONAssert.assertEquals(expectString, responseString, true);
-
-        // 货品对应的Onsale不在CouponOnsale中
-        responseString = mvc.perform(get("/products/1549/couponactivities"))
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
-        JSONAssert.assertEquals(expectString, responseString, true);
-
-
-    }
 
     @Test
     @Transactional(rollbackFor = Exception.class)
