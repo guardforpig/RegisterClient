@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OnSaleInfoVo{
+public class FullOnSaleVo {
 
     @ApiModelProperty(value = "OnsaleId")
     private Long id;

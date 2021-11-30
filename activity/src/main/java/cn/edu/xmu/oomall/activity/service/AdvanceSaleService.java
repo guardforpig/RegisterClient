@@ -262,7 +262,7 @@ public class AdvanceSaleService {
 
         AdvanceSaleRetVo advanceSaleRetVo = (AdvanceSaleRetVo) Common.cloneVo(advanceSaleBo, AdvanceSaleRetVo.class);
 
-        OnSaleInfoVo onSaleInfoVo=(OnSaleInfoVo) internalReturnObject.getData();
+        FullOnSaleVo onSaleInfoVo=(FullOnSaleVo) internalReturnObject.getData();
         advanceSaleRetVo.setShop(onSaleInfoVo.getShop());
         advanceSaleRetVo.setBeginTime(onSaleInfoVo.getBeginTime());
         advanceSaleRetVo.setEndTime(onSaleInfoVo.getEndTime());
@@ -297,12 +297,12 @@ public class AdvanceSaleService {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "找不到对应的销售信息");
         }
         //这里因为返回的对象需要同时从OnSale表和AdvanceSale表拿数据，所以只能用一次cloneVo
-        AdvanceSaleInfoRetVo advanceSaleInfoRetVo = (AdvanceSaleInfoRetVo) Common.cloneVo(advanceSaleBo, AdvanceSaleInfoRetVo.class);
+        FullAdvanceSaleRetVo advanceSaleInfoRetVo = (FullAdvanceSaleRetVo) Common.cloneVo(advanceSaleBo, FullAdvanceSaleRetVo.class);
         advanceSaleInfoRetVo.setCreator(new SimpleUserRetVo(advanceSaleBo.getCreatorId(),advanceSaleBo.getCreatorName()));
         advanceSaleInfoRetVo.setModifier(new SimpleUserRetVo(advanceSaleBo.getModifierId(),advanceSaleBo.getModifierName()));
 
         //将OnSale的字段赋给retVo
-        OnSaleInfoVo onSaleInfoVo=(OnSaleInfoVo) internalReturnObject.getData();
+        FullOnSaleVo onSaleInfoVo=(FullOnSaleVo) internalReturnObject.getData();
         advanceSaleInfoRetVo.setShop(onSaleInfoVo.getShop());
         advanceSaleInfoRetVo.setBeginTime(onSaleInfoVo.getBeginTime());
         advanceSaleInfoRetVo.setEndTime(onSaleInfoVo.getEndTime());
@@ -390,7 +390,7 @@ public class AdvanceSaleService {
         else{
             return new InternalReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST.getCode(), "活动不存在");
         }
-        InternalReturnObject<OnSaleInfoVo> returnObject=goodsService.getOnSaleInfo(simpleOnSaleInfoVo.getId());
+        InternalReturnObject<FullOnSaleVo> returnObject=goodsService.getOnSaleInfo(simpleOnSaleInfoVo.getId());
         return returnObject;
     }
 }

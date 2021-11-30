@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @date 2021-11-26
  */
 @Data
-public class AdvanceSaleInfoRetVo {
+public class FullAdvanceSaleRetVo {
     @ApiModelProperty(value = "预售活动id")
     private Long id;
 

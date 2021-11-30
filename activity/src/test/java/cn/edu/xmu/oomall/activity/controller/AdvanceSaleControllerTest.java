@@ -64,8 +64,8 @@ public class AdvanceSaleControllerTest {
 
     List<SimpleOnSaleInfoVo> list1 = new ArrayList<>();
     List<SimpleOnSaleInfoVo> list2 = new ArrayList<>();
-    List<OnSaleInfoVo> list3 = new ArrayList<>();
-    List<OnSaleInfoVo> list4 = new ArrayList<>();
+    List<FullOnSaleVo> list3 = new ArrayList<>();
+    List<FullOnSaleVo> list4 = new ArrayList<>();
     @BeforeEach
     public void init() {
         df = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, LOCALE);
@@ -82,7 +82,7 @@ public class AdvanceSaleControllerTest {
         vo2.setActivityId(11L);
         list2.add(vo2);
 
-        OnSaleInfoVo vo3=new OnSaleInfoVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
+        FullOnSaleVo vo3=new FullOnSaleVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
                 20L,LocalDateTime.parse("2021-06-21T17:38:20.001Z",df),
                 LocalDateTime.parse("2021-12-29T17:38:20.001Z",df),
                 10L,"3",1L,1L,new SimpleUserRetVo(1L,"zheng5d"),
@@ -90,7 +90,7 @@ public class AdvanceSaleControllerTest {
                 new SimpleUserRetVo(1L,"zheng5d"));
         list3.add(vo3);
 
-        OnSaleInfoVo vo4=new OnSaleInfoVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
+        FullOnSaleVo vo4=new FullOnSaleVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
                 20L,LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),
                 LocalDateTime.parse("2021-12-29T17:38:20.000Z",df),
                 10L,"3",11L,1L,new SimpleUserRetVo(1L,"zheng5d"),
@@ -206,7 +206,7 @@ public class AdvanceSaleControllerTest {
         Mockito.when(shopService.getShop(4L)).thenReturn(new InternalReturnObject<>(new ShopInfoVo(4L,"努力向前")));
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject=new InternalReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.getShopOnSaleInfo(4L,1L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
-        InternalReturnObject<OnSaleInfoVo> returnObject=new InternalReturnObject<>(list3.get(0));
+        InternalReturnObject<FullOnSaleVo> returnObject=new InternalReturnObject<>(list3.get(0));
         Mockito.when(goodsService.getOnSaleInfo(pageInfoReturnObject.getData().getList().get(0).getId())).thenReturn(returnObject);
         String responseString = mvc.perform(get("/advancesales/1"))
                 .andExpect((status().isOk()))
@@ -221,7 +221,7 @@ public class AdvanceSaleControllerTest {
     @Transactional
     public void getOnlineAdvanceSaleInfoTest2() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        InternalReturnObject<PageInfo<OnSaleInfoVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>());
+        InternalReturnObject<PageInfo<FullOnSaleVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>());
         Mockito.when(goodsService.getShopOnSaleInfo(4L,11L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
         String responseString = mvc.perform(get("/advancesales/11"))
                 .andExpect((status().isNotFound()))
@@ -235,7 +235,7 @@ public class AdvanceSaleControllerTest {
     @Test
     @Transactional
     public void getOnlineAdvanceSaleInfoTest3() throws Exception {
-        InternalReturnObject<PageInfo<OnSaleInfoVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>(list4));
+        InternalReturnObject<PageInfo<FullOnSaleVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>(list4));
         Mockito.when(goodsService.getShopOnSaleInfo(4L,11L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
         String responseString = mvc.perform(get("/advancesales/11"))
                 .andExpect((status().isNotFound()))
@@ -249,7 +249,7 @@ public class AdvanceSaleControllerTest {
     @Test
     public void getOnlineAdvanceSaleInfoTest4() throws Exception {
         Mockito.when(redisUtil.get("advanceSale_11")).thenReturn("{\"@class\":\"cn.edu.xmu.oomall.activity.model.bo.AdvanceSale\",\"id\":11,\"shop\":null,\"name\":\"预售活动11\",\"payTime\":\"2021-11-12 15:04:04.000\",\"advancePayPrice\":100,\"creatorId\":1,\"createName\":\"zheng5d\",\"modifierId\":1,\"modiName\":\"zheng5d\",\"state\":2}");
-        InternalReturnObject<PageInfo<OnSaleInfoVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>(list3));
+        InternalReturnObject<PageInfo<FullOnSaleVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>(list3));
         Mockito.when(goodsService.getShopOnSaleInfo(4L,11L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
 
         String responseString = mvc.perform(get("/advancesales/11"))
@@ -464,7 +464,7 @@ public class AdvanceSaleControllerTest {
         Mockito.when(shopService.getShop(4L)).thenReturn(new InternalReturnObject<>(new ShopInfoVo(1L,"OOMALL自营商铺")));
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject=new InternalReturnObject<>(new PageInfo<>(list1));
         Mockito.when(goodsService.getShopOnSaleInfo(4L,1L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
-        InternalReturnObject<OnSaleInfoVo> returnObject=new InternalReturnObject<>(list3.get(0));
+        InternalReturnObject<FullOnSaleVo> returnObject=new InternalReturnObject<>(list3.get(0));
         Mockito.when(goodsService.getOnSaleInfo(pageInfoReturnObject.getData().getList().get(0).getId())).thenReturn(returnObject);
         String responseString = mvc.perform(get("/shops/4/advancesales/1")
                 .header("authorization", adminToken)
@@ -515,7 +515,7 @@ public class AdvanceSaleControllerTest {
         Mockito.when(shopService.getShop(4L)).thenReturn(new InternalReturnObject<>(new ShopInfoVo(1L,"OOMALL自营商铺")));
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject1=new InternalReturnObject<>(new PageInfo<>(list2));
         Mockito.when(goodsService.getShopOnSaleInfo(4L,11L,null,null,null,1,10)).thenReturn(pageInfoReturnObject1);
-        InternalReturnObject<OnSaleInfoVo> returnObject=new InternalReturnObject<>(list3.get(0));
+        InternalReturnObject<FullOnSaleVo> returnObject=new InternalReturnObject<>(list3.get(0));
         Mockito.when(goodsService.getOnSaleInfo(pageInfoReturnObject1.getData().getList().get(0).getId())).thenReturn(returnObject);
         String responseString = mvc.perform(get("/shops/4/advancesales/11")
                 .header("authorization", adminToken)
