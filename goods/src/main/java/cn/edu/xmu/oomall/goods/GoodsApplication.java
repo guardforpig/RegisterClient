@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.goods;
 
+import cn.edu.xmu.privilegegateway.annotation.aop.PageAspect;
 import cn.edu.xmu.privilegegateway.aop.PageAspect;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -19,10 +20,7 @@ import org.springframework.context.annotation.Bean;
 public class GoodsApplication {
 
     
-    @Bean("PageAspect")
-    public PageAspect initPageAspect(){
-        return new PageAspect();
-    }
+
     public static void main(String[] args) {
 
         SpringApplication.run(GoodsApplication.class, args);
