@@ -27,6 +27,8 @@ public class AdvanceSale implements Serializable {
     private String creatorName;
     private Long modifierId;
     private String modifierName;
+    private LocalDateTime gmtCreate;
+    private LocalDateTime gmtModified;
     private Byte state;
 
     public enum state {

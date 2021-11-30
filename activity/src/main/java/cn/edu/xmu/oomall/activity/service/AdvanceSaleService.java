@@ -259,13 +259,17 @@ public class AdvanceSaleService {
         if (internalReturnObject.getData() == null) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "找不到对应的销售信息");
         }
+
+        AdvanceSaleRetVo advanceSaleRetVo = (AdvanceSaleRetVo) Common.cloneVo(advanceSaleBo, AdvanceSaleRetVo.class);
+
         OnSaleInfoVo onSaleInfoVo=(OnSaleInfoVo) internalReturnObject.getData();
-        AdvanceSaleRetVo advanceSaleDetailsRetVo = (AdvanceSaleRetVo) Common.cloneVo(onSaleInfoVo, AdvanceSaleRetVo.class);
-        advanceSaleDetailsRetVo.setName(advanceSaleBo.getName());
-        advanceSaleDetailsRetVo.setPayTime(advanceSaleBo.getPayTime());
-        advanceSaleDetailsRetVo.setAdvancePayPrice(advanceSaleBo.getAdvancePayPrice());
-        advanceSaleDetailsRetVo.setShop(new ShopVo(advanceSaleBo.getShopId(),advanceSaleBo.getShopName()));
-        return new ReturnObject(advanceSaleDetailsRetVo);
+        advanceSaleRetVo.setShop(onSaleInfoVo.getShop());
+        advanceSaleRetVo.setBeginTime(onSaleInfoVo.getBeginTime());
+        advanceSaleRetVo.setEndTime(onSaleInfoVo.getEndTime());
+        advanceSaleRetVo.setProduct(onSaleInfoVo.getProduct());
+        advanceSaleRetVo.setPrice(onSaleInfoVo.getPrice());
+        advanceSaleRetVo.setQuantity(onSaleInfoVo.getQuantity());
+        return new ReturnObject(advanceSaleRetVo);
     }
 
     /**
@@ -292,13 +296,19 @@ public class AdvanceSaleService {
         if (internalReturnObject.getData() == null) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "找不到对应的销售信息");
         }
+        //这里因为返回的对象需要同时从OnSale表和AdvanceSale表拿数据，所以只能用一次cloneVo
+        AdvanceSaleInfoRetVo advanceSaleInfoRetVo = (AdvanceSaleInfoRetVo) Common.cloneVo(advanceSaleBo, AdvanceSaleInfoRetVo.class);
+        advanceSaleInfoRetVo.setCreator(new SimpleAdminUserVo(advanceSaleBo.getCreatorId(),advanceSaleBo.getCreatorName()));
+        advanceSaleInfoRetVo.setModifier(new SimpleAdminUserVo(advanceSaleBo.getModifierId(),advanceSaleBo.getModifierName()));
+
+        //将OnSale的字段赋给retVo
         OnSaleInfoVo onSaleInfoVo=(OnSaleInfoVo) internalReturnObject.getData();
-        AdvanceSaleInfoRetVo advanceSaleInfoRetVo = (AdvanceSaleInfoRetVo) Common.cloneVo(onSaleInfoVo, AdvanceSaleInfoRetVo.class);
-        advanceSaleInfoRetVo.setName(advanceSaleBo.getName());
-        advanceSaleInfoRetVo.setPayTime(advanceSaleBo.getPayTime());
-        advanceSaleInfoRetVo.setAdvancePayPrice(advanceSaleBo.getAdvancePayPrice());
-        advanceSaleInfoRetVo.setState(advanceSaleBo.getState());
-        advanceSaleInfoRetVo.setShop(new ShopVo(advanceSaleBo.getShopId(),advanceSaleBo.getShopName()));
+        advanceSaleInfoRetVo.setShop(onSaleInfoVo.getShop());
+        advanceSaleInfoRetVo.setBeginTime(onSaleInfoVo.getBeginTime());
+        advanceSaleInfoRetVo.setEndTime(onSaleInfoVo.getEndTime());
+        advanceSaleInfoRetVo.setProduct(onSaleInfoVo.getProduct());
+        advanceSaleInfoRetVo.setPrice(onSaleInfoVo.getPrice());
+        advanceSaleInfoRetVo.setQuantity(onSaleInfoVo.getQuantity());
         return new ReturnObject(advanceSaleInfoRetVo);
     }
 
