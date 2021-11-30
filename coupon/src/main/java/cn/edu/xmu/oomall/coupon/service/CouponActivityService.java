@@ -162,11 +162,22 @@ public class CouponActivityService {
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject<CouponActivityVoInfo> showOwnCouponActivityInfo(Long userId,String userName,Long id,Long shopId){
-        CouponActivity couponActivity = new CouponActivity();
-        couponActivity.setId(id);
-        couponActivity.setShopId(shopId);
-        Common.setPoCreatedFields(couponActivity,userId,userName);
-        return couponActivityDao.showCouponActivityPoStraight(id,couponActivity);
+        ReturnObject returnObject = couponActivityDao.showCouponActivityPoStraight(id);
+        if(returnObject.getCode()!= ReturnNo.OK){
+            return returnObject;
+        }
+        CouponActivity couponActivity = (CouponActivity) returnObject.getData();
+        if(!couponActivity.getShopId().equals(shopId)){
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
+        }
+        //下线状态不给返回
+        if(couponActivity.getState()==CouponActivity.State.OFFLINE.getCode().byteValue()){
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
+        if(!couponActivity.getCreatorId().equals(userId)){
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
+        }
+        return new ReturnObject<>(new CouponActivityVoInfo(couponActivity));
     }
 
     /**
