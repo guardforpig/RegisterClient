@@ -156,7 +156,7 @@ public class FreightModelService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject updateFreightModel(Long id,FreightModelInfoVo freightModelInfo,
-                                           Long userId, String userName){
+                                                              Long userId, String userName){
         FreightModel freightModel= (FreightModel) Common.cloneVo(freightModelInfo,FreightModel.class);
         freightModel.setId(id);
         Common.setPoModifiedFields(freightModel,userId,userName);
