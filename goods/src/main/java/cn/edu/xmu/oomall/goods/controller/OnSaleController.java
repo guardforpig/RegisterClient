@@ -4,10 +4,7 @@ package cn.edu.xmu.oomall.goods.controller;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
-import cn.edu.xmu.oomall.goods.model.vo.ModifyOnSaleVo;
-import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleAllVo;
-import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
-import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
+import cn.edu.xmu.oomall.goods.model.vo.*;
 import cn.edu.xmu.oomall.goods.service.OnsaleService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
@@ -275,6 +272,33 @@ public class OnSaleController {
 
         ReturnObject returnObject1 = onsaleService.updateOnSaleNorSec(bo, shopId, loginUserId, loginUserName);
         return decorateReturnObject(returnObject1);
+    }
+
+
+
+//    @Audit(departName = "shops")
+    @PutMapping("internal/shops/{did}/onsales/{id}/decr")
+    public Object decreaseOnSale(@PathVariable Long did, @PathVariable Long id, @RequestBody QuantityVo vo,
+//                                 @LoginUser
+                                         Long loginUserId,
+//                                 @LoginName
+                                             String loginUserName){
+
+        Integer quantity = vo.getQuantity();
+        return decorateReturnObject(onsaleService.decreaseOnSale(did,id,quantity,loginUserId,loginUserName));
+    }
+
+
+//    @Audit(departName = "shops")
+    @PutMapping("internal/shops/{did}/onsales/{id}/incr")
+    public Object increaseOnSale(@PathVariable Long did, @PathVariable Long id, @RequestBody QuantityVo vo,
+//                                 @LoginUser
+                                         Long loginUserId,
+//                                 @LoginName
+                                             String loginUserName){
+
+        Integer quantity = vo.getQuantity();
+        return decorateReturnObject(onsaleService.increaseOnSale(did,id,quantity,loginUserId,loginUserName));
     }
 
 

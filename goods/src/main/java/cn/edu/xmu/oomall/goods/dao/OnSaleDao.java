@@ -9,10 +9,20 @@ import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Repository;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static cn.edu.xmu.oomall.core.util.Common.*;
 
@@ -26,6 +36,16 @@ public class OnSaleDao {
 
     @Autowired
     private OnSalePoMapper onSalePoMapper;
+
+    private final static String ONSALE_STOCK_GROUP_KEY="onsale_%d_stockgroup_%d";
+
+    private final static String DECREASE_PATH="stock/decrease.lua";
+    private final static String INCREASE_PATH="stock/increase.lua";
+
+    private final static Integer GROUPNUM=10;
+
+    @Autowired
+    private RedisTemplate<String, Serializable> redis;
 
 
     /**
@@ -189,4 +209,84 @@ public class OnSaleDao {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
+
+
+
+    public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity) {
+        try{
+            DefaultRedisScript<Long> script = new DefaultRedisScript<>();
+            script.setScriptSource(new ResourceScriptSource(new ClassPathResource(DECREASE_PATH)));
+            script.setResultType(Long.class);
+            List<String> argList;
+
+            Random r=new Random();
+            int init= r.nextInt(GROUPNUM);
+            for(int i=0;i<GROUPNUM;i++){
+                String key =String.format(ONSALE_STOCK_GROUP_KEY,id,(init+i)%GROUPNUM);
+                argList= Stream.of(key,quantity.toString()).collect(Collectors.toList());
+                Long res=redis.execute(script, argList);
+                if(res>=0)
+                {
+                    logger.info(key+"剩余库存"+res);
+                    return new ReturnObject(ReturnNo.OK);
+                }
+            }
+            return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE,"扣库存失败");
+        }
+        catch (Exception e){
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+
+    public ReturnObject increaseOnSaleQuantity(Long id, Integer quantity) {
+        try{
+            DefaultRedisScript<Long> script = new DefaultRedisScript<>();
+            script.setScriptSource(new ResourceScriptSource(new ClassPathResource(INCREASE_PATH)));
+            script.setResultType(Long.class);
+            List<String> argList;
+
+            Random r=new Random();
+            int init= r.nextInt(GROUPNUM);
+
+            // 将新增库存平均分到多个桶
+            Integer rest=quantity;
+            Integer count=0;
+            Integer incr[]=new Integer[GROUPNUM];
+            for(int i=0;i<GROUPNUM&&rest>0;i++){
+                Integer sub=0;
+                if(rest<GROUPNUM){
+                    sub=rest;
+                    incr[count++]=sub;
+                }
+                else{
+                    sub=(int)Math.ceil((double)quantity/GROUPNUM);
+                    incr[count++]=sub;
+                }
+                rest-=sub;
+            }
+
+            for(int i=0;i<count;i++){
+                String key =String.format(ONSALE_STOCK_GROUP_KEY,id,(init+i)%GROUPNUM);
+                argList= Stream.of(key,incr[i].toString()).collect(Collectors.toList());
+                Long res= redis.execute(script, argList);
+                logger.info(key+"剩余库存"+res);
+                if(quantity==0)
+                {
+                    return new ReturnObject(ReturnNo.OK);
+                }
+            }
+            return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE,"加库存失败");
+        }
+        catch (Exception e){
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+
+    }
+
+
+
+
 }
