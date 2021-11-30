@@ -1,5 +1,7 @@
 package cn.edu.xmu.oomall.goods.dao;
 
+import cn.edu.xmu.oomall.core.util.ReturnNo;
+import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
@@ -23,45 +25,28 @@ public class ProductDao {
     @Autowired
     private ProductPoMapper productMapper;
 
-    @Autowired
-    private RedisUtil redisUtil;
-
-    @Value("${oomall.goods.product.expiretime}")
-    private long productTimeout;
-
-    public boolean hasExist(Long productId) {
-        return null != productMapper.selectByPrimaryKey(productId);
-    }
-
-
-
-    public boolean matchProductShop(Long productId, Long shopId) {
-
-        ProductPo productPo=productMapper.selectByPrimaryKey(productId);
-        return shopId.equals(productPo.getShopId());
-    }
-
-    public Long getShopIdById(Long id){
+    public ReturnObject hasExist(Long productId) {
         try{
-            Product ret=(Product) redisUtil.get("p_"+id);
-            if(null!=ret){
-                return ret.getId();
-            }
-
-            ProductPo po= productMapper.selectByPrimaryKey(id);
-
-            if(po == null) {
-                return null;
-            }
-            Product pro=(Product)cloneVo(po,Product.class);
-            redisUtil.set("p_"+pro.getId(),pro,productTimeout);
-
-            return pro.getId();
+            ProductPo po= productMapper.selectByPrimaryKey(productId);
+            return new ReturnObject(null != po) ;
         }
         catch(Exception e){
-            return null;
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
 
+    }
+
+    public ReturnObject matchProductShop(Long productId, Long shopId) {
+        try{
+            ProductPo productPo=productMapper.selectByPrimaryKey(productId);
+            return new ReturnObject(shopId.equals(productPo.getShopId())) ;
+        }
+        catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
 
     }
+
 }

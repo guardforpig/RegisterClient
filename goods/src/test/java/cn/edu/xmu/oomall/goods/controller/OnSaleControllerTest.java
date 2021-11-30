@@ -3,7 +3,9 @@ package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.goods.GoodsApplication;
 import cn.edu.xmu.oomall.goods.constant.Constants;
+import cn.edu.xmu.oomall.goods.dao.OnSaleDao;
 import cn.edu.xmu.oomall.goods.model.vo.ModifyOnSaleVo;
+import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleAllVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
 import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest(classes = GoodsApplication.class)
 public class OnSaleControllerTest {
+    private Logger logger = LoggerFactory.getLogger(OnSaleControllerTest.class);
 
     @Autowired
     protected WebApplicationContext wac;
@@ -70,14 +75,14 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2022-10-11T15:20:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000Z", df));
         vo.setQuantity(10);
-        vo.setType(0);
+        vo.setType((byte)0);
         String s = JacksonUtil.toJson(vo);
 
         String res = this.mvc.perform(post("/shops/3/products/2532/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T15:20:30.000Z\",\"endTime\":\"2022-10-12T16:20:30.000Z\",\"quantity\":10},\"errmsg\":\"成功\"}\n";
+        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T15:20:30.000Z\",\"endTime\":\"2022-10-12T16:20:30.000Z\",\"quantity\":10,\"activityId\":null,\"shareActId\":null,\"type\":0},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expect, res, false);
 
 
@@ -87,7 +92,7 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2021-11-12T09:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2022-10-12T09:40:30.000Z", df));
         vo.setQuantity(10);
-        vo.setType(0);
+        vo.setType((byte)0);
         s = JacksonUtil.toJson(vo);
 
 
@@ -106,7 +111,7 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2028-02-12T16:20:30.000Z", df));
         vo.setQuantity(10);
-        vo.setType(0);
+        vo.setType((byte)0);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(post("/shops/2/products/2549/onsales")
@@ -123,7 +128,7 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2029-02-12T16:20:30.000Z", df));
         vo.setQuantity(10);
-        vo.setType(3);
+        vo.setType((byte)3);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(post("/shops/2/products/2549/onsales")
@@ -140,7 +145,7 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2029-03-12T16:20:30.000Z", df));
         vo.setQuantity(10);
-        vo.setType(0);
+        vo.setType((byte)0);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(post("/shops/2/products/999999/onsales")
@@ -157,7 +162,7 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2028-03-12T16:20:30.000Z", df));
         vo.setQuantity(10);
-        vo.setType(0);
+        vo.setType((byte)0);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(post("/shops/2/products/2532/onsales")
@@ -268,7 +273,7 @@ public class OnSaleControllerTest {
     public void testOnlineOnSaleGroPre() throws Exception {
 
         //        正常
-        String res = this.mvc.perform(put("/internal/activities/3/onsales/online")
+        String res = this.mvc.perform(put("/internal/shops/0/activities/3/onsales/online")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -284,7 +289,7 @@ public class OnSaleControllerTest {
     public void testOfflineOnSaleGP() throws Exception {
 
         //        正常
-        String res = this.mvc.perform(put("/internal/activities/1/onsales/offline")
+        String res = this.mvc.perform(put("/internal/shops/0/activities/1/onsales/offline")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -298,32 +303,34 @@ public class OnSaleControllerTest {
     public void testCreateAllOnSale() throws Exception {
 
         // 正常=》
-        NewOnSaleVo vo = new NewOnSaleVo();
+        NewOnSaleAllVo vo = new NewOnSaleAllVo();
         vo.setPrice(1000L);
         vo.setBeginTime(LocalDateTime.parse("2022-10-11T15:20:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000Z", df));
         vo.setQuantity(10);
-        vo.setType(0);
+        vo.setType((byte)3);
+        vo.setActivityId(5L);
         String s = JacksonUtil.toJson(vo);
 
-        String res = this.mvc.perform(post("/internal/products/2532/onsales")
+        String res = this.mvc.perform(post("/internal/shops/3/products/2532/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isCreated()).andReturn()
                 .getResponse().getContentAsString();
-        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T15:20:30.000Z\",\"endTime\":\"2022-10-12T16:20:30.000Z\",\"quantity\":10},\"errmsg\":\"成功\"}\n";
+        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T15:20:30.000Z\",\"endTime\":\"2022-10-12T16:20:30.000Z\",\"quantity\":10,\"activityId\":5,\"shareActId\":null,\"type\":3},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expect, res, false);
 
 
         // 商品销售时间冲突=》
-        vo = new NewOnSaleVo();
+        vo = new NewOnSaleAllVo();
         vo.setPrice(1000L);
         vo.setBeginTime(LocalDateTime.parse("2021-11-12T09:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2022-10-12T09:40:30.000Z", df));
         vo.setQuantity(10);
-        vo.setType(0);
+        vo.setType((byte)3);
+        vo.setActivityId(5L);
         s = JacksonUtil.toJson(vo);
 
-        res = this.mvc.perform(post("/internal/products/2549/onsales")
+        res = this.mvc.perform(post("/internal/shops/2/products/2549/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isOk()).andReturn()
                 .getResponse().getContentAsString();
@@ -332,16 +339,18 @@ public class OnSaleControllerTest {
 
 
 //        开始时间晚于结束时间
-        vo = new NewOnSaleVo();
+        vo = new NewOnSaleAllVo();
         vo.setPrice(1000L);
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2028-02-12T16:20:30.000Z", df));
         vo.setQuantity(10);
-        vo.setType(0);
+        vo.setType((byte)3);
+        vo.setActivityId(5L);
+
         s = JacksonUtil.toJson(vo);
 
 
-        res = this.mvc.perform(post("/internal/products/2549/onsales")
+        res = this.mvc.perform(post("/internal/shops/2/products/2549/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isBadRequest()).andReturn()
                 .getResponse().getContentAsString();
@@ -350,16 +359,18 @@ public class OnSaleControllerTest {
         JSONAssert.assertEquals(expect, res, true);
 
         //        货品不存在
-        vo = new NewOnSaleVo();
+        vo = new NewOnSaleAllVo();
         vo.setPrice(1000L);
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2029-02-12T16:20:30.000Z", df));
         vo.setQuantity(10);
-        vo.setType(0);
+        vo.setType((byte)3);
+        vo.setActivityId(5L);
+
         s = JacksonUtil.toJson(vo);
 
 
-        res = this.mvc.perform(post("/internal/products/999999/onsales")
+        res = this.mvc.perform(post("/internal/shops/3/products/999999/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isNotFound()).andReturn()
                 .getResponse().getContentAsString();
@@ -419,7 +430,7 @@ public class OnSaleControllerTest {
 
     @Test
     public void testDeleteAct() throws Exception {
-        String res = this.mvc.perform(delete("/internal/activities/3/onsales")
+        String res = this.mvc.perform(delete("/internal/shops/0/activities/3/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn()
@@ -441,7 +452,7 @@ public class OnSaleControllerTest {
         vo.setQuantity(10);
         String s = JacksonUtil.toJson(vo);
 
-        String res = this.mvc.perform(put("/internal/onsales/30")
+        String res = this.mvc.perform(put("/internal/shops/0/onsales/30")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
@@ -455,7 +466,7 @@ public class OnSaleControllerTest {
         vo.setQuantity(10);
         s = JacksonUtil.toJson(vo);
 
-        res = this.mvc.perform(put("/internal/onsales/29")
+        res = this.mvc.perform(put("/internal/shops/0/onsales/29")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isBadRequest()).andReturn()
                 .getResponse().getContentAsString();
@@ -471,7 +482,7 @@ public class OnSaleControllerTest {
         vo.setQuantity(10);
         s = JacksonUtil.toJson(vo);
 
-        res = this.mvc.perform(put("/internal/onsales/66666")
+        res = this.mvc.perform(put("/internal/shops/0/onsales/66666")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isNotFound()).andReturn()
                 .getResponse().getContentAsString();
@@ -486,7 +497,7 @@ public class OnSaleControllerTest {
         vo.setQuantity(10);
         s = JacksonUtil.toJson(vo);
 
-        res = this.mvc.perform(put("/internal/onsales/28")
+        res = this.mvc.perform(put("/internal/shops/0/onsales/28")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();

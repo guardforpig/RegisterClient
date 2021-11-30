@@ -39,6 +39,7 @@ public class GroupOnActivityDao {
     private long timeout;
 
     private static Logger logger = LoggerFactory.getLogger(Common.class);
+    private static final String GROUPON_KEY = "groupon_%d";
 
     public ReturnObject insertActivity(GroupOnActivity bo, Long createdBy, String createName) {
         try {
@@ -47,7 +48,7 @@ public class GroupOnActivityDao {
             Common.setPoCreatedFields(po, createdBy, createName);
             mapper.insert(po);
             bo.setId(po.getId());
-            redisUtil.set("groupon_" + po.getId().toString(), bo, timeout);
+            redisUtil.set(String.format(GROUPON_KEY, po.getId()), bo, timeout);
             return new ReturnObject(Common.cloneVo(bo, SimpleGroupOnActivityVo.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -78,7 +79,7 @@ public class GroupOnActivityDao {
     public ReturnObject getGroupOnActivity(Long id, GroupOnState state, Long shopId) {
         try {
             GroupOnActivityPo po;
-            var bo = (GroupOnActivity) redisUtil.get("groupon_" + id.toString());
+            var bo = (GroupOnActivity) redisUtil.get(String.format(GROUPON_KEY, id));
             if (bo == null) {
                 po = mapper.selectByPrimaryKey(id);
                 if (po == null) {
