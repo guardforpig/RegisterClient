@@ -1,15 +1,33 @@
 package cn.edu.xmu.oomall.goods.model.bo;
 
+import cn.edu.xmu.oomall.core.model.VoObject;
+import cn.edu.xmu.oomall.goods.model.vo.ProductVo;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 
 /**
  * @author YuJie 22920192204242
  * @date 2021/11/14
  */
+/**
+ * @author 黄添悦
+ **/
+/**
+ * @author 王文飞
+ */
 @Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Product implements Serializable {
     private Long id;
 
@@ -63,5 +81,25 @@ public class Product implements Serializable {
 
 
     private Byte state;
+
+    public enum ProductState
+    {
+        /**
+         * 共四种状态
+         */
+        WAIT_FOR_AUDIT(1,"待审核"),
+        OFFSHELF(2,"下架"),
+        ONSHELF(3,"上架"),
+        BANNED(4,"禁售中");
+        private int code;
+        private String state;
+        ProductState(int code, String state) {
+            this.code=code;
+            this.state=state;
+        }
+        public int getCode(){
+            return code;
+        }
+    }
 
 }
