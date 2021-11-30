@@ -126,13 +126,12 @@ public class ProductDao {
             ProductPoExample.Criteria cr = productPoExample.createCriteria();
             cr.andFreightIdEqualTo(fid);
             List<ProductPo> products = productMapper.selectByExample(productPoExample);
-            List<ProductVo> productList = new ArrayList<>(products.size());
-            for (ProductPo productPo : products) {
-                ProductVo productVo = (ProductVo) cloneVo(productPo, ProductVo.class);
-                productList.add(productVo);
+            if(products.size()==0)
+            {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            PageInfo<VoObject> pageInfo = new PageInfo(productList);
-            return new ReturnObject<>(pageInfo);
+            ReturnObject<PageInfo<Object>> ret=new ReturnObject(new PageInfo<ProductPo>(products));
+            return Common.getPageRetVo(ret,ProductVo.class);
         }catch(Exception e)
         {
             logger.error(e.getMessage());
