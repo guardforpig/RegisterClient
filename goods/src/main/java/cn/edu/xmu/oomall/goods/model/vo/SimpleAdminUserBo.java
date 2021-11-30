@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SimpleAdminUserBo {
     private Long id;
-    private String userName;
+    private String name;
+    private Boolean sign;
 }

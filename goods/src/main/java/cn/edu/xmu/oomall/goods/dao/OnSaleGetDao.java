@@ -38,6 +38,7 @@ public class OnSaleGetDao {
     private long onsaleTimeout;
 
     private static final Logger logger = LoggerFactory.getLogger(OnSaleDao.class);
+    private final static String ONSALE_ID="o_%d";
 
     /**
      * 无redis的onsale查询
@@ -66,7 +67,8 @@ public class OnSaleGetDao {
      */
     public ReturnObject selectOnSaleRedis(Long id){
         try {
-            OnSaleGetBo onSale=(OnSaleGetBo) redisUtil.get("o_"+id);
+            String key = ONSALE_ID + id;
+            OnSaleGetBo onSale=(OnSaleGetBo) redisUtil.get(key);
             if(null!=onSale){
                 return new ReturnObject(onSale);
             }else{
@@ -75,7 +77,7 @@ public class OnSaleGetDao {
                     return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
                 }else{
                     OnSaleGetBo onSaleGetBo=(OnSaleGetBo) Common.cloneVo(onSalePo, OnSaleGetBo.class);
-                    redisUtil.set("o_"+id,onSaleGetBo,onsaleTimeout);
+                    redisUtil.set(key,onSaleGetBo,onsaleTimeout);
                     return new ReturnObject(onSaleGetBo);
                 }
             }

@@ -1,8 +1,7 @@
 package cn.edu.xmu.oomall.goods.model.vo;
 
 import cn.edu.xmu.oomall.goods.constant.Constants;
-import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShareActBo;
-import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopBo;
+import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,14 +25,14 @@ public class OnSaleRetVo{
     private LocalDateTime endTime;
     private Byte type;
     private Long activityId;
+    private Long shareActId;
     @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime gmtCreate;
     @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime gmtModified;
 
     private SimpleProductRetVo product;
-    private SimpleShopBo shop;
-    private SimpleShareActBo shareAct;
-    private SimpleAdminUserBo createdBy;
-    private SimpleAdminUserBo modifiedBy;
+    private SimpleShopVo shop;
+    private SimpleAdminUserBo creator;
+    private SimpleAdminUserBo modifier;
 }

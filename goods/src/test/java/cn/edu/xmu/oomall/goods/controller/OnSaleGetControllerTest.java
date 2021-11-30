@@ -1,12 +1,16 @@
 package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.goods.GoodsApplication;
+import cn.edu.xmu.oomall.goods.microservice.ShopService;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,8 @@ public class OnSaleGetControllerTest {
 
     @Autowired
     private MockMvc mvc;
+    @MockBean
+    private ShopService shopService;
 
     @Test
     @Transactional
@@ -100,7 +106,6 @@ public class OnSaleGetControllerTest {
     @Test
     @Transactional
     public void selectActivities_fieldNotValid() throws Exception {
-        //state不合法
         String responseJson=this.mvc.perform(get("/internal/shops/5/activities/3/onsales?state=10&beginTime&endTime&page&pageSize")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
@@ -158,28 +163,28 @@ public class OnSaleGetControllerTest {
     @Test
     @Transactional
     public void selectFullOnsales_noRedis() throws Exception {
-        //正常情况
+        Mockito.when(shopService.getShopInfo(10L)).thenReturn(new InternalReturnObject(200,"成功","{\"id\":10,\"name\":\"商铺10\"}"));
         String responseJson=this.mvc.perform(get("/internal/onsales/1")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":26,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"type\":0,\"activityId\":null,\"gmtCreate\":\"2021-11-11T14:38:20.000Z\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"shareAct\":null,\"createdBy\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}\n";
+        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":26,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"gmtCreate\":\"2021-11-11T14:38:20.000Z\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
     @Test
     @Transactional
     public void selectFullOnsales() throws Exception {
-        //正常情况
+        Mockito.when(shopService.getShopInfo(10L)).thenReturn(new InternalReturnObject(200,"成功","{\"id\":10,\"name\":\"商铺10\"}"));
         String responseJson=this.mvc.perform(get("/internal/onsales/1")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":26,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"type\":0,\"activityId\":null,\"gmtCreate\":\"2021-11-11T14:38:20.000Z\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"shareAct\":null,\"createdBy\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}\n";
+        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":26,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"gmtCreate\":\"2021-11-11T14:38:20.000Z\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 

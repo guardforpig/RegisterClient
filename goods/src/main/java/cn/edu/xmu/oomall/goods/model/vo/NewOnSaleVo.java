@@ -32,7 +32,7 @@ public class NewOnSaleVo {
     private Integer quantity;
 
     @NotNull
-    private Integer type;
+    private Byte type;
 
     public NewOnSaleVo(){}
 

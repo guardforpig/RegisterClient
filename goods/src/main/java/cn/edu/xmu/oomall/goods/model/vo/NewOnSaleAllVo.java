@@ -1,40 +1,36 @@
 package cn.edu.xmu.oomall.goods.model.vo;
 
 import cn.edu.xmu.oomall.goods.constant.Constants;
-import cn.edu.xmu.oomall.goods.model.bo.OnSale;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * @author yujie lin
- * @date 2021/11/10
+ * @author YuJie 22920192204242
+ * @date 2021/11/29
  */
 @Data
-public class NewOnSaleRetVo {
-    private Long id;
+public class NewOnSaleAllVo {
 
     @Min(0)
     private Long price;
 
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
+    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
     private LocalDateTime beginTime;
 
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
+    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
     private LocalDateTime endTime;
 
     @Min(1)
     private Integer quantity;
 
-    private Long activityId;
-
-    private Long shareActId;
-
+    @NotNull
     private Byte type;
 
+    private Long activityId;
 
-
+    public NewOnSaleAllVo(){}
 }

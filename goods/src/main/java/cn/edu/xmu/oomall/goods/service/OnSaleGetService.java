@@ -5,12 +5,15 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.OnSaleGetDao;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
+import cn.edu.xmu.oomall.goods.microservice.ShopService;
+import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.goods.model.bo.OnSaleGetBo;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
 import cn.edu.xmu.oomall.goods.model.vo.OnSaleRetVo;
 import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,14 +26,16 @@ import java.time.LocalDateTime;
  * @createTime 2021/11/13 02:49
  **/
 @Service
-public class
-OnSaleGetService {
+public class OnSaleGetService {
 
     @Autowired
     private OnSaleGetDao onSaleDao;
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private ShopService shopService;
 
     /**
      * 管理员查询特定商品的价格浮动
@@ -107,11 +112,18 @@ OnSaleGetService {
         }
         OnSaleGetBo onSale=(OnSaleGetBo) returnObject.getData();
         OnSaleRetVo onSaleRetVo=(OnSaleRetVo)Common.cloneVo(onSale,OnSaleRetVo.class);
+        //设置product字段
         ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
         if(returnObjectProduct.getCode().equals(ReturnNo.OK)){
             Product product=(Product) returnObjectProduct.getData();
             SimpleProductRetVo simpleProduct=(SimpleProductRetVo)Common.cloneVo(product,SimpleProductRetVo.class);
             onSaleRetVo.setProduct(simpleProduct);
+        }
+        //设置shop字段
+        InternalReturnObject internalObj=shopService.getShopInfo(onSale.getShopId());
+        if(internalObj.getErrno().equals(ReturnNo.OK)) {
+            SimpleShopVo simpleShopVo = (SimpleShopVo)internalObj.getData();
+            onSaleRetVo.setShop(simpleShopVo);
         }
         return new ReturnObject(onSaleRetVo);
     }
