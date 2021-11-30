@@ -12,7 +12,6 @@ import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
 import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
 import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePoExample;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
-import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -21,12 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * @author RenJieZheng 22920192204334
