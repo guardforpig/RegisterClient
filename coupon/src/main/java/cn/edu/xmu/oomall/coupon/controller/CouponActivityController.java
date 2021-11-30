@@ -224,6 +224,17 @@ public class CouponActivityController {
         return Common.decorateReturnObject(retPageInfo);
     }
 
+    @ApiOperation(value = "管理员查看优惠活动中的商品")
+    @GetMapping("/shops/{shopId}/couponactivities/{id}/onsales")
+    public Object listOnsalesByCouponActivityId(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
+                                                @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
+                                                @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
+                                                @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize ) {
+
+        ReturnObject returnObject = couponActivityService.listOnsalesByCouponActivityId(shopId, couponActivityId, pageNumber, pageSize);
+        return Common.decorateReturnObject(returnObject);
+    }
+
 
     @ApiOperation(value = "管理员修改己方某优惠活动")
     @PutMapping("/shops/{shopId}/couponactivities/{id}")

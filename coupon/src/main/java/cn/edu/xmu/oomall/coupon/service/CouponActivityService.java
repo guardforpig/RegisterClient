@@ -374,6 +374,49 @@ public class CouponActivityService {
         return Common.getPageRetVo(ret, CouponActivityRetVo.class);
     }
 
+    @Transactional(readOnly = true)
+    public ReturnObject listOnsalesByCouponActivityId(Long shopId, Long couponActivityId, Integer pageNumber, Integer pageSize) {
+        // 判断活动存在与否
+        ReturnObject<CouponActivity> retCouponActivity = couponActivityDao.getCouponActivityById(couponActivityId);
+        if (!retCouponActivity.getCode().equals(ReturnNo.OK)) {
+            return retCouponActivity;
+        }
+
+        // 判断创建活动的商店Id是否与传入的shopId对应
+        CouponActivity couponActivity = retCouponActivity.getData();
+        if (!couponActivity.getShopId().equals(shopId)) {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
+        }
+
+        // 判断活动是否是上线态
+        if (!retCouponActivity.getData().getState().equals(CouponActivity.State.ONLINE.getCode())) {
+            return new ReturnObject<>(ReturnNo.STATENOTALLOW);
+        }
+
+        // 活动查CouponOnsale
+        ReturnObject retPageInfo =
+                couponActivityDao.listCouponOnsaleByActivityId(couponActivityId, pageNumber, pageSize);
+        if (!retPageInfo.getCode().equals(ReturnNo.OK)) {
+            return retPageInfo;
+        }
+
+        // CouponOnsale查Onsale
+        Map<String, Object> retMap = (Map<String, Object>) retPageInfo.getData();
+        List<CouponOnsale> couponOnsaleList = (List<CouponOnsale>) retMap.get("list");
+        List<OnsaleVo> onsaleVoList = new ArrayList<>();
+        for (CouponOnsale couponOnsale : couponOnsaleList) {
+            InternalReturnObject<OnsaleVo> retOnsaleVo =
+                    goodsService.getOnsaleById(couponOnsale.getOnsaleId());
+            if (retOnsaleVo.getErrno().equals(ReturnNo.OK.getCode())) {
+                // 所有状态
+                onsaleVoList.add(retOnsaleVo.getData());
+            }
+        }
+
+        retMap.put("list", onsaleVoList);
+        return new ReturnObject<>(retPageInfo);
+    }
+
 
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject updateCouponActivity(Long userId, String userName, Long shopId, Long couponActivityId, CouponActivityVo couponActivityVo, CouponActivity.State newState) {
@@ -386,7 +429,7 @@ public class CouponActivityService {
         // 判断创建活动的商店Id是否与传入的shopId对应
         CouponActivity formerCouponActivity = retFormerCouponActivity.getData();
         if (!formerCouponActivity.getShopId().equals(shopId)) {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "该优惠活动不属于该商店");
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
 
         // 判断是不是修改活动状态
@@ -450,10 +493,10 @@ public class CouponActivityService {
         CouponActivity couponActivity = retCouponActivity.getData();
         OnsaleVo onsaleVo = retOnsaleVo.getData();
         if (!couponActivity.getShopId().equals(shopId)) {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "该优惠活动不属于该商店");
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
         if (!onsaleVo.getShop().getId().equals(shopId)) {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "该Onsale不属于该商店");
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
 
         // 判断数据库中是否已经有CouponOnsale表示该onsale已经参与了该活动
@@ -501,7 +544,7 @@ public class CouponActivityService {
         // 判断创建活动的商店Id是否与传入的shopId对应
         CouponActivity formerCouponActivity = retFormerCouponActivity.getData();
         if (!formerCouponActivity.getShopId().equals(shopId)) {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "该优惠活动不属于该商店");
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
         if (!formerCouponActivity.getState().equals(CouponActivity.State.DRAFT.getCode())) {
             return new ReturnObject<>(ReturnNo.STATENOTALLOW);
@@ -542,7 +585,7 @@ public class CouponActivityService {
         // 判断活动的商店Id是否与传入的shopId对应
         CouponActivity couponActivity = retCouponActivity.getData();
         if (!couponActivity.getShopId().equals(shopId)) {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "该CouponOnSale参与的优惠活动不属于该商店");
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE );
         }
         // 判断是不是在下线态，下线态出错
         if (couponActivity.getState().equals(CouponActivity.State.OFFLINE.getCode())) {
@@ -563,4 +606,6 @@ public class CouponActivityService {
 
         return new ReturnObject<>(ReturnNo.OK);
     }
+
+
 }
