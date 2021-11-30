@@ -21,6 +21,7 @@ import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -282,11 +283,11 @@ public class CouponActivityService {
                         productVoList.add(retOnsaleVo.getData().getProduct());
                         // 逐个插入redis
                         redisUtils.rightPushList(key, retOnsaleVo.getData().getProduct());
-                        redisUtils.expire(key, listTimeout, TimeUnit.SECONDS);
                     }
                 }
             }
-
+            // 设置timeout
+            redisUtils.expire(key, listTimeout, TimeUnit.SECONDS);
             // 保存total、pages
             totalOfApi1 = (long) productVoList.size();
             pagesOfApi1 = (productVoList.size() - 1) / pageSize + 1;
@@ -360,12 +361,13 @@ public class CouponActivityService {
                             couponActivityList.add(retCouponActivity.getData());
                             // 逐个插入redis
                             redisUtils.rightPushList(key, retCouponActivity.getData());
-                            redisUtils.expire(key, listTimeout, TimeUnit.SECONDS);
                         }
                     }
                     couponOnsaleIdSet.add(couponOnsale.getActivityId());
                 }
             }
+            // 设置timeout
+            redisUtils.expire(key, listTimeout, TimeUnit.SECONDS);
             // 保存total、pages
             totalOfApi2 = (long) couponActivityList.size();
             pagesOfApi2 = (couponActivityList.size() - 1) / pageSize + 1;
