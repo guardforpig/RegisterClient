@@ -138,7 +138,6 @@ public class AdvanceSaleDao {
     }
 
     public ReturnObject getAdvanceSaleInfo(AdvanceSaleState state,Long id){
-        String key = "advanceSale_" + id;
         try {
             //先查redis
             AdvanceSale advanceSale = (AdvanceSale) redisUtil.get(String.format(ADVANCESALE_KEY,id));
@@ -152,7 +151,7 @@ public class AdvanceSaleDao {
                 //数据库查到，放入redis
                 else {
                     advanceSale = (AdvanceSale) Common.cloneVo(po, AdvanceSale.class);
-                    redisUtil.set(key, advanceSale, categoryTimeout);
+                    redisUtil.set(String.format(ADVANCESALE_KEY,id), advanceSale, categoryTimeout);
                 }
             }
             //如果传入状态不为空，判断活动是否为上线状态
