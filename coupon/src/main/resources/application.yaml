@@ -71,14 +71,14 @@ oomall:
       password: 12345678
       baseurl: http://172.16.4.1/webdav/test/
 
-oomall:
-  coupon:
     bo:
     # Bo在Redis中失效秒数
       expiretime: 600
     list:
-      # 对象在Redis中失效秒数
+      # list对象在Redis中失效秒数
       expiretime: 300
+      # list对象默认的长度
+      defaultsize: 100
 
 
 
