@@ -36,6 +36,8 @@ public class AdvanceSaleDao {
     private long categoryTimeout;
 
     private static Logger logger = LoggerFactory.getLogger(Common.class);
+
+    public final static String ADVANCESALE_KEY = "advanceSale_%d";
     /**
      * 根据id查找预售活动
      * @param id
@@ -125,13 +127,9 @@ public class AdvanceSaleDao {
         try {
             PageHelper.startPage(page, pageSize);
             List<AdvanceSalePo> poList = advanceSalePoMapper.selectByExample(example);
-            if(poList.size()==0) {
-                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "没有满足条件的预售活动");
-            }
             PageInfo<AdvanceSalePo> pageInfo = new PageInfo<>(poList);
             ReturnObject returnObject = new ReturnObject(pageInfo);
             return Common.getPageRetVo(returnObject, SimpleAdvanceSaleRetVo.class);
-
         }
         catch (Exception e) {
             logger.error(e.getMessage());
@@ -143,7 +141,7 @@ public class AdvanceSaleDao {
         String key = "advanceSale_" + id;
         try {
             //先查redis
-            AdvanceSale advanceSale = (AdvanceSale) redisUtil.get(key);
+            AdvanceSale advanceSale = (AdvanceSale) redisUtil.get(String.format(ADVANCESALE_KEY,id));
             //redis没有查到
             if(advanceSale==null) {
                 AdvanceSalePo po = advanceSalePoMapper.selectByPrimaryKey(id);
@@ -154,7 +152,7 @@ public class AdvanceSaleDao {
                 //数据库查到，放入redis
                 else {
                     advanceSale = (AdvanceSale) Common.cloneVo(po, AdvanceSale.class);
-                    redisUtil.set(key, JacksonUtil.toJson(advanceSale), categoryTimeout);
+                    redisUtil.set(key, advanceSale, categoryTimeout);
                 }
             }
             //如果传入状态不为空，判断活动是否为上线状态

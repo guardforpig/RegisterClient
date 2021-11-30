@@ -172,7 +172,7 @@ public class AdvanceSaleController {
     @GetMapping(value = "/advancesales/{id}")
     public Object queryOnlineAdvanceSaleInfo(
             @PathVariable(name = "id") Long id) {
-        ReturnObject ret=advanceSaleService.getAdvanceSaleInfo(id,AdvanceSaleState.ONLINE,null);
+        ReturnObject ret=advanceSaleService.getAdvanceSaleInfo(id,AdvanceSaleState.ONLINE);
         return Common.decorateReturnObject(ret);
     }
 
@@ -298,7 +298,7 @@ public class AdvanceSaleController {
             @LoginName String loginUserName,
             @PathVariable(name = "shopId") Long shopId,
             @PathVariable(name = "id") Long id) {
-        ReturnObject ret= advanceSaleService.getAdvanceSaleInfo(id,null,shopId);
+        ReturnObject ret= advanceSaleService.getShopAdvanceSaleInfo(id,shopId);
         return Common.decorateReturnObject(ret);
     }
 }

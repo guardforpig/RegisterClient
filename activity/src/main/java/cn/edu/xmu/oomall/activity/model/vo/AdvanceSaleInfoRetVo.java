@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 
 /**
  * @author Jiawei Zheng
- * @date 2021-11-30
+ * @date 2021-11-26
  */
 @Data
-public class AdvanceSaleRetVo{
+public class AdvanceSaleInfoRetVo {
     @ApiModelProperty(value = "预售活动id")
     private Long id;
 
@@ -44,4 +44,21 @@ public class AdvanceSaleRetVo{
 
     @ApiModelProperty(value = "订金")
     private Long advancePayPrice;
+
+    @ApiModelProperty(value = "创建者")
+    private SimpleAdminUserVo creator;
+
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
+    private LocalDateTime gmtCreate;
+
+    @ApiModelProperty(value = "修改时间")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
+    private LocalDateTime gmtModified;
+
+    @ApiModelProperty(value = "修改者")
+    private SimpleAdminUserVo modifier;
+
+    @ApiModelProperty(value = "状态")
+    private Byte state;
 }
