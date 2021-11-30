@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.coupon.model.vo;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
+import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPo;
 import lombok.*;
 
@@ -32,23 +33,23 @@ public class CouponActivityVoInfo implements VoObject {
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 
-    public CouponActivityVoInfo(CouponActivityPo couponActivityPo) {
-        this.id = couponActivityPo.getId();
-        this.name = couponActivityPo.getName();
-        this.beginTime = couponActivityPo.getBeginTime();
-        this.endTime = couponActivityPo.getEndTime();
-        this.couponTime = couponActivityPo.getCouponTime();
-        this.state = couponActivityPo.getState();
-        this.shop = new SimpleShopRetVo(couponActivityPo.getShopId(),couponActivityPo.getShopName());
-        this.quantity = couponActivityPo.getQuantity();
-        this.validTerm = couponActivityPo.getValidTerm();
-        this.imageUrl = couponActivityPo.getImageUrl();
-        this.strategy = couponActivityPo.getStrategy();
-        this.gmtCreate = couponActivityPo.getGmtCreate();
-        this.gmtModified = couponActivityPo.getGmtModified();
-        this.quantityType = couponActivityPo.getQuantityType();
-        this.createBy = new SimpleUserRetVo(couponActivityPo.getCreatorId(),couponActivityPo.getCreatorName());
-        this.modifiedBy = new SimpleUserRetVo(couponActivityPo.getModifierId(),couponActivityPo.getModifierName());
+    public CouponActivityVoInfo(CouponActivity couponActivity) {
+        this.id = couponActivity.getId();
+        this.name = couponActivity.getName();
+        this.beginTime = couponActivity.getBeginTime();
+        this.endTime = couponActivity.getEndTime();
+        this.couponTime = couponActivity.getCouponTime();
+        this.state = couponActivity.getState();
+        this.shop = new SimpleShopRetVo(couponActivity.getShopId(),couponActivity.getShopName());
+        this.quantity = couponActivity.getQuantity();
+        this.validTerm = couponActivity.getValidTerm();
+        this.imageUrl = couponActivity.getImageUrl();
+        this.strategy = couponActivity.getStrategy();
+        this.gmtCreate = couponActivity.getGmtCreate();
+        this.gmtModified = couponActivity.getGmtModified();
+        this.quantityType = couponActivity.getQuantityType();
+        this.createBy = new SimpleUserRetVo(couponActivity.getCreatorId(),couponActivity.getCreatorName());
+        this.modifiedBy = new SimpleUserRetVo(couponActivity.getModifierId(),couponActivity.getModifierName());
     }
 
     @Override

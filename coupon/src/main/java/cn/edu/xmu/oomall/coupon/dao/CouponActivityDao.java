@@ -12,8 +12,6 @@ import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
 import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
 import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePoExample;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
-import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVoInfo;
-import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -135,22 +133,15 @@ public class CouponActivityDao {
     /**
      * 根据主码直接返回优惠活动信息
      * @param id 优惠活动主码
-     * @return CouponActivityVoInfo
+     * @return CouponActivity
      */
-    public ReturnObject<CouponActivityVoInfo>showCouponActivityPoStraight(Long id,CouponActivity couponActivity){
+    public ReturnObject<CouponActivity>showCouponActivityPoStraight(Long id){
         try{
             CouponActivityPo couponActivityPo = couponActivityPoMapper.selectByPrimaryKey(id);
             if (couponActivityPo == null){
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            if(!couponActivityPo.getShopId().equals(couponActivity.getShopId())){
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
-            }
-            //下线状态不给返回
-            if(couponActivityPo.getState()==CouponActivity.State.OFFLINE.getCode().byteValue()){
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }
-            return new ReturnObject<>(new CouponActivityVoInfo(couponActivityPo));
+            return new ReturnObject<>((CouponActivity)Common.cloneVo(couponActivityPo,CouponActivity.class));
         }catch(Exception e){
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
         }

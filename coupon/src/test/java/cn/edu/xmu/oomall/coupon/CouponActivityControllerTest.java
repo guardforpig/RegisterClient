@@ -110,8 +110,8 @@ public class CouponActivityControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expectedString = "{\n" +
-                "\"errno\": 500,\n" +
-                "\"errmsg\": \"服务器内部错误\"\n" +
+                "\"errno\": 0,\n" +
+                "\"errmsg\": \"成功\"\n" +
                 "}";
         JSONAssert.assertEquals(expectedString,responseString,false);
 
