@@ -248,27 +248,23 @@ public class AdvanceSaleService {
         //需要先从advanceBo拿到shopId
         Long shopId = advanceSaleBo.getShopId();
 
-        //根据shopId判断商铺是否存在
-        InternalReturnObject<ShopInfoVo> shopVoReturnObject= shopService.getShop(shopId);
-        if (shopVoReturnObject.getData() == null) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该商铺");
-        }
-
         //根据商铺号shopId和预售活动id获得OnSale的信息
         InternalReturnObject internalReturnObject =  getOnSaleInfo(shopId,id);
         if (internalReturnObject.getData() == null) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "找不到对应的销售信息");
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, internalReturnObject.getErrmsg());
         }
 
+        //这里因为返回的对象需要同时从OnSale表和AdvanceSale表拿数据，所以只能用一次cloneVo
         AdvanceSaleRetVo advanceSaleRetVo = (AdvanceSaleRetVo) Common.cloneVo(advanceSaleBo, AdvanceSaleRetVo.class);
 
-        FullOnSaleVo onSaleInfoVo=(FullOnSaleVo) internalReturnObject.getData();
-        advanceSaleRetVo.setShop(onSaleInfoVo.getShop());
-        advanceSaleRetVo.setBeginTime(onSaleInfoVo.getBeginTime());
-        advanceSaleRetVo.setEndTime(onSaleInfoVo.getEndTime());
-        advanceSaleRetVo.setProduct(onSaleInfoVo.getProduct());
-        advanceSaleRetVo.setPrice(onSaleInfoVo.getPrice());
-        advanceSaleRetVo.setQuantity(onSaleInfoVo.getQuantity());
+        //将OnSale的字段赋给retVo
+        FullOnSaleVo fullOnSaleVo=(FullOnSaleVo) internalReturnObject.getData();
+        advanceSaleRetVo.setShop(fullOnSaleVo.getShop());
+        advanceSaleRetVo.setBeginTime(fullOnSaleVo.getBeginTime());
+        advanceSaleRetVo.setEndTime(fullOnSaleVo.getEndTime());
+        advanceSaleRetVo.setProduct(fullOnSaleVo.getProduct());
+        advanceSaleRetVo.setPrice(fullOnSaleVo.getPrice());
+        advanceSaleRetVo.setQuantity(fullOnSaleVo.getQuantity());
         return new ReturnObject(advanceSaleRetVo);
     }
 
@@ -294,22 +290,22 @@ public class AdvanceSaleService {
         //根据商铺号shopId和预售活动id获得OnSale的信息
         InternalReturnObject internalReturnObject =  getOnSaleInfo(shopId,id);
         if (internalReturnObject.getData() == null) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "找不到对应的销售信息");
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, internalReturnObject.getErrmsg());
         }
         //这里因为返回的对象需要同时从OnSale表和AdvanceSale表拿数据，所以只能用一次cloneVo
-        FullAdvanceSaleRetVo advanceSaleInfoRetVo = (FullAdvanceSaleRetVo) Common.cloneVo(advanceSaleBo, FullAdvanceSaleRetVo.class);
-        advanceSaleInfoRetVo.setCreator(new SimpleUserRetVo(advanceSaleBo.getCreatorId(),advanceSaleBo.getCreatorName()));
-        advanceSaleInfoRetVo.setModifier(new SimpleUserRetVo(advanceSaleBo.getModifierId(),advanceSaleBo.getModifierName()));
+        FullAdvanceSaleRetVo fullAdvanceSaleRetVo = (FullAdvanceSaleRetVo) Common.cloneVo(advanceSaleBo, FullAdvanceSaleRetVo.class);
+        fullAdvanceSaleRetVo.setCreator(new SimpleUserRetVo(advanceSaleBo.getCreatorId(),advanceSaleBo.getCreatorName()));
+        fullAdvanceSaleRetVo.setModifier(new SimpleUserRetVo(advanceSaleBo.getModifierId(),advanceSaleBo.getModifierName()));
 
         //将OnSale的字段赋给retVo
-        FullOnSaleVo onSaleInfoVo=(FullOnSaleVo) internalReturnObject.getData();
-        advanceSaleInfoRetVo.setShop(onSaleInfoVo.getShop());
-        advanceSaleInfoRetVo.setBeginTime(onSaleInfoVo.getBeginTime());
-        advanceSaleInfoRetVo.setEndTime(onSaleInfoVo.getEndTime());
-        advanceSaleInfoRetVo.setProduct(onSaleInfoVo.getProduct());
-        advanceSaleInfoRetVo.setPrice(onSaleInfoVo.getPrice());
-        advanceSaleInfoRetVo.setQuantity(onSaleInfoVo.getQuantity());
-        return new ReturnObject(advanceSaleInfoRetVo);
+        FullOnSaleVo fullOnSaleVo=(FullOnSaleVo) internalReturnObject.getData();
+        fullAdvanceSaleRetVo.setShop(fullOnSaleVo.getShop());
+        fullAdvanceSaleRetVo.setBeginTime(fullOnSaleVo.getBeginTime());
+        fullAdvanceSaleRetVo.setEndTime(fullOnSaleVo.getEndTime());
+        fullAdvanceSaleRetVo.setProduct(fullOnSaleVo.getProduct());
+        fullAdvanceSaleRetVo.setPrice(fullOnSaleVo.getPrice());
+        fullAdvanceSaleRetVo.setQuantity(fullOnSaleVo.getQuantity());
+        return new ReturnObject(fullAdvanceSaleRetVo);
     }
 
     /**
@@ -335,7 +331,7 @@ public class AdvanceSaleService {
         advanceSaleBo.setShopId(shopId);
         advanceSaleBo.setShopName(shopVoReturnObject.getData().getName());
 
-        //调用goodsservice，根据shopId,productId，beginTime，endTime获取OnSale列表,判断要加入的活动的时间是否和已有product的预售活动时间冲突
+        //调用goodsService，根据shopId,productId，beginTime，endTime获取OnSale列表,判断要加入的活动的时间是否和已有product的预售活动时间冲突
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1=goodsService.getAllOnSale(shopId,id,advanceSaleVo.getBeginTime(),advanceSaleVo.getEndTime(),1,1);
         List<SimpleOnSaleInfoVo> list=new ArrayList<>();
         if(onSaleList1.getData().getList()!=null) {
@@ -381,14 +377,14 @@ public class AdvanceSaleService {
      */
     public InternalReturnObject getOnSaleInfo(Long shopId,Long id) {
         SimpleOnSaleInfoVo simpleOnSaleInfoVo = new SimpleOnSaleInfoVo();
-        //根据shopId和预售活动id查找OnSale表，由于预售活动和OnSale是一对一关系，最大只会查到一条OnSale记录
+        //根据shopId和预售活动id查找OnSale表，由于预售活动和OnSale是一对一关系，最多只会查到一条OnSale记录
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject=goodsService.getShopOnSaleInfo(shopId,id,null,null,null,1,10);
         if (pageInfoReturnObject.getData().getList() != null) {
             simpleOnSaleInfoVo = pageInfoReturnObject.getData().getList().get(0);
         }
         //OnSale表中查不到
         else{
-            return new InternalReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST.getCode(), "活动不存在");
+            return new InternalReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST.getCode(), "找不到该预售活动对应的销售信息");
         }
         InternalReturnObject<FullOnSaleVo> returnObject=goodsService.getOnSaleInfo(simpleOnSaleInfoVo.getId());
         return returnObject;
