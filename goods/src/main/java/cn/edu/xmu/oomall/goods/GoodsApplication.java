@@ -1,5 +1,7 @@
 package cn.edu.xmu.oomall.goods;
 
+import cn.edu.xmu.privilegegateway.annotation.aop.PageAspect;
+import cn.edu.xmu.privilegegateway.aop.PageAspect;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 @MapperScan("cn.edu.xmu.oomall.goods.mapper")
 public class GoodsApplication {
 
+    
 
     public static void main(String[] args) {
 
