@@ -4,8 +4,7 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Goods;
-import cn.edu.xmu.privilegegateway.annotation.model.VoObject;
-import cn.edu.xmu.privilegegateway.annotation.util.Common;
+import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
@@ -53,12 +52,12 @@ public class ProductDao {
     @Value("${oomall.goods.product.expiretime}")
     private long productTimeout;
 
-    
-    
-   
+
+
+
     @Autowired
     private ProductDraftPoMapper productDraftPoMapper;
-   
+
     public final static String GOODSKEY="goods_%d";
 
     public ReturnObject hasExist(Long productId) {
@@ -175,9 +174,11 @@ public class ProductDao {
             if (productDraftPo.getProductId() == 0) {
                 productPo.setId(null);
                 productMapper.insert(productPo);
+                productPo.setState((byte)1);
             } else {
                 productPo.setId(productDraftPo.getProductId());
                 productMapper.updateByPrimaryKey(productPo);
+                productPo.setState((byte)1);
             }
             String key = String.format(GOODSKEY, productPo.getGoodsId());
             redisUtil.del(key);
@@ -207,9 +208,14 @@ public class ProductDao {
         productPo.setGoodsId(newId);
         return productMapper.updateByExampleSelective(productPo,productPoExample);
     }
-    public Product getProduct(Long id){
-        ProductPo productPo=productMapper.selectByPrimaryKey(id);
-        return (Product) Common.cloneVo(productPo,Product.class);
+    public Product getProduct(Long id) {
+        ProductPo productPo = productMapper.selectByPrimaryKey(id);
+        if (productPo != null) {
+            return (Product) Common.cloneVo(productPo, Product.class);
+        }
+        Product product=new Product();
+        product.setState((byte)-1);
+        return product;
     }
     public ProductDraftPo getProductDraft(Long id){
         return productDraftPoMapper.selectByPrimaryKey(id);

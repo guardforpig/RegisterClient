@@ -56,11 +56,12 @@ public class ProductService {
     public ReturnObject onshelvesProduct(Long shopId,Long productId)
     {
         Product product= productDao.getProduct(productId);
-        if(product==null){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
+        if (product.getState()==(byte)-1) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在");
         }
-        if(shopId!=0){
-            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
+        if(!product.getShopId().equals(shopId))
+        {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
         }
         ReturnObject ret=productDao.alterProductStates(product,(byte)Product.ProductState.ONSHELF.getCode(),(byte)Product.ProductState.OFFSHELF.getCode());
         if(ret.getData()!=null){
@@ -70,39 +71,58 @@ public class ProductService {
         }
     }
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject offshelvesProduct(Long shopId,Long productId)
-    {
-        Product product= productDao.getProduct(productId);
-        if(product==null){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
+    public ReturnObject offshelvesProduct(Long shopId,Long productId) {
+        Product product = productDao.getProduct(productId);
+        if (product.getState()==(byte)-1) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在");
         }
-        if(shopId!=0){
-            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
+        if(!product.getShopId().equals(shopId))
+        {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
         }
-        return productDao.alterProductStates(product,(byte)Product.ProductState.OFFSHELF.getCode(),(byte)Product.ProductState.ONSHELF.getCode());
+        ReturnObject ret = productDao.alterProductStates(product, (byte) Product.ProductState.OFFSHELF.getCode(), (byte) Product.ProductState.ONSHELF.getCode());
+        if(ret.getData()!=null){
+            return new ReturnObject(ReturnNo.OK,"成功");
+        }else
+        {
+            return ret;
+        }
     }
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject allowProduct(Long shopId,Long productId)
-    {
-        Product product= productDao.getProduct(productId);
-        if(product==null){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
+    public ReturnObject allowProduct(Long shopId,Long productId) {
+        Product product = productDao.getProduct(productId);
+        if (product.getState()==(byte)-1) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在");
         }
-        if(shopId!=0){
-            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
+        if(!product.getShopId().equals(shopId))
+        {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
         }
-        return productDao.alterProductStates(product,(byte)Product.ProductState.OFFSHELF.getCode(),(byte)Product.ProductState.BANNED.getCode());
+        ReturnObject ret = productDao.alterProductStates(product, (byte) Product.ProductState.OFFSHELF.getCode(), (byte) Product.ProductState.BANNED.getCode());
+        if(ret.getData()!=null){
+            return new ReturnObject(ReturnNo.OK,"成功");
+        }else
+        {
+            return ret;
+        }
     }
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject prohibitProduct(Long shopId,Long productId)
     {
         Product product= productDao.getProduct(productId);
-        if(product==null){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"货品id不存在");
+        if (product.getState()==(byte)-1) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在");
         }
-        if(shopId!=0){
-            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
+        if(!product.getShopId().equals(shopId))
+        {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
         }
-        return productDao.alterProductStates(product,(byte)Product.ProductState.BANNED.getCode(),(byte)Product.ProductState.OFFSHELF.getCode(),(byte)Product.ProductState.ONSHELF.getCode());
+        ReturnObject ret=productDao.alterProductStates(product,(byte)Product.ProductState.BANNED.getCode(),(byte)Product.ProductState.OFFSHELF.getCode(),(byte)Product.ProductState.ONSHELF.getCode());
+        if(ret.getData()!=null){
+            return new ReturnObject(ReturnNo.OK,"成功");
+        }else
+        {
+            return ret;
+        }
     }
 }

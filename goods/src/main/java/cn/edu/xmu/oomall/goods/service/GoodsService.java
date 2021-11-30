@@ -59,7 +59,7 @@ public class GoodsService {
         goods.setId(id);
         goods.setShopId(shopId);
         Common.setPoModifiedFields(goods,loginUser,loginUserName);
-        return new ReturnObject(goodsDao.updateGoods(goods));
+        return goodsDao.updateGoods(goods);
     }
 
     @Transactional(readOnly = true,rollbackFor=Exception.class)
