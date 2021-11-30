@@ -67,7 +67,7 @@ public class CouponActivityService {
     private Integer pagesOfApi2;
 
     // 活动查productVoList的key，key是activityId
-    public final static String PRODUCTVOLISTKEY = "productVo_%d";
+    public final static String PRODUCTVOLISTKEY = "productvolist_%d";
 
     // 商品查couponActivityList的key，key是productId
     public final static String COUPONACTIVITYLISTKEY = "couponactivitylist_%d";
