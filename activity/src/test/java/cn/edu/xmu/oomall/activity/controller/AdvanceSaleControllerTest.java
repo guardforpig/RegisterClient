@@ -4,6 +4,7 @@ import cn.edu.xmu.oomall.activity.ActivityApplication;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.microservice.vo.*;
+import cn.edu.xmu.oomall.activity.model.bo.AdvanceSale;
 import cn.edu.xmu.oomall.activity.model.vo.SimpleUserRetVo;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -248,16 +249,32 @@ public class AdvanceSaleControllerTest {
     //4.查询activityid为1的预售活动的详细信息，在redis中查到advancesale，该活动已下线
     @Test
     public void getOnlineAdvanceSaleInfoTest4() throws Exception {
-        Mockito.when(redisUtil.get("advanceSale_11")).thenReturn("{\"@class\":\"cn.edu.xmu.oomall.activity.model.bo.AdvanceSale\",\"id\":11,\"shop\":null,\"name\":\"预售活动11\",\"payTime\":\"2021-11-12 15:04:04.000\",\"advancePayPrice\":100,\"creatorId\":1,\"createName\":\"zheng5d\",\"modifierId\":1,\"modiName\":\"zheng5d\",\"state\":2}");
+        //模拟访问redis拿到一个未上线的预售活动bo
+        AdvanceSale advanceSale=new AdvanceSale(11L,4L,"努力向前","预售活动11",LocalDateTime.parse("2021-06-22T17:38:20.000Z",df),100L,1L,"zheng5d",1L,"zheng5d",LocalDateTime.parse("2021-06-22T17:38:20.000Z",df),LocalDateTime.parse("2021-06-22T17:38:20.000Z",df),Byte.valueOf("2"));
+        Mockito.when(redisUtil.get("advanceSale_11")).thenReturn(advanceSale);
         InternalReturnObject<PageInfo<FullOnSaleVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>(list3));
         Mockito.when(goodsService.getShopOnSaleInfo(4L,11L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
 
         String responseString = mvc.perform(get("/advancesales/11"))
-                .andExpect((status().isInternalServerError()))
+                .andExpect((status().isOk()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":500}";
-        JSONAssert.assertEquals(expected, responseString, false);
+        String expected = "{\"errno\":507,\"errmsg\":\"预售活动未上线\"}";
+        JSONAssert.assertEquals(expected, responseString, true);
+    }
+
+    //5.查询activityId为1的预售活动，假设查找OnSale表时找不到
+    @Test
+    @Transactional
+    public void getOnlineAdvanceSaleInfoTest5() throws Exception {
+        InternalReturnObject<PageInfo<FullOnSaleVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>());
+        Mockito.when(goodsService.getShopOnSaleInfo(4L,1L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
+        String responseString = mvc.perform(get("/advancesales/1"))
+                .andExpect((status().isNotFound()))
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expected = "{\"errno\":504,\"errmsg\":\"找不到该预售活动对应的销售信息\"}";
+        JSONAssert.assertEquals(expected, responseString, true);
     }
 
     //1.根据shopId,productId,beginTime,endTime查询
@@ -328,7 +345,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect((status().isOk()))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":902,\"errmsg\":\"商品销售时间冲突\"}";
-        JSONAssert.assertEquals(expected, responseString, false);
+        JSONAssert.assertEquals(expected, responseString, true);
     }
 
     //2.新建预售,输入参数不合法
@@ -395,7 +412,7 @@ public class AdvanceSaleControllerTest {
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
-    //6.新增预售活动，但新增到Onsale表时失败
+    //6.新增预售活动，但新增到OnSale表时失败
     @Test
     @Transactional
     public void addAdvanceSaleTest6() throws Exception {
@@ -473,7 +490,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"data\":{\"id\":1,\"name\":\"预售活动1\",\"shop\":{\"id\":4,\"name\":\"努力向前\"},\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2021-11-11T15:04:04.000\",\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null},\"state\":1},\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, false);
+        JSONAssert.assertEquals(expected, responseString, true);
     }
 
     //2.查询shopId为11,activityid为1的预售活动，shopId为空
@@ -488,7 +505,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":504,\"errmsg\":\"不存在该商铺\"}";
-        JSONAssert.assertEquals(expected, responseString, false);
+        JSONAssert.assertEquals(expected, responseString, true);
     }
 
     //3.查询shopId为4,activityid为2的预售活动，活动id和店铺不匹配，getShopOnsaleInfo查不到
@@ -504,8 +521,8 @@ public class AdvanceSaleControllerTest {
                 .andExpect((status().isNotFound()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":504,\"errmsg\":\"找不到对应的销售信息\"}";
-        JSONAssert.assertEquals(expected, responseString, false);
+        String expected="{\"errno\":504,\"errmsg\":\"找不到该预售活动对应的销售信息\"}";
+        JSONAssert.assertEquals(expected, responseString, true);
     }
 
     //4.查询shopId为4,activityid为11的预售活动，假设OnSale找得到，AdvanceSale找不到，会在dao层出错
@@ -524,6 +541,6 @@ public class AdvanceSaleControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected="{\"errno\":504,\"errmsg\":\"活动不存在\"}";
-        JSONAssert.assertEquals(expected, responseString, false);
+        JSONAssert.assertEquals(expected, responseString, true);
     }
 }
