@@ -1,8 +1,11 @@
 package cn.edu.xmu.oomall.activity.model.bo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import cn.edu.xmu.oomall.activity.model.vo.ShopVo;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -14,6 +17,8 @@ import java.util.Map;
  */
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AdvanceSale implements Serializable {
 
 

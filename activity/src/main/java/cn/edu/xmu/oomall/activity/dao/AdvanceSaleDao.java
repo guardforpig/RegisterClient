@@ -175,16 +175,11 @@ public class AdvanceSaleDao {
      * @return
      */
     public ReturnObject addAdvanceSale(Long adminId,String adminName,AdvanceSale advanceSaleBo){
-        AdvanceSalePo advanceSalePo = (AdvanceSalePo) Common.cloneVo(advanceSaleBo, AdvanceSalePo.class);
-        Common.setPoCreatedFields(advanceSalePo,adminId,adminName);
-        Common.setPoModifiedFields(advanceSalePo,adminId,adminName);
         try {
-            if (advanceSalePoMapper.insert(advanceSalePo) == 1) {
-                return new ReturnObject(Common.cloneVo(advanceSalePo, AdvanceSale.class));
-            }
-            else {
-                return new ReturnObject(ReturnNo.FIELD_NOTVALID, "新增预售活动失败");
-            }
+            AdvanceSalePo advanceSalePo = (AdvanceSalePo) Common.cloneVo(advanceSaleBo, AdvanceSalePo.class);
+            Common.setPoCreatedFields(advanceSalePo,adminId,adminName);
+            advanceSalePoMapper.insert(advanceSalePo);
+            return new ReturnObject(Common.cloneVo(advanceSalePo, AdvanceSale.class));
         }
         catch (Exception e) {
             logger.error(e.getMessage());
