@@ -1,6 +1,6 @@
 package cn.edu.xmu.oomall.activity.microservice.vo;
 
-import cn.edu.xmu.oomall.activity.model.vo.SimpleAdminUserVo;
+import cn.edu.xmu.oomall.activity.model.vo.SimpleUserRetVo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -51,7 +51,7 @@ public class OnSaleInfoVo{
     private Long shareActId;
 
     @ApiModelProperty(value = "创建者")
-    private SimpleAdminUserVo creator;
+    private SimpleUserRetVo creator;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime gmtCreate;
@@ -60,5 +60,5 @@ public class OnSaleInfoVo{
     private LocalDateTime gmtModified;
 
     @ApiModelProperty(value = "修改者")
-    private SimpleAdminUserVo modifier;
+    private SimpleUserRetVo modifier;
 }

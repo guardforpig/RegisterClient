@@ -4,7 +4,7 @@ import cn.edu.xmu.oomall.activity.ActivityApplication;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.microservice.vo.*;
-import cn.edu.xmu.oomall.activity.model.vo.SimpleAdminUserVo;
+import cn.edu.xmu.oomall.activity.model.vo.SimpleUserRetVo;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
@@ -85,17 +85,17 @@ public class AdvanceSaleControllerTest {
         OnSaleInfoVo vo3=new OnSaleInfoVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
                 20L,LocalDateTime.parse("2021-06-21T17:38:20.001Z",df),
                 LocalDateTime.parse("2021-12-29T17:38:20.001Z",df),
-                10L,"3",1L,1L,new SimpleAdminUserVo(1L,"zheng5d"),
+                10L,"3",1L,1L,new SimpleUserRetVo(1L,"zheng5d"),
                 LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),
-                new SimpleAdminUserVo(1L,"zheng5d"));
+                new SimpleUserRetVo(1L,"zheng5d"));
         list3.add(vo3);
 
         OnSaleInfoVo vo4=new OnSaleInfoVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
                 20L,LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),
                 LocalDateTime.parse("2021-12-29T17:38:20.000Z",df),
-                10L,"3",11L,1L,new SimpleAdminUserVo(1L,"zheng5d"),
+                10L,"3",11L,1L,new SimpleUserRetVo(1L,"zheng5d"),
                 LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),
-                new SimpleAdminUserVo(1L,"zheng5d"));
+                new SimpleUserRetVo(1L,"zheng5d"));
         list4.add(vo4);
     }
 

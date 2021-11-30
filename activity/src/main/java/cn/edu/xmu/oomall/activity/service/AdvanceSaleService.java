@@ -298,8 +298,8 @@ public class AdvanceSaleService {
         }
         //这里因为返回的对象需要同时从OnSale表和AdvanceSale表拿数据，所以只能用一次cloneVo
         AdvanceSaleInfoRetVo advanceSaleInfoRetVo = (AdvanceSaleInfoRetVo) Common.cloneVo(advanceSaleBo, AdvanceSaleInfoRetVo.class);
-        advanceSaleInfoRetVo.setCreator(new SimpleAdminUserVo(advanceSaleBo.getCreatorId(),advanceSaleBo.getCreatorName()));
-        advanceSaleInfoRetVo.setModifier(new SimpleAdminUserVo(advanceSaleBo.getModifierId(),advanceSaleBo.getModifierName()));
+        advanceSaleInfoRetVo.setCreator(new SimpleUserRetVo(advanceSaleBo.getCreatorId(),advanceSaleBo.getCreatorName()));
+        advanceSaleInfoRetVo.setModifier(new SimpleUserRetVo(advanceSaleBo.getModifierId(),advanceSaleBo.getModifierName()));
 
         //将OnSale的字段赋给retVo
         OnSaleInfoVo onSaleInfoVo=(OnSaleInfoVo) internalReturnObject.getData();

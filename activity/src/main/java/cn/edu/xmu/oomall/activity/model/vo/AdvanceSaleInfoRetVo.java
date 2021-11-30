@@ -47,7 +47,7 @@ public class AdvanceSaleInfoRetVo {
     private Long advancePayPrice;
 
     @ApiModelProperty(value = "创建者")
-    private SimpleAdminUserVo creator;
+    private SimpleUserRetVo creator;
 
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
@@ -58,7 +58,7 @@ public class AdvanceSaleInfoRetVo {
     private LocalDateTime gmtModified;
 
     @ApiModelProperty(value = "修改者")
-    private SimpleAdminUserVo modifier;
+    private SimpleUserRetVo modifier;
 
     @ApiModelProperty(value = "状态")
     private Byte state;
