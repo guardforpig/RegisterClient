@@ -281,25 +281,6 @@ public class CouponActivityDao {
         }
     }
 
-    public ReturnObject listOnlineCouponActivityByIdList(List<Long> idList, Integer pageNumber, Integer pageSize) {
-        try {
-            PageHelper.startPage(pageNumber, pageSize, true, false, true);
-            CouponActivityPoExample example = new CouponActivityPoExample();
-            example.createCriteria()
-                    .andIdIn(idList)
-                    .andStateEqualTo(CouponActivity.State.ONLINE.getCode());
-            List<CouponActivityPo> poList = couponActivityPoMapper.selectByExample(example);
-            if (poList.size() == 0) {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }
-
-            ReturnObject ret = new ReturnObject<>(new PageInfo<>(poList));
-            return Common.getPageRetVo(ret, CouponActivity.class);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
-        }
-    }
 
     public ReturnObject listCouponOnsaleByOnsaleIdAndActivityId(Long onsaleId, Long activityId, Integer pageNumber, Integer pageSize) {
         try {

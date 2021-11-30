@@ -259,7 +259,6 @@ public class CouponActivityService {
             if (!retPageInfo.getCode().equals(ReturnNo.OK)) {
                 return retPageInfo;
             }
-
             // CouponOnsale查Onsale，然后获得ProductVo
             Map<String, Object> retMap = (Map<String, Object>) retPageInfo.getData();
             List<CouponOnsale> couponOnsaleList = (List<CouponOnsale>) retMap.get("list");
@@ -277,10 +276,10 @@ public class CouponActivityService {
                 }
             }
 
-            // 手动保存total、pages
+            // 保存total、pages
             totalOfApi1 = (long) productVoList.size();
             pagesOfApi1 = (productVoList.size() - 1) / pageSize + 1;
-            // 手动分页
+            // 分页
             productVoList = productVoList.subList((pageNumber - 1) * pageSize,
                     Math.min(pageNumber * pageSize, productVoList.size()));
         }
@@ -340,7 +339,7 @@ public class CouponActivityService {
             List<CouponOnsale>  couponOnsaleList = (List<CouponOnsale>) retCouponOnsaleMap.get("list");
             Set<Long> couponOnsaleIdSet = new HashSet<>();
             for (CouponOnsale couponOnsale : couponOnsaleList) {
-                // 根据activityId查CouponActivity，这里有redis缓存，已降低负载
+                // 根据activityId查CouponActivity，这里有redis缓存
                 if (!couponOnsaleIdSet.contains(couponOnsale.getActivityId())) {
                     ReturnObject<CouponActivity> retCouponActivity =
                             couponActivityDao.getCouponActivityById(couponOnsale.getActivityId());
@@ -356,10 +355,10 @@ public class CouponActivityService {
                     couponOnsaleIdSet.add(couponOnsale.getActivityId());
                 }
             }
-            // 手动保存total、pages
+            // 保存total、pages
             totalOfApi2 = (long) couponActivityList.size();
             pagesOfApi2 = (couponActivityList.size() - 1) / pageSize + 1;
-            // 手动分页
+            // 分页
             couponActivityList = couponActivityList.subList((pageNumber - 1) * pageSize,
                     Math.min(pageNumber * pageSize, couponActivityList.size()));
         }
@@ -523,10 +522,10 @@ public class CouponActivityService {
             return returnObject;
         }
 
-        // 插入couponOnsale，需要删除活动查商品这个API的redis中activityId, List<onsaleId>的缓存数据
+        // 插入couponOnsale，需要删除活动查商品这个API的redis中activityId, List<productVo>的缓存数据
         redisUtils.del(String.format(PRODUCTVOLISTKEY, couponActivityId));
 
-        // 插入couponOnsale，需要删除商品查活动这个API的redis中productId, List<activityId>的缓存需要删除
+        // 插入couponOnsale，需要删除商品查活动这个API的redis中productId, List<activity>的缓存需要删除
         redisUtils.del(String.format(COUPONACTIVITYLISTKEY, retOnsaleVo.getData().getProduct().getId()));
 
         return new ReturnObject<>(ReturnNo.OK);
@@ -585,7 +584,7 @@ public class CouponActivityService {
         // 判断活动的商店Id是否与传入的shopId对应
         CouponActivity couponActivity = retCouponActivity.getData();
         if (!couponActivity.getShopId().equals(shopId)) {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE );
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
         // 判断是不是在下线态，下线态出错
         if (couponActivity.getState().equals(CouponActivity.State.OFFLINE.getCode())) {
@@ -597,10 +596,10 @@ public class CouponActivityService {
             return returnObject;
         }
 
-        // 删除couponOnsale，需要删除活动查商品这个API的redis中activityId, List<onsaleId>的缓存数据
+        // 删除couponOnsale，需要删除活动查商品这个API的redis中activityId, List<productVo>的缓存数据
         redisUtils.del(String.format(PRODUCTVOLISTKEY, retCouponOnsale.getData().getActivityId()));
 
-        // 删除couponOnsale，需要删除商品查活动这个API的redis中productId, List<activityId>需要删除，所以需要找到onsale对应的productId
+        // 删除couponOnsale，需要删除商品查活动这个API的redis中productId, List<activity>需要删除，所以需要找到onsale对应的productId
         InternalReturnObject<OnsaleVo> tempOnsaleVo = goodsService.getOnsaleById(retCouponOnsale.getData().getOnsaleId());
         redisUtils.del(String.format(COUPONACTIVITYLISTKEY, tempOnsaleVo.getData().getProduct().getId()));
 

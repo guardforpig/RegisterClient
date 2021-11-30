@@ -263,7 +263,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":504,\"errmsg\":\"该优惠活动不属于该商店\"}";
+        expectString = "{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1,3600);
@@ -323,7 +323,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":504,\"errmsg\":\"该优惠活动不属于该商店\"}";
+        expectString = "{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",3L, 1, 3600);
@@ -333,7 +333,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":504,\"errmsg\":\"该Onsale不属于该商店\"}";
+        expectString = "{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
@@ -403,7 +403,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":504,\"errmsg\":\"该CouponOnSale参与的优惠活动不属于该商店\"}";
+        expectString = "{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         adminToken = jwtHelper.createToken(1L,"admin",2L, 1, 3600);
@@ -462,7 +462,7 @@ public class CouponControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":504,\"errmsg\":\"该优惠活动不属于该商店\"}";
+        expectString = "{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
     }
 
