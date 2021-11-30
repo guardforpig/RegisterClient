@@ -7,7 +7,7 @@ echo $daily_dir
 
 echo '-------------------initializing privilege database-------------------------'
 cd /home/mingqiu/privilegegateway/sql
-mysql -h 172.16.1.254 -udbuser -p12345678 -D privilegegateway < privilegegateway-batch.sql
+mysql -h 172.16.1.254 -udbuser -p12345678 -D privilege_gateway < privilegegateway-batch.sql
 
 cd /home/mingqiu/privilegegateway
 git checkout annotation/pom.xml
@@ -21,6 +21,7 @@ mvn site:site site:deploy
 
 echo '-------------------building comment-------------------------'
 cd /home/mingqiu/privilegegateway/privilegeservice
+git checkout pom.xml
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean test
 mvn site:site site:deploy
