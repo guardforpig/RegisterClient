@@ -52,7 +52,7 @@ public class CommentControllerTest {
                 "\t],\n" +
                 "\t\"errmsg\": \"成功\"\n" +
                 "}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     /**
@@ -70,7 +70,7 @@ public class CommentControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":503,\"errmsg\":\"评论不能为空;\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
 
 
         //成功评论
@@ -101,7 +101,7 @@ public class CommentControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
 
     }
 
@@ -121,7 +121,7 @@ public class CommentControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     /**
@@ -159,7 +159,7 @@ public class CommentControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
 
         responseString = this.mvc.perform(get("/products/1/comments").contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())

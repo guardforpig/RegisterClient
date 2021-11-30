@@ -32,13 +32,13 @@ public class CouponActivityDao {
     @Autowired
     CouponActivityPoMapper couponActivityPoMapper;
 
-    @Value("${webdav.user}")
+    @Value("${oomall.coupon.webdav.user}")
     String webDavUser;
 
-    @Value("${webdav.password}")
+    @Value("${oomall.coupon.webdav.password}")
     String webDavPassword;
 
-    @Value("${webdav.baseurl}")
+    @Value("${oomall.coupon.webdav.baseurl}")
     String baseUrl;
     /**
      * 查看优惠活动模块的所有活动

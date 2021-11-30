@@ -56,7 +56,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expected = "{\"errno\":0,\"data\":[{\"code\":0,\"name\":\"未审核\"},{\"code\":1,\"name\":\"下线\"},{\"code\":2,\"name\":\"上线\"},{\"code\":3,\"name\":\"关闭\"}],\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
     /**
      * 获取店铺信息
@@ -70,7 +70,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"data\":{\"id\":1,\"name\":\"OOMALL自营商铺\"},\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
 
     }
     /**
@@ -102,7 +102,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected=" {\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     /**
@@ -139,7 +139,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expected = "{\"errno\":503,\"errmsg\":\"商铺名不能为空;\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     /**
@@ -158,7 +158,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expected = "{\"errno\":503,\"errmsg\":\"商铺名不能为空;\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     /**
@@ -177,7 +177,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     @Test
@@ -191,7 +191,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     /**
@@ -210,7 +210,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     @Test
@@ -224,7 +224,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expected = "{\"errno\":503,\"errmsg\":\"商铺名不能为空;\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     /**
@@ -243,7 +243,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     /**
@@ -262,7 +262,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_audit, true);
+        JSONAssert.assertEquals(expected, responseString_audit, false);
 
         String responseString_onself = this.mvc.perform(put("/shops/1/online").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -270,7 +270,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_onself, true);
+        JSONAssert.assertEquals(expected, responseString_onself, false);
 
         String responseString_offself = this.mvc.perform(put("/shops/1/offline").header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -278,7 +278,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_offself, true);
+        JSONAssert.assertEquals(expected, responseString_offself, false);
     }
 
 
@@ -298,7 +298,7 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_audit, true);
+        JSONAssert.assertEquals(expected, responseString_audit, false);
 
         RefundDepositVo refundDepositVo = new RefundDepositVo();
         refundDepositVo.setAccount("11111111");
@@ -312,7 +312,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_delete, true);
+        JSONAssert.assertEquals(expected, responseString_delete, false);
     }
 
     /**
@@ -331,14 +331,14 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_audit, true);
+        JSONAssert.assertEquals(expected, responseString_audit, false);
 
         String responseString_onself = this.mvc.perform(put("/shops/1/online").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_onself, true);
+        JSONAssert.assertEquals(expected, responseString_onself, false);
 
         RefundDepositVo refundDepositVo = new RefundDepositVo();
         refundDepositVo.setAccount("11111111");
@@ -381,7 +381,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_audit, true);
+        JSONAssert.assertEquals(expected, responseString_audit, false);
     }
 
     /**
@@ -400,7 +400,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_audit, true);
+        JSONAssert.assertEquals(expected, responseString_audit, false);
 
         RefundDepositVo refundDepositVo = new RefundDepositVo();
         refundDepositVo.setAccount("11111111");
@@ -413,8 +413,8 @@ public class ShopControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":968,\"data\":null,\"errmsg\":\"店铺尚有支付未清算完毕\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        expected = "{\"errno\":968,\"errmsg\":\"店铺尚有支付未清算完毕\"}";
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
     @Test
@@ -428,7 +428,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_audit, true);
+        JSONAssert.assertEquals(expected, responseString_audit, false);
         RefundDepositVo refundDepositVo = new RefundDepositVo();
         refundDepositVo.setAccount("11111111");
         refundDepositVo.setType(Byte.valueOf((byte) 0));
@@ -442,15 +442,15 @@ public class ShopControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_delete, true);
+        JSONAssert.assertEquals(expected, responseString_delete, false);
 
         String requestJson2 = "{\"name\": \"修改后\"}";
         String responseString = this.mvc.perform(put("/shops/1").header("authorization", shopToken).contentType("application/json;charset=UTF-8").content(requestJson2))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":507,\"data\":null,\"errmsg\":\"商铺处于关闭态\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        expected = "{\"errno\":507,\"errmsg\":\"商铺处于关闭态\"}";
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
 
@@ -470,7 +470,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_audit, true);
+        JSONAssert.assertEquals(expected, responseString_audit, false);
 
         RefundDepositVo refundDepositVo = new RefundDepositVo();
         refundDepositVo.setAccount("11111111");
@@ -484,7 +484,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_delete, true);
+        JSONAssert.assertEquals(expected, responseString_delete, false);
 
 
         String requestJson2 = "{\"conclusion\": true}";
@@ -508,7 +508,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_audit, true);
+        JSONAssert.assertEquals(expected, responseString_audit, false);
 
         RefundDepositVo refundDepositVo = new RefundDepositVo();
         refundDepositVo.setAccount("11111111");
@@ -522,14 +522,14 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_delete, true);
+        JSONAssert.assertEquals(expected, responseString_delete, false);
 
         String responseString = this.mvc.perform(put("/shops/1/online").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expected = "{\"errno\":507,\"data\":null,\"errmsg\":\"当前状态禁止此操作\"}";
-        JSONAssert.assertEquals(expected, responseString, true);
+        expected = "{\"errno\":507,\"errmsg\":\"当前状态禁止此操作\"}";
+        JSONAssert.assertEquals(expected, responseString, false);
     }
 
 
@@ -549,7 +549,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_audit, true);
+        JSONAssert.assertEquals(expected, responseString_audit, false);
 
         RefundDepositVo refundDepositVo = new RefundDepositVo();
         refundDepositVo.setAccount("11111111");
@@ -564,7 +564,7 @@ public class ShopControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         expected = "{\"errno\":0,\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected, responseString_delete, true);
+        JSONAssert.assertEquals(expected, responseString_delete, false);
 
         String responseString = this.mvc.perform(put("/shops/1/offline").header("authorization", adminToken))
                 .andExpect(status().isOk())

@@ -77,13 +77,13 @@ public class ShareActivityService {
         List<Long> shareActivityIds = new ArrayList<>();
         if (productId != null) {
             //TODO:openfeign获得分享活动id
-            InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, 10);
+            InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, 10);
             if (onSalesByProductId.getData() == null) {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,onSalesByProductId.getErrmsg());
             }
             int total = (int) onSalesByProductId.getData().get("total");
             if (total != 0) {
-                onSalesByProductId = goodsService.getOnSalesByProductId(shopId, productId, null, null, 1, total > 500 ? 500 : total);
+                onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, total > 500 ? 500 : total);
                 if (onSalesByProductId.getData() == null) {
                     return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,onSalesByProductId.getErrmsg());
                 }

@@ -52,6 +52,9 @@ public enum ReturnNo {
     CUSTOMER_INVALID_ACCOUNT(609, "用户名不存在或者密码错误"),
     CUSTOMER_FORBIDDEN(610,"用户被禁止登录"),
 
+    COUPON_NOTBEGIN(630,"未到优惠卷领取时间"),
+    COUPON_FINISH(631,"优惠卷领罄"),
+    COUPON_END(632,"优惠卷活动终止"),
     /***************************************************
      *    订单模块错误码
      **************************************************/
@@ -69,9 +72,7 @@ public enum ReturnNo {
     GOODS_ONSALE_NOTEFFECTIVE(905, "货品不在有效的销售状态和时间"),
 
 
-    COUPON_NOTBEGIN(909,"未到优惠卷领取时间"),
-    COUPON_FINISH(910,"优惠卷领罄"),
-    COUPON_END(911,"优惠卷活动终止"),
+
     STATE_NOCHANGE(920,"状态未改变"),
     CATEALTER_INVALID(921,"对SPU类别操作无效"),
     ACTIVITY_NOTFOUND(924,"无符合条件的优惠活动"),
