@@ -281,18 +281,30 @@ public class OnSaleDao {
 
     private int[] getAvgArray(Integer groupNum, Integer wholeQuantity) {
         // 将库存尽量平均分到多个桶
-        Integer rest = wholeQuantity;
-        Integer count = 0;
         int incr[] = new int[groupNum];
-        for (int i = 0; i < groupNum && rest > 0; i++) {
-            Integer sub;
-            if (rest < groupNum) {
-                sub = rest;
-            } else {
-                sub = (int) Math.ceil((double) wholeQuantity / groupNum);
+
+        // 数量小于组数，随机把数量加到桶中
+        if(wholeQuantity<=groupNum){
+            for(int i=0;i<wholeQuantity;i++){
+                Random r = new Random();
+                int init = r.nextInt(groupNum);
+                incr[init]++;
             }
-            incr[count++] = sub;
-            rest -= sub;
+            return incr;
+        }
+
+        // 数量大于组数，先将余数随机加到某个桶中，再将其余相同的增量也随机加到各自随机的桶中
+        int unit=wholeQuantity/groupNum;
+        int other=wholeQuantity-unit*groupNum;
+
+        Random r = new Random();
+        int init = r.nextInt(groupNum);
+        incr[init]+=other;
+
+        for (int i = 0; i < groupNum ; i++) {
+            Random r1 = new Random();
+            int init1 = r1.nextInt(groupNum);
+            incr[init1] += unit;
         }
         return incr;
     }
