@@ -33,7 +33,7 @@ public class OnSaleDao {
     private final static String ONSALE_STOCK_GROUP_KEY = "onsale_%d_stockgroup_%d";
     private final static String DECREASE_PATH = "stock/decrease.lua";
     private final static String INCREASE_PATH = "stock/increase.lua";
-    private final static Integer GROUPNUM = 10;
+
     private Logger logger = LoggerFactory.getLogger(OnSaleDao.class);
     @Autowired
     private OnSalePoMapper onSalePoMapper;
@@ -204,7 +204,7 @@ public class OnSaleDao {
     }
 
 
-    public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity) {
+    public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity,Integer groupNum) {
         try {
             // load lua script
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
@@ -212,10 +212,10 @@ public class OnSaleDao {
             script.setResultType(Long.class);
 
             Random r = new Random();
-            int init = r.nextInt(GROUPNUM);
+            int init = r.nextInt(groupNum);
 
-            for (int i = 0; i < GROUPNUM; i++) {
-                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init + i) % GROUPNUM);
+            for (int i = 0; i < groupNum; i++) {
+                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init + i) % groupNum);
                 List<String> keys = Stream.of(key).collect(Collectors.toList());
                 Long res = redis.execute(script, keys, quantity);
                 if (res >= 0) {
@@ -231,7 +231,7 @@ public class OnSaleDao {
     }
 
 
-    public ReturnObject increaseOnSaleQuantity(Long id, Integer quantity) {
+    public ReturnObject increaseOnSaleQuantity(Long id, Integer quantity,Integer groupNum) {
         try {
             // load lua script
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
@@ -241,30 +241,30 @@ public class OnSaleDao {
             // 将新增库存尽量平均分到多个桶
             Integer rest = quantity;
             Integer count = 0;
-            Integer incr[] = new Integer[GROUPNUM];
-            for (int i = 0; i < GROUPNUM && rest > 0; i++) {
+            Integer incr[] = new Integer[groupNum];
+            for (int i = 0; i < groupNum && rest > 0; i++) {
                 Integer sub;
-                if (rest < GROUPNUM) {
+                if (rest < groupNum) {
                     sub = rest;
                 } else {
-                    sub = (int) Math.ceil((double) quantity / GROUPNUM);
+                    sub = (int) Math.ceil((double) quantity / groupNum);
                 }
                 incr[count++] = sub;
                 rest -= sub;
             }
 
             Random r = new Random();
-            int init = r.nextInt(GROUPNUM);
+            int init = r.nextInt(groupNum);
             for (int i = 0; i < count; i++) {
-                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init + i) % GROUPNUM);
+                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init + i) % groupNum);
                 List<String> keys = Stream.of(key).collect(Collectors.toList());
                 Long res = redis.execute(script, keys, incr[i]);
                 logger.info(key + "剩余库存" + res);
-                if (quantity == 0) {
-                    return new ReturnObject(ReturnNo.OK);
+                if (res == -1) {
+                    return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE, "加库存失败");
                 }
             }
-            return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE, "加库存失败");
+            return new ReturnObject(ReturnNo.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());

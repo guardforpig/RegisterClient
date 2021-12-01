@@ -305,7 +305,10 @@ public class OnsaleService {
             return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE);
         }
 
-        return onsaleDao.decreaseOnSaleQuantity(id,quantity);
+
+        Integer groupNum=10;
+
+        return onsaleDao.decreaseOnSaleQuantity(id,quantity,groupNum);
 
     }
 
@@ -330,7 +333,9 @@ public class OnsaleService {
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该价格浮动不属于该商铺");
         }
 
-        return onsaleDao.increaseOnSaleQuantity(id,quantity);
+        Integer groupNum=10;
+
+        return onsaleDao.increaseOnSaleQuantity(id,quantity,groupNum);
 
     }
 
