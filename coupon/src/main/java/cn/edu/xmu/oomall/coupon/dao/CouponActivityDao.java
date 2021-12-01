@@ -199,8 +199,6 @@ public class CouponActivityDao {
     }
 
 
-
-
     /**
      * @author qingguo Hu 22920192204208
      */
@@ -211,13 +209,12 @@ public class CouponActivityDao {
             if (serializableBo != null) {
                 return new ReturnObject<>((CouponActivity) serializableBo);
             }
-            CouponActivityPo po = couponActivityPoMapper.selectByPrimaryKey(id);
-            if (po == null) {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            ReturnObject<CouponActivity> retCouponActivity = showCouponActivityPoStraight(id);
+            if (!retCouponActivity.getCode().equals(ReturnNo.OK)) {
+                return retCouponActivity;
             }
-            CouponActivity couponActivity = (CouponActivity) Common.cloneVo(po, CouponActivity.class);
-            redisUtils.set(key, couponActivity, boTimeout);
-            return new ReturnObject<>(couponActivity);
+            redisUtils.set(key, retCouponActivity.getData(), boTimeout);
+            return new ReturnObject<>(retCouponActivity.getData());
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -238,7 +235,7 @@ public class CouponActivityDao {
         }
     }
 
-    public ReturnObject listCouponOnsaleByActivityId(Long activityId, Integer pageNumber, Integer pageSize) {
+    public ReturnObject listCouponOnsalesByActivityId(Long activityId, Integer pageNumber, Integer pageSize) {
         try {
             PageHelper.startPage(pageNumber, pageSize, true, false, true);
             CouponOnsalePoExample example = new CouponOnsalePoExample();
@@ -256,37 +253,25 @@ public class CouponActivityDao {
         }
     }
 
-    public ReturnObject listCouponOnsaleByOnsaleIdList(List<Long> onsaleIdList, Integer pageNumber, Integer pageSize) {
+
+    public ReturnObject listCouponActivitiesByOnsaleId(Long onsaleId, Integer pageNumber, Integer pageSize) {
         try {
             PageHelper.startPage(pageNumber, pageSize, true, false, true);
             CouponOnsalePoExample example = new CouponOnsalePoExample();
-            example.createCriteria().andOnsaleIdIn(onsaleIdList);
-            List<CouponOnsalePo> poList = couponOnsalePoMapper.selectByExample(example);
-            if (poList.size() == 0) {
+            example.createCriteria().andOnsaleIdEqualTo(onsaleId);
+            List<CouponOnsalePo> couponOnsalePoList = couponOnsalePoMapper.selectByExample(example);
+            if (couponOnsalePoList.size() == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-
-            ReturnObject ret = new ReturnObject<>(new PageInfo<>(poList));
-            return Common.getPageRetVo(ret, CouponOnsale.class);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
-        }
-    }
-
-    public ReturnObject listOnlineCouponActivityByIdList(List<Long> idList, Integer pageNumber, Integer pageSize) {
-        try {
-            PageHelper.startPage(pageNumber, pageSize, true, false, true);
-            CouponActivityPoExample example = new CouponActivityPoExample();
-            example.createCriteria()
-                    .andIdIn(idList)
-                    .andStateEqualTo(CouponActivity.State.ONLINE.getCode());
-            List<CouponActivityPo> poList = couponActivityPoMapper.selectByExample(example);
-            if (poList.size() == 0) {
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            ReturnObject ret = new ReturnObject<>(new PageInfo<>(couponOnsalePoList));
+            List<CouponActivity> couponActivityList = new ArrayList<>();
+            for (CouponOnsalePo couponOnsalePo : couponOnsalePoList) {
+                ReturnObject<CouponActivity> retCouponActivity = getCouponActivityById(couponOnsalePo.getActivityId());
+                if (retCouponActivity.getCode().equals(ReturnNo.OK)) {
+                    couponActivityList.add(retCouponActivity.getData());
+                }
             }
-
-            ReturnObject ret = new ReturnObject<>(new PageInfo<>(poList));
+            ((PageInfo) ret.getData()).setList(couponActivityList);
             return Common.getPageRetVo(ret, CouponActivity.class);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -294,7 +279,8 @@ public class CouponActivityDao {
         }
     }
 
-    public ReturnObject listCouponOnsaleByOnsaleIdAndActivityId(Long onsaleId, Long activityId, Integer pageNumber, Integer pageSize) {
+
+    public ReturnObject listCouponOnsalesByOnsaleIdAndActivityId(Long onsaleId, Long activityId, Integer pageNumber, Integer pageSize) {
         try {
             PageHelper.startPage(pageNumber, pageSize);
             CouponOnsalePoExample example = new CouponOnsalePoExample();

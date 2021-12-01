@@ -76,7 +76,7 @@ oomall:
       expiretime: 600
     list:
       # list对象在Redis中失效秒数
-      expiretime: 300
+      expiretime: 60
       # list对象默认的长度
       defaultsize: 100
 
