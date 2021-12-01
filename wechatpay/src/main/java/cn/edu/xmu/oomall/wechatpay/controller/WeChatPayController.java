@@ -4,9 +4,11 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayRefund;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayTransaction;
+import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayFundFlowBillRetVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayRefundVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayTransactionVo;
 import cn.edu.xmu.oomall.wechatpay.service.WeChatPayService;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.validation.BindingResult;
@@ -68,6 +70,22 @@ public class WeChatPayController {
         }
 
         ReturnObject returnObject = weChatPayService.createRefund(new WeChatPayRefund(weChatPayRefundVo));
+        returnObject = Common.getRetObject(returnObject);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+    @GetMapping("/internal/wechat/refund/domestic/refunds/{out_refund_no}")
+    public Object getRefund(@PathVariable("out_refund_no") String outRefundNo){
+
+        ReturnObject returnObject = weChatPayService.getRefund(outRefundNo);
+        returnObject = Common.getRetObject(returnObject);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+    @GetMapping("/internal/wechat/bill/fundflowbill")
+    public Object getFundFlowBill(@RequestParam("bill_date") String billDate){
+
+        ReturnObject returnObject = new ReturnObject(new WeChatPayFundFlowBillRetVo());
         return Common.decorateReturnObject(returnObject);
     }
 
