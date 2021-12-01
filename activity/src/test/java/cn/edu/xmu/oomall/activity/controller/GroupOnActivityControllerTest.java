@@ -12,6 +12,8 @@ import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -23,6 +25,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -45,15 +48,24 @@ public class GroupOnActivityControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @MockBean(name = "cn.edu.xmu.oomall.activity.microservice.ShopService")
+    @MockBean
     private ShopService shopService;
 
-    @MockBean(name = "cn.edu.xmu.oomall.activity.microservice.GoodsService")
+    @MockBean
     private GoodsService goodsService;
+
+    @MockBean
+    private RedisUtil redisUtil;
 
 
     private static JwtHelper jwtHelper = new JwtHelper();
     private static String adminToken = jwtHelper.createToken(1L,"admin",0L, 1,2000);
+
+    @BeforeEach
+    public void init() {
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+        Mockito.when(redisUtil.set(Mockito.anyString(), Mockito.any(), Mockito.anyLong())).thenReturn(true);
+    }
 
     /**
      * 获得所有团购活动状态
