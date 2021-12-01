@@ -307,8 +307,9 @@ public class OnsaleService {
 
 
         Integer groupNum=10;
+        Integer randomRound=10;
 
-        return onsaleDao.decreaseOnSaleQuantity(id,quantity,groupNum);
+        return onsaleDao.decreaseOnSaleQuantity(id,quantity,groupNum,onsale.getQuantity(),randomRound);
 
     }
 
@@ -334,6 +335,7 @@ public class OnsaleService {
         }
 
         Integer groupNum=10;
+
 
         return onsaleDao.increaseOnSaleQuantity(id,quantity,groupNum);
 

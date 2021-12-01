@@ -6,17 +6,17 @@ import cn.edu.xmu.oomall.goods.mapper.OnSalePoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -33,12 +33,14 @@ public class OnSaleDao {
     private final static String ONSALE_STOCK_GROUP_KEY = "onsale_%d_stockgroup_%d";
     private final static String DECREASE_PATH = "stock/decrease.lua";
     private final static String INCREASE_PATH = "stock/increase.lua";
+    private final static String LOAD_PATH = "stock/load.lua";
+
 
     private Logger logger = LoggerFactory.getLogger(OnSaleDao.class);
     @Autowired
     private OnSalePoMapper onSalePoMapper;
     @Autowired
-    private RedisTemplate<String, Serializable> redis;
+    private RedisUtil redis;
 
 
     /**
@@ -204,24 +206,30 @@ public class OnSaleDao {
     }
 
 
-    public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity,Integer groupNum) {
+    public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum, Integer wholeQuantity,Integer randomRound) {
         try {
+            if (redis.get(String.format(ONSALE_STOCK_GROUP_KEY, id, 0)) == null) {
+                loadQuantity(id, groupNum, wholeQuantity);
+            }
+
             // load lua script
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
             script.setScriptSource(new ResourceScriptSource(new ClassPathResource(DECREASE_PATH)));
             script.setResultType(Long.class);
 
-            Random r = new Random();
-            int init = r.nextInt(groupNum);
 
-            for (int i = 0; i < groupNum; i++) {
-                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init + i) % groupNum);
+            for (int i = 0; i < randomRound; i++) {
+
+                Random r = new Random();
+                int init = r.nextInt(groupNum);
+                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, init);
                 List<String> keys = Stream.of(key).collect(Collectors.toList());
-                Long res = redis.execute(script, keys, quantity);
+                Long res = (Long) redis.executeScript(script, keys, quantity);
                 if (res >= 0) {
                     logger.info(key + "剩余库存" + res);
                     return new ReturnObject(ReturnNo.OK);
                 }
+
             }
             return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE, "扣库存失败");
         } catch (Exception e) {
@@ -230,8 +238,7 @@ public class OnSaleDao {
         }
     }
 
-
-    public ReturnObject increaseOnSaleQuantity(Long id, Integer quantity,Integer groupNum) {
+    public ReturnObject increaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum) {
         try {
             // load lua script
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
@@ -239,26 +246,15 @@ public class OnSaleDao {
             script.setResultType(Long.class);
 
             // 将新增库存尽量平均分到多个桶
-            Integer rest = quantity;
-            Integer count = 0;
-            Integer incr[] = new Integer[groupNum];
-            for (int i = 0; i < groupNum && rest > 0; i++) {
-                Integer sub;
-                if (rest < groupNum) {
-                    sub = rest;
-                } else {
-                    sub = (int) Math.ceil((double) quantity / groupNum);
-                }
-                incr[count++] = sub;
-                rest -= sub;
-            }
+            int[] incr = getAvgArray(groupNum, quantity);
 
             Random r = new Random();
             int init = r.nextInt(groupNum);
-            for (int i = 0; i < count; i++) {
-                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init + i) % groupNum);
+
+            for (int i = 0; i < groupNum; i++) {
+                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init+i)%groupNum);
                 List<String> keys = Stream.of(key).collect(Collectors.toList());
-                Long res = redis.execute(script, keys, incr[i]);
+                Long res = (Long) redis.executeScript(script, keys, incr[i]);
                 logger.info(key + "剩余库存" + res);
                 if (res == -1) {
                     return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE, "加库存失败");
@@ -269,8 +265,40 @@ public class OnSaleDao {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
-
     }
+
+    private void loadQuantity(Long id, Integer groupNum, Integer wholeQuantity) {
+        int[] incr = getAvgArray(groupNum, wholeQuantity);
+        // load lua load script
+        DefaultRedisScript script1 = new DefaultRedisScript<>();
+        script1.setScriptSource(new ResourceScriptSource(new ClassPathResource(LOAD_PATH)));
+
+        for(int i=0;i<groupNum;i++){
+            redis.executeScript(script1,
+                    Stream.of(String.format(ONSALE_STOCK_GROUP_KEY, id, i)).collect(Collectors.toList()), incr[i]);
+        }
+    }
+
+    private int[] getAvgArray(Integer groupNum, Integer wholeQuantity) {
+        // 将库存尽量平均分到多个桶
+        Integer rest = wholeQuantity;
+        Integer count = 0;
+        int incr[] = new int[groupNum];
+        for (int i = 0; i < groupNum && rest > 0; i++) {
+            Integer sub;
+            if (rest < groupNum) {
+                sub = rest;
+            } else {
+                sub = (int) Math.ceil((double) wholeQuantity / groupNum);
+            }
+            incr[count++] = sub;
+            rest -= sub;
+        }
+        return incr;
+    }
+
+
+
 
 
 }
