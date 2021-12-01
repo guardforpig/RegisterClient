@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 
@@ -32,9 +33,9 @@ public class WeChatPayService {
     @Autowired
     private MockMvc mvc;
 
+
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject createTransaction(WeChatPayTransaction weChatPayTransaction){
-
         weChatPayTransaction.setPrepayId(Common.genSeqNum());
         weChatPayTransaction.setTransactionId(Common.genSeqNum());
         weChatPayTransaction.setTradeType(TRADE_TYPE);
@@ -79,19 +80,24 @@ public class WeChatPayService {
         weChatPayTransaction.setPayerTotal(weChatPayTransaction.getTotal());
         weChatPayTransaction.setPayerCurrency(weChatPayTransaction.getCurrency());
         weChatPayTransaction.setSuccessTime(LocalDateTime.now());
-
         return weChatPayDao.createTransaction( (WeChatPayTransactionPo)Common.cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
     }
 
     private ReturnObject payFail(WeChatPayTransaction weChatPayTransaction){
         weChatPayTransaction.setTradeState(TRADE_STATE_FAIL);
         weChatPayTransaction.setTradeStateDesc("支付失败");
-
         return weChatPayDao.createTransaction( (WeChatPayTransactionPo)Common.cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
     }
 
     private void payNotify(WeChatPayTransaction weChatPayTransaction){
         //todo
+    }
+
+
+    @Transactional(rollbackFor=Exception.class, readOnly = true)
+    public ReturnObject getTransaction(String outTradeNo, String mchid){
+        ReturnObject returnObject = weChatPayDao.getTransaction(outTradeNo, mchid);
+        return returnObject;
     }
 
 }

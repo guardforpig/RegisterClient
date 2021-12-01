@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,6 +39,14 @@ public class WeChatPayController {
         }
 
         ReturnObject returnObject = weChatPayService.createTransaction(new WeChatPayTransaction(weChatPayTransactionVo));
+        return Common.decorateReturnObject(returnObject);
+    }
+
+    @GetMapping("/internal/wechat/pay/transactions/out-trade-no/{out_trade_no}")
+    public Object getTransaction(@PathVariable("out_trade_no") String outTradeNo, @RequestParam("mchid") String mchid){
+
+        ReturnObject returnObject = weChatPayService.getTransaction(outTradeNo,mchid);
+        returnObject = Common.getRetObject(returnObject);
         return Common.decorateReturnObject(returnObject);
     }
 
