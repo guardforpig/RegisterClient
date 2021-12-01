@@ -94,7 +94,7 @@ public class ProductDao {
      */
     public ReturnObject getProductInfo(Long id){
         try{
-            String key = String.format(PRODUCT_ID,id);
+            String  key = String.format(PRODUCT_ID,id);
             Product product=(Product) redisUtil.get(key);
             if(null!=product){
                 return new ReturnObject(product);

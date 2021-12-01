@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 @EnableFeignClients(basePackages = "cn.edu.xmu.oomall.goods.microservice")
 public class GoodsApplication {
 
-    
+
 
     public static void main(String[] args) {
 
