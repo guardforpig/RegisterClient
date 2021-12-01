@@ -26,6 +26,7 @@ public class WeChatPayDao {
     @Autowired
     private WeChatPayRefundPoMapper weChatPayRefundPoMapper;
 
+
     public ReturnObject createTransaction(WeChatPayTransactionPo weChatPayTransactionPo){
         try{
             weChatPayTransactionPoMapper.insertSelective(weChatPayTransactionPo);
@@ -36,17 +37,32 @@ public class WeChatPayDao {
         }
     }
 
-    public ReturnObject getTransaction(String outTradeNo, String mchid){
+    public ReturnObject getTransaction(String outTradeNo){
         try{
             WeChatPayTransactionPoExample example = new WeChatPayTransactionPoExample();
             WeChatPayTransactionPoExample.Criteria criteria = example.createCriteria();
             criteria.andOutTradeNoEqualTo(outTradeNo);
-            criteria.andMchidEqualTo(mchid);
             List<WeChatPayTransactionPo> list = weChatPayTransactionPoMapper.selectByExample(example);
             if(list.size()==0) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             return new ReturnObject(Common.cloneVo(list.get(0), WeChatPayTransaction.class));
+        }catch (Exception e){
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+    public ReturnObject closeTransaction(WeChatPayTransactionPo weChatPayTransactionPo){
+        try{
+            WeChatPayTransactionPoExample example = new WeChatPayTransactionPoExample();
+            WeChatPayTransactionPoExample.Criteria criteria = example.createCriteria();
+            criteria.andOutTradeNoEqualTo(weChatPayTransactionPo.getOutTradeNo());
+            int ret = weChatPayTransactionPoMapper.updateByExampleSelective(weChatPayTransactionPo,example);
+            if (ret == 0) {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            } else {
+                return new ReturnObject(ReturnNo.OK);
+            }
         }catch (Exception e){
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }

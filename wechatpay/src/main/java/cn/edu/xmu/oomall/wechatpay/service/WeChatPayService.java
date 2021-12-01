@@ -3,15 +3,15 @@ package cn.edu.xmu.oomall.wechatpay.service;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.wechatpay.dao.WeChatPayDao;
+import cn.edu.xmu.oomall.wechatpay.microservice.WeChatPayNotifyService;
+import cn.edu.xmu.oomall.wechatpay.microservice.vo.PaymentNotifyVo;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayTransaction;
 import cn.edu.xmu.oomall.wechatpay.model.po.WeChatPayTransactionPo;
+import cn.edu.xmu.oomall.wechatpay.model.vo.PaymentNotifyRetVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayPrepayRetVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 
@@ -20,26 +20,21 @@ import java.time.LocalDateTime;
  * @date 2021/12/1
  */
 @Service
-@AutoConfigureMockMvc
 public class WeChatPayService {
 
-    private static final String TRADE_TYPE = String.format("JSAPI");
     private static final String TRADE_STATE_SUCCESS = String.format("SUCCESS");
     private static final String TRADE_STATE_FAIL = String.format("NOTPAY");
+    private static final String TRADE_STATE_CLOSE = String.format("CLOSED");
 
     @Autowired
     private WeChatPayDao weChatPayDao;
 
     @Autowired
-    private MockMvc mvc;
+    private WeChatPayNotifyService weChatPayNotifyService;
 
 
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject createTransaction(WeChatPayTransaction weChatPayTransaction){
-        weChatPayTransaction.setPrepayId(Common.genSeqNum());
-        weChatPayTransaction.setTransactionId(Common.genSeqNum());
-        weChatPayTransaction.setTradeType(TRADE_TYPE);
-
         int random = (int)(Math.random()*4);
         switch (random)
         {
@@ -47,7 +42,7 @@ public class WeChatPayService {
             {
                 ReturnObject returnObject = paySuccess(weChatPayTransaction);
                 if(returnObject.getData()!=null) {
-                    payNotify(returnObject.getData());
+                    weChatPayNotifyService.paymentNotify(new PaymentNotifyRetVo( (WeChatPayTransaction) returnObject.getData() ));
                 }
                 break;
             }
@@ -60,7 +55,7 @@ public class WeChatPayService {
             {
                 ReturnObject returnObject = payFail(weChatPayTransaction);
                 if(returnObject.getData()!=null) {
-                    payNotify(returnObject.getData());
+                    weChatPayNotifyService.paymentNotify(new PaymentNotifyRetVo( (WeChatPayTransaction) returnObject.getData() ));
                 }
                 break;
             }
@@ -70,33 +65,34 @@ public class WeChatPayService {
                 break;
             }
         }
-
-        return new ReturnObject(new WeChatPayPrepayRetVo(weChatPayTransaction.getPrepayId()));
+        return new ReturnObject(new WeChatPayPrepayRetVo());
     }
 
     private ReturnObject paySuccess(WeChatPayTransaction weChatPayTransaction){
         weChatPayTransaction.setTradeState(TRADE_STATE_SUCCESS);
-        weChatPayTransaction.setTradeStateDesc("支付成功");
         weChatPayTransaction.setPayerTotal(weChatPayTransaction.getTotal());
-        weChatPayTransaction.setPayerCurrency(weChatPayTransaction.getCurrency());
         weChatPayTransaction.setSuccessTime(LocalDateTime.now());
         return weChatPayDao.createTransaction( (WeChatPayTransactionPo)Common.cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
     }
 
     private ReturnObject payFail(WeChatPayTransaction weChatPayTransaction){
         weChatPayTransaction.setTradeState(TRADE_STATE_FAIL);
-        weChatPayTransaction.setTradeStateDesc("支付失败");
         return weChatPayDao.createTransaction( (WeChatPayTransactionPo)Common.cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
-    }
-
-    private void payNotify(WeChatPayTransaction weChatPayTransaction){
-        //todo
     }
 
 
     @Transactional(rollbackFor=Exception.class, readOnly = true)
-    public ReturnObject getTransaction(String outTradeNo, String mchid){
-        ReturnObject returnObject = weChatPayDao.getTransaction(outTradeNo, mchid);
+    public ReturnObject getTransaction(String outTradeNo){
+        ReturnObject returnObject = weChatPayDao.getTransaction(outTradeNo);
+        return returnObject;
+    }
+
+    @Transactional(rollbackFor=Exception.class)
+    public ReturnObject closeTransaction(String outTradeNo){
+        WeChatPayTransactionPo weChatPayTransactionPo = new WeChatPayTransactionPo();
+        weChatPayTransactionPo.setOutTradeNo(outTradeNo);
+        weChatPayTransactionPo.setTradeState(TRADE_STATE_CLOSE);
+        ReturnObject returnObject = weChatPayDao.closeTransaction(weChatPayTransactionPo);
         return returnObject;
     }
 
