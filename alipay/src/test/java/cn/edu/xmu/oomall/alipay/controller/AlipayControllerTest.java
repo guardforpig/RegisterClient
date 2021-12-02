@@ -209,6 +209,7 @@ class AlipayControllerTest {
 
     @Test
     void refundQuery() throws Exception{
+        //查询失败，该退款单不存在
         String biz_content1="{\"out_trade_no\":\"2\",\"out_request_no\":\"7788\"}";
         Mockito.when(paymentFeightService.notify(Mockito.any())).thenReturn(new NotifyReturnObject("SUCCESS","成功"));
         String responseString1 = this.mockMvc.perform(MockMvcRequestBuilders.post("/internal/alipay/gateway.do")
@@ -220,6 +221,8 @@ class AlipayControllerTest {
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expectedResponse1="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_fastpay_refund_query_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_EXIST\"}}";
         JSONAssert.assertEquals(expectedResponse1,responseString1,true);
+
+        //查询成功
         String biz_content2="{\"out_trade_no\":\"2\",\"out_request_no\":\"1\"}";
         Mockito.when(paymentFeightService.notify(Mockito.any())).thenReturn(new NotifyReturnObject("SUCCESS","成功"));
         String responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.post("/internal/alipay/gateway.do")
@@ -229,7 +232,7 @@ class AlipayControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedResponse2="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_fastpay_refund_query_response\":{\"code\":\"10000\",\"msg\":\"Success\",\"out_trade_no\":\"2\",\"total_amount\":100,\"refund_amount\":90,\"refund_status\":\"REFUND_SUCCESS\",\"gmt_refund_pay\":\"2021-12-01 10:56:17\",\"trade_no\":\"2013112011001004330000121536\"}}";
+        String expectedResponse2="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_fastpay_refund_query_response\":{\"code\":\"10000\",\"msg\":\"Success\",\"out_trade_no\":\"2\",\"out_request_no\":\"1\",\"total_amount\":100,\"refund_amount\":90,\"refund_status\":\"REFUND_SUCCESS\",\"gmt_refund_pay\":\"2021-12-01 10:56:17\",\"trade_no\":\"2013112011001004330000121536\"}}";
         JSONAssert.assertEquals(expectedResponse2,responseString2,true);
     }
 

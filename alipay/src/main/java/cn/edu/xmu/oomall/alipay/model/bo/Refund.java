@@ -21,7 +21,7 @@ public class Refund {
     /**
      * 退款单号
      */
-    private String ourRequestNo;
+    private String outRequestNo;
 
     /**
      * 对应订单总额

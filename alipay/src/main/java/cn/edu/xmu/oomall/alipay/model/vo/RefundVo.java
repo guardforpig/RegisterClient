@@ -17,7 +17,6 @@ public class RefundVo {
     @JsonProperty("out_request_no")
     private String outRequestNo;
 
-
     @JsonProperty("refund_amount")
     private Long refundAmount;
 
