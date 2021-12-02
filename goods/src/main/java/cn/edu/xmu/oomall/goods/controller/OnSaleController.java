@@ -9,6 +9,7 @@ import cn.edu.xmu.oomall.goods.service.OnsaleService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
+import com.alibaba.druid.sql.visitor.functions.Bin;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,7 +240,13 @@ public class OnSaleController {
     })
     @Audit(departName = "shops")
     @PutMapping("internal/shops/{did}/onsales/{id}")
-    public Object modifyOnSale(@PathVariable Long did, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName) {
+    public Object modifyOnSale(@PathVariable Long did,@Validated @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName,
+                               BindingResult bindingResult) {
+
+        Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
+        if (null != returnObject) {
+            return returnObject;
+        }
 
         // 判断开始时间是否比结束时间晚
         if (onSale.getBeginTime().isAfter(onSale.getEndTime())) {
@@ -260,7 +267,13 @@ public class OnSaleController {
     })
     @Audit(departName = "shops")
     @PutMapping("shops/{shopId}/onsales/{id}")
-    public Object modifyOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName) {
+    public Object modifyOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName,
+                                     BindingResult bindingResult) {
+
+        Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
+        if (null != returnObject) {
+            return returnObject;
+        }
 
         // 判断开始时间是否比结束时间晚
         if (onSale.getBeginTime().isAfter(onSale.getEndTime())) {
@@ -277,7 +290,7 @@ public class OnSaleController {
 
     @Audit(departName = "shops")
     @PutMapping("internal/shops/{did}/onsales/{id}/decr")
-    public Object decreaseOnSale(@PathVariable Long did, @PathVariable Long id, @RequestBody QuantityVo vo,
+    public Object decreaseOnSale(@PathVariable Long did, @PathVariable Long id,@Validated @RequestBody QuantityVo vo,
                                  @LoginUser Long loginUserId,
                                  @LoginName String loginUserName, BindingResult bindingResult) {
 
@@ -293,7 +306,7 @@ public class OnSaleController {
 
     @Audit(departName = "shops")
     @PutMapping("internal/shops/{did}/onsales/{id}/incr")
-    public Object increaseOnSale(@PathVariable Long did, @PathVariable Long id, @RequestBody QuantityVo vo,
+    public Object increaseOnSale(@PathVariable Long did, @PathVariable Long id,@Validated @RequestBody QuantityVo vo,
                                  @LoginUser Long loginUserId,
                                  @LoginName String loginUserName, BindingResult bindingResult) {
 
