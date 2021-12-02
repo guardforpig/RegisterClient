@@ -63,7 +63,7 @@ class AlipayControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);;
-        String expectedString2="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_wap_pay_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_HAS_CLOSE\"}}";
+        String expectedString2="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_wap_pay_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_HAS_CLOSE\",\"sub_msg\":\"交易已关闭\"}}";
         JSONAssert.assertEquals(expectedString2,responseString2,true);
 
         //交易存在，且交易已支付
@@ -76,7 +76,7 @@ class AlipayControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);;
-        String expectedString3="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_wap_pay_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_HAS_SUCCESS\"}}";
+        String expectedString3="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_wap_pay_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_HAS_SUCCESS\",\"sub_msg\":\"交易已被支付\"}}";
         JSONAssert.assertEquals(expectedString3,responseString3,true);
     }
 
@@ -92,7 +92,7 @@ class AlipayControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);;
-        String expectedString1="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_query_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_EXIST\"}}";
+        String expectedString1="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_query_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_EXIST\",\"sub_msg\":\"交易不存在\"}}";
         JSONAssert.assertEquals(expectedString1,responseString1,true);
         //交易存在
         String biz_content2="{\"out_trade_no\":\"1\"}";
@@ -135,7 +135,7 @@ class AlipayControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);;
-        String expectedString2="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_close_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.REASON_TRADE_STATUS_INVALID\"}}";
+        String expectedString2="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_close_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.REASON_TRADE_STATUS_INVALID\",\"sub_msg\":\"交易状态不合法\"}}";
         JSONAssert.assertEquals(expectedString2,responseString2,true);
         //此单号不存在不能关
         String biz_content3="{\"out_trade_no\":\"77887788\"}";
@@ -147,7 +147,7 @@ class AlipayControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);;
-        String expectedString3="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_close_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_EXIST\"}}";
+        String expectedString3="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_close_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_EXIST\",\"sub_msg\":\"交易不存在\"}}";
         JSONAssert.assertEquals(expectedString3,responseString3,true);
     }
 
@@ -179,7 +179,7 @@ class AlipayControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedString2="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_refund_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_EXIST\"}}";
+        String expectedString2="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_refund_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_EXIST\",\"sub_msg\":\"交易不存在\"}}";
         JSONAssert.assertEquals(expectedString2,responseString2,true);
         //订单状态不为成功，不允许退款
         String biz_content3="{\"out_trade_no\":\"1\",\"out_request_no\":\"7788\",\"refund_amount\":1}";
@@ -191,7 +191,7 @@ class AlipayControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedString3="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_refund_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_ALLOW_REFUND\"}}";
+        String expectedString3="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_refund_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_ALLOW_REFUND\",\"sub_msg\":\"当前交易不允许退款\"}}";
         JSONAssert.assertEquals(expectedString3,responseString3,true);
         //退款金额超限
         String biz_content4="{\"out_trade_no\":\"2\",\"out_request_no\":\"7788\",\"refund_amount\":100}";
@@ -203,7 +203,7 @@ class AlipayControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedString4="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_refund_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.REFUND_AMT_NOT_EQUAL_TOTAL\"}}";
+        String expectedString4="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_refund_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.REFUND_AMT_NOT_EQUAL_TOTAL\",\"sub_msg\":\"退款金额超限\"}}";
         JSONAssert.assertEquals(expectedString4,responseString4,true);
     }
 
@@ -219,7 +219,7 @@ class AlipayControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedResponse1="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_fastpay_refund_query_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_EXIST\"}}";
+        String expectedResponse1="{\"sign\":\"ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE\",\"alipay_trade_fastpay_refund_query_response\":{\"code\":\"40004\",\"msg\":\"Business Failed\",\"sub_code\":\"ACQ.TRADE_NOT_EXIST\",\"sub_msg\":\"交易不存在\"}}";
         JSONAssert.assertEquals(expectedResponse1,responseString1,true);
 
         //查询成功

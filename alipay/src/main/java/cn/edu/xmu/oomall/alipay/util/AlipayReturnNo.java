@@ -36,7 +36,7 @@ public enum AlipayReturnNo {
     private String subMsg;
     AlipayReturnNo(String subCode, String message){
         this.subCode = subCode;
-        this.subMsg = subMsg;
+        this.subMsg = message;
     }
 
     public String getSubCode() {

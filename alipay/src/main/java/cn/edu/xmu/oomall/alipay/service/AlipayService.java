@@ -74,7 +74,7 @@ public class AlipayService {
             {
                 return new PayRetVo(AlipayReturnNo.TRADE_HAS_CLOSE);
             }
-            //确认该笔交易信息是否为当前买家的，如果是则认为交易付款成功
+            //确认该笔交易信息是否为当前买家的(是否已经存在该订单号对应的Payment)，如果是则认为交易付款成功，不能再支付
             else if(existingPayment.getTradeStatus().equals(Payment.TradeStatus.TRADE_SUCCESS)||existingPayment.getTradeStatus().equals(Payment.TradeStatus.WAIT_BUYER_PAY))
             {
                 return new PayRetVo(AlipayReturnNo.TRADE_HAS_SUCCESS);
@@ -170,6 +170,7 @@ public class AlipayService {
     {
         refund.setGmtRefundPay(LocalDateTime.now());
         refund.setRefundStatus(Refund.RefundStatus.REFUND_SUCCESS);
+        //默认插入成功，因为支付宝没有服务器错误的状态码
         refundDao.insertRefund(refund);
     }
 
