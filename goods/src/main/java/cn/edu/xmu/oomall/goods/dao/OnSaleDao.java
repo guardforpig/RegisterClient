@@ -6,13 +6,21 @@ import cn.edu.xmu.oomall.goods.mapper.OnSalePoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static cn.edu.xmu.oomall.core.util.Common.*;
 
@@ -22,10 +30,17 @@ import static cn.edu.xmu.oomall.core.util.Common.*;
  */
 @Repository
 public class OnSaleDao {
-    private Logger logger = LoggerFactory.getLogger(OnSaleDao.class);
+    private final static String ONSALE_STOCK_GROUP_KEY = "onsale_%d_stockgroup_%d";
+    private final static String DECREASE_PATH = "stock/decrease.lua";
+    private final static String INCREASE_PATH = "stock/increase.lua";
+    private final static String LOAD_PATH = "stock/load.lua";
 
+
+    private Logger logger = LoggerFactory.getLogger(OnSaleDao.class);
     @Autowired
     private OnSalePoMapper onSalePoMapper;
+    @Autowired
+    private RedisUtil redis;
 
 
     /**
@@ -102,7 +117,7 @@ public class OnSaleDao {
         try {
             OnSalePo po = onSalePoMapper.selectByPrimaryKey(id);
             if (po == null) {
-                OnSale ret=null;
+                OnSale ret = null;
                 return new ReturnObject(ret);
             }
             OnSale ret = (OnSale) cloneVo(po, OnSale.class);
@@ -189,4 +204,113 @@ public class OnSaleDao {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
+
+
+    public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum, Integer wholeQuantity,Integer randomRound) {
+        try {
+            if (redis.get(String.format(ONSALE_STOCK_GROUP_KEY, id, 0)) == null) {
+                loadQuantity(id, groupNum, wholeQuantity);
+            }
+
+            // load lua script
+            DefaultRedisScript<Long> script = new DefaultRedisScript<>();
+            script.setScriptSource(new ResourceScriptSource(new ClassPathResource(DECREASE_PATH)));
+            script.setResultType(Long.class);
+
+
+            for (int i = 0; i < randomRound; i++) {
+
+                Random r = new Random();
+                int init = r.nextInt(groupNum);
+                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, init);
+                List<String> keys = Stream.of(key).collect(Collectors.toList());
+                Long res = (Long) redis.executeScript(script, keys, quantity);
+                if (res >= 0) {
+                    logger.info(key + "剩余库存" + res);
+                    return new ReturnObject(ReturnNo.OK);
+                }
+
+            }
+            return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE, "扣库存失败");
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+    public ReturnObject increaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum) {
+        try {
+            // load lua script
+            DefaultRedisScript<Long> script = new DefaultRedisScript<>();
+            script.setScriptSource(new ResourceScriptSource(new ClassPathResource(INCREASE_PATH)));
+            script.setResultType(Long.class);
+
+            // 将新增库存尽量平均分到多个桶
+            int[] incr = getAvgArray(groupNum, quantity);
+
+            Random r = new Random();
+            int init = r.nextInt(groupNum);
+
+            for (int i = 0; i < groupNum; i++) {
+                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init+i)%groupNum);
+                List<String> keys = Stream.of(key).collect(Collectors.toList());
+                Long res = (Long) redis.executeScript(script, keys, incr[i]);
+                logger.info(key + "剩余库存" + res);
+                if (res == -1) {
+                    return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE, "加库存失败");
+                }
+            }
+            return new ReturnObject(ReturnNo.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+    private void loadQuantity(Long id, Integer groupNum, Integer wholeQuantity) {
+        int[] incr = getAvgArray(groupNum, wholeQuantity);
+        // load lua load script
+        DefaultRedisScript script1 = new DefaultRedisScript<>();
+        script1.setScriptSource(new ResourceScriptSource(new ClassPathResource(LOAD_PATH)));
+
+        for(int i=0;i<groupNum;i++){
+            redis.executeScript(script1,
+                    Stream.of(String.format(ONSALE_STOCK_GROUP_KEY, id, i)).collect(Collectors.toList()), incr[i]);
+        }
+    }
+
+    private int[] getAvgArray(Integer groupNum, Integer wholeQuantity) {
+        // 将库存尽量平均分到多个桶
+        int incr[] = new int[groupNum];
+
+        // 数量小于等于组数，随机把数量加到桶中
+        if(wholeQuantity<=groupNum){
+            for(int i=0;i<wholeQuantity;i++){
+                Random r = new Random();
+                int init = r.nextInt(groupNum);
+                incr[init]++;
+            }
+            return incr;
+        }
+
+        // 数量大于组数，先将余数先加到前面的桶中，再将其余相同的增量加到各自随机的桶中
+        int unit=wholeQuantity/groupNum;
+        int other=wholeQuantity-unit*groupNum;
+
+        for(int i=0;i<other;i++){
+            incr[i]++;
+        }
+
+        for (int i = 0; i < groupNum ; i++) {
+            Random r = new Random();
+            int init = r.nextInt(groupNum);
+            incr[init] += unit;
+        }
+        return incr;
+    }
+
+
+
+
+
 }
