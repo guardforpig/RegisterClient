@@ -76,6 +76,8 @@ public class OnSaleControllerTest {
         vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000Z", df));
         vo.setQuantity(10);
         vo.setType((byte)0);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         String s = JacksonUtil.toJson(vo);
 
         String res = this.mvc.perform(post("/shops/3/products/2532/onsales")
@@ -93,6 +95,8 @@ public class OnSaleControllerTest {
         vo.setEndTime(LocalDateTime.parse("2022-10-12T09:40:30.000Z", df));
         vo.setQuantity(10);
         vo.setType((byte)0);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
 
@@ -112,6 +116,8 @@ public class OnSaleControllerTest {
         vo.setEndTime(LocalDateTime.parse("2028-02-12T16:20:30.000Z", df));
         vo.setQuantity(10);
         vo.setType((byte)0);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(post("/shops/2/products/2549/onsales")
@@ -129,6 +135,8 @@ public class OnSaleControllerTest {
         vo.setEndTime(LocalDateTime.parse("2029-02-12T16:20:30.000Z", df));
         vo.setQuantity(10);
         vo.setType((byte)3);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(post("/shops/2/products/2549/onsales")
@@ -146,6 +154,8 @@ public class OnSaleControllerTest {
         vo.setEndTime(LocalDateTime.parse("2029-03-12T16:20:30.000Z", df));
         vo.setQuantity(10);
         vo.setType((byte)0);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(post("/shops/2/products/999999/onsales")
@@ -163,6 +173,8 @@ public class OnSaleControllerTest {
         vo.setEndTime(LocalDateTime.parse("2028-03-12T16:20:30.000Z", df));
         vo.setQuantity(10);
         vo.setType((byte)0);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(post("/shops/2/products/2532/onsales")
@@ -310,6 +322,8 @@ public class OnSaleControllerTest {
         vo.setQuantity(10);
         vo.setType((byte)3);
         vo.setActivityId(5L);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         String s = JacksonUtil.toJson(vo);
 
         String res = this.mvc.perform(post("/internal/shops/3/products/2532/onsales")
@@ -328,6 +342,8 @@ public class OnSaleControllerTest {
         vo.setQuantity(10);
         vo.setType((byte)3);
         vo.setActivityId(5L);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(post("/internal/shops/2/products/2549/onsales")
@@ -346,6 +362,8 @@ public class OnSaleControllerTest {
         vo.setQuantity(10);
         vo.setType((byte)3);
         vo.setActivityId(5L);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
 
         s = JacksonUtil.toJson(vo);
 
@@ -366,6 +384,8 @@ public class OnSaleControllerTest {
         vo.setQuantity(10);
         vo.setType((byte)3);
         vo.setActivityId(5L);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
 
         s = JacksonUtil.toJson(vo);
 
@@ -450,6 +470,8 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2022-10-11T15:20:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000Z", df));
         vo.setQuantity(10);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         String s = JacksonUtil.toJson(vo);
 
         String res = this.mvc.perform(put("/internal/shops/0/onsales/30")
@@ -464,6 +486,8 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2028-02-12T16:20:30.000Z", df));
         vo.setQuantity(10);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(put("/internal/shops/0/onsales/29")
@@ -480,6 +504,8 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2028-04-12T16:20:30.000Z", df));
         vo.setQuantity(10);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(put("/internal/shops/0/onsales/66666")
@@ -495,6 +521,8 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2022-10-11T15:20:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000Z", df));
         vo.setQuantity(10);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(put("/internal/shops/0/onsales/28")
@@ -516,6 +544,8 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2022-10-11T15:20:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000Z", df));
         vo.setQuantity(10);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         String s = JacksonUtil.toJson(vo);
 
 
@@ -532,6 +562,8 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2028-02-12T16:20:30.000Z", df));
         vo.setQuantity(10);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(put("/shops/10/onsales/1")
@@ -549,6 +581,8 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2028-04-12T16:20:30.000Z", df));
         vo.setQuantity(10);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(put("/shops/3/onsales/2")
@@ -564,6 +598,8 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2028-04-12T16:20:30.000Z", df));
         vo.setQuantity(10);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
 
         res = this.mvc.perform(put("/shops/3/onsales/22266")
@@ -579,6 +615,8 @@ public class OnSaleControllerTest {
         vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000Z", df));
         vo.setEndTime(LocalDateTime.parse("2028-04-12T16:20:30.000Z", df));
         vo.setQuantity(10);
+        vo.setMaxQuantity(50);
+        vo.setNumKey(1);
         s = JacksonUtil.toJson(vo);
         res = this.mvc.perform(put("/shops/4/onsales/28")
                 .header("authorization", adminToken)
