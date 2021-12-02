@@ -197,6 +197,12 @@ public class Common {
         }
     }
 
+    /**
+     * @author xucangbai
+     * @param returnObject
+     * @param voClass
+     * @return
+     */
     public static ReturnObject getPageRetVo(ReturnObject<PageInfo<Object>> returnObject,Class voClass){
         ReturnNo code = returnObject.getCode();
         switch (code){
