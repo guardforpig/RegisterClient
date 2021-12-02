@@ -63,9 +63,21 @@ public class OnSaleGetService {
             return returnObject;
         }
         OnSaleGetBo onSale=(OnSaleGetBo) returnObject.getData();
-        OnSalePo onSalePo=(OnSalePo) Common.cloneVo(onSale,OnSalePo.class);
-        if(onSalePo.getType().equals(OnSaleGetBo.Type.NOACTIVITY.getCode())||onSalePo.getType().equals(OnSaleGetBo.Type.SECKILL.getCode())){
-            NewOnSaleRetVo onSaleRetVo=(NewOnSaleRetVo)Common.cloneVo(onSalePo, NewOnSaleRetVo.class);
+        if(onSale.getType().equals(OnSaleGetBo.Type.NOACTIVITY)||onSale.getType().equals(OnSaleGetBo.Type.SECKILL)){
+            OnSaleRetVo onSaleRetVo=(OnSaleRetVo)Common.cloneVo(onSale,OnSaleRetVo.class);
+            //设置product字段
+            ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
+            if(returnObjectProduct.getCode().equals(ReturnNo.OK)){
+                Product product=(Product) returnObjectProduct.getData();
+                SimpleProductRetVo simpleProduct=(SimpleProductRetVo)Common.cloneVo(product,SimpleProductRetVo.class);
+                onSaleRetVo.setProduct(simpleProduct);
+            }
+            //设置shop字段
+            InternalReturnObject internalObj=shopService.getShopInfo(onSale.getShopId());
+            if(internalObj.getErrno().equals(ReturnNo.OK)) {
+                SimpleShopVo simpleShopVo = (SimpleShopVo)internalObj.getData();
+                onSaleRetVo.setShop(simpleShopVo);
+            }
             return new ReturnObject(onSaleRetVo);
         }else{
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
