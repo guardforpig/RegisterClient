@@ -206,30 +206,25 @@ public class OnSaleDao {
     }
 
 
-    public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum, Integer wholeQuantity,Integer randomRound) {
+    public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum, Integer wholeQuantity, Integer randomRound) {
         try {
             if (redis.get(String.format(ONSALE_STOCK_GROUP_KEY, id, 0)) == null) {
                 loadQuantity(id, groupNum, wholeQuantity);
             }
 
-            // load lua script
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
             script.setScriptSource(new ResourceScriptSource(new ClassPathResource(DECREASE_PATH)));
             script.setResultType(Long.class);
 
-
             for (int i = 0; i < randomRound; i++) {
-
                 Random r = new Random();
                 int init = r.nextInt(groupNum);
                 String key = String.format(ONSALE_STOCK_GROUP_KEY, id, init);
                 List<String> keys = Stream.of(key).collect(Collectors.toList());
                 Long res = (Long) redis.executeScript(script, keys, quantity);
                 if (res >= 0) {
-                    logger.info(key + "剩余库存" + res);
                     return new ReturnObject(ReturnNo.OK);
                 }
-
             }
             return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE, "扣库存失败");
         } catch (Exception e) {
@@ -240,22 +235,19 @@ public class OnSaleDao {
 
     public ReturnObject increaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum) {
         try {
-            // load lua script
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
             script.setScriptSource(new ResourceScriptSource(new ClassPathResource(INCREASE_PATH)));
             script.setResultType(Long.class);
 
-            // 将新增库存尽量平均分到多个桶
             int[] incr = getAvgArray(groupNum, quantity);
 
             Random r = new Random();
             int init = r.nextInt(groupNum);
 
             for (int i = 0; i < groupNum; i++) {
-                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init+i)%groupNum);
+                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init + i) % groupNum);
                 List<String> keys = Stream.of(key).collect(Collectors.toList());
                 Long res = (Long) redis.executeScript(script, keys, incr[i]);
-                logger.info(key + "剩余库存" + res);
                 if (res == -1) {
                     return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE, "加库存失败");
                 }
@@ -269,48 +261,13 @@ public class OnSaleDao {
 
     private void loadQuantity(Long id, Integer groupNum, Integer wholeQuantity) {
         int[] incr = getAvgArray(groupNum, wholeQuantity);
-        // load lua load script
-        DefaultRedisScript script1 = new DefaultRedisScript<>();
-        script1.setScriptSource(new ResourceScriptSource(new ClassPathResource(LOAD_PATH)));
-
-        for(int i=0;i<groupNum;i++){
-            redis.executeScript(script1,
+        DefaultRedisScript script = new DefaultRedisScript<>();
+        script.setScriptSource(new ResourceScriptSource(new ClassPathResource(LOAD_PATH)));
+        for (int i = 0; i < groupNum; i++) {
+            redis.executeScript(script,
                     Stream.of(String.format(ONSALE_STOCK_GROUP_KEY, id, i)).collect(Collectors.toList()), incr[i]);
         }
     }
-
-    private int[] getAvgArray(Integer groupNum, Integer wholeQuantity) {
-        // 将库存尽量平均分到多个桶
-        int incr[] = new int[groupNum];
-
-        // 数量小于等于组数，随机把数量加到桶中
-        if(wholeQuantity<=groupNum){
-            for(int i=0;i<wholeQuantity;i++){
-                Random r = new Random();
-                int init = r.nextInt(groupNum);
-                incr[init]++;
-            }
-            return incr;
-        }
-
-        // 数量大于组数，先将余数先加到前面的桶中，再将其余相同的增量加到各自随机的桶中
-        int unit=wholeQuantity/groupNum;
-        int other=wholeQuantity-unit*groupNum;
-
-        for(int i=0;i<other;i++){
-            incr[i]++;
-        }
-
-        for (int i = 0; i < groupNum ; i++) {
-            Random r = new Random();
-            int init = r.nextInt(groupNum);
-            incr[init] += unit;
-        }
-        return incr;
-    }
-
-
-
 
 
 }
