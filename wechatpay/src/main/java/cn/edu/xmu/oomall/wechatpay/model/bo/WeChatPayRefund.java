@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.wechatpay.model.bo;
 
+import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayRefundRetVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayRefundVo;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-public class WeChatPayRefund implements Serializable {
+public class WeChatPayRefund implements VoObject, Serializable {
 
     private Long id;
     private String refundId;
@@ -46,7 +47,13 @@ public class WeChatPayRefund implements Serializable {
         this.currency = weChatPayRefundVo.getAmount().getCurrency();
     }
 
+    @Override
     public WeChatPayRefundRetVo createVo(){
+        return new WeChatPayRefundRetVo(this);
+    }
+
+    @Override
+    public WeChatPayRefundRetVo createSimpleVo(){
         return new WeChatPayRefundRetVo(this);
     }
 

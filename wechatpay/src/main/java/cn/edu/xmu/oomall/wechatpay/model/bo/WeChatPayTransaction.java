@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.wechatpay.model.bo;
 
+import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayTransactionRetVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayTransactionVo;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-public class WeChatPayTransaction implements Serializable {
+public class WeChatPayTransaction implements VoObject, Serializable {
 
     private Long id;
     private String appid;
@@ -47,7 +48,13 @@ public class WeChatPayTransaction implements Serializable {
         this.notifyUrl = weChatPayTransactionVo.getNotifyUrl();
     }
 
+    @Override
     public WeChatPayTransactionRetVo createVo(){
+        return new WeChatPayTransactionRetVo(this);
+    }
+
+    @Override
+    public WeChatPayTransactionRetVo createSimpleVo(){
         return new WeChatPayTransactionRetVo(this);
     }
 
