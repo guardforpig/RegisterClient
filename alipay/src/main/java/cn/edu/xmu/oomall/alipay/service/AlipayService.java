@@ -217,7 +217,7 @@ public class AlipayService {
                 //回调
                 case 1:
                     refundSuccess(refund);
-                    paymentFeightService.notify(new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"WAIT_BUYER_PAY",refund.getOurRequestNo()));
+                    paymentFeightService.notify(new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"TRADE_SUCCESS",refund.getOutRequestNo()));
                     break;
                 default:
                     break;
