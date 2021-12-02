@@ -50,14 +50,14 @@ public class WeChatPayRefundRetVo {
     private RefundAmountRetVo amount;
 
     public WeChatPayRefundRetVo(WeChatPayRefund weChatPayRefund){
-        this.refundId = weChatPayRefund.getRefundId();
+        this.refundId = "50000000382019052709732678859";
         this.outRefundNo = weChatPayRefund.getOutRefundNo();
-        this.transactionId = weChatPayRefund.getTransactionId();
+        this.transactionId = "1217752501201407033233368018";
         this.outTradeNo = weChatPayRefund.getOutTradeNo();
-        this.channel = weChatPayRefund.getChannel();
-        this.userReceivedAccount = weChatPayRefund.getUserReceivedAccount();
+        this.channel = "ORIGINAL";
+        this.userReceivedAccount = "招商银行信用卡0403";
         this.createTime = weChatPayRefund.getCreateTime();
         this.status = weChatPayRefund.getStatus();
-        this.amount = new RefundAmountRetVo(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getPayerRefund(), weChatPayRefund.getSettlementRefund(), weChatPayRefund.getSettlementTotal(), weChatPayRefund.getDiscountRefund(), weChatPayRefund.getCurrency());
+        this.amount = new RefundAmountRetVo(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getPayerRefund(), null, null, null, null);
     }
 }

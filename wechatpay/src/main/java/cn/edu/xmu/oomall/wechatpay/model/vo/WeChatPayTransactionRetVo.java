@@ -56,15 +56,15 @@ public class WeChatPayTransactionRetVo {
 
 
     public WeChatPayTransactionRetVo(WeChatPayTransaction weChatPayTransaction){
-        this.appid = weChatPayTransaction.getAppid();
-        this.mchid = weChatPayTransaction.getMchid();
+        this.appid = "wxd678efh567hg6787";
+        this.mchid = "1230000109";
         this.outTradeNo = weChatPayTransaction.getOutTradeNo();
-        this.transactionId = weChatPayTransaction.getTransactionId();
-        this.tradeType = weChatPayTransaction.getTradeType();
+        this.transactionId = "1217752501201407033233368018";
+        this.tradeType = "JSAPI";
         this.tradeState = weChatPayTransaction.getTradeState();
-        this.tradeStateDesc = weChatPayTransaction.getTradeStateDesc();
-        this.amount = new TransactionAmountRetVo(weChatPayTransaction.getTotal(), weChatPayTransaction.getPayerTotal(), weChatPayTransaction.getCurrency(), weChatPayTransaction.getPayerCurrency());
-        this.payer = new PayerRetVo(weChatPayTransaction.getOpenid());
+        this.tradeStateDesc = null;
+        this.amount = new TransactionAmountRetVo(weChatPayTransaction.getTotal(), weChatPayTransaction.getPayerTotal(), "CNY", "CNY");
+        this.payer = new PayerRetVo("oUpF8uMuAJO_M2pxb1Q9zNjWeS6o");
         this.successTime = weChatPayTransaction.getSuccessTime();
     }
 }

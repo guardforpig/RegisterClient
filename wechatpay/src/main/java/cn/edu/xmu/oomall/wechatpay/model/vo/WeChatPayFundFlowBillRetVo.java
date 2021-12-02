@@ -2,7 +2,6 @@ package cn.edu.xmu.oomall.wechatpay.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author ziyi guo

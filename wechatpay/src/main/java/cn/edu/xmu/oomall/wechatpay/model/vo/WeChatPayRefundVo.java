@@ -23,9 +23,6 @@ public class WeChatPayRefundVo {
     }
 
     @NotBlank
-    private String transactionId;
-
-    @NotBlank
     private String outTradeNo;
 
     @NotBlank
