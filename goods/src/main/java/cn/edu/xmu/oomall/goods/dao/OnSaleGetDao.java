@@ -67,7 +67,7 @@ public class OnSaleGetDao {
      */
     public ReturnObject selectOnSaleRedis(Long id){
         try {
-            String key = ONSALE_ID + id;
+            String key = String.format(ONSALE_ID,id);
             OnSaleGetBo onSale=(OnSaleGetBo) redisUtil.get(key);
             if(null!=onSale){
                 return new ReturnObject(onSale);

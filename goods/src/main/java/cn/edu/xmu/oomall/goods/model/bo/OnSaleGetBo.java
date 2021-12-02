@@ -12,11 +12,10 @@ import java.util.Map;
 import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 
 /**
- *
- */
+ * @author Zijun Min 22920192204257
+ **/
 @Data
-public class OnSaleGetBo implements  VoObject, Serializable {
-
+public class OnSaleGetBo implements Serializable {
     private Long id;
     private Long shopId;
     private Long productId;
@@ -34,24 +33,20 @@ public class OnSaleGetBo implements  VoObject, Serializable {
     private String modifierName;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
-
-
+    private Integer maxQuantity;
+    private Integer numKey;
 
     public Type getType() {
         return Type.getTypeByCode(Byte.valueOf(type));
     }
 
-
     public void setType(Type type) {
         this.type=(type.getCode().byteValue());
     }
 
-
-
     public State getState() {
         return State.getStatusByCode((byte) state);
     }
-
 
     public void setState(State state) {
         Byte code=state.getCode();
@@ -59,23 +54,11 @@ public class OnSaleGetBo implements  VoObject, Serializable {
         this.state=b;
     }
 
-    @Override
-    public NewOnSaleRetVo createVo() {
-        return (NewOnSaleRetVo)cloneVo(this,NewOnSaleRetVo.class);
-    }
-
-    @Override
-    public Object createSimpleVo() {
-        return null;
-    }
-
-
     public enum Type {
         NOACTIVITY((byte) 0, "无活动"),
         SECKILL((byte) 1, "秒杀"),
         GROUPON((byte) 2, "团购"),
         PRESALE((byte) 3, "预售");
-
 
         private static final Map<Byte, Type> TYPE_MAP;
 
@@ -113,7 +96,6 @@ public class OnSaleGetBo implements  VoObject, Serializable {
         DRAFT((byte) 0, "草稿"),
         ONLINE((byte) 1, "上线"),
         OFFLINE((byte) 2, "下线");
-
 
         private static final Map<Byte, State> STATE_MAP;
 

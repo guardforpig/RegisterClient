@@ -57,7 +57,7 @@ spring:
         min-idle: 0
         max-wait: -1
     timeout: 5000
-    host: localhost
+    host: 172.16.2.172
 
 mybatis:
   type-aliases-package: cn.edu.xmu.oomall.goods.model.po

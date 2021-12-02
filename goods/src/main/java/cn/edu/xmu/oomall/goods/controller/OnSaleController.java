@@ -4,10 +4,7 @@ package cn.edu.xmu.oomall.goods.controller;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
-import cn.edu.xmu.oomall.goods.model.vo.ModifyOnSaleVo;
-import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleAllVo;
-import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
-import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
+import cn.edu.xmu.oomall.goods.model.vo.*;
 import cn.edu.xmu.oomall.goods.service.OnsaleService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
@@ -139,7 +136,7 @@ public class OnSaleController {
     })
     @Audit(departName = "shops")
     @PutMapping("internal/shops/{did}/activities/{id}/onsales/online")
-    public Object onlineOnSaleGroupPre(@PathVariable Long did,@PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
+    public Object onlineOnSaleGroupPre(@PathVariable Long did, @PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
 
         ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(id, loginUserId, loginUserName, OnSale.State.DRAFT, OnSale.State.ONLINE);
@@ -185,7 +182,7 @@ public class OnSaleController {
             return decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME, "开始时间晚于结束时间。"));
         }
 
-        ReturnObject returnObject1 = onsaleService.createOnSaleAll(did,id, newOnSaleAllVo, loginUserId, loginUserName);
+        ReturnObject returnObject1 = onsaleService.createOnSaleAll(did, id, newOnSaleAllVo, loginUserId, loginUserName);
         if (returnObject1.getCode() != ReturnNo.OK) {
             return decorateReturnObject(returnObject1);
         }
@@ -227,7 +224,7 @@ public class OnSaleController {
     })
     @Audit(departName = "shops")
     @DeleteMapping("internal/shops/{did}/activities/{id}/onsales")
-    public Object deleteOnSaleGroPre(@PathVariable Long did,@PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
+    public Object deleteOnSaleGroPre(@PathVariable Long did, @PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
 
         ReturnObject returnObject1 = onsaleService.deleteOnSaleGroPre(id);
@@ -242,7 +239,7 @@ public class OnSaleController {
     })
     @Audit(departName = "shops")
     @PutMapping("internal/shops/{did}/onsales/{id}")
-    public Object modifyOnSale(@PathVariable Long did,@PathVariable Long id, @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName) {
+    public Object modifyOnSale(@PathVariable Long did, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
         // 判断开始时间是否比结束时间晚
         if (onSale.getBeginTime().isAfter(onSale.getEndTime())) {
@@ -275,6 +272,38 @@ public class OnSaleController {
 
         ReturnObject returnObject1 = onsaleService.updateOnSaleNorSec(bo, shopId, loginUserId, loginUserName);
         return decorateReturnObject(returnObject1);
+    }
+
+
+    @Audit(departName = "shops")
+    @PutMapping("internal/shops/{did}/onsales/{id}/decr")
+    public Object decreaseOnSale(@PathVariable Long did, @PathVariable Long id, @RequestBody QuantityVo vo,
+                                 @LoginUser Long loginUserId,
+                                 @LoginName String loginUserName, BindingResult bindingResult) {
+
+        Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
+        if (null != returnObject) {
+            return returnObject;
+        }
+
+        Integer quantity = vo.getQuantity();
+        return decorateReturnObject(onsaleService.decreaseOnSale(did, id, quantity, loginUserId, loginUserName));
+    }
+
+
+    @Audit(departName = "shops")
+    @PutMapping("internal/shops/{did}/onsales/{id}/incr")
+    public Object increaseOnSale(@PathVariable Long did, @PathVariable Long id, @RequestBody QuantityVo vo,
+                                 @LoginUser Long loginUserId,
+                                 @LoginName String loginUserName, BindingResult bindingResult) {
+
+        Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
+        if (null != returnObject) {
+            return returnObject;
+        }
+
+        Integer quantity = vo.getQuantity();
+        return decorateReturnObject(onsaleService.increaseOnSale(did, id, quantity, loginUserId, loginUserName));
     }
 
 
