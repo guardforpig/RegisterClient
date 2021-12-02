@@ -61,9 +61,9 @@ public class GoodsController {
     public Object getFreightProducts(@PathVariable("shopId") Long shopId, @PathVariable("fid") Long fid, @RequestParam(value = "page", required = false) Integer page,
                                      @RequestParam(value = "pageSize", required = false) Integer pageSize, @LoginUser Long loginUserId, @LoginName String loginUserName)
     {
-        ReturnObject<PageInfo<VoObject>> retVoObject =
+        ReturnObject retVoObject =
                 productService.listProductsByFreightId(shopId,fid, page, pageSize);
-        return Common.decorateReturnObject(Common.getPageRetObject(retVoObject));
+        return Common.decorateReturnObject(retVoObject);
     }
 
     @ApiOperation(value="新建商品集合")
