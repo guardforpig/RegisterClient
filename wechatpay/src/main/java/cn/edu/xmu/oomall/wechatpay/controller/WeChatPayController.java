@@ -1,14 +1,14 @@
 package cn.edu.xmu.oomall.wechatpay.controller;
 
-import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayRefund;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayTransaction;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayFundFlowBillRetVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayRefundVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayTransactionVo;
 import cn.edu.xmu.oomall.wechatpay.service.WeChatPayService;
-import io.lettuce.core.dynamic.annotation.Param;
+import cn.edu.xmu.oomall.wechatpay.util.WeChatPayCommon;
+import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnNo;
+import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.validation.BindingResult;
@@ -39,26 +39,26 @@ public class WeChatPayController {
 
         Object object = processFieldErrors(bindingResult, httpServletResponse);
         if (object != null){
-            return object;
+            return WeChatPayCommon.decorateReturnObject(new WeChatPayReturnObject(WeChatPayReturnNo.PARAM_ERROR));
         }
 
-        ReturnObject returnObject = weChatPayService.createTransaction(new WeChatPayTransaction(weChatPayTransactionVo));
-        return Common.decorateReturnObject(returnObject);
+        WeChatPayReturnObject returnObject = weChatPayService.createTransaction(new WeChatPayTransaction(weChatPayTransactionVo));
+        return WeChatPayCommon.decorateReturnObject(returnObject);
     }
 
     @GetMapping("/internal/wechat/pay/transactions/out-trade-no/{out_trade_no}")
     public Object getTransaction(@PathVariable("out_trade_no") String outTradeNo){
 
-        ReturnObject returnObject = weChatPayService.getTransaction(outTradeNo);
-        returnObject = Common.getRetObject(returnObject);
-        return Common.decorateReturnObject(returnObject);
+        WeChatPayReturnObject returnObject = weChatPayService.getTransaction(outTradeNo);
+        returnObject = WeChatPayCommon.getRetObject(returnObject);
+        return WeChatPayCommon.decorateReturnObject(returnObject);
     }
 
     @PostMapping("/internal/wechat/pay/transactions/out-trade-no/{out_trade_no}/close")
     public Object closeTransaction(@PathVariable("out_trade_no") String outTradeNo){
 
-        ReturnObject returnObject = weChatPayService.closeTransaction(outTradeNo);
-        return Common.decorateReturnObject(returnObject);
+        WeChatPayReturnObject returnObject = weChatPayService.closeTransaction(outTradeNo);
+        return WeChatPayCommon.decorateReturnObject(returnObject);
     }
 
     @PostMapping("/internal/wechat/refund/domestic/refunds")
@@ -66,27 +66,27 @@ public class WeChatPayController {
 
         Object object = processFieldErrors(bindingResult, httpServletResponse);
         if (object != null){
-            return object;
+            return WeChatPayCommon.decorateReturnObject(new WeChatPayReturnObject(WeChatPayReturnNo.PARAM_ERROR));
         }
 
-        ReturnObject returnObject = weChatPayService.createRefund(new WeChatPayRefund(weChatPayRefundVo));
-        returnObject = Common.getRetObject(returnObject);
-        return Common.decorateReturnObject(returnObject);
+        WeChatPayReturnObject returnObject = weChatPayService.createRefund(new WeChatPayRefund(weChatPayRefundVo));
+        returnObject = WeChatPayCommon.getRetObject(returnObject);
+        return WeChatPayCommon.decorateReturnObject(returnObject);
     }
 
     @GetMapping("/internal/wechat/refund/domestic/refunds/{out_refund_no}")
     public Object getRefund(@PathVariable("out_refund_no") String outRefundNo){
 
-        ReturnObject returnObject = weChatPayService.getRefund(outRefundNo);
-        returnObject = Common.getRetObject(returnObject);
-        return Common.decorateReturnObject(returnObject);
+        WeChatPayReturnObject returnObject = weChatPayService.getRefund(outRefundNo);
+        returnObject = WeChatPayCommon.getRetObject(returnObject);
+        return WeChatPayCommon.decorateReturnObject(returnObject);
     }
 
     @GetMapping("/internal/wechat/bill/fundflowbill")
     public Object getFundFlowBill(@RequestParam("bill_date") String billDate){
 
-        ReturnObject returnObject = new ReturnObject(new WeChatPayFundFlowBillRetVo());
-        return Common.decorateReturnObject(returnObject);
+        WeChatPayReturnObject returnObject = new WeChatPayReturnObject(new WeChatPayFundFlowBillRetVo());
+        return WeChatPayCommon.decorateReturnObject(returnObject);
     }
 
 }
