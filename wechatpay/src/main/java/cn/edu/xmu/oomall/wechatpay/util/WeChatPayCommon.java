@@ -1,8 +1,6 @@
 package cn.edu.xmu.oomall.wechatpay.util;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
-import cn.edu.xmu.oomall.core.util.ReturnNo;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

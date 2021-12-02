@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.wechatpay.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,21 +15,6 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class WeChatPayTransactionVo {
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class TransactionAmountVo{
-        private Integer total;
-        private String currency;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class PayerVo{
-        private String openid;
-    }
 
     @NotBlank
     private String appid;
@@ -48,20 +32,12 @@ public class WeChatPayTransactionVo {
     private String outTradeNo;
 
     @NotNull
-    private TransactionAmountVo amount;
+    private TransactionAmountVo amount = new TransactionAmountVo();
 
     @NotNull
-    private PayerVo payer;
+    private PayerVo payer = new PayerVo();
 
     @NotBlank
     private String notifyUrl;
 
-    public void setAmount(Integer total, String currency) {
-        this.amount.total = total;
-        this.amount.currency = currency;
-    }
-
-    public void setPayer(String openid) {
-        this.payer.openid = openid;
-    }
 }

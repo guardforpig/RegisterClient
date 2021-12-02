@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.wechatpay.controller;
 
+import cn.edu.xmu.oomall.core.util.ResponseUtil;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayRefund;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayTransaction;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayFundFlowBillRetVo;
@@ -36,7 +37,6 @@ public class WeChatPayController {
 
     @PostMapping("/internal/wechat/pay/transactions/jsapi")
     public Object createTransaction(@Validated @RequestBody WeChatPayTransactionVo weChatPayTransactionVo, BindingResult bindingResult){
-
         Object object = processFieldErrors(bindingResult, httpServletResponse);
         if (object != null){
             return WeChatPayCommon.decorateReturnObject(new WeChatPayReturnObject(WeChatPayReturnNo.PARAM_ERROR));
@@ -62,7 +62,7 @@ public class WeChatPayController {
     }
 
     @PostMapping("/internal/wechat/refund/domestic/refunds")
-    public Object createTransaction(@Validated @RequestBody WeChatPayRefundVo weChatPayRefundVo, BindingResult bindingResult){
+    public Object createRefund(@Validated @RequestBody WeChatPayRefundVo weChatPayRefundVo, BindingResult bindingResult){
 
         Object object = processFieldErrors(bindingResult, httpServletResponse);
         if (object != null){

@@ -101,7 +101,7 @@ public class WeChatPayService {
     public WeChatPayReturnObject createRefund(WeChatPayRefund weChatPayRefund){
 
         WeChatPayTransaction wcpt = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
-        if( wcpt!=null && !(wcpt.getTradeState().equals(TRADE_STATE_CLOSE)||wcpt.getTradeState().equals(TRADE_STATE_FAIL)) ){
+        if( wcpt!=null && (wcpt.getTradeState().equals(TRADE_STATE_CLOSE)||wcpt.getTradeState().equals(TRADE_STATE_FAIL)) ){
             return new WeChatPayReturnObject(WeChatPayReturnNo.USER_ACCOUNT_ABNORMAL);
         }
         weChatPayRefund.setPayerTotal(wcpt.getPayerTotal());

@@ -14,14 +14,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class WeChatPayRefundVo {
 
-    @Data
-    @NoArgsConstructor
-    public class RefundAmountVo{
-        private Integer refund;
-        private Integer total;
-        private String currency;
-    }
-
     @NotBlank
     private String outTradeNo;
 
