@@ -216,8 +216,10 @@ public class OnSaleDao {
             script.setScriptSource(new ResourceScriptSource(new ClassPathResource(DECREASE_PATH)));
             script.setResultType(Long.class);
 
+            Random r = new Random();
+
             for (int i = 0; i < randomRound; i++) {
-                Random r = new Random();
+
                 int init = r.nextInt(groupNum);
                 String key = String.format(ONSALE_STOCK_GROUP_KEY, id, init);
                 List<String> keys = Stream.of(key).collect(Collectors.toList());

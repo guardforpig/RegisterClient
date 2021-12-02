@@ -565,13 +565,11 @@ public class Common {
         // 数量大于组数，先将余数先加到前面的桶中，再将其余相同的增量加到各自随机的桶中
         int unit=whole/groupNum;
         int other=whole-unit*groupNum;
-        for(int i=0;i<other;i++){
-            incr[i]++;
-        }
         for (int i = 0; i < groupNum ; i++) {
-            Random r = new Random();
-            int init = r.nextInt(groupNum);
-            incr[init] += unit;
+            if(i<other)
+                incr[i]+=unit+1;
+            else
+            incr[i] += unit;
         }
         return incr;
     }
