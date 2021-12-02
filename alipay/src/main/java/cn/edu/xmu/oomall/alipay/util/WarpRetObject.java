@@ -41,32 +41,4 @@ public class WarpRetObject {
      * 固定:ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE
      */
     private String sign="ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE";
-
-    public void setPayRetVo(PayRetVo payRetVo) {
-        this.payRetVo = payRetVo;
-    }
-
-    public void setPayQueryRetVo(PayQueryRetVo payQueryRetVo) {
-        this.payQueryRetVo = payQueryRetVo;
-    }
-
-    public void setCloseRetVo(CloseRetVo closeRetVo) {
-        this.closeRetVo = closeRetVo;
-    }
-
-    public void setRefundRetVo(RefundRetVo refundRetVo) {
-        this.refundRetVo = refundRetVo;
-    }
-
-    public void setRefundQueryRetVo(RefundQueryRetVo refundQueryRetVo) {
-        this.refundQueryRetVo = refundQueryRetVo;
-    }
-
-    public void setDownloadUrlQueryRetVo(DownloadUrlQueryRetVo downloadUrlQueryRetVo) {
-        this.downloadUrlQueryRetVo = downloadUrlQueryRetVo;
-    }
-
-    public void setSign(String sign) {
-        this.sign = sign;
-    }
 }
