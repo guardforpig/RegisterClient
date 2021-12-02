@@ -37,6 +37,7 @@ public class WeChatPayController {
 
     @PostMapping("/internal/wechat/pay/transactions/jsapi")
     public Object createTransaction(@Validated @RequestBody WeChatPayTransactionVo weChatPayTransactionVo, BindingResult bindingResult){
+
         Object object = processFieldErrors(bindingResult, httpServletResponse);
         if (object != null){
             return WeChatPayCommon.decorateReturnObject(new WeChatPayReturnObject(WeChatPayReturnNo.PARAM_ERROR));
