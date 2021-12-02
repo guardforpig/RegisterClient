@@ -37,7 +37,6 @@ public class WeChatPayRefund implements Serializable {
     private String notifyUrl;
 
     public WeChatPayRefund(WeChatPayRefundVo weChatPayRefundVo){
-        this.transactionId = weChatPayRefundVo.getTransactionId();
         this.outTradeNo = weChatPayRefundVo.getOutTradeNo();
         this.outRefundNo = weChatPayRefundVo.getOutRefundNo();
         this.reason = weChatPayRefundVo.getReason();
