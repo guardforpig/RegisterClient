@@ -10,7 +10,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core", "cn.edu.xmu.oomall.wechatpay", "cn.edu.xmu.privilegegateway"})
 @EnableConfigurationProperties
 @MapperScan("cn.edu.xmu.oomall.wechatpay.mapper")
-@EnableDiscoveryClient
 @EnableFeignClients(basePackages = "cn.edu.xmu.oomall.wechatpay.microservice")
 public class WeChatPayApplication {
 
