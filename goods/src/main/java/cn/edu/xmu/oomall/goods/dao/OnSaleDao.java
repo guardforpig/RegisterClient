@@ -7,6 +7,9 @@ import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +34,12 @@ import static cn.edu.xmu.oomall.core.util.Common.*;
 @Repository
 public class OnSaleDao {
     private final static String ONSALE_STOCK_GROUP_KEY = "onsale_%d_stockgroup_%d";
+    private final static String ONSALE_SET_KEY="onsale_%d_set";
+
     private final static String DECREASE_PATH = "stock/decrease.lua";
     private final static String INCREASE_PATH = "stock/increase.lua";
     private final static String LOAD_PATH = "stock/load.lua";
+
 
 
     private Logger logger = LoggerFactory.getLogger(OnSaleDao.class);
@@ -220,33 +226,28 @@ public class OnSaleDao {
      * @param quantity
      * @param groupNum
      * @param wholeQuantity
-     * @param randomRound
      * @return
      */
-    public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum, Integer wholeQuantity, Integer randomRound) {
+    public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum, Integer wholeQuantity) {
         try {
-            if (redis.get(String.format(ONSALE_STOCK_GROUP_KEY, id, 0)) == null) {
-                loadQuantity(id, groupNum, wholeQuantity);
-            }
+            String setKey=String.format(ONSALE_SET_KEY,id);
+
+            if(!redis.hasKey(setKey))
+                loadQuantity(setKey,id,groupNum, wholeQuantity);
 
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
             script.setScriptSource(new ResourceScriptSource(new ClassPathResource(DECREASE_PATH)));
             script.setResultType(Long.class);
 
-            Random r = new Random();
-
-            for (int i = 0; i < randomRound; i++) {
-
-                int init = r.nextInt(groupNum);
-                String key = String.format(ONSALE_STOCK_GROUP_KEY, id, init);
-                List<String> keys = Stream.of(key).collect(Collectors.toList());
-                Long res = (Long) redis.executeScript(script, keys, quantity);
-                if (res >= 0) {
-                    return new ReturnObject(ReturnNo.OK);
-                }
+            long timeSeed=  System.currentTimeMillis();
+            Long res = redis.executeScript(script,
+                    Stream.of(setKey).collect(Collectors.toList()), quantity,timeSeed);
+            if (res >= 0) {
+                return new ReturnObject(ReturnNo.OK);
             }
             return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE, "扣库存失败");
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
@@ -262,6 +263,8 @@ public class OnSaleDao {
      */
     public ReturnObject increaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum) {
         try {
+            String setKey=String.format(ONSALE_SET_KEY,id);
+
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
             script.setScriptSource(new ResourceScriptSource(new ClassPathResource(INCREASE_PATH)));
             script.setResultType(Long.class);
@@ -273,8 +276,8 @@ public class OnSaleDao {
 
             for (int i = 0; i < groupNum; i++) {
                 String key = String.format(ONSALE_STOCK_GROUP_KEY, id, (init + i) % groupNum);
-                List<String> keys = Stream.of(key).collect(Collectors.toList());
-                Long res = (Long) redis.executeScript(script, keys, incr[i]);
+                List<String> keys = Stream.of(setKey,key).collect(Collectors.toList());
+                Long res = redis.executeScript(script, keys, incr[i]);
                 if (res == -1) {
                     return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE, "加库存失败");
                 }
@@ -286,13 +289,15 @@ public class OnSaleDao {
         }
     }
 
-    private void loadQuantity(Long id, Integer groupNum, Integer wholeQuantity) {
+    private void loadQuantity(String setKey,Long id, Integer groupNum, Integer wholeQuantity) {
+
         int[] incr = getAvgArray(groupNum, wholeQuantity);
         DefaultRedisScript script = new DefaultRedisScript<>();
         script.setScriptSource(new ResourceScriptSource(new ClassPathResource(LOAD_PATH)));
+
         for (int i = 0; i < groupNum; i++) {
             redis.executeScript(script,
-                    Stream.of(String.format(ONSALE_STOCK_GROUP_KEY, id, i)).collect(Collectors.toList()), incr[i]);
+                    Stream.of(setKey,String.format(ONSALE_STOCK_GROUP_KEY, id, i)).collect(Collectors.toList()), incr[i]);
         }
     }
 

@@ -1,12 +1,27 @@
 -- 减库存
 
-local key=KEYS[1]
-local quantity=tonumber(ARGV[1])
+-- @author YuJie
 
-if (redis.call('exists',key)==1) then
-    local stock =tonumber(redis.call('get',key))
-    if(stock>=quantity) then
-        return redis.call('incrBy',key,0-quantity)
+
+local setKey = KEYS[1]
+local quantity = tonumber(ARGV[1])
+math.randomseed(ARGV[2])
+
+if (redis.call('exists', setKey) == 1) then
+    local num = redis.call('scard', setKey)
+    local keys = redis.call('smembers', setKey)
+    local init = math.random(num)
+
+    for i = 1, num do
+        local curr = math.fmod(init + i, num) + 1;
+        local stock = tonumber(redis.call('get', keys[curr]))
+        if (stock >= quantity) then
+            local res = redis.call('incrBy', keys[curr], 0 - quantity)
+            if (res == 0) then
+                redis.call('srem', setKey, keys[curr])
+            end
+            return res
+        end
     end
 end
 
