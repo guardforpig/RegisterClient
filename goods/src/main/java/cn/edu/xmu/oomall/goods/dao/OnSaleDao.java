@@ -157,6 +157,8 @@ public class OnSaleDao {
 
     public ReturnObject onSaleShopMatch(Long id, Long shopId) {
         try {
+            if(shopId==0)
+                return new ReturnObject(true);
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andIdEqualTo(id);
