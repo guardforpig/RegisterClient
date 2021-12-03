@@ -34,7 +34,7 @@ class CloneVoTest {
         categoryBo.setName("name");
 
 
-        CategoryRetVo categoryRetVo = (CategoryRetVo) Common.cloneVo(categoryBo, CategoryRetVo.class);
+        CategoryRetVo categoryRetVo =Common.cloneVo(categoryBo, CategoryRetVo.class);
         assertEquals(categoryRetVo.getId(),1L);
         assertEquals(categoryRetVo.getName(),"name");
 
