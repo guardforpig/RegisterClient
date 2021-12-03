@@ -7,9 +7,6 @@ import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
-import org.luaj.vm2.LuaTable;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +16,6 @@ import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
