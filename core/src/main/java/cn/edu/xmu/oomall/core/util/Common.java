@@ -252,9 +252,9 @@ public class Common {
      * @param voClass vo对象类型
      * @return 浅克隆的vo对象
      */
-    public static Object cloneVo(Object bo, Class voClass) {
+    public static <T> T cloneVo(Object bo, Class<T> voClass) {
         Class boClass = bo.getClass();
-        Object newVo = null;
+        T newVo = null;
         try {
             //默认voClass有无参构造函数
             newVo = voClass.getDeclaredConstructor().newInstance();
