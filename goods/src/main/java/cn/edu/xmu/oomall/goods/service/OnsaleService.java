@@ -306,8 +306,8 @@ public class OnsaleService {
         }
 
 
-        Integer groupNum=10;
-        Integer randomRound=10;
+        Integer groupNum=onsale.getNumKey();
+        Integer randomRound=onsale.getMaxQuantity();
 
         return onsaleDao.decreaseOnSaleQuantity(id,quantity,groupNum,onsale.getQuantity(),randomRound);
 
@@ -334,8 +334,7 @@ public class OnsaleService {
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该价格浮动不属于该商铺");
         }
 
-        Integer groupNum=10;
-
+        Integer groupNum=onsale.getNumKey();
 
         return onsaleDao.increaseOnSaleQuantity(id,quantity,groupNum);
 

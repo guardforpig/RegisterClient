@@ -9,7 +9,7 @@ import java.util.Locale;
  * @date 2021/11/24
  */
 public class Constants {
-    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     public static final Locale LOCALE=Locale.CHINA;
 
 }

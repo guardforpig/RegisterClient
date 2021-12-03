@@ -26,6 +26,8 @@ public class OnSaleRetVo{
     private Byte type;
     private Long activityId;
     private Long shareActId;
+    private Integer numKey;
+    private Integer maxQuantity;
     @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime gmtCreate;
     @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
