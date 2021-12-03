@@ -157,6 +157,8 @@ public class OnSaleDao {
 
     public ReturnObject onSaleShopMatch(Long id, Long shopId) {
         try {
+            if(shopId==0)
+                return new ReturnObject(true);
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andIdEqualTo(id);
@@ -205,7 +207,22 @@ public class OnSaleDao {
         }
     }
 
-
+    /**
+     * 减Redis中的预扣库存
+     * 基本思想用脚本实现如下逻辑：
+     * 1. 如果有多个key的话，维持一个xx集合，记录值>0的key
+     * 2. 随机从多个key减库存，如果库存减到0，则从xx集合中去除这个key
+     * 3. 如果key库存不够扣，则从XX集合中选取下个key，看是否够，够按照2处理，不够继续找下一个，直到找到足够扣的key，或者所有key都不够扣
+     * 这个逻辑的基本思想是在开始的时候都是直接随机扣
+     * 在结束阶段的逻辑是先随机扣，发现是0，再到集合中寻找适合扣的key
+     * 这样可以保证开始的时候比较快完成，结束的时候保证公平
+     * @param id
+     * @param quantity
+     * @param groupNum
+     * @param wholeQuantity
+     * @param randomRound
+     * @return
+     */
     public ReturnObject decreaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum, Integer wholeQuantity, Integer randomRound) {
         try {
             if (redis.get(String.format(ONSALE_STOCK_GROUP_KEY, id, 0)) == null) {
@@ -235,6 +252,14 @@ public class OnSaleDao {
         }
     }
 
+    /**
+     * 增加预扣库存
+     * 如果有多个key的话，需要把不为0的key加到集合中
+     * @param id
+     * @param quantity
+     * @param groupNum
+     * @return
+     */
     public ReturnObject increaseOnSaleQuantity(Long id, Integer quantity, Integer groupNum) {
         try {
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();

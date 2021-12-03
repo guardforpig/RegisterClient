@@ -573,9 +573,9 @@ public class Common {
         // 将数量尽量平均分到多个桶
         int[] incr = new int[groupNum];
         // 数量小于等于组数，随机把数量加到桶中
+        Random r = new Random();
         if(whole<=groupNum){
             for(int i=0;i<whole;i++){
-                Random r = new Random();
                 int init = r.nextInt(groupNum);
                 incr[init]++;
             }

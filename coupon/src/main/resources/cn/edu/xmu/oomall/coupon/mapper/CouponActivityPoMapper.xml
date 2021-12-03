@@ -25,6 +25,7 @@
     <result column="modifier_name" jdbcType="VARCHAR" property="modifierName" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="num_key" jdbcType="INTEGER" property="numKey" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -66,7 +67,7 @@
     -->
     `id`, `name`, `shop_id`, `shop_name`, `coupon_time`, `begin_time`, `end_time`, `quantity`, 
     `quantity_type`, `valid_term`, `image_url`, `strategy`, `state`, `creator_id`, `creator_name`, 
-    `modifier_id`, `modifier_name`, `gmt_create`, `gmt_modified`
+    `modifier_id`, `modifier_name`, `gmt_create`, `gmt_modified`, `num_key`
   </sql>
   <select id="selectByExample" parameterType="cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample" resultMap="BaseResultMap">
     <!--
@@ -118,15 +119,15 @@
       `quantity`, `quantity_type`, `valid_term`, 
       `image_url`, `strategy`, `state`, 
       `creator_id`, `creator_name`, `modifier_id`, 
-      `modifier_name`, `gmt_create`, `gmt_modified`
-      )
+      `modifier_name`, `gmt_create`, `gmt_modified`, 
+      `num_key`)
     values (#{name,jdbcType=VARCHAR}, #{shopId,jdbcType=BIGINT}, #{shopName,jdbcType=VARCHAR}, 
       #{couponTime,jdbcType=TIMESTAMP}, #{beginTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
       #{quantity,jdbcType=INTEGER}, #{quantityType,jdbcType=TINYINT}, #{validTerm,jdbcType=TINYINT}, 
       #{imageUrl,jdbcType=VARCHAR}, #{strategy,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT}, 
       #{creatorId,jdbcType=BIGINT}, #{creatorName,jdbcType=VARCHAR}, #{modifierId,jdbcType=BIGINT}, 
-      #{modifierName,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}
-      )
+      #{modifierName,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
+      #{numKey,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="cn.edu.xmu.oomall.coupon.model.po.CouponActivityPo">
     <!--
@@ -192,6 +193,9 @@
       <if test="gmtModified != null">
         `gmt_modified`,
       </if>
+      <if test="numKey != null">
+        `num_key`,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="name != null">
@@ -247,6 +251,9 @@
       </if>
       <if test="gmtModified != null">
         #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="numKey != null">
+        #{numKey,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -311,6 +318,9 @@
       <if test="gmtModified != null">
         `gmt_modified` = #{gmtModified,jdbcType=TIMESTAMP},
       </if>
+      <if test="numKey != null">
+        `num_key` = #{numKey,jdbcType=INTEGER},
+      </if>
     </set>
     where `id` = #{id,jdbcType=BIGINT}
   </update>
@@ -337,7 +347,8 @@
       `modifier_id` = #{modifierId,jdbcType=BIGINT},
       `modifier_name` = #{modifierName,jdbcType=VARCHAR},
       `gmt_create` = #{gmtCreate,jdbcType=TIMESTAMP},
-      `gmt_modified` = #{gmtModified,jdbcType=TIMESTAMP}
+      `gmt_modified` = #{gmtModified,jdbcType=TIMESTAMP},
+      `num_key` = #{numKey,jdbcType=INTEGER}
     where `id` = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

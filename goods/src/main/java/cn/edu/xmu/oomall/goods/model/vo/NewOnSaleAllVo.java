@@ -32,5 +32,11 @@ public class NewOnSaleAllVo {
 
     private Long activityId;
 
+    @Min(1)
+    private Integer maxQuantity;
+
+    @Min(1)
+    private Integer numKey;
+
     public NewOnSaleAllVo(){}
 }
