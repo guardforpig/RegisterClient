@@ -243,7 +243,6 @@ public class OnSaleDao {
             }
             return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE, "扣库存失败");
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
