@@ -338,10 +338,6 @@ public class OnsaleService {
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该价格浮动不属于该商铺");
         }
 
-        // 判断数量是否超过最大值
-        if(quantity>onsale.getMaxQuantity()){
-            return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE);
-        }
 
         Integer groupNum=onsale.getNumKey();
 
