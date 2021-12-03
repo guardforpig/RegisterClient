@@ -97,6 +97,12 @@ public class Common {
         }
     }
 
+    /**
+     * @author xucangbai
+     * @param returnObject
+     * @param voClass
+     * @return
+     */
     public static ReturnObject getRetVo(ReturnObject<Object> returnObject,Class voClass) {
         ReturnNo code = returnObject.getCode();
         switch (code){
@@ -141,6 +147,12 @@ public class Common {
         }
     }
 
+    /**
+     * @author xucangbai
+     * @param returnObject
+     * @param voClass
+     * @return
+     */
     public static ReturnObject getListRetVo(ReturnObject<List> returnObject,Class voClass)
     {
         ReturnNo code = returnObject.getCode();
@@ -197,10 +209,17 @@ public class Common {
         }
     }
 
+    /**
+     * @author xucangbai
+     * @param returnObject
+     * @param voClass
+     * @return
+     */
     public static ReturnObject getPageRetVo(ReturnObject<PageInfo<Object>> returnObject,Class voClass){
         ReturnNo code = returnObject.getCode();
         switch (code){
             case OK:
+            case RESOURCE_FALSIFY:
                 PageInfo<Object> objs = returnObject.getData();
                 if (objs != null){
                     List<Object> voObjs = new ArrayList<>(objs.getList().size());
@@ -215,9 +234,9 @@ public class Common {
                     ret.put("page", objs.getPageNum());
                     ret.put("pageSize", objs.getPageSize());
                     ret.put("pages", objs.getPages());
-                    return new ReturnObject(ret);
+                    return new ReturnObject(code,ret);
                 }else{
-                    return new ReturnObject();
+                    return new ReturnObject(code);
                 }
             default:
                 return new ReturnObject(returnObject.getCode(), returnObject.getErrmsg());
