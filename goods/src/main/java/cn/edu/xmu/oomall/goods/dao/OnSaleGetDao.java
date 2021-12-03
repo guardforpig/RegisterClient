@@ -21,6 +21,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+
 /**
  * @author Zijun Min 22920192204257
  * @description
@@ -51,7 +53,7 @@ public class OnSaleGetDao {
             if(onSalePo==null){
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }else{
-                OnSaleGetBo onSale=(OnSaleGetBo) Common.cloneVo(onSalePo, OnSaleGetBo.class);
+                OnSaleGetBo onSale=(OnSaleGetBo) cloneVo(onSalePo, OnSaleGetBo.class);
                 return new ReturnObject(onSale);
             }
         }catch (Exception e){
@@ -76,7 +78,7 @@ public class OnSaleGetDao {
                 if(onSalePo==null){
                     return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
                 }else{
-                    OnSaleGetBo onSaleGetBo=(OnSaleGetBo) Common.cloneVo(onSalePo, OnSaleGetBo.class);
+                    OnSaleGetBo onSaleGetBo=(OnSaleGetBo) cloneVo(onSalePo, OnSaleGetBo.class);
                     redisUtil.set(key,onSaleGetBo,onsaleTimeout);
                     return new ReturnObject(onSaleGetBo);
                 }

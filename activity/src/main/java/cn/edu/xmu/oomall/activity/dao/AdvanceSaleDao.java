@@ -19,8 +19,10 @@ import com.github.pagehelper.PageInfo;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSaleState;
 import cn.edu.xmu.oomall.activity.model.po.AdvanceSalePoExample;
 import cn.edu.xmu.oomall.activity.model.vo.SimpleAdvanceSaleRetVo;
-import cn.edu.xmu.oomall.core.util.JacksonUtil;
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
 /**
  * @author GXC 22920192204194
  */
@@ -49,7 +51,7 @@ public class AdvanceSaleDao {
             AdvanceSalePo po=null;
             AdvanceSale bo=(AdvanceSale) redisUtil.get("AdvanceSaleId"+id);
             if(bo!=null) {
-                po=(AdvanceSalePo) Common.cloneVo(bo,AdvanceSalePo.class);
+                po=(AdvanceSalePo) cloneVo(bo,AdvanceSalePo.class);
             }
             else {
                 po=advanceSalePoMapper.selectByPrimaryKey(id);
@@ -150,7 +152,7 @@ public class AdvanceSaleDao {
                 }
                 //数据库查到，放入redis
                 else {
-                    advanceSale = (AdvanceSale) Common.cloneVo(po, AdvanceSale.class);
+                    advanceSale = (AdvanceSale) cloneVo(po, AdvanceSale.class);
                     redisUtil.set(String.format(ADVANCESALE_KEY,id), advanceSale, categoryTimeout);
                 }
             }
@@ -176,10 +178,10 @@ public class AdvanceSaleDao {
      */
     public ReturnObject addAdvanceSale(Long adminId,String adminName,AdvanceSale advanceSaleBo){
         try {
-            AdvanceSalePo advanceSalePo = (AdvanceSalePo) Common.cloneVo(advanceSaleBo, AdvanceSalePo.class);
-            Common.setPoCreatedFields(advanceSalePo,adminId,adminName);
+            AdvanceSalePo advanceSalePo = (AdvanceSalePo) cloneVo(advanceSaleBo, AdvanceSalePo.class);
+            setPoCreatedFields(advanceSalePo,adminId,adminName);
             advanceSalePoMapper.insert(advanceSalePo);
-            return new ReturnObject(Common.cloneVo(advanceSalePo, AdvanceSale.class));
+            return new ReturnObject(cloneVo(advanceSalePo, AdvanceSale.class));
         }
         catch (Exception e) {
             logger.error(e.getMessage());

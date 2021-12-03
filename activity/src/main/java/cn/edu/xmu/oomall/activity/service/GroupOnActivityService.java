@@ -7,7 +7,6 @@ import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
 import cn.edu.xmu.oomall.activity.model.bo.GroupOnActivity;
 import cn.edu.xmu.oomall.activity.model.vo.*;
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -19,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 /**
  * @author Lin Jiyuan
  * @sn 30320192200032
@@ -75,10 +76,10 @@ public class GroupOnActivityService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject modifyGroupon(long id, GroupOnActivityVo groupOnActivityVo, long shopId,long loginUser,String loginUsername) {
-        GroupOnActivity groupOnActivity = (GroupOnActivity) Common.cloneVo(groupOnActivityVo,GroupOnActivity.class);
+        GroupOnActivity groupOnActivity = (GroupOnActivity) cloneVo(groupOnActivityVo,GroupOnActivity.class);
         groupOnActivity.setId(id);
         groupOnActivity.setShopId(shopId);
-        Common.setPoModifiedFields(groupOnActivity,loginUser,loginUsername);
+       setPoModifiedFields(groupOnActivity,loginUser,loginUsername);
 
 
         ReturnObject<GroupOnActivity> findObj = groupActivityDao.getGroupOnActivity(id);
@@ -156,7 +157,7 @@ public class GroupOnActivityService {
         }
 
         GroupOnActivity groupOnActivity = new GroupOnActivity();
-        Common.setPoModifiedFields(groupOnActivity,loginUser,loginUsername);
+       setPoModifiedFields(groupOnActivity,loginUser,loginUsername);
         groupOnActivity.setId(id);
         groupOnActivity.setState(GroupOnState.ONLINE);
 
@@ -197,7 +198,7 @@ public class GroupOnActivityService {
         }
 
         GroupOnActivity groupOnActivity = new GroupOnActivity();
-        Common.setPoModifiedFields(groupOnActivity,loginUser,loginUsername);
+       setPoModifiedFields(groupOnActivity,loginUser,loginUsername);
         groupOnActivity.setId(id);
         groupOnActivity.setState(GroupOnState.OFFLINE);
 

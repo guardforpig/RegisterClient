@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.freight.dao;
 
-import cn.edu.xmu.oomall.core.util.*;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.mapper.RegionPoMapper;
@@ -15,6 +14,10 @@ import org.springframework.stereotype.Repository;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author ziyi guo
@@ -66,7 +69,7 @@ public class RegionDao {
             while (null != regionPo && regionPo.getPid() != 0) {
                 regionPo = regionPoMapper.selectByPrimaryKey(regionPo.getPid());
                 if (null != regionPo) {
-                    retRegions.add(0, (Region) Common.cloneVo(regionPo,Region.class) );
+                    retRegions.add(0, (Region) cloneVo(regionPo,Region.class) );
                 }
             }
 
@@ -90,7 +93,7 @@ public class RegionDao {
     public ReturnObject createRegion(RegionPo regionPo, Long userId, String userName){
 
         try {
-            Common.setPoCreatedFields(regionPo, userId, userName);
+            setPoCreatedFields(regionPo, userId, userName);
 
             RegionPo parentRegionPo = regionPoMapper.selectByPrimaryKey(regionPo.getPid());
             if (parentRegionPo == null) {
@@ -134,7 +137,7 @@ public class RegionDao {
 
             List<RegionPo> regionPos=regionPoMapper.selectByExample(example);
             for(RegionPo rp:regionPos){
-                Region r = (Region) Common.cloneVo(rp,Region.class);
+                Region r = (Region) cloneVo(rp,Region.class);
                 retRegions.add(r);
             }
 
@@ -183,7 +186,7 @@ public class RegionDao {
             for(RegionPo rp:regionPos){
                 subKey = redisKeyForSubList + rp.getId();
                 redisUtil.set(subKey,id,regionRedisTimeout);
-                Region r = (Region) Common.cloneVo(rp,Region.class);
+                Region r = (Region) cloneVo(rp,Region.class);
                 retRegions.add(r);
             }
             redisUtil.set(key, (Serializable)retRegions,regionRedisTimeout);
@@ -203,7 +206,7 @@ public class RegionDao {
     public ReturnObject modiRegion(RegionPo regionPo, Long userId, String userName){
 
         try {
-            Common.setPoModifiedFields(regionPo,userId,userName);
+           setPoModifiedFields(regionPo,userId,userName);
 
             RegionPo rp = regionPoMapper.selectByPrimaryKey(regionPo.getId());
             if (rp == null) {
@@ -229,7 +232,7 @@ public class RegionDao {
     public ReturnObject abandonRegion(RegionPo regionPo, Long userId, String userName) {
 
         try {
-            Common.setPoModifiedFields(regionPo,userId,userName);
+           setPoModifiedFields(regionPo,userId,userName);
 
             RegionPo rp=regionPoMapper.selectByPrimaryKey(regionPo.getId());
             if (rp == null) {
@@ -260,7 +263,7 @@ public class RegionDao {
     public ReturnObject modiStateRegion(RegionPo regionPo, Long userId, String userName) {
 
         try {
-            Common.setPoModifiedFields(regionPo,userId,userName);
+           setPoModifiedFields(regionPo,userId,userName);
 
             RegionPo rp=regionPoMapper.selectByPrimaryKey(regionPo.getId());
             if (rp == null) {

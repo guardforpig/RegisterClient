@@ -8,7 +8,6 @@ import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityStatesBo;
 import cn.edu.xmu.oomall.activity.model.vo.*;
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -21,6 +20,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author xiuchen lang 22920192204222
@@ -114,9 +117,9 @@ public class ShareActivityService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject addShareAct(String createName, Long createId,
                                     Long shopId, ShareActivityVo shareActivityVo) {
-        ShareActivityBo shareActivityBo = (ShareActivityBo) Common.cloneVo(shareActivityVo, ShareActivityBo.class);
-        Common.setPoCreatedFields(shareActivityBo, createId, createName);
-        Common.setPoModifiedFields(shareActivityBo, createId, createName);
+        ShareActivityBo shareActivityBo = (ShareActivityBo) cloneVo(shareActivityVo, ShareActivityBo.class);
+        setPoCreatedFields(shareActivityBo, createId, createName);
+       setPoModifiedFields(shareActivityBo, createId, createName);
         shareActivityBo.setState(ShareActivityStatesBo.DRAFT.getCode());
         shareActivityBo.setShopId(shopId);
         //TODO:通过商铺id弄到商铺名称
@@ -132,7 +135,7 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo1 = (ShareActivityBo) returnObject.getData();
-        RetShareActivityInfoVo retShareActivityInfoVo = (RetShareActivityInfoVo) Common.cloneVo(shareActivityBo1, RetShareActivityInfoVo.class);
+        RetShareActivityInfoVo retShareActivityInfoVo = (RetShareActivityInfoVo) cloneVo(shareActivityBo1, RetShareActivityInfoVo.class);
         retShareActivityInfoVo.setShop(new ShopVo(shareActivityBo1.getShopId(), shareActivityBo1.getShopName()));
         return new ReturnObject(retShareActivityInfoVo);
     }
@@ -150,7 +153,7 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
-        RetShareActivityInfoVo retShareActivityInfoVo = (RetShareActivityInfoVo) Common.cloneVo(shareActivityBo, RetShareActivityInfoVo.class);
+        RetShareActivityInfoVo retShareActivityInfoVo = (RetShareActivityInfoVo) cloneVo(shareActivityBo, RetShareActivityInfoVo.class);
         retShareActivityInfoVo.setShop(new ShopVo(shareActivityBo.getShopId(), shareActivityBo.getShopName()));
         return new ReturnObject(retShareActivityInfoVo);
     }
@@ -169,7 +172,7 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
-        RetShareActivitySpecificInfoVo retShareActivitySpecificInfoVo = (RetShareActivitySpecificInfoVo) Common.cloneVo(shareActivityBo, RetShareActivitySpecificInfoVo.class);
+        RetShareActivitySpecificInfoVo retShareActivitySpecificInfoVo = (RetShareActivitySpecificInfoVo) cloneVo(shareActivityBo, RetShareActivitySpecificInfoVo.class);
         retShareActivitySpecificInfoVo.setShop(new ShopVo(shareActivityBo.getShopId(), shareActivityBo.getShopName()));
         retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getCreatorId(), shareActivityBo.getCreatorName()));
         retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getModifierId(), shareActivityBo.getModifierName()));

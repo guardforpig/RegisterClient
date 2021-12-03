@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+
 /**
  * 商品分类Controller
  *
@@ -113,7 +116,7 @@ public class CategoryController {
         if (res != null) {
             return res;
         }
-        Category cate = (Category) Common.cloneVo(vo, Category.class);
+        Category cate = (Category) cloneVo(vo, Category.class);
         ReturnObject ret = categoryService.newCategory(id, cate, createId, createName);
 
         if (ret.getCode() == ReturnNo.OK) {
@@ -157,7 +160,7 @@ public class CategoryController {
             return res;
         }
 
-        Category cate = (Category) Common.cloneVo(vo, Category.class);
+        Category cate = (Category) cloneVo(vo, Category.class);
         ReturnObject ret = categoryService.changeCategory(id, cate, modifyId, modiName);
         return Common.decorateReturnObject(ret);
     }

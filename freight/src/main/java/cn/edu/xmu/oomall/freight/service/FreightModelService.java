@@ -1,15 +1,12 @@
 package cn.edu.xmu.oomall.freight.service;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.dao.FreightModelDao;
 import cn.edu.xmu.oomall.freight.dao.PieceFreightDao;
-import cn.edu.xmu.oomall.freight.dao.PieceFreightDao;
 import cn.edu.xmu.oomall.freight.dao.RegionDao;
 import cn.edu.xmu.oomall.freight.dao.WeightFreightDao;
 import cn.edu.xmu.oomall.freight.model.bo.*;
-import cn.edu.xmu.oomall.freight.model.po.WeightFreightPo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightCalculatingPostVo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightCalculatingRetVo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelInfoVo;
@@ -21,6 +18,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author xucangbai
@@ -52,7 +53,7 @@ public class FreightModelService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject addFreightModel(FreightModelInfoVo freightModelInfo,
                                         Long userId, String userName){
-        FreightModel freightModel = (FreightModel) Common.cloneVo(freightModelInfo,FreightModel.class);
+        FreightModel freightModel = (FreightModel) cloneVo(freightModelInfo,FreightModel.class);
         //新建,不为默认
 
         //如果是默认模板需要把原来默认模板改为非默认
@@ -61,7 +62,7 @@ public class FreightModelService {
             freightModelDao.deleteDefaultFreight();
         }
         //设置创建者
-        Common.setPoCreatedFields(freightModel,userId,userName);
+        setPoCreatedFields(freightModel,userId,userName);
         //id置空
         freightModel.setId(null);
         return freightModelDao.addFreightModel(freightModel);
@@ -105,7 +106,7 @@ public class FreightModelService {
         FreightModel freightModelToBeCloned= (FreightModel) returnObjectToBeCloned.getData();
 
         //设置创建人
-        Common.setPoCreatedFields(freightModelToBeCloned,userId,userName);
+        setPoCreatedFields(freightModelToBeCloned,userId,userName);
         //将置空id
         freightModelToBeCloned.setId(null);
         Random r = new Random();
@@ -157,9 +158,9 @@ public class FreightModelService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject updateFreightModel(Long id,FreightModelInfoVo freightModelInfo,
                                                               Long userId, String userName){
-        FreightModel freightModel= (FreightModel) Common.cloneVo(freightModelInfo,FreightModel.class);
+        FreightModel freightModel= (FreightModel) cloneVo(freightModelInfo,FreightModel.class);
         freightModel.setId(id);
-        Common.setPoModifiedFields(freightModel,userId,userName);
+       setPoModifiedFields(freightModel,userId,userName);
         //如果修改的是默认的模板，会将原来的取消，如果修改的是原来的默认模板，逻辑不变
         if(freightModelInfo.getDefaultModel().equals((byte)1))
         {

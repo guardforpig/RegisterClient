@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
-
 @Data
 public class OnSale  implements   Serializable {
 

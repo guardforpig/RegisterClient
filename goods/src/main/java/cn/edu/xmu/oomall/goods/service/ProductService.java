@@ -4,8 +4,6 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
-import cn.edu.xmu.oomall.goods.model.po.ProductDraftPo;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
