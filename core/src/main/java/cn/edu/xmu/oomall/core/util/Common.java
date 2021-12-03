@@ -97,6 +97,12 @@ public class Common {
         }
     }
 
+    /**
+     * @author xucangbai
+     * @param returnObject
+     * @param voClass
+     * @return
+     */
     public static ReturnObject getRetVo(ReturnObject<Object> returnObject,Class voClass) {
         ReturnNo code = returnObject.getCode();
         switch (code){
@@ -141,6 +147,12 @@ public class Common {
         }
     }
 
+    /**
+     * @author xucangbai
+     * @param returnObject
+     * @param voClass
+     * @return
+     */
     public static ReturnObject getListRetVo(ReturnObject<List> returnObject,Class voClass)
     {
         ReturnNo code = returnObject.getCode();
@@ -197,10 +209,17 @@ public class Common {
         }
     }
 
+    /**
+     * @author xucangbai
+     * @param returnObject
+     * @param voClass
+     * @return
+     */
     public static ReturnObject getPageRetVo(ReturnObject<PageInfo<Object>> returnObject,Class voClass){
         ReturnNo code = returnObject.getCode();
         switch (code){
             case OK:
+            case RESOURCE_FALSIFY:
                 PageInfo<Object> objs = returnObject.getData();
                 if (objs != null){
                     List<Object> voObjs = new ArrayList<>(objs.getList().size());
@@ -215,9 +234,9 @@ public class Common {
                     ret.put("page", objs.getPageNum());
                     ret.put("pageSize", objs.getPageSize());
                     ret.put("pages", objs.getPages());
-                    return new ReturnObject(ret);
+                    return new ReturnObject(code,ret);
                 }else{
-                    return new ReturnObject();
+                    return new ReturnObject(code);
                 }
             default:
                 return new ReturnObject(returnObject.getCode(), returnObject.getErrmsg());
@@ -540,6 +559,38 @@ public class Common {
             return false;
         }
         return true;
+    }
+
+
+    /**
+     * 分桶策略
+     * @param groupNum
+     * @param whole
+     * @return
+     * @author yujie
+     */
+    public static int[] getAvgArray(Integer groupNum, Integer whole) {
+        // 将数量尽量平均分到多个桶
+        int[] incr = new int[groupNum];
+        // 数量小于等于组数，随机把数量加到桶中
+        Random r = new Random();
+        if(whole<=groupNum){
+            for(int i=0;i<whole;i++){
+                int init = r.nextInt(groupNum);
+                incr[init]++;
+            }
+            return incr;
+        }
+        // 数量大于组数，先将余数先加到前面的桶中，再将其余相同的增量加到各自随机的桶中
+        int unit=whole/groupNum;
+        int other=whole-unit*groupNum;
+        for (int i = 0; i < groupNum ; i++) {
+            if(i<other)
+                incr[i]+=unit+1;
+            else
+            incr[i] += unit;
+        }
+        return incr;
     }
 
 }

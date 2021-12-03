@@ -1394,6 +1394,66 @@ public class CouponActivityPoExample {
             addCriterion("`gmt_modified` not between", value1, value2, "gmtModified");
             return (Criteria) this;
         }
+
+        public Criteria andNumKeyIsNull() {
+            addCriterion("`num_key` is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyIsNotNull() {
+            addCriterion("`num_key` is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyEqualTo(Integer value) {
+            addCriterion("`num_key` =", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyNotEqualTo(Integer value) {
+            addCriterion("`num_key` <>", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyGreaterThan(Integer value) {
+            addCriterion("`num_key` >", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyGreaterThanOrEqualTo(Integer value) {
+            addCriterion("`num_key` >=", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyLessThan(Integer value) {
+            addCriterion("`num_key` <", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyLessThanOrEqualTo(Integer value) {
+            addCriterion("`num_key` <=", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyIn(List<Integer> values) {
+            addCriterion("`num_key` in", values, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyNotIn(List<Integer> values) {
+            addCriterion("`num_key` not in", values, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyBetween(Integer value1, Integer value2) {
+            addCriterion("`num_key` between", value1, value2, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyNotBetween(Integer value1, Integer value2) {
+            addCriterion("`num_key` not between", value1, value2, "numKey");
+            return (Criteria) this;
+        }
     }
 
     /**
