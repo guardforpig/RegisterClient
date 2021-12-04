@@ -62,17 +62,15 @@ public class PaymentDao {
         }
     }
 
-    public boolean updatePayment(Payment payment)
+    public void updatePayment(Payment payment)
     {
         try{
             AlipayPaymentPo alipayPaymentPo= (AlipayPaymentPo) Common.cloneVo(payment,AlipayPaymentPo.class);
             alipayPaymentPoMapper.updateByPrimaryKeySelective(alipayPaymentPo);
-            return true;
         }
         catch (Exception e)
         {
             logger.error(e.getMessage());
-            return false;
         }
     }
 }
