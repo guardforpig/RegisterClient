@@ -34,6 +34,12 @@ public class NewOnSaleVo {
     @NotNull
     private Byte type;
 
+    @Min(1)
+    private Integer maxQuantity;
+
+    @Min(1)
+    private Integer numKey;
+
     public NewOnSaleVo(){}
 
 }

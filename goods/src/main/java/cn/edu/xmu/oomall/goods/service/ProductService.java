@@ -4,8 +4,6 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
-import cn.edu.xmu.oomall.goods.model.po.ProductDraftPo;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +25,7 @@ public class ProductService {
         if(shopId!=0){
             return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
         }
-        return productDao.listProductsByFreightId(shopId,fid,pageNumber,pageSize) ;
+        return productDao.listProductsByFreightId(fid,pageNumber,pageSize) ;
     }
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject publishProduct(Long shopId,Long productId)

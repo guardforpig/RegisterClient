@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 /**
  * @author GXC 22920192204194
  */
@@ -52,7 +54,7 @@ public class AdvanceSaleService {
                 returnObject=new ReturnObject(ReturnNo.STATENOTALLOW,"当前状态禁止此操作");
             }else{
                 po.setState((byte) 1);
-                Common.setPoModifiedFields(po,adminId,adminName);
+               setPoModifiedFields(po,adminId,adminName);
                 advanceSaleDao.updateAdvanceSale(po);
                 InternalReturnObject retObject=goodsService.onlineOnsale(shopId,advancesaleId);
                 //抛出异常是为了回滚
@@ -86,7 +88,7 @@ public class AdvanceSaleService {
                 returnObject=new ReturnObject(ReturnNo.STATENOTALLOW,"当前状态禁止此操作");
             }else{
                 po.setState((byte) 2);
-                Common.setPoModifiedFields(po,adminId,adminName);
+               setPoModifiedFields(po,adminId,adminName);
                 advanceSaleDao.updateAdvanceSale(po);
                 InternalReturnObject retObject=goodsService.offlineOnsale(shopId,advancesaleId);
                 if(retObject.getErrno()!=0){
@@ -113,8 +115,8 @@ public class AdvanceSaleService {
         if(po!=null){
             if(po.getShopId().equals(shopId)){
                 if(po.getState()==0){
-                    po=(AdvanceSalePo) Common.cloneVo(advanceSaleModifyVo,po.getClass());
-                    Common.setPoModifiedFields(po,adminId,adminName);
+                    po=(AdvanceSalePo) cloneVo(advanceSaleModifyVo,po.getClass());
+                   setPoModifiedFields(po,adminId,adminName);
                     advanceSaleDao.updateAdvanceSale(po);
 
                     //调用内部API，查onsale信息
@@ -123,7 +125,7 @@ public class AdvanceSaleService {
                     //确定有需要修改的onsale目标
                     if(retObj.getErrno()==0&&retObj.getData().getTotal()>0){
                         onsaleId=retObj.getData().getList().get(0).getId();
-                        OnsaleModifyVo onsaleModifyVo=(OnsaleModifyVo)Common.cloneVo(advanceSaleModifyVo,OnsaleModifyVo.class);
+                        OnsaleModifyVo onsaleModifyVo=(OnsaleModifyVo)cloneVo(advanceSaleModifyVo,OnsaleModifyVo.class);
                         InternalReturnObject result=goodsService.modifyOnsale(shopId,onsaleId,onsaleModifyVo);
                         if(result.getErrno()!=0){
                             returnObject=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
@@ -255,7 +257,7 @@ public class AdvanceSaleService {
         }
 
         //这里因为返回的对象需要同时从OnSale表和AdvanceSale表拿数据，所以只能用一次cloneVo
-        AdvanceSaleRetVo advanceSaleRetVo = (AdvanceSaleRetVo) Common.cloneVo(advanceSaleBo, AdvanceSaleRetVo.class);
+        AdvanceSaleRetVo advanceSaleRetVo = (AdvanceSaleRetVo) cloneVo(advanceSaleBo, AdvanceSaleRetVo.class);
 
         //将OnSale的字段赋给retVo
         FullOnSaleVo fullOnSaleVo=(FullOnSaleVo) internalReturnObject.getData();
@@ -293,7 +295,7 @@ public class AdvanceSaleService {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, internalReturnObject.getErrmsg());
         }
         //这里因为返回的对象需要同时从OnSale表和AdvanceSale表拿数据，所以只能用一次cloneVo
-        FullAdvanceSaleRetVo fullAdvanceSaleRetVo = (FullAdvanceSaleRetVo) Common.cloneVo(advanceSaleBo, FullAdvanceSaleRetVo.class);
+        FullAdvanceSaleRetVo fullAdvanceSaleRetVo = (FullAdvanceSaleRetVo) cloneVo(advanceSaleBo, FullAdvanceSaleRetVo.class);
         fullAdvanceSaleRetVo.setCreator(new SimpleUserRetVo(advanceSaleBo.getCreatorId(),advanceSaleBo.getCreatorName()));
         fullAdvanceSaleRetVo.setModifier(new SimpleUserRetVo(advanceSaleBo.getModifierId(),advanceSaleBo.getModifierName()));
 
@@ -320,7 +322,7 @@ public class AdvanceSaleService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject addAdvanceSale(Long loginUserId, String loginUerName, Long shopId, Long id, AdvanceSaleVo advanceSaleVo) {
 
-        AdvanceSale advanceSaleBo = (AdvanceSale) Common.cloneVo(advanceSaleVo, AdvanceSale.class);
+        AdvanceSale advanceSaleBo = (AdvanceSale) cloneVo(advanceSaleVo, AdvanceSale.class);
         advanceSaleBo.setState(AdvanceSaleState.DRAFT.getCode());
 
         //先判断商铺是否存在
@@ -348,7 +350,7 @@ public class AdvanceSaleService {
             }
         }
 
-        OnSaleCreatedVo onSaleCreatedVo = (OnSaleCreatedVo) Common.cloneVo(advanceSaleVo, OnSaleCreatedVo.class);
+        OnSaleCreatedVo onSaleCreatedVo = (OnSaleCreatedVo) cloneVo(advanceSaleVo, OnSaleCreatedVo.class);
         //设置新增的OnSale的type为3,表示预售类型
         onSaleCreatedVo.setType(Byte.valueOf("3"));
         //新增记录到OnSale表
@@ -363,7 +365,7 @@ public class AdvanceSaleService {
         if(returnObject.getData()==null){
             return returnObject;
         }
-        SimpleAdvanceSaleRetVo simpleAdvanceSaleRetVo = (SimpleAdvanceSaleRetVo) Common.cloneVo(returnObject.getData(), SimpleAdvanceSaleRetVo.class);
+        SimpleAdvanceSaleRetVo simpleAdvanceSaleRetVo = (SimpleAdvanceSaleRetVo) cloneVo(returnObject.getData(), SimpleAdvanceSaleRetVo.class);
         return new ReturnObject<>(simpleAdvanceSaleRetVo);
     }
 

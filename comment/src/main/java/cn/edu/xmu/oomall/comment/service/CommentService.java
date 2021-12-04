@@ -5,7 +5,6 @@ import cn.edu.xmu.oomall.comment.dao.CommentDao;
 import cn.edu.xmu.oomall.comment.model.bo.Comment;
 import cn.edu.xmu.oomall.comment.model.po.CommentPo;
 import cn.edu.xmu.oomall.comment.model.vo.*;
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageInfo;
@@ -16,6 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 /**
  * 评论
  * @author Xinyu Jiang
@@ -58,10 +61,10 @@ public class CommentService {
         commentPo.setPostId(loginUser);
         commentPo.setPostName(loginUsername);
         commentPo.setPostTime(LocalDateTime.now());
-        Common.setPoCreatedFields(commentPo, loginUser, loginUsername);
+        setPoCreatedFields(commentPo, loginUser, loginUsername);
         InternalReturnObject ret_insert = commentDao.insertComment(commentPo);
         if (ret_insert.getErrno().equals(0)) {
-            CommentRetVo commentRetVo = (CommentRetVo) Common.cloneVo(commentPo, CommentRetVo.class);
+            CommentRetVo commentRetVo = (CommentRetVo) cloneVo(commentPo, CommentRetVo.class);
             return new InternalReturnObject(commentRetVo);
         }
         return ret_insert;
@@ -132,7 +135,7 @@ public class CommentService {
         commentPo.setAuditId(loginUser);
         commentPo.setAuditName(loginUserName);
         commentPo.setAuditTime(LocalDateTime.now());
-        Common.setPoModifiedFields(commentPo, loginUser, loginUserName);
+       setPoModifiedFields(commentPo, loginUser, loginUserName);
         ReturnObject ret = commentDao.updateCommentState(commentPo);
         return ret;
     }

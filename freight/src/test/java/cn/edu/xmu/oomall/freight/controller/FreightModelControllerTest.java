@@ -514,7 +514,7 @@ class FreightModelControllerTest {
                 "    \"weight\":100\n" +
                 "  }\n" +
                 "]";
-        this.mockMvc.perform(post("/regions/151/price")
+        this.mockMvc.perform(post("/regions/1604/price")
                 .header("authorization", token)
                 .contentType("application/json;charset=UTF-8")
                 .content(json))
@@ -540,13 +540,13 @@ class FreightModelControllerTest {
                 "    \"weight\":100\n" +
                 "  }\n" +
                 "]";
-        this.mockMvc.perform(post("/regions/152/price")
+        this.mockMvc.perform(post("/regions/1604/price")
                 .header("authorization", token)
                 .contentType("application/json;charset=UTF-8")
                 .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.freightPrice").value(22400))
-                .andExpect(jsonPath("$.data.productId").value(2));
+                .andExpect(jsonPath("$.data.freightPrice").value(15500))
+                .andExpect(jsonPath("$.data.productId").value(1));
     }
 
     @Test
@@ -565,7 +565,7 @@ class FreightModelControllerTest {
                 .contentType("application/json;charset=UTF-8")
                 .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.freightPrice").value(1900))
+                .andExpect(jsonPath("$.data.freightPrice").value(70))
                 .andExpect(jsonPath("$.data.productId").value(1));
     }
 

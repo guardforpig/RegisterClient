@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc    //配置模拟的MVC，这样可以不启动服务器测试
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
-public class ActivityTestControllerTest {
+public class GroupOnControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -170,7 +170,7 @@ public class ActivityTestControllerTest {
     public void deleteGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.deleteOnsale(Mockito.anyLong(),Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
-        String responseString = this.mvc.perform(delete("/shops/0/groupons/3")
+        String responseString = this.mvc.perform(delete("/shops/0/groupons/4")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -186,7 +186,7 @@ public class ActivityTestControllerTest {
     public void noRightDeleteGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.deleteOnsale(Mockito.anyLong(),Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
-        String responseString = this.mvc.perform(delete("/shops/1/groupons/3")
+        String responseString = this.mvc.perform(delete("/shops/1/groupons/4")
                 .header("authorization", adminToken))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -247,7 +247,7 @@ public class ActivityTestControllerTest {
         PageVo<OnsaleVo> po = new PageVo<>(1,5,5,5,list);
         Mockito.when(goodsService.getOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.anyInt(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject<>(po));
         Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new InternalReturnObject(true));
-        String responseString = this.mvc.perform(put("/shops/0/groupons/3").contentType("application/json;charset=UTF-8").content(requestJson)
+        String responseString = this.mvc.perform(put("/shops/0/groupons/4").contentType("application/json;charset=UTF-8").content(requestJson)
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -277,7 +277,7 @@ public class ActivityTestControllerTest {
         PageVo<OnsaleVo> po = new PageVo<>(1,5,5,5,list);
         Mockito.when(goodsService.getOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.anyInt(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject<>(po));
         Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new InternalReturnObject(true));
-        String responseString = this.mvc.perform(put("/shops/1/groupons/3").contentType("application/json;charset=UTF-8").content(requestJson)
+        String responseString = this.mvc.perform(put("/shops/1/groupons/4").contentType("application/json;charset=UTF-8").content(requestJson)
                 .header("authorization", adminToken))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -323,7 +323,7 @@ public class ActivityTestControllerTest {
     public void addOnSaleToGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.addOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(SimpleSaleInfoVo.class))).thenReturn(new InternalReturnObject(true));
-        String responseString = this.mvc.perform(put("/shops/0/products/2/groupons/3/onsale").contentType("application/json;charset=UTF-8")
+        String responseString = this.mvc.perform(put("/shops/0/products/2/groupons/4/onsale").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))

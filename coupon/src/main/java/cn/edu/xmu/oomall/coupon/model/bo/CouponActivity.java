@@ -76,6 +76,7 @@ public class CouponActivity implements Serializable {
     private String modifierName;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
+    private Integer numKey;
 
 
 

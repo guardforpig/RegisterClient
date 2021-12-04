@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.coupon.service;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
@@ -30,6 +29,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author RenJieZheng 22920192204334
@@ -149,12 +152,12 @@ public class CouponActivityService {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
         Shop shop = returnObject.getData();
-        CouponActivity couponActivity = (CouponActivity) Common.cloneVo(couponActivityVo,CouponActivity.class);
+        CouponActivity couponActivity = (CouponActivity) cloneVo(couponActivityVo,CouponActivity.class);
         couponActivity.setShopId(shopId);
         couponActivity.setShopName(shop.getName());
         // 新建优惠时默认是草稿
         couponActivity.setState(CouponActivity.State.DRAFT.getCode().byteValue());
-        Common.setPoCreatedFields(couponActivity,userId,userName);
+        setPoCreatedFields(couponActivity,userId,userName);
         return couponActivityDao.addCouponActivity(couponActivity);
     }
 
@@ -221,7 +224,7 @@ public class CouponActivityService {
         couponActivity.setId(id);
         couponActivity.setShopId(shopId);
         couponActivity.setImageUrl(multipartFile.getResource().getFilename());
-        Common.setPoModifiedFields(couponActivity,userId,userName);
+       setPoModifiedFields(couponActivity,userId,userName);
         return couponActivityDao.updateImageUrl(id,couponActivity,multipartFile);
     }
 

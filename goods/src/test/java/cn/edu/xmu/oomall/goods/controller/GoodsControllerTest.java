@@ -3,9 +3,7 @@ package cn.edu.xmu.oomall.goods.controller;
 import cn.edu.xmu.oomall.goods.GoodsApplication;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
-import com.auth0.jwt.JWTCreator;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -52,7 +50,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expected="{\"errno\":0,\"data\":{\"total\":10,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[]},\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":0,\"data\":{\"total\":3912,\"pages\":392,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},{\"id\":1551,\"name\":\"欢乐家杨梅罐头\",\"imageUrl\":null},{\"id\":1552,\"name\":\"欢乐家蜜桔\",\"imageUrl\":null},{\"id\":1553,\"name\":\"欢乐家岭南杂果罐头\",\"imageUrl\":null},{\"id\":1554,\"name\":\"黑金刚巧力\",\"imageUrl\":null},{\"id\":1555,\"name\":\"黑金刚咔奇脆巧力\",\"imageUrl\":null},{\"id\":1556,\"name\":\"黑金刚大蘑头\",\"imageUrl\":null},{\"id\":1557,\"name\":\"奥利奥原味\",\"imageUrl\":null},{\"id\":1558,\"name\":\"奥利奥树莓蓝莓\",\"imageUrl\":null},{\"id\":1559,\"name\":\"奥利奥缤纷双果味\",\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -61,10 +59,22 @@ class GoodsControllerTest {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString=this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/1/freightmodels/1/products").header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isOk())
+                .andExpect(status().isForbidden())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expected="{\"errno\":505,\"errmsg\":\"此商铺没有发布货品的权限\"}";
+        JSONAssert.assertEquals(expected,responseString,true);
+    }
+    @Test
+    public void ListByfreightIdTest3() throws Exception
+    {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
+        String responseString=this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/0/freightmodels/2/products").header("authorization", adminToken)
+                .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expected="{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
 
@@ -247,10 +257,10 @@ class GoodsControllerTest {
     public void PUB_testProduct01() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString = this.mockMvc.perform(put("/shops/0/products/1550/publish").header("authorization", adminToken))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":504,\"errmsg\":\"货品草稿不存在\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -316,7 +326,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":507,\"errmsg\":\"当前货品状态不支持进行该操作\"}";
+        String expected="{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -327,7 +337,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":507,\"errmsg\":\"当前货品状态不支持进行该操作\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -404,7 +414,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":507,\"errmsg\":\"当前货品状态不支持进行该操作\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test

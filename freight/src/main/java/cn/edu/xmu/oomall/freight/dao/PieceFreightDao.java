@@ -7,7 +7,6 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.mapper.FreightModelPoMapper;
 import cn.edu.xmu.oomall.freight.mapper.PieceFreightPoMapper;
 import cn.edu.xmu.oomall.freight.model.bo.PieceFreight;
-import cn.edu.xmu.oomall.freight.model.bo.WeightFreight;
 import cn.edu.xmu.oomall.freight.model.po.*;
 import cn.edu.xmu.oomall.freight.model.vo.PieceFreightRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
@@ -21,6 +20,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author 高艺桐 22920192204199
@@ -49,8 +52,8 @@ public class PieceFreightDao {
      */
     public ReturnObject addPieceFreight(PieceFreight pieceFreight, Long createId, String createName) {
         try {
-            PieceFreightPo pieceFreightPo = (PieceFreightPo) Common.cloneVo(pieceFreight, PieceFreightPo.class);
-            Common.setPoCreatedFields(pieceFreightPo, createId, createName);
+            PieceFreightPo pieceFreightPo = (PieceFreightPo) cloneVo(pieceFreight, PieceFreightPo.class);
+            setPoCreatedFields(pieceFreightPo, createId, createName);
             if (pieceFreight.getRegionId() != null) {
                 PieceFreightPoExample example = new PieceFreightPoExample();
                 PieceFreightPoExample.Criteria criteria = example.createCriteria();
@@ -61,7 +64,7 @@ public class PieceFreightDao {
                 }
             }
             pieceFreightPoMapper.insertSelective(pieceFreightPo);
-            return new ReturnObject((Common.cloneVo(pieceFreightPo, PieceFreight.class)));
+            return new ReturnObject((cloneVo(pieceFreightPo, PieceFreight.class)));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -148,8 +151,8 @@ public class PieceFreightDao {
      */
     public ReturnObject updatePieceFreight(PieceFreight pieceFreight, Long userId, String userName) {
         try {
-            PieceFreightPo pieceFreightPo = (PieceFreightPo) Common.cloneVo(pieceFreight, PieceFreightPo.class);
-            Common.setPoModifiedFields(pieceFreightPo, userId, userName);
+            PieceFreightPo pieceFreightPo = (PieceFreightPo) cloneVo(pieceFreight, PieceFreightPo.class);
+           setPoModifiedFields(pieceFreightPo, userId, userName);
             PieceFreightPo rp = pieceFreightPoMapper.selectByPrimaryKey(pieceFreight.getId());
             if (rp == null) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -186,7 +189,7 @@ public class PieceFreightDao {
                 criteria.andFreightModelIdEqualTo(fid).andRegionIdEqualTo(regionIds.get(i));
                 var poList = pieceFreightPoMapper.selectByExample(example);
                 if (!poList.isEmpty()) {
-                    var bo = (PieceFreight) Common.cloneVo(poList.get(0), PieceFreight.class);
+                    var bo = (PieceFreight) cloneVo(poList.get(0), PieceFreight.class);
                     redisUtil.set(String.format(PIECE_FREIGHT_REGION_KEY, fid, regionId), bo, timeout);
                     return new ReturnObject(bo);
                 }

@@ -31,5 +31,11 @@ public class ModifyOnSaleVo {
     @Min(1)
     private Integer quantity;
 
+    @Min(1)
+    private Integer maxQuantity;
+
+    @Min(1)
+    private Integer numKey;
+
 
 }

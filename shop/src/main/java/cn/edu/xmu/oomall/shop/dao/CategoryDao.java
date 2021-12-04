@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.shop.dao;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.mapper.CategoryPoMapper;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 /**
  * 商品分类Dao层
  *
@@ -58,7 +58,7 @@ public class CategoryDao {
             }
 
             // 数据库找到就插入redis
-            category = (Category) Common.cloneVo(categoryPo, Category.class);
+            category = (Category) cloneVo(categoryPo, Category.class);
             redisUtil.set(key, category, categoryTimeout);
 
             return new ReturnObject(category);
@@ -99,7 +99,7 @@ public class CategoryDao {
             for (CategoryPo categoryPo : categoryPos) {
                 subKey = redisKeyForFindParentCategory + categoryPo.getId();
                 redisUtil.set(subKey, id, categoryTimeout);
-                Category c = (Category) Common.cloneVo(categoryPo, Category.class);
+                Category c = (Category) cloneVo(categoryPo, Category.class);
                 categories.add(c);
             }
 
@@ -141,7 +141,7 @@ public class CategoryDao {
             if (ret == 0) {
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
-            Category category = (Category) Common.cloneVo(categoryPo, Category.class);
+            Category category = (Category) cloneVo(categoryPo, Category.class);
             return new ReturnObject(category);
         } catch (Exception e) {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());

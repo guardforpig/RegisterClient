@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author ziyi guo
@@ -51,11 +50,11 @@ public class RegionService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject createRegion(RegionVo regionVo, Long pid, Long userId, String userName) {
 
-        Region region = (Region) Common.cloneVo(regionVo,Region.class);
+        Region region = (Region) cloneVo(regionVo,Region.class);
         region.setPid(pid);
         region.setState(STATE_EFFECTIVE);
 
-        ReturnObject retObj = regionDao.createRegion( (RegionPo) Common.cloneVo(region, RegionPo.class), userId,userName);
+        ReturnObject retObj = regionDao.createRegion( (RegionPo) cloneVo(region, RegionPo.class), userId,userName);
 
         return retObj;
     }
@@ -88,10 +87,10 @@ public class RegionService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject modifyRegion(RegionVo regionVo, Long id, Long userId, String userName) {
 
-        Region region = (Region) Common.cloneVo(regionVo, Region.class);
+        Region region = (Region) cloneVo(regionVo, Region.class);
         region.setId(id);
 
-        return regionDao.modiRegion((RegionPo) Common.cloneVo(region, RegionPo.class),userId,userName);
+        return regionDao.modiRegion((RegionPo) cloneVo(region, RegionPo.class),userId,userName);
     }
 
     /**
@@ -106,7 +105,7 @@ public class RegionService {
         region.setId(id);
         region.setState(STATE_ABANDONED);
 
-        return regionDao.abandonRegion( (RegionPo) Common.cloneVo(region, RegionPo.class), userId,userName);
+        return regionDao.abandonRegion( (RegionPo) cloneVo(region, RegionPo.class), userId,userName);
     }
 
     /**
@@ -121,7 +120,7 @@ public class RegionService {
         region.setId(id);
         region.setState(STATE_SUSPENDED);
 
-        return regionDao.modiStateRegion( (RegionPo) Common.cloneVo(region, RegionPo.class), userId,userName);
+        return regionDao.modiStateRegion( (RegionPo) cloneVo(region, RegionPo.class), userId,userName);
     }
 
     /**
@@ -136,7 +135,7 @@ public class RegionService {
         region.setId(id);
         region.setState(STATE_EFFECTIVE);
 
-        return regionDao.modiStateRegion( (RegionPo) Common.cloneVo(region, RegionPo.class), userId,userName);
+        return regionDao.modiStateRegion( (RegionPo) cloneVo(region, RegionPo.class), userId,userName);
     }
 
 }
