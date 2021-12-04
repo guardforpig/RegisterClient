@@ -4,6 +4,9 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
+import cn.edu.xmu.oomall.goods.microservice.ShopService;
+import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
@@ -219,5 +222,36 @@ public class ProductDao {
     }
     public ProductDraftPo getProductDraft(Long id){
         return productDraftPoMapper.selectByPrimaryKey(id);
+    }
+
+    public Integer updateProductFreight(Integer shopId, Integer productId, Integer fid) {
+        ProductPoExample productPoExample = new ProductPoExample();
+        productPoExample.createCriteria()
+                .andShopIdEqualTo(Long.parseLong(String.valueOf(shopId)))
+                .andIdEqualTo(Long.parseLong(String.valueOf(productId)));
+        ProductPo productPo = new ProductPo();
+        productPo.setFreightId(Long.parseLong(String.valueOf(fid)));
+
+        return productMapper.updateByExampleSelective(productPo,productPoExample);
+    }
+
+    public PageInfo<ProductPo> secondProducts(Integer id, Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize);
+        ProductPoExample example = new ProductPoExample();
+        ProductPoExample.Criteria criteria=example.createCriteria();
+        criteria.andCategoryIdEqualTo(Long.parseLong(String.valueOf(id)));
+        criteria.andStateEqualTo((byte)(Product.ProductState.ONSHELF.getCode()));
+        List<ProductPo> productPos = productMapper.selectByExample(example);
+        return new PageInfo<>(productPos);
+    }
+
+    public PageInfo<ProductPo> secondShopProducts(Integer did, Integer cid, Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize);
+        ProductPoExample example = new ProductPoExample();
+        ProductPoExample.Criteria criteria=example.createCriteria();
+        criteria.andCategoryIdEqualTo(Long.parseLong(String.valueOf(cid)))
+                .andShopIdEqualTo(Long.parseLong(String.valueOf(did)));
+        List<ProductPo> productPos = productMapper.selectByExample(example);
+        return new PageInfo<>(productPos);
     }
 }

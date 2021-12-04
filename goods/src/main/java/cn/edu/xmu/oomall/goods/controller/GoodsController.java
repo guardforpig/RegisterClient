@@ -249,4 +249,76 @@ public class GoodsController {
     {
         return Common.decorateReturnObject(productService.prohibitProduct(shopId,id));
     }
+
+    /**
+     * @author 何赟
+     * @date 2021-12-5
+     */
+    @ApiOperation(value="定义商品的运费模板")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name="shopId",value="商铺id",required = true,dataType = "integer",paramType = "path"),
+            @ApiImplicitParam(name="id",value="product id",required = true,dataType = "integer",paramType = "path"),
+            @ApiImplicitParam(name="fid",value="运费id",required = true,dataType = "Long",paramType = "path"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 500, message = "服务器内部错误")
+    })
+    @PostMapping(value="shops/{shopId}/products/{id}/freightmodels/{fid}")
+    @Audit(departName = "shops")
+    public Object definitionFreight(@PathVariable("shopId") Integer shopId, @PathVariable("id") Integer productId, @PathVariable("fid") Integer fid) {
+        return Common.decorateReturnObject(productService.definitionFreight(shopId,productId,fid));
+    }
+
+    /**
+     * @author 何赟
+     * @date 2021-12-5
+     */
+    @ApiOperation(value="获得二级分类下的上架商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name="id",value="分类id",required = true,dataType = "integer",paramType = "path"),
+            @ApiImplicitParam(name="page",value="页码",required = true,dataType = "integer",paramType = "query"),
+            @ApiImplicitParam(name="pageSize",value="每页数目",required = true,dataType = "integer",paramType = "query"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 500, message = "服务器内部错误")
+    })
+    @GetMapping(value="categories/{id}/products")
+    @Audit(departName = "shops")
+    public Object secondProducts(@PathVariable("id") Integer id,
+                                 @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        return Common.decorateReturnObject(productService.secondProducts(id,page,pageSize));
+    }
+
+    /**
+     * @author 何赟
+     * @date 2021-12-5
+     */
+    @ApiOperation(value="获得二级分类下的店铺的所有商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name="did",value="商铺id",required = true,dataType = "Long",paramType = "path"),
+            @ApiImplicitParam(name="id",value="分类id",required = true,dataType = "Long",paramType = "path"),
+            @ApiImplicitParam(name="page",value="页码",required = true,dataType = "integer",paramType = "query"),
+            @ApiImplicitParam(name="pageSize",value="每页数目",required = true,dataType = "integer",paramType = "query"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 500, message = "服务器内部错误")
+    })
+    @GetMapping(value="shops/{did}/categories/{id}/products" )
+    @Audit(departName = "shops")
+    public Object secondShopProducts(@PathVariable("did") Integer did,@PathVariable("id") Integer cid,
+                                  @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
+        return Common.decorateReturnObject(productService.secondShopProducts(did,cid,page,pageSize));
+    }
+
 }

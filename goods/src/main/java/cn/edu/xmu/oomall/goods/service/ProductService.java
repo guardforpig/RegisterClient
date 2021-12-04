@@ -3,10 +3,15 @@ package cn.edu.xmu.oomall.goods.service;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
+import cn.edu.xmu.oomall.goods.microservice.ShopService;
+import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 /**
  * @author 黄添悦
@@ -18,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private ShopService shopService;
 
     @Transactional(readOnly = true,rollbackFor=Exception.class)
     public ReturnObject listProductsByFreightId(Long shopId,Long fid,Integer pageNumber, Integer pageSize)
@@ -121,6 +129,38 @@ public class ProductService {
         }else
         {
             return ret;
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject definitionFreight(Integer shopId, Integer productId, Integer fid) {
+        Integer flag = productDao.updateProductFreight(shopId, productId, fid);
+        return new ReturnObject(ReturnNo.OK,"成功");
+    }
+    @Transactional(readOnly = true)
+    public ReturnObject secondProducts(Integer id, Integer page, Integer pageSize) {
+        InternalReturnObject<CategoryVo> categoryById = shopService.getCategoryById(id);
+        Integer errno = categoryById.getErrno();
+        if(0 == errno){
+            CategoryVo categoryVo = categoryById.getData();
+            Long voId = categoryVo.getId();
+            return Objects.isNull(voId)?new ReturnObject<>(ReturnNo.OK):
+                    new ReturnObject<>(ReturnNo.OK,productDao.secondProducts(id,page,pageSize));
+        }else {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"分类id不存在");
+        }
+    }
+    @Transactional(readOnly = true)
+    public ReturnObject secondShopProducts(Integer did, Integer cid, Integer page, Integer pageSize) {
+        InternalReturnObject<CategoryVo> categoryById = shopService.getCategoryById(cid);
+        Integer errno = categoryById.getErrno();
+        if(0 == errno){
+            CategoryVo categoryVo = categoryById.getData();
+            Long voId = categoryVo.getId();
+            return Objects.isNull(voId)?new ReturnObject<>(ReturnNo.OK):
+                    new ReturnObject<>(ReturnNo.OK,productDao.secondShopProducts(did,cid,page,pageSize));
+        }else {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"分类id不存在");
         }
     }
 }
