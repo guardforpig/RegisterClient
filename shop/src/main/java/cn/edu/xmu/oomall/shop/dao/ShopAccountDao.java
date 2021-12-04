@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.shop.dao;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.mapper.ShopAccountPoMapper;
@@ -10,10 +9,11 @@ import cn.edu.xmu.oomall.shop.model.vo.ShopAccountVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
 
 /**
  * @author  Xusheng Wang
@@ -57,7 +57,7 @@ public class ShopAccountDao {
     public boolean addShopAccount(ShopAccountPo shopAccountPo,Long shopId,Long loginUserId,String loginUserName) {
         //Po添加设置基本信息
         shopAccountPo.setShopId(shopId);
-        Common.setPoCreatedFields(shopAccountPo,loginUserId,loginUserName);
+        setPoCreatedFields(shopAccountPo,loginUserId,loginUserName);
         ShopAccountPoExample shopAccountPoExample=new ShopAccountPoExample();
         ShopAccountPoExample.Criteria criteria=shopAccountPoExample.createCriteria();
         criteria.andPriorityEqualTo(shopAccountPo.getPriority());

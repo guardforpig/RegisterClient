@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.shop.service;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.dao.CategoryDao;
@@ -9,6 +8,10 @@ import cn.edu.xmu.oomall.shop.model.po.CategoryPo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * 商品分类Service
@@ -58,8 +61,8 @@ public class CategoryService {
         if (categoryDao.hasSameName(category.getName())) {
             return new ReturnObject(ReturnNo.GOODS_CATEGORY_SAME);
         }
-        CategoryPo categoryPo = (CategoryPo) Common.cloneVo(category, CategoryPo.class);
-        Common.setPoCreatedFields(categoryPo, createId, createName);
+        CategoryPo categoryPo = (CategoryPo) cloneVo(category, CategoryPo.class);
+        setPoCreatedFields(categoryPo, createId, createName);
         categoryPo.setPid(id.longValue());
         ReturnObject ret = categoryDao.insertCategory(categoryPo);
         return ret;
@@ -79,8 +82,8 @@ public class CategoryService {
         if (categoryDao.hasSameName(category.getName())) {
             return new ReturnObject<>(ReturnNo.GOODS_CATEGORY_SAME);
         }
-        CategoryPo po = (CategoryPo) Common.cloneVo(category, CategoryPo.class);
-        Common.setPoModifiedFields(po, modifyId, modiName);
+        CategoryPo po = (CategoryPo) cloneVo(category, CategoryPo.class);
+       setPoModifiedFields(po, modifyId, modiName);
         po.setId(id.longValue());
 
         ReturnObject ret = categoryDao.updateCategory(po);
@@ -100,7 +103,7 @@ public class CategoryService {
         if (sub.getCode().equals(ReturnNo.OK)) {
             for (Category category : sub.getData()) {
                 category.setPid(-1L);
-                CategoryPo categoryPo = (CategoryPo) Common.cloneVo(category, CategoryPo.class);
+                CategoryPo categoryPo = (CategoryPo) cloneVo(category, CategoryPo.class);
                 categoryDao.updateCategory(categoryPo);
             }
         }

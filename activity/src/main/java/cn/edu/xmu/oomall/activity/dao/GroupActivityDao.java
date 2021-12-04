@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
 
 /**
  * @author Lin Jiyuan
@@ -46,7 +47,7 @@ public class GroupActivityDao {
         {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        GroupOnActivity groupOnActivity = (GroupOnActivity) Common.cloneVo(g1,GroupOnActivity.class);
+        GroupOnActivity groupOnActivity = (GroupOnActivity) cloneVo(g1,GroupOnActivity.class);
         return new ReturnObject<GroupOnActivity>(groupOnActivity);
     }
 
@@ -84,8 +85,8 @@ public class GroupActivityDao {
     public ReturnObject modifyGroupOnActivity(GroupOnActivity groupOnActivity)
     {
         ReturnObject retObj;
-        GroupOnActivityPo groupOnActivityPo = (GroupOnActivityPo) Common.cloneVo(groupOnActivity,GroupOnActivityPo.class);
-        Common.setPoModifiedFields(groupOnActivityPo,groupOnActivity.getModifierId(),groupOnActivity.getModifierName());
+        GroupOnActivityPo groupOnActivityPo = (GroupOnActivityPo) cloneVo(groupOnActivity,GroupOnActivityPo.class);
+       setPoModifiedFields(groupOnActivityPo,groupOnActivity.getModifierId(),groupOnActivity.getModifierName());
         int ret;
         try
         {

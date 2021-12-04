@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import static cn.edu.xmu.oomall.core.util.Common.*;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+
 /**
  * @author 高艺桐 22920192204199
  */
@@ -71,7 +73,7 @@ public class PieceFreightController {
         if (object != null) {
             return object;
         }
-        PieceFreight pieceFreight = (PieceFreight) Common.cloneVo(pieceFreightVo, PieceFreight.class);
+        PieceFreight pieceFreight = (PieceFreight) cloneVo(pieceFreightVo, PieceFreight.class);
         pieceFreight.setFreightModelId(id);
         ReturnObject returnObject = pieceFreightService.addPieceFreight(loginUserName, loginUserId, pieceFreight);
         return Common.decorateReturnObject(returnObject);

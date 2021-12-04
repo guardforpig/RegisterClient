@@ -9,10 +9,6 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
-import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
 
 /**
  * @author YuJie 22920192204242

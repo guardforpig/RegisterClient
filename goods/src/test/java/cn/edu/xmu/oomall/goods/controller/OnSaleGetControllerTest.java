@@ -4,6 +4,7 @@ import cn.edu.xmu.oomall.goods.GoodsApplication;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -34,6 +35,8 @@ public class OnSaleGetControllerTest {
     private MockMvc mvc;
     @MockBean
     private ShopService shopService;
+    @MockBean
+    private RedisUtil redisUtil;
 
     @Test
     @Transactional
@@ -45,7 +48,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"price\":53295,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"quantity\":26,\"activityId\":null,\"shareActId\":null,\"type\":0}]},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"price\":53295,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"quantity\":1000,\"activityId\":null,\"shareActId\":null,\"type\":0}]},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -53,6 +56,8 @@ public class OnSaleGetControllerTest {
     @Transactional
     public void selectOnsale() throws Exception {
         //正常情况
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+        Mockito.when(shopService.getShopInfo(8L)).thenReturn(new InternalReturnObject(200,"成功","{\"id\":8,\"name\":\"商铺8\"}"));
         String responseJson=this.mvc.perform(get("/shops/8/onsales/5")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
@@ -163,6 +168,7 @@ public class OnSaleGetControllerTest {
     @Test
     @Transactional
     public void selectFullOnsales_noRedis() throws Exception {
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
         Mockito.when(shopService.getShopInfo(10L)).thenReturn(new InternalReturnObject(200,"成功","{\"id\":10,\"name\":\"商铺10\"}"));
         String responseJson=this.mvc.perform(get("/internal/onsales/1")
                 .header("authorization", adminToken)
@@ -170,13 +176,14 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":26,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"gmtCreate\":\"2021-11-11T14:38:20.000Z\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
+        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":1000,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":1,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20.000Z\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
     @Test
     @Transactional
     public void selectFullOnsales() throws Exception {
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
         Mockito.when(shopService.getShopInfo(10L)).thenReturn(new InternalReturnObject(200,"成功","{\"id\":10,\"name\":\"商铺10\"}"));
         String responseJson=this.mvc.perform(get("/internal/onsales/1")
                 .header("authorization", adminToken)
@@ -184,7 +191,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":26,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"gmtCreate\":\"2021-11-11T14:38:20.000Z\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
+        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":1000,\"beginTime\":\"2021-11-11T14:38:20.000Z\",\"endTime\":\"2022-02-19T14:38:20.000Z\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":1,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20.000Z\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
