@@ -55,17 +55,15 @@ public class RefundDao {
     }
 
 
-    public boolean insertRefund(Refund refund)
+    public void insertRefund(Refund refund)
     {
         try{
             AlipayRefundPo alipayRefundPo= (AlipayRefundPo) Common.cloneVo(refund,AlipayRefundPo.class);
             alipayRefundPoMapper.insertSelective(alipayRefundPo);
-            return true;
         }
         catch (Exception e)
         {
             logger.error(e.getMessage());
-            return false;
         }
     }
 }
