@@ -229,7 +229,7 @@ public class CouponActivityDao {
             if (po == null) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            CouponOnsale couponOnsale = (CouponOnsale) cloneVo(po, CouponOnsale.class);
+            CouponOnsale couponOnsale = cloneVo(po, CouponOnsale.class);
             return new ReturnObject<>(couponOnsale);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -304,8 +304,7 @@ public class CouponActivityDao {
     public ReturnObject updateCouponActivity(CouponActivity couponActivity) {
         try {
             String key = String.format(COUPONACTIVITYKEY, couponActivity.getId());
-            CouponActivityPo couponActivityPo =
-                    (CouponActivityPo) cloneVo(couponActivity, CouponActivityPo.class);
+            CouponActivityPo couponActivityPo = cloneVo(couponActivity, CouponActivityPo.class);
             int flag = couponActivityPoMapper.updateByPrimaryKeySelective(couponActivityPo);
             if (flag == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -322,8 +321,7 @@ public class CouponActivityDao {
 
     public ReturnObject insertCouponOnsale(CouponOnsale couponOnsale) {
         try {
-            CouponOnsalePo couponOnsalePo =
-                    (CouponOnsalePo) cloneVo(couponOnsale, CouponOnsalePo.class);
+            CouponOnsalePo couponOnsalePo = cloneVo(couponOnsale, CouponOnsalePo.class);
             couponOnsalePoMapper.insert(couponOnsalePo);
             return new ReturnObject<>(ReturnNo.OK);
         } catch (Exception e) {
