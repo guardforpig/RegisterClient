@@ -17,8 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author ziyi guo
@@ -55,7 +56,7 @@ public class FreightModelDao {
                 List<FreightModelPo> freightModelPoList = freightModelPoMapper.selectByExample(freightModelPoExample);
                 FreightModelPo defaultFreightModelPo = freightModelPoList.get(0);
 
-                defaultFreightModel = (FreightModel) Common.cloneVo(defaultFreightModelPo, FreightModel.class);
+                defaultFreightModel = (FreightModel) cloneVo(defaultFreightModelPo, FreightModel.class);
                 redisUtil.set(defaultFreightModelKey, defaultFreightModel, freightModelRedisTimeout);
             }
             return new ReturnObject(defaultFreightModel);
@@ -81,7 +82,7 @@ public class FreightModelDao {
             }
             FreightModel oldDefaultFreightModel= (FreightModel) returnObject.getData();
             oldDefaultFreightModel.setDefaultModel((byte)0);
-            freightModelPoMapper.updateByPrimaryKeySelective((FreightModelPo) Common.cloneVo(oldDefaultFreightModel,FreightModelPo.class));
+            freightModelPoMapper.updateByPrimaryKeySelective((FreightModelPo) cloneVo(oldDefaultFreightModel,FreightModelPo.class));
             return new ReturnObject();
         } catch (Exception e) {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
@@ -96,9 +97,9 @@ public class FreightModelDao {
      */
     public ReturnObject addFreightModel(FreightModel freightModel) {
         try {
-            FreightModelPo freightModelPo = (FreightModelPo) Common.cloneVo(freightModel, FreightModelPo.class);
+            FreightModelPo freightModelPo = (FreightModelPo) cloneVo(freightModel, FreightModelPo.class);
             freightModelPoMapper.insertSelective(freightModelPo);
-            FreightModelRetVo freightModelRetVo= (FreightModelRetVo) Common.cloneVo(freightModelPo,FreightModelRetVo.class);
+            FreightModelRetVo freightModelRetVo= (FreightModelRetVo) cloneVo(freightModelPo,FreightModelRetVo.class);
             return new ReturnObject(freightModelRetVo);
         } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
@@ -169,7 +170,7 @@ public class FreightModelDao {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
 
-            freightModel = (FreightModel) Common.cloneVo(freightModelPo, FreightModel.class);
+            freightModel = (FreightModel) cloneVo(freightModelPo, FreightModel.class);
             redisUtil.set(key, freightModel, freightModelRedisTimeout);
 
             return new ReturnObject<>(freightModel);
@@ -187,7 +188,7 @@ public class FreightModelDao {
      */
     public ReturnObject updateFreightModel(FreightModel freightModel) {
         try {
-            FreightModelPo freightModelPo = (FreightModelPo) Common.cloneVo(freightModel, FreightModelPo.class);
+            FreightModelPo freightModelPo = (FreightModelPo) cloneVo(freightModel, FreightModelPo.class);
             int ret = freightModelPoMapper.updateByPrimaryKeySelective(freightModelPo);
             if (ret == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);

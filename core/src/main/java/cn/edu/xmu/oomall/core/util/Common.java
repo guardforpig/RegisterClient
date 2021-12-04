@@ -10,13 +10,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.*;
 
 /**
  * 通用工具类
@@ -25,35 +21,6 @@ import java.util.regex.Pattern;
 public class Common {
 
     private static Logger logger = LoggerFactory.getLogger(Common.class);
-
-
-    /**
-     * 生成八位数序号
-     * @return 序号
-     */
-    public static String genSeqNum(){
-        int  maxNum = 36;
-        int i;
-
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmssS");
-        LocalDateTime localDateTime = LocalDateTime.now();
-        String strDate = localDateTime.format(dtf);
-        StringBuffer sb = new StringBuffer(strDate);
-
-        int count = 0;
-        char[] str = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
-                'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
-                'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-        Random r = new Random();
-        while(count < 2){
-            i = Math.abs(r.nextInt(maxNum));
-            if (i >= 0 && i < str.length) {
-                sb.append(str[i]);
-                count ++;
-            }
-        }
-        return sb.toString();
-    }
 
     /**
      * 处理BindingResult的错误
@@ -85,6 +52,7 @@ public class Common {
         ReturnNo code = returnObject.getCode();
         switch (code){
             case OK:
+            case RESOURCE_FALSIFY:
                 VoObject data = returnObject.getData();
                 if (data != null){
                     Object voObj = data.createVo();
@@ -97,10 +65,17 @@ public class Common {
         }
     }
 
+    /**
+     * @author xucangbai
+     * @param returnObject
+     * @param voClass
+     * @return
+     */
     public static ReturnObject getRetVo(ReturnObject<Object> returnObject,Class voClass) {
         ReturnNo code = returnObject.getCode();
         switch (code){
             case OK:
+            case RESOURCE_FALSIFY:
                 Object data = returnObject.getData();
                 if (data != null){
                     Object voObj = cloneVo(data,voClass);
@@ -124,6 +99,7 @@ public class Common {
         ReturnNo code = returnObject.getCode();
         switch (code){
             case OK:
+            case RESOURCE_FALSIFY:
                 List objs = returnObject.getData();
                 if (objs != null){
                     List<Object> ret = new ArrayList<>(objs.size());
@@ -141,11 +117,18 @@ public class Common {
         }
     }
 
+    /**
+     * @author xucangbai
+     * @param returnObject
+     * @param voClass
+     * @return
+     */
     public static ReturnObject getListRetVo(ReturnObject<List> returnObject,Class voClass)
     {
         ReturnNo code = returnObject.getCode();
         switch (code){
             case OK:
+            case RESOURCE_FALSIFY:
                 List objs = returnObject.getData();
                 if (objs != null){
                     List<Object> ret = new ArrayList<>(objs.size());
@@ -173,6 +156,7 @@ public class Common {
         ReturnNo code = returnObject.getCode();
         switch (code){
             case OK:
+            case RESOURCE_FALSIFY:
                 PageInfo<VoObject> objs = returnObject.getData();
                 if (objs != null){
                     List<Object> voObjs = new ArrayList<>(objs.getList().size());
@@ -197,10 +181,17 @@ public class Common {
         }
     }
 
+    /**
+     * @author xucangbai
+     * @param returnObject
+     * @param voClass
+     * @return
+     */
     public static ReturnObject getPageRetVo(ReturnObject<PageInfo<Object>> returnObject,Class voClass){
         ReturnNo code = returnObject.getCode();
         switch (code){
             case OK:
+            case RESOURCE_FALSIFY:
                 PageInfo<Object> objs = returnObject.getData();
                 if (objs != null){
                     List<Object> voObjs = new ArrayList<>(objs.getList().size());
@@ -215,129 +206,16 @@ public class Common {
                     ret.put("page", objs.getPageNum());
                     ret.put("pageSize", objs.getPageSize());
                     ret.put("pages", objs.getPages());
-                    return new ReturnObject(ret);
+                    return new ReturnObject(code,ret);
                 }else{
-                    return new ReturnObject();
+                    return new ReturnObject(code);
                 }
             default:
                 return new ReturnObject(returnObject.getCode(), returnObject.getErrmsg());
         }
     }
 
-    /**
-     * @author xucangbai
-     * @date 2021/11/13
-     * 根据clazz实例化一个对象，并深度克隆bo中对应属性到这个新对象
-     * 其中会自动实现modifiedBy和createdBy两字段的类型转换
-     * @param bo business object
-     * @param voClass vo对象类型
-     * @return 浅克隆的vo对象
-     */
-    public static Object cloneVo(Object bo, Class voClass) {
-        Class boClass = bo.getClass();
-        Object newVo = null;
-        try {
-            //默认voClass有无参构造函数
-            newVo = voClass.getDeclaredConstructor().newInstance();
-            Field[] voFields = voClass.getDeclaredFields();
-            Field[] boFields = boClass.getDeclaredFields();
-            for (Field voField : voFields) {
-                //静态和Final不能拷贝
-                int mod = voField.getModifiers();
-                if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
-                    continue;
-                }
-                voField.setAccessible(true);
-                Field boField=null;
-                try {
-                    boField= boClass.getDeclaredField(voField.getName());
-                    boField.setAccessible(true);
-                }
-                //bo中查找不到对应的属性，那就有可能为特殊情况xxx，需要由xxxId与xxxName组装
-                catch (NoSuchFieldException e)
-                {
-                    //提取头部
-                    String head=voField.getName();
-                    Field boxxxNameField=null;
-                    Field boxxxIdField=null;
-                    for (Field bof:boFields)
-                    {
-                        if(bof.getName().matches(head+"Name")){
-                            boxxxNameField=bof;
-                        }
-                        else if(bof.getName().matches(head+"Id")) {
-                            boxxxIdField=bof;
-                        }
-                    }
-                    //找不到xxxName或者找不到xxxId
-                    if (boxxxNameField==null||boxxxIdField==null)
-                    {
-                        voField.set(newVo, null);
-                        continue;
-                    }
 
-                    Object newSimpleRetVo = voField.getType().getDeclaredConstructor().newInstance();
-                    Field newSimpleRetVoIdField=newSimpleRetVo.getClass().getDeclaredField("id");
-                    Field newSimpleRetVoNameField=newSimpleRetVo.getClass().getDeclaredField("name");
-                    newSimpleRetVoIdField.setAccessible(true);
-                    newSimpleRetVoNameField.setAccessible(true);
-
-                    //bo的xxxId和xxxName组装为SimpleRetVo的id,name
-                    boxxxIdField.setAccessible(true);
-                    boxxxNameField.setAccessible(true);
-                    Object boxxxId=boxxxIdField.get(bo);
-                    Object boxxxName=boxxxNameField.get(bo);
-
-                    newSimpleRetVoIdField.set(newSimpleRetVo,boxxxId);
-                    newSimpleRetVoNameField.set(newSimpleRetVo,boxxxName);
-
-                    voField.set(newVo, newSimpleRetVo);
-                    continue;
-                }
-                Class<?> boFieldType = boField.getType();
-                //属性名相同，类型相同，直接克隆
-                if (voField.getType().equals(boFieldType))
-                {
-                    boField.setAccessible(true);
-                    Object newObject = boField.get(bo);
-                    voField.set(newVo, newObject);
-                }
-                //属性名相同，类型不同
-                else
-                {
-                    boolean boFieldIsIntegerOrByteAndVoFieldIsEnum=("Integer".equals(boFieldType.getSimpleName())||"Byte".equals(boFieldType.getSimpleName()))&&voField.getType().isEnum();
-                    boolean voFieldIsIntegerOrByteAndBoFieldIsEnum=("Integer".equals(voField.getType().getSimpleName())||"Byte".equals(voField.getType().getSimpleName()))&&boFieldType.isEnum();
-                    //整形或Byte转枚举
-                    if(boFieldIsIntegerOrByteAndVoFieldIsEnum)
-                    {
-                        Object newObj=boField.get(bo);
-                        if("Byte".equals(boFieldType.getSimpleName()))
-                        {
-                            newObj=((Byte)newObj).intValue();
-                        }
-                        Object[] enumer=voField.getType().getEnumConstants();
-                        voField.set(newVo,enumer[(int) newObj]);
-                    }
-                    //枚举转整形或Byte
-                    else if(voFieldIsIntegerOrByteAndBoFieldIsEnum)
-                    {
-                        Object value= ((Enum)boField.get(bo)).ordinal();
-                        if("Byte".equals(voField.getType().getSimpleName()))
-                        {
-                            value = ((Integer) value).byteValue();
-                        }
-                        voField.set(newVo,value);
-                    }
-                    else {
-                        voField.set(newVo, null);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-        return newVo;
-    }
 
     /**
      * 根据 errCode 修饰 API 返回对象的 HTTP Status
@@ -405,141 +283,34 @@ public class Common {
     }
 
     /**
-     * 动态拼接字符串
-     * @param sep 分隔符
-     * @param fields 拼接的字符串
-     * @return StringBuilder
-     * createdBy: Ming Qiu 2020-11-02 11:44
+     * 分桶策略
+     * @param groupNum
+     * @param whole
+     * @return
+     * @author yujie
      */
-    public static StringBuilder concatString(String sep, String... fields){
-        StringBuilder ret = new StringBuilder();
-
-        for (int i = 0; i< fields.length; i++){
-            if (i > 0){
-                ret.append(sep);
+    public static int[] getAvgArray(Integer groupNum, Integer whole) {
+        // 将数量尽量平均分到多个桶
+        int[] incr = new int[groupNum];
+        // 数量小于等于组数，随机把数量加到桶中
+        Random r = new Random();
+        if(whole<=groupNum){
+            for(int i=0;i<whole;i++){
+                int init = r.nextInt(groupNum);
+                incr[init]++;
             }
-            ret.append(fields[i]);
+            return incr;
         }
-        return ret;
-    }
-
-    /**
-     * 增加20%以内的随机时间
-     * 如果timeout <0 则会返回60s+随机时间
-     * @param timeout 时间
-     * @return 增加后的随机时间
-     */
-    public static long addRandomTime(long timeout) {
-        if (timeout <= 0) {
-            timeout = 60;
+        // 数量大于组数，先将余数先加到前面的桶中，再将其余相同的增量加到各自随机的桶中
+        int unit=whole/groupNum;
+        int other=whole-unit*groupNum;
+        for (int i = 0; i < groupNum ; i++) {
+            if(i<other)
+                incr[i]+=unit+1;
+            else
+            incr[i] += unit;
         }
-        //增加随机数，防止雪崩
-        timeout += (long) new Random().nextDouble() * (timeout / 5 - 1);
-        return timeout;
-    }
-
-    /**
-     * 设置所有po对象的createdBy, createName和gmtCreate字段属性
-     *
-     * @author : Wangzixia 32420182202938
-     * @date： 2021/11/19 00:12
-     * @version: 2.0
-     *
-     * @param po       po对象
-     * @param userId   设置到createdBy
-     * @param userName 设置到createName
-     * @return 如果po对象没有这些属性或类型不对返回false，否则true
-     */
-    public static boolean setPoCreatedFields(Object po, long userId, String userName) {
-        Class<?> aClass = po.getClass();
-        try {
-            Field creatorId = aClass.getDeclaredField("creatorId");
-            creatorId.setAccessible(true);
-            creatorId.set(po, userId);
-
-        } catch (NoSuchFieldException e) {
-            logger.info(e.getMessage());
-            return false;
-        } catch (IllegalAccessException ex) {
-            logger.info(ex.getMessage());
-            return false;
-        }
-
-        try {
-            Field creatorName = aClass.getDeclaredField("creatorName");
-            creatorName.setAccessible(true);
-            creatorName.set(po, userName);
-        } catch (NoSuchFieldException e) {
-            logger.info(e.getMessage());
-            return false;
-        } catch (IllegalAccessException ex) {
-            logger.info(ex.getMessage());
-            return false;
-        }
-        try {
-            Field createName = aClass.getDeclaredField("gmtCreate");
-            createName.setAccessible(true);
-            createName.set(po,LocalDateTime.now());
-        } catch (NoSuchFieldException e) {
-            logger.info(e.getMessage());
-            return false;
-        } catch (IllegalAccessException ex) {
-            logger.info(ex.getMessage());
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * 设置所有po对象的modifiedBy, modiName和gmtModify字段属性
-     *
-     * @author : Wangzixia 32420182202938
-     * @date： 2021/11/19 00:12
-     * @version: 2.0
-     *
-     *
-     * @param po       po对象
-     * @param userId   设置到modifiedBy
-     * @param userName 设置到modiName
-     * @return 如果po对象没有这些属性或类型不对返回false，否则true
-     */
-    public static boolean setPoModifiedFields(Object po, long userId, String userName) {
-        Class<?> aClass = po.getClass();
-        try {
-            Field modifierId = aClass.getDeclaredField("modifierId");
-            modifierId.setAccessible(true);
-            modifierId.set(po, userId);
-        } catch (NoSuchFieldException e) {
-            logger.info(e.getMessage());
-            return false;
-        } catch (IllegalAccessException ex) {
-            logger.info(ex.getMessage());
-            return false;
-        }
-
-        try {
-            Field modifierName = aClass.getDeclaredField("modifierName");
-            modifierName.setAccessible(true);
-            modifierName.set(po, userName);
-        } catch (NoSuchFieldException e) {
-            logger.info(e.getMessage());
-            return false;
-        } catch (IllegalAccessException ex) {
-            logger.info(ex.getMessage());
-            return false;
-        }
-        try {
-            Field gmtModified = aClass.getDeclaredField("gmtModified");
-            gmtModified.setAccessible(true);
-            gmtModified.set(po,LocalDateTime.now());
-        } catch (NoSuchFieldException e) {
-            logger.info(e.getMessage());
-            return false;
-        } catch (IllegalAccessException ex) {
-            logger.info(ex.getMessage());
-            return false;
-        }
-        return true;
+        return incr;
     }
 
 }

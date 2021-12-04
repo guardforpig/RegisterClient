@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.shop.service;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.dao.ShopDao;
@@ -19,6 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 @Service
 public class ShopService {
@@ -70,7 +73,7 @@ public class ShopService {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject getSimpleShopByShopId(Long ShopId) {
         ReturnObject ret = shopDao.getShopById(ShopId);
-        ShopSimpleRetVo vo = (ShopSimpleRetVo) Common.cloneVo(ret.getData(), ShopSimpleRetVo.class);
+        ShopSimpleRetVo vo = (ShopSimpleRetVo) cloneVo(ret.getData(), ShopSimpleRetVo.class);
         return new ReturnObject(vo);
     }
 
@@ -82,10 +85,10 @@ public class ShopService {
     public ReturnObject newShop(ShopVo shopVo, Long loginUser, String loginUsername) {
         ShopPo po = new ShopPo();
         po.setName(shopVo.getName());
-        Common.setPoCreatedFields(po, loginUser, loginUsername);
+        setPoCreatedFields(po, loginUser, loginUsername);
         ReturnObject ret = shopDao.newShop(po);
         if (ret.getCode().equals(0)) {
-            ShopSimpleRetVo vo = (ShopSimpleRetVo) Common.cloneVo(ret.getData(), ShopSimpleRetVo.class);
+            ShopSimpleRetVo vo = (ShopSimpleRetVo) cloneVo(ret.getData(), ShopSimpleRetVo.class);
             ret = new ReturnObject(vo);
         }
         return ret;
@@ -101,7 +104,7 @@ public class ShopService {
         Shop shop = new Shop();
         shop.setId(id);
         shop.setName(shopVo.getName());
-        Common.setPoModifiedFields(shop, loginUser, loginUsername);
+       setPoModifiedFields(shop, loginUser, loginUsername);
 
         ReturnObject ret = shopDao.UpdateShop(shop.getId(), shop);
         return ret;
@@ -128,7 +131,7 @@ public class ShopService {
         accountPo.setType((byte) 0);
         accountPo.setName("测试");
         /*******************************************/
-        RefundDepositVo depositVo = (RefundDepositVo) Common.cloneVo(accountPo, RefundDepositVo.class);
+        RefundDepositVo depositVo = (RefundDepositVo) cloneVo(accountPo, RefundDepositVo.class);
         InternalReturnObject refundRet = paymentService.refund(depositVo);
         if (!refundRet.getErrno().equals(0)) {
             return new ReturnObject(ReturnNo.getByCode(refundRet.getErrno()),refundRet.getErrmsg());
@@ -138,7 +141,7 @@ public class ShopService {
         Shop shop = new Shop();
         shop.setId(id.longValue());
         shop.setState(Shop.State.FORBID.getCode().byteValue());
-        Common.setPoModifiedFields(shop, loginUser, loginUsername);
+       setPoModifiedFields(shop, loginUser, loginUsername);
         ReturnObject retUpdate = shopDao.updateShopState(shop);
         return retUpdate;
 
@@ -148,7 +151,7 @@ public class ShopService {
     public ReturnObject passShop(Long id, ShopConclusionVo conclusion, Long loginUser, String loginUsername) {
         Shop shop = new Shop();
         shop.setId(id.longValue());
-        Common.setPoModifiedFields(shop, loginUser, loginUsername);
+       setPoModifiedFields(shop, loginUser, loginUsername);
         shop.setState(conclusion.getConclusion() == true ? Shop.State.OFFLINE.getCode().byteValue() : Shop.State.EXAME.getCode().byteValue());
         ReturnObject ret = shopDao.updateShopState(shop);
         return ret;
@@ -158,7 +161,7 @@ public class ShopService {
     public ReturnObject onShelfShop(Long id, Long loginUser, String loginUsername) {
         Shop shop = new Shop();
         shop.setId(id);
-        Common.setPoModifiedFields(shop, loginUser, loginUsername);
+       setPoModifiedFields(shop, loginUser, loginUsername);
         shop.setState(Shop.State.ONLINE.getCode().byteValue());
         var x = getShopByShopId(id).getData();
         if (x.getState() == Shop.State.OFFLINE.getCode().byteValue()) {
@@ -174,7 +177,7 @@ public class ShopService {
     public ReturnObject offShelfShop(Long id, Long loginUser, String loginUsername) {
         Shop shop = new Shop();
         shop.setId(id.longValue());
-        Common.setPoModifiedFields(shop, loginUser, loginUsername);
+       setPoModifiedFields(shop, loginUser, loginUsername);
         shop.setState(Shop.State.OFFLINE.getCode().byteValue());
         var x = getShopByShopId(id).getData();
         if (x.getState() == Shop.State.ONLINE.getCode().byteValue()) {

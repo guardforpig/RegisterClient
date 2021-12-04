@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.goods.service;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.OnSaleGetDao;
@@ -9,8 +8,6 @@ import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.goods.model.bo.OnSaleGetBo;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
-import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
-import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
 import cn.edu.xmu.oomall.goods.model.vo.OnSaleRetVo;
 import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -19,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author Zijun Min 22920192204257
@@ -63,9 +62,21 @@ public class OnSaleGetService {
             return returnObject;
         }
         OnSaleGetBo onSale=(OnSaleGetBo) returnObject.getData();
-        OnSalePo onSalePo=(OnSalePo) Common.cloneVo(onSale,OnSalePo.class);
-        if(onSalePo.getType().equals(OnSaleGetBo.Type.NOACTIVITY.getCode())||onSalePo.getType().equals(OnSaleGetBo.Type.SECKILL.getCode())){
-            NewOnSaleRetVo onSaleRetVo=(NewOnSaleRetVo)Common.cloneVo(onSalePo, NewOnSaleRetVo.class);
+        if(onSale.getType().equals(OnSaleGetBo.Type.NOACTIVITY)||onSale.getType().equals(OnSaleGetBo.Type.SECKILL)){
+            OnSaleRetVo onSaleRetVo=(OnSaleRetVo)cloneVo(onSale,OnSaleRetVo.class);
+            //设置product字段
+            ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
+            if(returnObjectProduct.getCode().equals(ReturnNo.OK)){
+                Product product=(Product) returnObjectProduct.getData();
+                SimpleProductRetVo simpleProduct=(SimpleProductRetVo)cloneVo(product,SimpleProductRetVo.class);
+                onSaleRetVo.setProduct(simpleProduct);
+            }
+            //设置shop字段
+            InternalReturnObject internalObj=shopService.getShopInfo(onSale.getShopId());
+            if(internalObj.getErrno().equals(ReturnNo.OK)) {
+                SimpleShopVo simpleShopVo = (SimpleShopVo)internalObj.getData();
+                onSaleRetVo.setShop(simpleShopVo);
+            }
             return new ReturnObject(onSaleRetVo);
         }else{
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
@@ -111,12 +122,12 @@ public class OnSaleGetService {
             return returnObject;
         }
         OnSaleGetBo onSale=(OnSaleGetBo) returnObject.getData();
-        OnSaleRetVo onSaleRetVo=(OnSaleRetVo)Common.cloneVo(onSale,OnSaleRetVo.class);
+        OnSaleRetVo onSaleRetVo=(OnSaleRetVo)cloneVo(onSale,OnSaleRetVo.class);
         //设置product字段
         ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
         if(returnObjectProduct.getCode().equals(ReturnNo.OK)){
             Product product=(Product) returnObjectProduct.getData();
-            SimpleProductRetVo simpleProduct=(SimpleProductRetVo)Common.cloneVo(product,SimpleProductRetVo.class);
+            SimpleProductRetVo simpleProduct=(SimpleProductRetVo)cloneVo(product,SimpleProductRetVo.class);
             onSaleRetVo.setProduct(simpleProduct);
         }
         //设置shop字段

@@ -19,6 +19,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+
 /**
  * @author xiuchen lang 22920192204222
  * @date 2021/11/12 12:55
@@ -87,14 +89,14 @@ public class ShareActivityDao {
      * @return
      */
     public ReturnObject addShareAct(ShareActivityBo shareActivityBo) {
-        ShareActivityPo shareActivityPo = (ShareActivityPo) Common.cloneVo(shareActivityBo, ShareActivityPo.class);
+        ShareActivityPo shareActivityPo = (ShareActivityPo) cloneVo(shareActivityBo, ShareActivityPo.class);
         shareActivityPo.setStrategy(JacksonUtil.toJson(shareActivityBo.getStrategy()));
         try {
             int flag = shareActivityPoMapper.insert(shareActivityPo);
             if (flag == 0) {
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
-            ShareActivityBo shareActivityBo1 = (ShareActivityBo) Common.cloneVo(shareActivityPo, ShareActivityBo.class);
+            ShareActivityBo shareActivityBo1 = (ShareActivityBo) cloneVo(shareActivityPo, ShareActivityBo.class);
             if (shareActivityPo.getStrategy() != null) {
                 List<StrategyVo> strategyVos = (List<StrategyVo>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
                 shareActivityBo1.setStrategy(strategyVos);
@@ -127,7 +129,7 @@ public class ShareActivityDao {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             //使用clonevo
-            shareActivityBo = (ShareActivityBo) Common.cloneVo(shareActivityPo, ShareActivityBo.class);
+            shareActivityBo = (ShareActivityBo) cloneVo(shareActivityPo, ShareActivityBo.class);
             if (shareActivityPo.getStrategy() != null) {
                 List<StrategyVo> strategyVos = (List<StrategyVo>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
                 shareActivityBo.setStrategy(strategyVos);
@@ -165,7 +167,7 @@ public class ShareActivityDao {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             ShareActivityPo shareActivityPo = shareActivityPos.get(0);
-            shareActivityBo = (ShareActivityBo) Common.cloneVo(shareActivityPo, ShareActivityBo.class);
+            shareActivityBo = (ShareActivityBo) cloneVo(shareActivityPo, ShareActivityBo.class);
             if (shareActivityPo.getStrategy() != null) {
                 List<StrategyVo> strategyVos = (List<StrategyVo>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
                 shareActivityBo.setStrategy(strategyVos);

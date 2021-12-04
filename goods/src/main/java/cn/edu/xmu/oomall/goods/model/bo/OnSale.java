@@ -6,15 +6,14 @@ import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
 import com.alibaba.druid.support.spring.stat.annotation.Stat;
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
-
 @Data
-public class OnSale  implements  VoObject, Serializable {
+public class OnSale  implements   Serializable {
 
     private Long id;
     private Long shopId;
@@ -33,6 +32,8 @@ public class OnSale  implements  VoObject, Serializable {
     private String modifierName;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
+    private Integer maxQuantity;
+    private Integer numKey;
 
 
 
@@ -56,16 +57,6 @@ public class OnSale  implements  VoObject, Serializable {
         Integer code=state.getCode();
         Byte b=code.byteValue();
         this.state=b;
-    }
-
-    @Override
-    public NewOnSaleRetVo createVo() {
-        return (NewOnSaleRetVo)cloneVo(this,NewOnSaleRetVo.class);
-    }
-
-    @Override
-    public Object createSimpleVo() {
-        return null;
     }
 
 

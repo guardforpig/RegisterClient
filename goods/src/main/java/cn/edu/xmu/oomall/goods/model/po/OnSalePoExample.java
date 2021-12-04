@@ -1234,6 +1234,126 @@ public class OnSalePoExample {
             addCriterion("`gmt_modified` not between", value1, value2, "gmtModified");
             return (Criteria) this;
         }
+
+        public Criteria andMaxQuantityIsNull() {
+            addCriterion("`max_quantity` is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityIsNotNull() {
+            addCriterion("`max_quantity` is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityEqualTo(Integer value) {
+            addCriterion("`max_quantity` =", value, "maxQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityNotEqualTo(Integer value) {
+            addCriterion("`max_quantity` <>", value, "maxQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityGreaterThan(Integer value) {
+            addCriterion("`max_quantity` >", value, "maxQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityGreaterThanOrEqualTo(Integer value) {
+            addCriterion("`max_quantity` >=", value, "maxQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityLessThan(Integer value) {
+            addCriterion("`max_quantity` <", value, "maxQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityLessThanOrEqualTo(Integer value) {
+            addCriterion("`max_quantity` <=", value, "maxQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityIn(List<Integer> values) {
+            addCriterion("`max_quantity` in", values, "maxQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityNotIn(List<Integer> values) {
+            addCriterion("`max_quantity` not in", values, "maxQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityBetween(Integer value1, Integer value2) {
+            addCriterion("`max_quantity` between", value1, value2, "maxQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxQuantityNotBetween(Integer value1, Integer value2) {
+            addCriterion("`max_quantity` not between", value1, value2, "maxQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyIsNull() {
+            addCriterion("`num_key` is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyIsNotNull() {
+            addCriterion("`num_key` is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyEqualTo(Integer value) {
+            addCriterion("`num_key` =", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyNotEqualTo(Integer value) {
+            addCriterion("`num_key` <>", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyGreaterThan(Integer value) {
+            addCriterion("`num_key` >", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyGreaterThanOrEqualTo(Integer value) {
+            addCriterion("`num_key` >=", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyLessThan(Integer value) {
+            addCriterion("`num_key` <", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyLessThanOrEqualTo(Integer value) {
+            addCriterion("`num_key` <=", value, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyIn(List<Integer> values) {
+            addCriterion("`num_key` in", values, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyNotIn(List<Integer> values) {
+            addCriterion("`num_key` not in", values, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyBetween(Integer value1, Integer value2) {
+            addCriterion("`num_key` between", value1, value2, "numKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andNumKeyNotBetween(Integer value1, Integer value2) {
+            addCriterion("`num_key` not between", value1, value2, "numKey");
+            return (Criteria) this;
+        }
     }
 
     /**

@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.freight.dao;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.mapper.WeightFreightPoMapper;
@@ -16,6 +15,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author ziyi guo
@@ -43,7 +46,7 @@ public class WeightFreightDao {
     public ReturnObject addWeightItems(WeightFreightPo weightFreightPo, Long userId, String userName){
 
         try {
-            Common.setPoCreatedFields(weightFreightPo, userId, userName);
+            setPoCreatedFields(weightFreightPo, userId, userName);
 
             WeightFreightPoExample example = new WeightFreightPoExample();
             WeightFreightPoExample.Criteria criteria = example.createCriteria();
@@ -56,7 +59,7 @@ public class WeightFreightDao {
 
             weightFreightPoMapper.insertSelective(weightFreightPo);
             WeightFreightPo newWeightFreightPo = weightFreightPoMapper.selectByPrimaryKey(weightFreightPo.getId());
-            return new ReturnObject(Common.cloneVo(newWeightFreightPo, WeightFreight.class));
+            return new ReturnObject(cloneVo(newWeightFreightPo, WeightFreight.class));
         }catch (Exception e){
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
@@ -78,7 +81,7 @@ public class WeightFreightDao {
             List<WeightFreightPo> weightFreightPoList = weightFreightPoMapper.selectByExample(example);
             List<WeightFreight> weightFreightBoList = new ArrayList<>();
             for (WeightFreightPo wfPo : weightFreightPoList) {
-                weightFreightBoList.add((WeightFreight) Common.cloneVo(wfPo,WeightFreight.class));
+                weightFreightBoList.add((WeightFreight) cloneVo(wfPo,WeightFreight.class));
             }
 
             PageInfo pageInfo = PageInfo.of(weightFreightPoList);
@@ -120,7 +123,7 @@ public class WeightFreightDao {
     public ReturnObject updateWeightItems(WeightFreightPo weightFreightPo, Long userId, String userName){
 
         try {
-            Common.setPoModifiedFields(weightFreightPo,userId,userName);
+           setPoModifiedFields(weightFreightPo,userId,userName);
 
             WeightFreightPo wp = weightFreightPoMapper.selectByPrimaryKey(weightFreightPo.getId());
             if (wp == null) {
@@ -176,7 +179,7 @@ public class WeightFreightDao {
                 criteria.andFreightModelIdEqualTo(fid).andRegionIdEqualTo(regionIds.get(i));
                 var poList = weightFreightPoMapper.selectByExample(example);
                 if (!poList.isEmpty()) {
-                    var bo = (WeightFreight) Common.cloneVo(poList.get(0), WeightFreight.class);
+                    var bo = (WeightFreight) cloneVo(poList.get(0), WeightFreight.class);
                     redisUtil.set(String.format(WEIGHT_FREIGHT_REGION_KEY, fid, regionId), bo, timeout);
                     return new ReturnObject(bo);
                 }

@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.freight.service;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.dao.FreightModelDao;
@@ -9,13 +8,12 @@ import cn.edu.xmu.oomall.freight.model.bo.FreightModel;
 import cn.edu.xmu.oomall.freight.model.bo.PieceFreight;
 import cn.edu.xmu.oomall.freight.model.vo.PieceFreightRetVo;
 import cn.edu.xmu.oomall.freight.model.vo.PieceFreightVo;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+
 /**
  * @author 高艺桐 22920192204199
  */
@@ -52,7 +50,7 @@ public class PieceFreightService {
         if (returnPieceFreight == null) {
             return returnObject;
         }
-        PieceFreightRetVo pieceFreightRetVo = (PieceFreightRetVo) Common.cloneVo(returnPieceFreight, PieceFreightRetVo.class);
+        PieceFreightRetVo pieceFreightRetVo = (PieceFreightRetVo) cloneVo(returnPieceFreight, PieceFreightRetVo.class);
         return new ReturnObject(pieceFreightRetVo);
     }
 
@@ -97,7 +95,7 @@ public class PieceFreightService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject updatePieceFreight(PieceFreightVo pieceFreightVo, Long id, Long userId, String userName) {
-        PieceFreight pieceFreight = (PieceFreight) Common.cloneVo(pieceFreightVo, PieceFreight.class);
+        PieceFreight pieceFreight = (PieceFreight) cloneVo(pieceFreightVo, PieceFreight.class);
         pieceFreight.setId(id);
         ReturnObject returnObject = pieceFreightDao.updatePieceFreight(pieceFreight, userId, userName);
         return returnObject;

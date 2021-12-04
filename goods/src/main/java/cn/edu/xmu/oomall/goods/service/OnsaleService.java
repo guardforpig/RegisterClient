@@ -17,8 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
-
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author yujie lin
@@ -274,6 +273,69 @@ public class OnsaleService {
             return new ReturnObject(ReturnNo.GOODS_PRICE_CONFLICT, "商品销售时间冲突。");
         }
         return onsaleDao.updateOnSale(bo,userId, userName);
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject decreaseOnSale(Long shopId,Long id,Integer quantity,Long userId,String userName){
+
+        //判断OnSale是否存在
+        ReturnObject ret=onsaleDao.getOnSaleById(id);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        OnSale onsale = (OnSale) ret.getData();
+        if (null == onsale) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该价格浮动");
+        }
+
+        //判断是否该商家的onsale
+        ret=onsaleDao.onSaleShopMatch(id,shopId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if(!(boolean)ret.getData()){
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该价格浮动不属于该商铺");
+        }
+
+        // 判断是否online 且在销售时间内
+        if (onsale.getState() != OnSale.State.ONLINE
+        || !(onsale.getBeginTime().isBefore(LocalDateTime.now()) && onsale.getEndTime().isAfter(LocalDateTime.now()))) {
+            return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE);
+        }
+
+
+        Integer groupNum=onsale.getNumKey();
+        Integer randomRound=onsale.getMaxQuantity();
+
+        return onsaleDao.decreaseOnSaleQuantity(id,quantity,groupNum,onsale.getQuantity(),randomRound);
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject increaseOnSale(Long shopId,Long id,Integer quantity,Long userId,String userName){
+        //判断OnSale是否存在
+        ReturnObject ret=onsaleDao.getOnSaleById(id);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        OnSale onsale = (OnSale) ret.getData();
+        if (null == onsale) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该价格浮动");
+        }
+
+        //判断是否该商家的onsale
+        ret=onsaleDao.onSaleShopMatch(id,shopId);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if(!(boolean)ret.getData()){
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该价格浮动不属于该商铺");
+        }
+
+        Integer groupNum=onsale.getNumKey();
+
+        return onsaleDao.increaseOnSaleQuantity(id,quantity,groupNum);
 
     }
 
