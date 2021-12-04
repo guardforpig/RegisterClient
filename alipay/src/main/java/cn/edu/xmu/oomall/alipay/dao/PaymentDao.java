@@ -5,8 +5,6 @@ import cn.edu.xmu.oomall.alipay.model.bo.Payment;
 import cn.edu.xmu.oomall.alipay.model.po.AlipayPaymentPo;
 import cn.edu.xmu.oomall.alipay.model.po.AlipayPaymentPoExample;
 import cn.edu.xmu.oomall.core.util.Common;
-import cn.edu.xmu.oomall.core.util.ReturnNo;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
