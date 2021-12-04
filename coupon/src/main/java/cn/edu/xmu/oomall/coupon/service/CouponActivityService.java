@@ -247,7 +247,7 @@ public class CouponActivityService {
 
         String key = String.format(PRODUCTVOLISTKEY, couponActivityId);
         List<ProductVo> productVoList = new ArrayList<>();
-        if (redisUtils.hasKey(key) && (long) pageNumber * pageSize <= redisUtils.sizeList(key)) {
+        if (redisUtils.hasKey(key) && (long) (pageNumber - 1) * pageSize <= redisUtils.sizeList(key)) {
             long beginIndex = (long) (pageNumber - 1) * pageSize;
             long endIndex = Math.min((long) pageNumber * pageSize, redisUtils.sizeList(key));
             List<Serializable> serializableList = redisUtils.rangeList(key, beginIndex, endIndex);
@@ -255,6 +255,7 @@ public class CouponActivityService {
                 productVoList.add((ProductVo) serializable);
             }
         } else {
+            redisUtils.del(key);
             ReturnObject retCouponOnsalesPageInfo =
                     couponActivityDao.listCouponOnsalesByActivityId(couponActivityId, 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
             if (!retCouponOnsalesPageInfo.getCode().equals(ReturnNo.OK)) {
@@ -290,7 +291,7 @@ public class CouponActivityService {
     public ReturnObject listCouponActivitiesByProductId(Long productId, Integer pageNumber, Integer pageSize) {
         String key = String.format(COUPONACTIVITYLISTKEY, productId);
         List<CouponActivity> onlineCouponActivityList = new ArrayList<>();
-        if (redisUtils.hasKey(key) && (long) pageNumber * pageSize <= redisUtils.sizeList(key)) {
+        if (redisUtils.hasKey(key) &&  (long) (pageNumber - 1) * pageSize <= redisUtils.sizeList(key)) {
             long beginIndex = (long) (pageNumber - 1) * pageSize;
             long endIndex = Math.min((long) pageNumber * pageSize, redisUtils.sizeList(key));
             List<Serializable> serializableList = redisUtils.rangeList(key, beginIndex, endIndex);
@@ -298,6 +299,7 @@ public class CouponActivityService {
                 onlineCouponActivityList.add((CouponActivity) serializable);
             }
         } else {
+            redisUtils.del(key);
             InternalReturnObject<List<OnsaleVo>> retOnsaleVoPageInfo =
                     goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
             if (!retOnsaleVoPageInfo.getErrno().equals(ReturnNo.OK.getCode())) {

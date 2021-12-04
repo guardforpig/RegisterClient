@@ -1,13 +1,11 @@
 package cn.edu.xmu.oomall.coupon.controller;
 
 
-import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.util.CreateObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
-import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +42,6 @@ public class CouponControllerTest {
     @MockBean
     private GoodsService goodsService;
 
-    @MockBean
-    private RedisUtil redisUtil;
 
     @BeforeEach
     public void init() throws Exception {
@@ -76,11 +72,6 @@ public class CouponControllerTest {
         Mockito.when(goodsService.getOnsaleById(2L)).thenReturn(onsaleVo3);
         InternalReturnObject<OnsaleVo> onsaleVo4 = CreateObject.createOnsaleVo4();
         Mockito.when(goodsService.getOnsaleById(3912L)).thenReturn(onsaleVo4);
-
-//        Mockito.when(redisUtil.get("couponactivity_11")).thenReturn("{\"id\":11,\"name\":null,\"shopId\":1,\"shopName\":null,\"couponTime\":null,\"beginTime\":null,\"endTime\":null,\"quantity\":null,\"quantityType\":null,\"validTerm\":null,\"imageUrl\":null,\"strategy\":null,\"state\":0,\"creatorId\":null,\"creatorName\":null,\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,17,19,2,20],\"gmtModified\":null}");
-//        Mockito.when(redisUtil.get("coupononsale_5")).thenReturn("{\"id\":5,\"activityId\":2,\"onsaleId\":21,\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":[2021,11,11,15,40,45],\"gmtModified\":null}");
-        Mockito.when(redisUtil.get("couponactivity_11")).thenReturn(null);
-        Mockito.when(redisUtil.get("coupononsale_5")).thenReturn(null);
 
         adminToken = jwtHelper.createToken(1L,"admin",0L, 1,3600);
     }
@@ -114,24 +105,40 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
 
-        // 正常
+        // 正常，走数据库
         responseString = mvc.perform(get("/couponactivities/11/products"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":10,\"name\":null,\"imageUrl\":null},{\"id\":100,\"name\":null,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        expectString = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":10,\"name\":null,\"imageUrl\":null},{\"id\":100,\"name\":null,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        JSONAssert.assertEquals(expectString, responseString, true);
+
+        // 正常，走redis
+        responseString = mvc.perform(get("/couponactivities/11/products"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        expectString = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":10,\"name\":null,\"imageUrl\":null},{\"id\":100,\"name\":null,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
     }
 
     @Test
     @Transactional(rollbackFor = Exception.class)
     public void testListCouponActivitiesByProductId() throws Exception {
-        // 正常
+        // 正常，走数据库
         String responseString = mvc.perform(get("/products/1550/couponactivities"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null},{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        String expectString = "{\"errno\":0,\"data\":{\"total\":9,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null},{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        JSONAssert.assertEquals(expectString, responseString, true);
+
+        // 正常，走redis
+        responseString = mvc.perform(get("/products/1550/couponactivities"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        expectString = "{\"errno\":0,\"data\":{\"total\":9,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null},{\"id\":2,\"name\":\"优惠活动2\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":11,\"name\":null,\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":null,\"imageUrl\":null},{\"id\":4,\"name\":\"优惠活动4\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":10,\"name\":\"优惠活动10\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":5,\"name\":\"优惠活动5\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":8,\"name\":\"优惠活动8\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null},{\"id\":9,\"name\":\"优惠活动9\",\"beginTime\":\"2021-11-11T14:53:49\",\"endTime\":\"2022-02-19T14:53:49\",\"couponTime\":\"2021-11-01T14:53:49\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 货品不存在
