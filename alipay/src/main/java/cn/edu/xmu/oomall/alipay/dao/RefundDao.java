@@ -9,6 +9,8 @@ import cn.edu.xmu.oomall.alipay.model.po.AlipayRefundPoExample;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +20,8 @@ import java.util.List;
 public class RefundDao {
     @Autowired
     private AlipayRefundPoMapper alipayRefundPoMapper;
+
+    private Logger logger = LoggerFactory.getLogger(RefundDao.class);
 
     public List<AlipayRefundPo> selectRefundByOutTradeNo(String outTradeNo)
     {
@@ -30,6 +34,7 @@ public class RefundDao {
         }
         catch (Exception e)
         {
+            logger.error(e.getMessage());
             return null;
         }
     }
@@ -49,6 +54,7 @@ public class RefundDao {
         }
         catch (Exception e)
         {
+            logger.error(e.getMessage());
             return null;
         }
     }
@@ -63,6 +69,7 @@ public class RefundDao {
         }
         catch (Exception e)
         {
+            logger.error(e.getMessage());
             return false;
         }
     }
