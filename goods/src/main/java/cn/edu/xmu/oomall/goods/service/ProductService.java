@@ -25,7 +25,7 @@ public class ProductService {
         if(shopId!=0){
             return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
         }
-        return productDao.listProductsByFreightId(shopId,fid,pageNumber,pageSize) ;
+        return productDao.listProductsByFreightId(fid,pageNumber,pageSize) ;
     }
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject publishProduct(Long shopId,Long productId)
