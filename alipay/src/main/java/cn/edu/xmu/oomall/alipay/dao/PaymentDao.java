@@ -7,6 +7,8 @@ import cn.edu.xmu.oomall.alipay.model.po.AlipayPaymentPoExample;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +21,8 @@ public class PaymentDao {
     @Autowired
     private AlipayPaymentPoMapper alipayPaymentPoMapper;
 
+    private Logger logger = LoggerFactory.getLogger(PaymentDao.class);
+
     public boolean insertPayment(Payment payment)
     {
         try
@@ -29,6 +33,7 @@ public class PaymentDao {
         }
         catch (Exception e)
         {
+            logger.error(e.getMessage());
             return false;
         }
     }
