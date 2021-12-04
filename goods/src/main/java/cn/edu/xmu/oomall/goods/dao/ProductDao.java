@@ -4,8 +4,6 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
-import cn.edu.xmu.oomall.goods.model.bo.Goods;
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
@@ -21,12 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author yujie lin
@@ -103,7 +99,7 @@ public class ProductDao {
                 if (productPo == null) {
                     return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
                 } else {
-                    Product pro=(Product) Common.cloneVo(productPo,Product.class);
+                    Product pro=(Product) cloneVo(productPo,Product.class);
                     redisUtil.set(key,pro,productTimeout);
                     return new ReturnObject(pro);
                 }
@@ -215,7 +211,7 @@ public class ProductDao {
     public Product getProduct(Long id) {
         ProductPo productPo = productMapper.selectByPrimaryKey(id);
         if (productPo != null) {
-            return (Product) Common.cloneVo(productPo, Product.class);
+            return (Product) cloneVo(productPo, Product.class);
         }
         Product product=new Product();
         product.setState((byte)-1);

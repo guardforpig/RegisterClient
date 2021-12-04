@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.freight.service;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.dao.FreightModelDao;
@@ -11,6 +10,8 @@ import cn.edu.xmu.oomall.freight.model.po.WeightFreightPo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author ziyi guo
@@ -44,7 +45,7 @@ public class WeightFreightService {
             return new ReturnObject(ReturnNo.FREIGHT_WRONGTYPE);
         }
 
-        ReturnObject returnObject = weightFreightDao.addWeightItems( (WeightFreightPo) Common.cloneVo(weightFreight, WeightFreightPo.class), userId, userName);
+        ReturnObject returnObject = weightFreightDao.addWeightItems( (WeightFreightPo) cloneVo(weightFreight, WeightFreightPo.class), userId, userName);
         return returnObject;
     }
 
@@ -73,7 +74,7 @@ public class WeightFreightService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject updateWeightItems(WeightFreight weightFreight, Long userId, String userName) {
 
-        ReturnObject returnObject = weightFreightDao.updateWeightItems((WeightFreightPo) Common.cloneVo(weightFreight, WeightFreightPo.class),userId,userName);
+        ReturnObject returnObject = weightFreightDao.updateWeightItems((WeightFreightPo) cloneVo(weightFreight, WeightFreightPo.class),userId,userName);
         return returnObject;
     }
 

@@ -8,8 +8,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
-
 /**
  * @author 黄添悦
  **/

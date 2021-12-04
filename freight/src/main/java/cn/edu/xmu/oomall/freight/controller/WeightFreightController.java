@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
 import static cn.edu.xmu.oomall.core.util.Common.processFieldErrors;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author ziyi guo
@@ -66,7 +67,7 @@ public class WeightFreightController {
             return object;
         }
 
-        WeightFreight weightFreight = (WeightFreight) Common.cloneVo(weightFreightVo,WeightFreight.class);
+        WeightFreight weightFreight = (WeightFreight) cloneVo(weightFreightVo,WeightFreight.class);
         weightFreight.setFreightModelId(id);
 
         ReturnObject returnObject = weightFreightService.addWeightItems(weightFreight, userId, userName);
@@ -123,7 +124,7 @@ public class WeightFreightController {
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "非管理员无权操作"), HttpStatus.FORBIDDEN);
         }
 
-        WeightFreight weightFreight = (WeightFreight) Common.cloneVo(weightFreightVo, WeightFreight.class);
+        WeightFreight weightFreight = (WeightFreight) cloneVo(weightFreightVo, WeightFreight.class);
         weightFreight.setId(id);
         ReturnObject returnObject = weightFreightService.updateWeightItems(weightFreight, userId, userName);
         return Common.decorateReturnObject(returnObject);

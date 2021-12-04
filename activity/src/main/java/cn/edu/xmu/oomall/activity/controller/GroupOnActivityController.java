@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+
 /**
  * @author Gao Yanfeng
  * @date 2021/11/11
@@ -88,7 +90,7 @@ public class GroupOnActivityController {
     public Object getOnlineGroupOnActivity(@PathVariable Long id) {
         var ret = groupOnService.getGroupOnActivity(id, GroupOnState.ONLINE, null);
         if (ret.getCode().equals(ReturnNo.OK)) {
-            ret = new ReturnObject(Common.cloneVo(ret.getData(), GroupOnActivityVo.class));
+            ret = new ReturnObject(cloneVo(ret.getData(), GroupOnActivityVo.class));
         }
         return Common.decorateReturnObject(ret);
     }
@@ -161,7 +163,7 @@ public class GroupOnActivityController {
     public Object getGroupOnActivityInShop(@PathVariable Long shopId, @PathVariable Long id) {
         var ret = groupOnService.getGroupOnActivity(id, null, shopId);
         if (ret.getCode().equals(ReturnNo.OK)) {
-            ret = new ReturnObject(Common.cloneVo(ret.getData(), FullGroupOnActivityVo.class));
+            ret = new ReturnObject(cloneVo(ret.getData(), FullGroupOnActivityVo.class));
         }
         return Common.decorateReturnObject(ret);
     }

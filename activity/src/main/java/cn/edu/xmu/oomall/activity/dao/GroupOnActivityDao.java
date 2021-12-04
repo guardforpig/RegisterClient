@@ -22,6 +22,9 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+
 /**
  * @author Gao Yanfeng
  * @date 2021/11/11
@@ -43,13 +46,13 @@ public class GroupOnActivityDao {
 
     public ReturnObject insertActivity(GroupOnActivity bo, Long createdBy, String createName) {
         try {
-            GroupOnActivityPo po = (GroupOnActivityPo) Common.cloneVo(bo, GroupOnActivityPo.class);
+            GroupOnActivityPo po = (GroupOnActivityPo) cloneVo(bo, GroupOnActivityPo.class);
             po.setStrategy(JacksonUtil.toJson(bo.getStrategy()));
-            Common.setPoCreatedFields(po, createdBy, createName);
+            setPoCreatedFields(po, createdBy, createName);
             mapper.insert(po);
             bo.setId(po.getId());
             redisUtil.set(String.format(GROUPON_KEY, po.getId()), bo, timeout);
-            return new ReturnObject(Common.cloneVo(bo, SimpleGroupOnActivityVo.class));
+            return new ReturnObject(cloneVo(bo, SimpleGroupOnActivityVo.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -62,7 +65,7 @@ public class GroupOnActivityDao {
             List<GroupOnActivityPo> poList = mapper.selectByExample(example);
             var voList = new ArrayList<SimpleGroupOnActivityVo>();
             for (var po : poList) {
-                voList.add((SimpleGroupOnActivityVo) Common.cloneVo(po, SimpleGroupOnActivityVo.class));
+                voList.add((SimpleGroupOnActivityVo) cloneVo(po, SimpleGroupOnActivityVo.class));
             }
             var pageInfo = new PageInfo<>(voList);
             pageInfo.setPages(PageInfo.of(poList).getPages());
@@ -85,7 +88,7 @@ public class GroupOnActivityDao {
                 if (po == null) {
                     return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "未找到指定ID对应的团购活动");
                 }
-                bo = (GroupOnActivity) Common.cloneVo(po, GroupOnActivity.class);
+                bo = (GroupOnActivity) cloneVo(po, GroupOnActivity.class);
                 bo.setStrategy(JacksonUtil.parseObjectList(po.getStrategy(), GroupOnStrategyVo.class));
             }
             if (state != null && !bo.getState().equals(state)) {

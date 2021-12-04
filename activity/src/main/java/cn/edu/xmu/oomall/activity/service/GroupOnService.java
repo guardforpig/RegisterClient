@@ -10,7 +10,6 @@ import cn.edu.xmu.oomall.activity.model.po.GroupOnActivityPoExample;
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityPostVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageInfoVo;
 import cn.edu.xmu.oomall.activity.model.vo.StateVo;
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -23,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 /**
  * @author Gao Yanfeng
  * @date 2021/11/11
@@ -61,7 +61,7 @@ public class GroupOnService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject addActivity(Long shopId, GroupOnActivityPostVo vo, Long createdBy, String createName) {
-            var bo = (GroupOnActivity) Common.cloneVo(vo, GroupOnActivity.class);
+            var bo = (GroupOnActivity) cloneVo(vo, GroupOnActivity.class);
             var shopInfoRet = shopService.getShopInfo(shopId);
             if (!shopInfoRet.getErrno().equals(ReturnNo.OK.getCode())) {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, shopInfoRet.getErrmsg());

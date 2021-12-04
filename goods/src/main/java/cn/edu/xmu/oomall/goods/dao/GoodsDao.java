@@ -1,16 +1,11 @@
 package cn.edu.xmu.oomall.goods.dao;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.GoodsPoMapper;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Goods;
-import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.GoodsPo;
-import cn.edu.xmu.oomall.goods.model.po.ProductPo;
-import cn.edu.xmu.oomall.goods.model.po.ProductPoExample;
-import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author 黄添悦
@@ -55,7 +44,7 @@ public class GoodsDao {
     {
         try
         {
-            GoodsPo goodsPo=(GoodsPo) Common.cloneVo(goods,GoodsPo.class);
+            GoodsPo goodsPo=(GoodsPo) cloneVo(goods,GoodsPo.class);
             goodsPoMapper.insert(goodsPo);
             return new ReturnObject((Goods) cloneVo(goodsPo,Goods.class));
         }
@@ -78,7 +67,7 @@ public class GoodsDao {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE, "该商品不属于该商铺");
             }
             oldGoods.setName(goods.getName());
-            Common.setPoModifiedFields(oldGoods,goods.getModifierId(),goods.getModifierName());
+           setPoModifiedFields(oldGoods,goods.getModifierId(),goods.getModifierName());
             goodsPoMapper.updateByPrimaryKeySelective(oldGoods);
             return new ReturnObject<>(ReturnNo.OK);
         }
