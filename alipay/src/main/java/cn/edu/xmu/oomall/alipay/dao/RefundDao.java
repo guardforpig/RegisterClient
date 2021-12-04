@@ -29,8 +29,7 @@ public class RefundDao {
             AlipayRefundPoExample alipayRefundPoExample = new AlipayRefundPoExample();
             AlipayRefundPoExample.Criteria criteria = alipayRefundPoExample.createCriteria();
             criteria.andOutTradeNoEqualTo(outTradeNo);
-            List<AlipayRefundPo> alipayRefundPoList= alipayRefundPoMapper.selectByExample(alipayRefundPoExample);
-            return alipayRefundPoList;
+            return alipayRefundPoMapper.selectByExample(alipayRefundPoExample);
         }
         catch (Exception e)
         {
