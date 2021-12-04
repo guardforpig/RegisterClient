@@ -274,8 +274,9 @@ public class CouponActivityService {
                 }
             }
             redisUtils.expire(key, listTimeout, TimeUnit.SECONDS);
-            productVoList = productVoList.subList(Math.min((pageNumber - 1) * pageSize, productVoList.size()),
-                    Math.min(pageNumber * pageSize, productVoList.size()));
+            int beginIndex = Math.min((pageNumber - 1) * pageSize, productVoList.size());
+            int endIndex = Math.min(pageNumber * pageSize, productVoList.size());
+            productVoList = productVoList.subList(beginIndex, endIndex);
         }
         PageInfo<ProductVo> retPageInfo = new PageInfo<>(productVoList);
         retPageInfo.setTotal(redisUtils.sizeList(key));
