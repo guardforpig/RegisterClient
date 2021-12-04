@@ -73,6 +73,7 @@ public class PaymentDao {
         }
         catch (Exception e)
         {
+            logger.error(e.getMessage());
             return false;
         }
     }
