@@ -30,6 +30,9 @@ import java.util.List;
 /**
  * @author RenJieZheng 22920192204334
  */
+/**
+ * @author qingguo Hu 22920192204208
+ */
 @RestController
 @RefreshScope
 @RequestMapping(value = "/",produces = "application/json;charset=UTF-8")

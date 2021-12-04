@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+
 
 /**
  * @author RenJieZheng 22920192204334
@@ -95,7 +97,7 @@ public class CouponActivityDao {
             List<CouponActivityPo>list = couponActivityPoMapper.selectByExample(example);
             List<VoObject>list1 = new ArrayList<>();
             for(CouponActivityPo couponActivityPo:list){
-                CouponActivityRetVo couponActivityRetVo = (CouponActivityRetVo) Common.cloneVo(couponActivityPo,CouponActivityRetVo.class);
+                CouponActivityRetVo couponActivityRetVo = (CouponActivityRetVo) cloneVo(couponActivityPo,CouponActivityRetVo.class);
                 list1.add(couponActivityRetVo);
             }
             PageInfo<VoObject> pageInfo = new PageInfo<>(list1);
@@ -115,13 +117,13 @@ public class CouponActivityDao {
     public ReturnObject<CouponActivityRetVo> addCouponActivity(CouponActivity couponActivity){
         int ret;
         try{
-            CouponActivityPo couponActivityPo = (CouponActivityPo) Common.cloneVo(couponActivity,CouponActivityPo.class);
+            CouponActivityPo couponActivityPo = (CouponActivityPo) cloneVo(couponActivity,CouponActivityPo.class);
             ret = couponActivityPoMapper.insert(couponActivityPo);
             if (ret == 0) {
                 return new ReturnObject<>(ReturnNo.FIELD_NOTVALID);
             } else {
                 //插入成功将数据返回
-                CouponActivityRetVo couponActivityRetVo = (CouponActivityRetVo) Common.cloneVo(couponActivityPo,CouponActivityRetVo.class);
+                CouponActivityRetVo couponActivityRetVo = (CouponActivityRetVo) cloneVo(couponActivityPo,CouponActivityRetVo.class);
                 return new ReturnObject<>(couponActivityRetVo);
             }
         }catch (Exception e){
@@ -143,7 +145,7 @@ public class CouponActivityDao {
             if (couponActivityPo == null){
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            return new ReturnObject<>((CouponActivity)Common.cloneVo(couponActivityPo,CouponActivity.class));
+            return new ReturnObject<>((CouponActivity) cloneVo(couponActivityPo,CouponActivity.class));
         }catch(Exception e){
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
         }
@@ -227,7 +229,7 @@ public class CouponActivityDao {
             if (po == null) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            CouponOnsale couponOnsale = (CouponOnsale) Common.cloneVo(po, CouponOnsale.class);
+            CouponOnsale couponOnsale = (CouponOnsale) cloneVo(po, CouponOnsale.class);
             return new ReturnObject<>(couponOnsale);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -303,7 +305,7 @@ public class CouponActivityDao {
         try {
             String key = String.format(COUPONACTIVITYKEY, couponActivity.getId());
             CouponActivityPo couponActivityPo =
-                    (CouponActivityPo) Common.cloneVo(couponActivity, CouponActivityPo.class);
+                    (CouponActivityPo) cloneVo(couponActivity, CouponActivityPo.class);
             int flag = couponActivityPoMapper.updateByPrimaryKeySelective(couponActivityPo);
             if (flag == 0) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -321,7 +323,7 @@ public class CouponActivityDao {
     public ReturnObject insertCouponOnsale(CouponOnsale couponOnsale) {
         try {
             CouponOnsalePo couponOnsalePo =
-                    (CouponOnsalePo) Common.cloneVo(couponOnsale, CouponOnsalePo.class);
+                    (CouponOnsalePo) cloneVo(couponOnsale, CouponOnsalePo.class);
             couponOnsalePoMapper.insert(couponOnsalePo);
             return new ReturnObject<>(ReturnNo.OK);
         } catch (Exception e) {

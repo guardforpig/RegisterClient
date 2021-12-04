@@ -32,4 +32,6 @@ public class CouponOnsale implements Serializable {
 
     private LocalDateTime gmtModified;
 
+    private Integer numKey;
+
 }

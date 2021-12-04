@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.coupon.service;
 import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
@@ -391,9 +392,9 @@ public class CouponActivityService {
             if (!formerCouponActivity.getState().equals(CouponActivity.State.DRAFT.getCode())) {
                 return new ReturnObject<>(ReturnNo.STATENOTALLOW);
             }
-            CouponActivity newCouponActivity = (CouponActivity) Common.cloneVo(couponActivityVo, CouponActivity.class);
+            CouponActivity newCouponActivity = (CouponActivity) cloneVo(couponActivityVo, CouponActivity.class);
             newCouponActivity.setId(couponActivityId);
-            Common.setPoModifiedFields(newCouponActivity, userId, userName);
+            setPoModifiedFields(newCouponActivity, userId, userName);
             return couponActivityDao.updateCouponActivity(newCouponActivity);
         } else {
             // 修改的是状态
@@ -404,7 +405,7 @@ public class CouponActivityService {
                         return new ReturnObject<>(ReturnNo.STATENOTALLOW);
                     }
                     formerCouponActivity.setState(CouponActivity.State.ONLINE.getCode());
-                    Common.setPoModifiedFields(formerCouponActivity, userId, userName);
+                    setPoModifiedFields(formerCouponActivity, userId, userName);
                     return couponActivityDao.updateCouponActivity(formerCouponActivity);
                 }
                 case OFFLINE: {
@@ -413,7 +414,7 @@ public class CouponActivityService {
                         return new ReturnObject<>(ReturnNo.STATENOTALLOW);
                     }
                     formerCouponActivity.setState(CouponActivity.State.OFFLINE.getCode());
-                    Common.setPoModifiedFields(formerCouponActivity, userId, userName);
+                    setPoModifiedFields(formerCouponActivity, userId, userName);
                     ReturnObject returnObject = couponActivityDao.updateCouponActivity(formerCouponActivity);
                     return returnObject;
                     // TODO: 将已发行未用的优惠卷一并下线
@@ -461,8 +462,8 @@ public class CouponActivityService {
         CouponOnsale newCouponOnsale = new CouponOnsale();
         newCouponOnsale.setActivityId(couponActivityId);
         newCouponOnsale.setOnsaleId(onsaleId);
-        Common.setPoCreatedFields(newCouponOnsale, userId, userName);
-        Common.setPoModifiedFields(newCouponOnsale, userId, userName);
+        setPoCreatedFields(newCouponOnsale, userId, userName);
+        setPoModifiedFields(newCouponOnsale, userId, userName);
 
         ReturnObject returnObject = couponActivityDao.insertCouponOnsale(newCouponOnsale);
         if (!returnObject.getCode().equals(ReturnNo.OK)) {
