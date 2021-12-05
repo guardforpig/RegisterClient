@@ -66,7 +66,7 @@ public class QuantityTest {
         JSONAssert.assertEquals(expect, res, true);
 
         // 不是该商家的OnSale
-        res=this.mvc.perform(put("/internal/shops/0/onsales/900/decr")
+        res=this.mvc.perform(put("/internal/shops/66/onsales/900/decr")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
@@ -100,7 +100,7 @@ public class QuantityTest {
 
 
         // 不是该商家的OnSale
-        res=this.mvc.perform(put("/internal/shops/0/onsales/900/incr")
+        res=this.mvc.perform(put("/internal/shops/66/onsales/900/incr")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
