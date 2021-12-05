@@ -117,7 +117,7 @@ public class ProductDao {
      * @author 王文飞
      * @date 2021/11/25
      */
-    public ReturnObject listProductsByFreightId(Long shopId, Long fid, Integer pageNumber, Integer pageSize)
+    public ReturnObject listProductsByFreightId(Long fid, Integer pageNumber, Integer pageSize)
     {
         try {
             PageHelper.startPage(pageNumber, pageSize, true, true, true);
