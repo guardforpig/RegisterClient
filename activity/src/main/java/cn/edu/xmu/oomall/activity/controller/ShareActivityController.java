@@ -211,4 +211,123 @@ public class ShareActivityController {
         return Common.decorateReturnObject(shareActivityService.getShareActivityByShopIdAndId(shopId, id));
     }
 
+    @ApiOperation(value = "在已有销售上增加分享")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name = "shopId", value = "店铺id", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "在售商品id", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "sid", value = "分享活动id", required = true, dataType = "Integer", paramType = "path")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 507, message = "信息签名不正确"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 500, message = "服务器内部错误")
+    })
+    @Audit(departName = "shops")
+    @PostMapping("/shops/{shopId}/onSale/{id}/shareActivities/{sid}")
+    public Object addShareActivityOnOnSale(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @PathVariable("sid") Long sid,@LoginUser Long loginUser,@LoginName String loginUsername){
+        ReturnObject ret = shareActivityService.addShareActivityOnOnSale(id,sid,loginUser,loginUsername);
+        return Common.decorateReturnObject(ret);
+    }
+
+    @ApiOperation(value = "取消已有销售上的分享")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name = "shopId", value = "店铺id", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "在售商品id", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "sid", value = "分享活动id", required = true, dataType = "Integer", paramType = "path")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 500, message = "服务器内部错误")
+    })
+    @Audit(departName = "shops")
+    @DeleteMapping("/shops/{shopId}/onSale/{id}/shareActivities/{sid}")
+    public Object deleteShareActivityOnOnSale(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @PathVariable("sid") Long sid,@LoginUser Long loginUser,@LoginName String loginUsername){
+        ReturnObject ret =shareActivityService.deleteShareActivityOnOnSale(id,sid,loginUser,loginUsername);
+        return Common.decorateReturnObject(ret);
+    }
+
+    @ApiOperation(value = "修改平台分享活动的内容")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name = "shopId", value = "店铺id", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "分享活动id", required = true, dataType = "Integer", paramType = "path"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 507, message = "信息签名不正确"),
+            @ApiResponse(code = 947, message = "开始时间不能晚于结束时间")
+    })
+    @Audit(departName = "shops")
+    @PutMapping("/shops/{shopId}/shareactivities/{id}")
+    public Object modifyShareActivity(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @RequestBody ShareActivityVo shareActivityVo,@LoginUser Long loginUser,@LoginName String loginUsername){
+        if(shareActivityVo.getBeginTime().compareTo(shareActivityVo.getEndTime())>0){
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME));
+        }
+        ReturnObject ret = shareActivityService.modifyShareActivity(id, shareActivityVo,loginUser,loginUsername);
+        return Common.decorateReturnObject(ret);
+    }
+
+    @ApiOperation(value = "删除草稿状态的分享活动")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name = "shopId", value = "店铺id", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "分享活动id", required = true, dataType = "Integer", paramType = "path"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 507, message = "信息签名不正确"),
+    })
+    @Audit(departName = "shops")
+    @DeleteMapping("/shops/{shopId}/shareactivities/{id}")
+    public Object deleteShareActivity(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
+        ReturnObject ret =shareActivityService.deleteShareActivity(id,loginUser,loginUsername);
+        return Common.decorateReturnObject(ret);
+    }
+
+    @ApiOperation(value = "上线分享活动")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name = "shopId", value = "店铺id", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "分享活动id", required = true, dataType = "Integer", paramType = "path"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 507, message = "信息签名不正确"),
+    })
+    @Audit(departName = "shops")
+    @PutMapping("/shops/{shopId}/shareactivities/{id}/online")
+    public Object onlineShareActivity(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
+        ReturnObject ret =shareActivityService.onlineShareActivity(id,loginUser,loginUsername);
+        return Common.decorateReturnObject(ret);
+    }
+
+    @ApiOperation(value = "下线分享活动")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name = "shopId", value = "店铺id", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "分享活动id", required = true, dataType = "Integer", paramType = "path"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 507, message = "信息签名不正确"),
+    })
+    @Audit(departName = "shops")
+    @PutMapping("/shops/{shopId}/shareactivities/{id}/offline")
+    public Object offlineShareActivity(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
+        ReturnObject ret =shareActivityService.offlineShareActivity(id,loginUser,loginUsername);
+        return Common.decorateReturnObject(ret);
+    }
+
 }
