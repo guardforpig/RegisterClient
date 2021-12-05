@@ -138,29 +138,18 @@ public class ProductService {
         return new ReturnObject(ReturnNo.OK,"成功");
     }
     @Transactional(readOnly = true)
-    public ReturnObject secondProducts(Integer id, Integer page, Integer pageSize) {
-        InternalReturnObject<CategoryVo> categoryById = shopService.getCategoryById(id);
-        Integer errno = categoryById.getErrno();
-        if(0 == errno){
-            CategoryVo categoryVo = categoryById.getData();
-            Long voId = categoryVo.getId();
-            return Objects.isNull(voId)?new ReturnObject<>(ReturnNo.OK):
-                    new ReturnObject<>(ReturnNo.OK,productDao.secondProducts(id,page,pageSize));
-        }else {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"分类id不存在");
-        }
-    }
-    @Transactional(readOnly = true)
-    public ReturnObject secondShopProducts(Integer did, Integer cid, Integer page, Integer pageSize) {
+    public ReturnObject getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
         InternalReturnObject<CategoryVo> categoryById = shopService.getCategoryById(cid);
         Integer errno = categoryById.getErrno();
         if(0 == errno){
             CategoryVo categoryVo = categoryById.getData();
-            Long voId = categoryVo.getId();
+            if (Objects.isNull(categoryVo)) {
+                new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "分类id不存在");
+            }
+                Long voId = categoryVo.getPid();
             return Objects.isNull(voId)?new ReturnObject<>(ReturnNo.OK):
-                    new ReturnObject<>(ReturnNo.OK,productDao.secondShopProducts(did,cid,page,pageSize));
-        }else {
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"分类id不存在");
+                    new ReturnObject<>(ReturnNo.OK,productDao.getProductsOfCategories(did, cid,page,pageSize));
         }
+        return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"分类id不存在");
     }
 }

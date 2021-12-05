@@ -4,9 +4,6 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
-import cn.edu.xmu.oomall.goods.microservice.ShopService;
-import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
-import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
@@ -235,22 +233,17 @@ public class ProductDao {
         return productMapper.updateByExampleSelective(productPo,productPoExample);
     }
 
-    public PageInfo<ProductPo> secondProducts(Integer id, Integer page, Integer pageSize) {
+    public PageInfo<ProductPo> getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize);
         ProductPoExample example = new ProductPoExample();
         ProductPoExample.Criteria criteria=example.createCriteria();
-        criteria.andCategoryIdEqualTo(Long.parseLong(String.valueOf(id)));
-        criteria.andStateEqualTo((byte)(Product.ProductState.ONSHELF.getCode()));
-        List<ProductPo> productPos = productMapper.selectByExample(example);
-        return new PageInfo<>(productPos);
-    }
-
-    public PageInfo<ProductPo> secondShopProducts(Integer did, Integer cid, Integer page, Integer pageSize) {
-        PageHelper.startPage(page,pageSize);
-        ProductPoExample example = new ProductPoExample();
-        ProductPoExample.Criteria criteria=example.createCriteria();
-        criteria.andCategoryIdEqualTo(Long.parseLong(String.valueOf(cid)))
-                .andShopIdEqualTo(Long.parseLong(String.valueOf(did)));
+        if (Objects.isNull(did)){
+            criteria.andCategoryIdEqualTo(Long.parseLong(String.valueOf(cid)))
+                    .andShopIdEqualTo(Long.parseLong(String.valueOf(did)));
+        }else{
+            criteria.andCategoryIdEqualTo(Long.parseLong(String.valueOf(cid)));
+            criteria.andStateEqualTo((byte)(Product.ProductState.ONSHELF.getCode()));
+        }
         List<ProductPo> productPos = productMapper.selectByExample(example);
         return new PageInfo<>(productPos);
     }

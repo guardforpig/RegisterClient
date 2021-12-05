@@ -1,17 +1,14 @@
 package cn.edu.xmu.oomall.goods.controller;
 
-import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.oomall.goods.model.bo.Goods;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.oomall.goods.service.GoodsService;
 import cn.edu.xmu.oomall.goods.service.ProductService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -254,28 +251,6 @@ public class GoodsController {
      * @author 何赟
      * @date 2021-12-5
      */
-    @ApiOperation(value="定义商品的运费模板")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
-            @ApiImplicitParam(name="shopId",value="商铺id",required = true,dataType = "integer",paramType = "path"),
-            @ApiImplicitParam(name="id",value="product id",required = true,dataType = "integer",paramType = "path"),
-            @ApiImplicitParam(name="fid",value="运费id",required = true,dataType = "Long",paramType = "path"),
-    })
-    @ApiResponses({
-            @ApiResponse(code = 0, message = "成功"),
-            @ApiResponse(code = 504, message = "资源不存在"),
-            @ApiResponse(code = 500, message = "服务器内部错误")
-    })
-    @PostMapping(value="shops/{shopId}/products/{id}/freightmodels/{fid}")
-    @Audit(departName = "shops")
-    public Object definitionFreight(@PathVariable("shopId") Integer shopId, @PathVariable("id") Integer productId, @PathVariable("fid") Integer fid) {
-        return Common.decorateReturnObject(productService.definitionFreight(shopId,productId,fid));
-    }
-
-    /**
-     * @author 何赟
-     * @date 2021-12-5
-     */
     @ApiOperation(value="获得二级分类下的上架商品")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
@@ -293,7 +268,7 @@ public class GoodsController {
     public Object secondProducts(@PathVariable("id") Integer id,
                                  @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        return Common.decorateReturnObject(productService.secondProducts(id,page,pageSize));
+        return Common.decorateReturnObject(productService.getProductsOfCategories(null, id,page,pageSize));
     }
 
     /**
@@ -318,7 +293,7 @@ public class GoodsController {
     public Object secondShopProducts(@PathVariable("did") Integer did,@PathVariable("id") Integer cid,
                                   @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                   @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
-        return Common.decorateReturnObject(productService.secondShopProducts(did,cid,page,pageSize));
+        return Common.decorateReturnObject(productService.getProductsOfCategories(did,cid,page,pageSize));
     }
 
 }
