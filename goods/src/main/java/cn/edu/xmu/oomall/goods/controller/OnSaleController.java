@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
 import static cn.edu.xmu.oomall.core.util.Common.*;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author yujie lin 22920192204242
@@ -253,7 +254,7 @@ public class OnSaleController {
             return decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME, "开始时间晚于结束时间。"));
         }
 
-        OnSale bo = (OnSale) cloneVo(onSale, OnSale.class);
+        OnSale bo = cloneVo(onSale, OnSale.class);
         bo.setId(id);
         ReturnObject returnObject1 = onsaleService.updateOnSale(bo, loginUserId, loginUserName);
         return decorateReturnObject(returnObject1);
@@ -280,7 +281,7 @@ public class OnSaleController {
             return decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME, "开始时间晚于结束时间。"));
         }
 
-        OnSale bo = (OnSale) cloneVo(onSale, OnSale.class);
+        OnSale bo = cloneVo(onSale, OnSale.class);
         bo.setId(id);
 
         ReturnObject returnObject1 = onsaleService.updateOnSaleNorSec(bo, shopId, loginUserId, loginUserName);
