@@ -2,9 +2,15 @@ package cn.edu.xmu.oomall.activity.controller;
 
 import cn.edu.xmu.oomall.activity.ActivityApplication;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
+import cn.edu.xmu.oomall.activity.microservice.OnSaleService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
+import cn.edu.xmu.oomall.activity.model.bo.OnSale;
+import cn.edu.xmu.oomall.activity.model.vo.ShareActivityVo;
+import cn.edu.xmu.oomall.activity.model.vo.StrategyVo;
 import cn.edu.xmu.oomall.activity.util.CreateObject;
+import cn.edu.xmu.oomall.core.util.JacksonUtil;
+import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
@@ -23,6 +29,10 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -42,9 +52,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ShareActivityControllerTest {
 
     private static String token = "0";
+    private static String adminToken;
 
     @Autowired
     private MockMvc mvc;
+
+    @MockBean
+    private OnSaleService onSaleService;
 
     @MockBean
     private GoodsService goodsService;
@@ -82,6 +96,7 @@ public class ShareActivityControllerTest {
         Mockito.when(redisUtil.get("shareactivivyid_1_shopid_10")).thenReturn(null);
         Mockito.when(redisUtil.get("shareactivivyid_1_shopid_2")).thenReturn("{\"@class\":\"cn.edu.xmu.oomall.activity.model.bo.ShareActivityBo\",\"id\":1,\"shopId\":2,\"shopName\":\"甜蜜之旅\",\"name\":\"分享活动1\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"state\":1,\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":\"2021-11-11 15:01:23.000\",\"gmtModified\":null,\"strategy\":null}");
         token = jwtHelper.createToken(666L, "lxc", 0L, 1, 5000);
+        adminToken = jwtHelper.createToken(1L, "admin", 0L, 1, 5000);
     }
 
     /**
@@ -352,6 +367,355 @@ public class ShareActivityControllerTest {
                 .andReturn().getResponse().getContentAsString();
         String expectString3 = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString3, responseString3, true);
+    }
+
+
+    @Test
+    @Transactional
+    public void addShareActivityOnOnSale_OnSaleOfflineState() throws Exception{
+        OnSale onSale = new OnSale();
+        onSale.setId(1L);
+        onSale.setState((byte) 2);
+        Mockito.when(onSaleService.getOnSaleById(1L)).thenReturn(new ReturnObject<>(onSale));
+        Mockito.when(onSaleService.updateAddOnSaleShareActId(1L,1L)).thenReturn(new ReturnObject<>(Boolean.TRUE));
+        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/1").header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString= "{\n" +
+                "\t\"errno\": 507,\n" +
+                "\t\"errmsg\": \"当前状态禁止此操作\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void addShareActivityOnOnSale_ShareActivityOfflineState() throws Exception{
+        OnSale onSale = new OnSale();
+        onSale.setId(1L);
+        onSale.setState((byte) 1);
+        Mockito.when(onSaleService.getOnSaleById(1L)).thenReturn(new ReturnObject<>(onSale));
+        Mockito.when(onSaleService.updateAddOnSaleShareActId(1L,2L)).thenReturn(new ReturnObject<>(Boolean.TRUE));
+        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/2").header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString= "{\n" +
+                "\t\"errno\": 507,\n" +
+                "\t\"errmsg\": \"当前状态禁止此操作\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void addShareActivityOnOnSale_ShareActivityIdNotFound() throws Exception{
+        OnSale onSale = new OnSale();
+        onSale.setId(1L);
+        onSale.setState((byte) 1);
+        Mockito.when(onSaleService.getOnSaleById(1L)).thenReturn(new ReturnObject<>(onSale));
+        Mockito.when(onSaleService.updateAddOnSaleShareActId(1L,-1L)).thenReturn(new ReturnObject<>(Boolean.TRUE));
+        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/-1").header("authorization", adminToken))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString= "{\n" +
+                "\t\"errno\": 504,\n" +
+                "\t\"errmsg\": \"操作的资源id不存在\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void addShareActivityOnOnSale_ShareActivityOnlineState() throws Exception{
+        OnSale onSale = new OnSale();
+        onSale.setId(1L);
+        onSale.setState((byte) 1);
+        Mockito.when(onSaleService.getOnSaleById(1L)).thenReturn(new ReturnObject<>(onSale));
+        Mockito.when(onSaleService.updateAddOnSaleShareActId(1L,1L)).thenReturn(new ReturnObject<>(Boolean.TRUE));
+        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/1").header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString= "{\n" +
+                "\t\"errno\": 0,\n" +
+                "\t\"errmsg\": \"成功\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void addShareActivityOnOnSale_ShareActivityDraftState() throws Exception{
+        OnSale onSale = new OnSale();
+        onSale.setId(1L);
+        onSale.setState((byte) 1);
+        Mockito.when(onSaleService.getOnSaleById(1L)).thenReturn(new ReturnObject<>(onSale));
+        Mockito.when(onSaleService.updateAddOnSaleShareActId(1L,4L)).thenReturn(new ReturnObject<>(Boolean.TRUE));
+        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/4").header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString= "{\n" +
+                "\t\"errno\": 0,\n" +
+                "\t\"errmsg\": \"成功\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void deleteShareActivityOnOnSale_ShareActivityIdNotFound() throws Exception{
+        OnSale onSale = new OnSale();
+        onSale.setId(1L);
+        onSale.setState((byte) 1);
+        Mockito.when(onSaleService.getOnSaleById(1L)).thenReturn(new ReturnObject<>(onSale));
+        Mockito.when(onSaleService.updateDeleteOnSaleShareActId(1L,-1L)).thenReturn(new ReturnObject<>(Boolean.FALSE));
+        String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/-1").header("authorization", adminToken))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString= "{\n" +
+                "\t\"errno\": 504,\n" +
+                "\t\"errmsg\": \"操作的资源id不存在\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void deleteShareActivityOnOnSale_Success() throws Exception{
+        OnSale onSale = new OnSale();
+        onSale.setId(1L);
+        onSale.setState((byte) 1);
+        Mockito.when(onSaleService.getOnSaleById(1L)).thenReturn(new ReturnObject<>(onSale));
+        Mockito.when(onSaleService.updateAddOnSaleShareActId(1L,4L)).thenReturn(new ReturnObject<>(Boolean.TRUE));
+        String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/4").header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString= "{\n" +
+                "\t\"errno\": 0,\n" +
+                "\t\"errmsg\": \"成功\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void modifyShareActivity_NotDraftState() throws Exception{
+        StrategyVo shareActivityStrategyVo=new StrategyVo(10L,10L);
+        List<StrategyVo> list = new ArrayList<>();
+        list.add(shareActivityStrategyVo);
+        ShareActivityVo shareActivityVo = new ShareActivityVo();
+        shareActivityVo.setName("分享活动5");
+        shareActivityVo.setBeginTime(LocalDateTime.parse("2021-11-11T18:30:30"));
+        shareActivityVo.setEndTime(LocalDateTime.parse("2021-11-11T19:30:40"));
+        shareActivityVo.setStrategy(list);
+        String json= JacksonUtil.toJson(shareActivityVo);
+        String responseString=this.mvc.perform(put("/shops/1/shareactivities/1")
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8").content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString="{\n" +
+                "\t\"errno\": 507,\n" +
+                "\t\"errmsg\": \"当前状态禁止此操作\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void modifyShareActivity_BeginTimeAfterEndTime() throws Exception{
+        StrategyVo shareActivityStrategyVo=new StrategyVo(10L,10L);
+        List<StrategyVo> list = new ArrayList<>();
+        list.add(shareActivityStrategyVo);
+        ShareActivityVo shareActivityVo = new ShareActivityVo();
+        shareActivityVo.setName("测试活动");
+        shareActivityVo.setBeginTime(LocalDateTime.parse("2022-11-11T18:30:30"));
+        shareActivityVo.setEndTime(LocalDateTime.parse("2021-11-11T19:30:40"));
+        shareActivityVo.setStrategy(list);
+        String json= JacksonUtil.toJson(shareActivityVo);
+        String responseString=this.mvc.perform(put("/shops/1/shareactivities/4")
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8").content(json))
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString="{\n" +
+                "\t\"errno\": 947,\n" +
+                "\t\"errmsg\": \"开始时间不能晚于结束时间\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void modifyShareActivity_ShareActivityIdNotFound() throws Exception{
+        StrategyVo shareActivityStrategyVo=new StrategyVo(10L,10L);
+        List<StrategyVo> list = new ArrayList<>();
+        list.add(shareActivityStrategyVo);
+        ShareActivityVo shareActivityVo = new ShareActivityVo();
+        shareActivityVo.setName("测试活动");
+        shareActivityVo.setBeginTime(LocalDateTime.parse("2021-11-11T18:30:30"));
+        shareActivityVo.setEndTime(LocalDateTime.parse("2021-11-11T19:30:40"));
+        shareActivityVo.setStrategy(list);
+        String json= JacksonUtil.toJson(shareActivityVo);
+        String responseString=this.mvc.perform(put("/shops/1/shareactivities/-1")
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8").content(json))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString= "{\n" +
+                "\t\"errno\": 504,\n" +
+                "\t\"errmsg\": \"操作的资源id不存在\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void modifyShareActivity_Success() throws Exception{
+        StrategyVo shareActivityStrategyVo=new StrategyVo(10L,10L);
+        List<StrategyVo> list = new ArrayList<>();
+        list.add(shareActivityStrategyVo);
+        ShareActivityVo shareActivityVo = new ShareActivityVo();
+        shareActivityVo.setName("测试活动");
+        shareActivityVo.setBeginTime(LocalDateTime.parse("2021-11-11T18:30:30"));
+        shareActivityVo.setEndTime(LocalDateTime.parse("2021-11-11T19:30:40"));
+        shareActivityVo.setStrategy(list);
+        String json= JacksonUtil.toJson(shareActivityVo);
+        String responseString=this.mvc.perform(put("/shops/1/shareactivities/4")
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8").content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString= "{\n" +
+                "\t\"errno\": 0,\n" +
+                "\t\"errmsg\": \"成功\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void deleteShareActivity_ShareActivityIdNotFound() throws Exception{
+        String responseString=this.mvc.perform(delete("/shops/1/shareactivities/-1")
+                        .header("authorization", adminToken))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString="{\n" +
+                "\t\"errno\": 504,\n" +
+                "\t\"errmsg\": \"操作的资源id不存在\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void deleteShareActivity_NotDraftState() throws Exception{
+        String responseString=this.mvc.perform(delete("/shops/1/shareactivities/1")
+                        .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString = "{\n" +
+                "\t\"errno\": 507,\n" +
+                "\t\"errmsg\": \"当前状态禁止此操作\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void deleteShareActivity_Success() throws Exception{
+        String responseString=this.mvc.perform(delete("/shops/1/shareactivities/4")
+                        .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString = "{\n" +
+                "\t\"errno\": 0,\n" +
+                "\t\"errmsg\": \"成功\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void shareActivityOnline_NotOfflineState() throws Exception{
+        String responseString=this.mvc.perform(put("/shops/1/shareactivities/1/online")
+                        .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString = "{\n" +
+                "\t\"errno\": 507,\n" +
+                "\t\"errmsg\": \"当前状态禁止此操作\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void shareActivityOnline_ShareActivityIdNotFound() throws Exception{
+        String responseString=this.mvc.perform(put("/shops/1/shareactivities/-1/online")
+                        .header("authorization", adminToken))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString = "{\n" +
+                "\t\"errno\": 504,\n" +
+                "\t\"errmsg\": \"操作的资源id不存在\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void shareActivityOnline_Success() throws Exception{
+        String responseString=this.mvc.perform(put("/shops/1/shareactivities/2/online")
+                        .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString = "{\n" +
+                "\t\"errno\": 0,\n" +
+                "\t\"errmsg\": \"成功\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void shareActivityOffline_NotOnlineState() throws Exception{
+        String responseString=this.mvc.perform(put("/shops/1/shareactivities/3/offline")
+                        .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString = "{\n" +
+                "\t\"errno\": 507,\n" +
+                "\t\"errmsg\": \"当前状态禁止此操作\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void shareActivityOffline_ShareActivityIdNotFound() throws Exception{
+        String responseString=this.mvc.perform(put("/shops/1/shareactivities/-1/offline")
+                        .header("authorization", adminToken))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString = "{\n" +
+                "\t\"errno\": 504,\n" +
+                "\t\"errmsg\": \"操作的资源id不存在\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
+    }
+    @Test
+    @Transactional
+    public void shareActivityOffline_Success() throws Exception{
+        String responseString=this.mvc.perform(put("/shops/1/shareactivities/1/offline")
+                        .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString = "{\n" +
+                "\t\"errno\": 0,\n" +
+                "\t\"errmsg\": \"成功\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString,responseString,false);
     }
 
 }

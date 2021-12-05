@@ -8,10 +8,15 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 
+
 /**
  * @author RenJieZheng 22920192204334
  */
-@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core", "cn.edu.xmu.oomall.coupon","cn.edu.xmu.privilegegateway"})
+/**
+ * @author qingguo Hu 22920192204208
+ */
+@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core",
+        "cn.edu.xmu.oomall.coupon","cn.edu.xmu.privilegegateway"})
 @EnableConfigurationProperties
 @MapperScan("cn.edu.xmu.oomall.coupon.mapper")
 @EnableFeignClients(basePackages = "cn.edu.xmu.oomall.coupon.microservice")

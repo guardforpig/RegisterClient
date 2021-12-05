@@ -304,11 +304,15 @@ public class OnsaleService {
             return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE);
         }
 
+        // 判断数量是否超过最大值
+        if(quantity>onsale.getMaxQuantity()){
+            return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE);
+        }
+
 
         Integer groupNum=onsale.getNumKey();
-        Integer randomRound=onsale.getMaxQuantity();
 
-        return onsaleDao.decreaseOnSaleQuantity(id,quantity,groupNum,onsale.getQuantity(),randomRound);
+        return onsaleDao.decreaseOnSaleQuantity(id,quantity,groupNum,onsale.getQuantity());
 
     }
 
@@ -332,6 +336,7 @@ public class OnsaleService {
         if(!(boolean)ret.getData()){
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该价格浮动不属于该商铺");
         }
+
 
         Integer groupNum=onsale.getNumKey();
 
