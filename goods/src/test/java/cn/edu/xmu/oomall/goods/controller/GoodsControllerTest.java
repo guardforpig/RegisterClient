@@ -481,15 +481,6 @@ class GoodsControllerTest {
         Mockito.when(shopService.getShopInfo(2L)).thenReturn(new InternalReturnObject(1, "", List.of()));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
     }
-    @Test
-    @Transactional(rollbackFor = Exception.class)
-    public void addFreightModels1() throws Exception {
-        this.mockMvc.perform(post("/shops/1/products/1551/freightmodels/198")
-                        .header("authorization", adminToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.errno").value(0))
-                .andExpect(jsonPath("$.errmsg").value("成功"));
-    }
 
     @Test
     @Transactional(readOnly = true)

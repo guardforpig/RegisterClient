@@ -265,7 +265,7 @@ public class GoodsController {
     })
     @GetMapping(value="categories/{id}/products")
     @Audit(departName = "shops")
-    public Object secondProducts(@PathVariable("id") Integer id,
+    public Object getProductOfCategory(@PathVariable("id") Integer id,
                                  @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         return Common.decorateReturnObject(productService.getProductsOfCategories(null, id,page,pageSize));
@@ -290,7 +290,7 @@ public class GoodsController {
     })
     @GetMapping(value="shops/{did}/categories/{id}/products" )
     @Audit(departName = "shops")
-    public Object secondShopProducts(@PathVariable("did") Integer did,@PathVariable("id") Integer cid,
+    public Object getProductOfCategoryInShop(@PathVariable("did") Integer did,@PathVariable("id") Integer cid,
                                   @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                   @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
         return Common.decorateReturnObject(productService.getProductsOfCategories(did,cid,page,pageSize));
