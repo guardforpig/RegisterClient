@@ -222,7 +222,7 @@ public class ProductDao {
         return productDraftPoMapper.selectByPrimaryKey(id);
     }
 
-    public PageInfo<ProductPo> getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
+    public Object getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize);
         ProductPoExample example = new ProductPoExample();
         ProductPoExample.Criteria criteria=example.createCriteria()
@@ -232,7 +232,12 @@ public class ProductDao {
         }else{
             criteria.andStateEqualTo((byte)(Product.ProductState.ONSHELF.getCode()));
         }
-        List<ProductPo> productPos = productMapper.selectByExample(example);
+        List<ProductPo> productPos = null;
+        try {
+            productPos = productMapper.selectByExample(example);
+        } catch (Exception e) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
         return new PageInfo<>(productPos);
     }
 }
