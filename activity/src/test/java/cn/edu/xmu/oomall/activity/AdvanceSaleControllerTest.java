@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.activity;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -43,14 +44,16 @@ public class AdvanceSaleControllerTest {
     private GoodsService goodsService;
     @Autowired
     private WebApplicationContext wac;
-
+    @MockBean
+    private RedisUtil redisUtil;
     final Charset charset=Charset.forName("UTF-8");
 
     @BeforeEach
     public void init() {
         mvc = MockMvcBuilders.webAppContextSetup(wac).build();  //初始化MockMvc对象
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+        Mockito.when(redisUtil.set(Mockito.anyString(), Mockito.any(), Mockito.anyLong())).thenReturn(true);
     }
-
     @Test
     public void onlineAdvancesale1() throws Exception {            //上架成功（重新上架
         Mockito.when(goodsService.onlineOnsale(4L,1L)).thenReturn(new InternalReturnObject());

@@ -3,7 +3,7 @@ package cn.edu.xmu.oomall.activity.dao;
 import cn.edu.xmu.oomall.activity.mapper.AdvanceSalePoMapper;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSale;
 import cn.edu.xmu.oomall.activity.model.po.AdvanceSalePo;
-import cn.edu.xmu.oomall.core.util.Common;
+import cn.edu.xmu.privilegegateway.annotation.util.Common;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -49,12 +49,14 @@ public class AdvanceSaleDao {
         ReturnObject returnObject=null;
         try{
             AdvanceSalePo po=null;
-            AdvanceSale bo=(AdvanceSale) redisUtil.get("AdvanceSaleId"+id);
+            AdvanceSale bo=(AdvanceSale) redisUtil.get(String.format(ADVANCESALE_KEY,id));
             if(bo!=null) {
                 po=(AdvanceSalePo) cloneVo(bo,AdvanceSalePo.class);
             }
             else {
                 po=advanceSalePoMapper.selectByPrimaryKey(id);
+                bo=(AdvanceSale) Common.cloneVo(po,AdvanceSale.class);
+                redisUtil.set(String.format(ADVANCESALE_KEY,id),bo,categoryTimeout);
             }
             returnObject=new ReturnObject(po);
         }catch(Exception e){

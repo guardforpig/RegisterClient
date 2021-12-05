@@ -44,7 +44,11 @@ public class AdvanceSaleService {
     public ReturnObject onlineAdvancesale(Long adminId, String adminName,Long shopId, Long advancesaleId) {
         ReturnObject returnObject=null;
         AdvanceSalePo po=null;
-        po=(AdvanceSalePo) advanceSaleDao.selectAdvanceSaleByKey(advancesaleId).getData();
+        ReturnObject r1=advanceSaleDao.selectAdvanceSaleByKey(advancesaleId);
+        if(r1.getCode().equals(ReturnNo.INTERNAL_SERVER_ERR)){
+            return r1;
+        }
+        po=(AdvanceSalePo) r1.getData();
         if(po==null){
             returnObject=new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "目标预售活动不存在");
         }else if(!po.getShopId().equals(shopId)){
@@ -78,7 +82,11 @@ public class AdvanceSaleService {
     public ReturnObject offlineAdvancesale(Long adminId,String adminName,Long shopId, Long advancesaleId)  {
         ReturnObject returnObject=null;
         AdvanceSalePo po=null;
-        po=(AdvanceSalePo) advanceSaleDao.selectAdvanceSaleByKey(advancesaleId).getData();
+        ReturnObject r1=advanceSaleDao.selectAdvanceSaleByKey(advancesaleId);
+        if(r1.getCode().equals(ReturnNo.INTERNAL_SERVER_ERR)){
+            return r1;
+        }
+        po=(AdvanceSalePo) r1.getData();
         if(po==null){
             returnObject=new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "目标预售活动不存在");
         }else if(!po.getShopId().equals(shopId)){
@@ -111,7 +119,12 @@ public class AdvanceSaleService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject modifyAdvancesale(Long adminId, Long shopId, String adminName,Long advancesaleId, AdvanceSaleModifyVo advanceSaleModifyVo) {
         ReturnObject returnObject=null;
-        AdvanceSalePo po=(AdvanceSalePo) advanceSaleDao.selectAdvanceSaleByKey(advancesaleId).getData();
+        AdvanceSalePo po=null;
+        ReturnObject r1=advanceSaleDao.selectAdvanceSaleByKey(advancesaleId);
+        if(r1.getCode().equals(ReturnNo.INTERNAL_SERVER_ERR)){
+            return r1;
+        }
+        po=(AdvanceSalePo) r1.getData();
         if(po!=null){
             if(po.getShopId().equals(shopId)){
                 if(po.getState()==0){
@@ -161,7 +174,12 @@ public class AdvanceSaleService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject deleteAdvancesale(Long adminId, Long shopId, Long advancesaleId) {
         ReturnObject returnObject=null;
-        AdvanceSalePo po=(AdvanceSalePo) advanceSaleDao.selectAdvanceSaleByKey(advancesaleId).getData();
+        AdvanceSalePo po=null;
+        ReturnObject r1=advanceSaleDao.selectAdvanceSaleByKey(advancesaleId);
+        if(r1.getCode().equals(ReturnNo.INTERNAL_SERVER_ERR)){
+            return r1;
+        }
+        po=(AdvanceSalePo) r1.getData();
         if(po!=null){
             if(po.getShopId().equals(shopId)){
                 if(po.getState()==0){
