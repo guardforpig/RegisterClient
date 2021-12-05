@@ -41,6 +41,8 @@
         <module>shop</module>
         <module>comment</module>
         <module>alipay</module>
+        <module>wechatpay</module>
+
     </modules>
 
     <dependencyManagement>
