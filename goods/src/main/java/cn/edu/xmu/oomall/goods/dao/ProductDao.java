@@ -222,23 +222,12 @@ public class ProductDao {
         return productDraftPoMapper.selectByPrimaryKey(id);
     }
 
-    public Integer updateProductFreight(Integer shopId, Integer productId, Integer fid) {
-        ProductPoExample productPoExample = new ProductPoExample();
-        productPoExample.createCriteria()
-                .andShopIdEqualTo(Long.parseLong(String.valueOf(shopId)))
-                .andIdEqualTo(Long.parseLong(String.valueOf(productId)));
-        ProductPo productPo = new ProductPo();
-        productPo.setFreightId(Long.parseLong(String.valueOf(fid)));
-
-        return productMapper.updateByExampleSelective(productPo,productPoExample);
-    }
-
     public PageInfo<ProductPo> getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize);
         ProductPoExample example = new ProductPoExample();
         ProductPoExample.Criteria criteria=example.createCriteria()
                 .andCategoryIdEqualTo(Long.parseLong(String.valueOf(cid)));
-        if (Objects.isNull(did)){
+        if (Objects.nonNull(did)){
             criteria.andShopIdEqualTo(Long.parseLong(String.valueOf(did)));
         }else{
             criteria.andStateEqualTo((byte)(Product.ProductState.ONSHELF.getCode()));

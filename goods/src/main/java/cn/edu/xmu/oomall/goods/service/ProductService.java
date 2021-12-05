@@ -131,12 +131,6 @@ public class ProductService {
             return ret;
         }
     }
-
-    @Transactional(rollbackFor = Exception.class)
-    public ReturnObject definitionFreight(Integer shopId, Integer productId, Integer fid) {
-        Integer flag = productDao.updateProductFreight(shopId, productId, fid);
-        return new ReturnObject(ReturnNo.OK,"成功");
-    }
     @Transactional(readOnly = true)
     public ReturnObject getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
         InternalReturnObject<CategoryVo> categoryById = shopService.getCategoryById(cid);
