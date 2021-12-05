@@ -73,7 +73,7 @@ public class AdvanceSaleControllerTest {
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 1, 3600);
 
         SimpleOnSaleInfoVo vo1=new SimpleOnSaleInfoVo();
-        vo1.setActivityId(1L);
+        vo1.setActivityId(2L);
         vo1.setBeginTime(LocalDateTime.parse("2021-06-21T17:38:20.000Z",df));
         vo1.setEndTime(LocalDateTime.parse("2021-12-29T17:38:20.000Z",df));
         list1.add(vo1);
@@ -119,7 +119,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"total\":10,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"name\":\"预售活动1\"},{\"id\":2,\"name\":\"预售活动2\"},{\"id\":3,\"name\":\"预售活动3\"},{\"id\":4,\"name\":\"预售活动4\"},{\"id\":5,\"name\":\"预售活动5\"},{\"id\":6,\"name\":\"预售活动6\"},{\"id\":7,\"name\":\"预售活动7\"},{\"id\":8,\"name\":\"预售活动8\"},{\"id\":9,\"name\":\"预售活动9\"},{\"id\":10,\"name\":\"预售活动10\"}]},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"total\":6,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"预售活动2\"},{\"id\":5,\"name\":\"预售活动5\"},{\"id\":7,\"name\":\"预售活动7\"},{\"id\":8,\"name\":\"预售活动8\"},{\"id\":9,\"name\":\"预售活动9\"},{\"id\":10,\"name\":\"预售活动10\"}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -134,7 +134,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect((status().isOk()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"name\":\"预售活动1\"}]},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"预售活动2\"}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -199,21 +199,21 @@ public class AdvanceSaleControllerTest {
      *
      * @throws Exception
      */
-    //1.查询activityid为1的预售活动的详细信息，成功查到
+    //1.查询activityid为2的预售活动的详细信息，成功查到
     @Test
     @Transactional
     public void getOnlineAdvanceSaleInfoTest1() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(shopService.getShop(4L)).thenReturn(new InternalReturnObject<>(new ShopInfoVo(4L,"努力向前")));
+        Mockito.when(shopService.getShop(5L)).thenReturn(new InternalReturnObject<>(new ShopInfoVo(5L,"坚持就是胜利")));
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject=new InternalReturnObject<>(new PageInfo<>(list1));
-        Mockito.when(goodsService.getShopOnSaleInfo(4L,1L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
+        Mockito.when(goodsService.getShopOnSaleInfo(5L,2L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
         InternalReturnObject<FullOnSaleVo> returnObject=new InternalReturnObject<>(list3.get(0));
         Mockito.when(goodsService.getOnSaleInfo(pageInfoReturnObject.getData().getList().get(0).getId())).thenReturn(returnObject);
-        String responseString = mvc.perform(get("/advancesales/1"))
+        String responseString = mvc.perform(get("/advancesales/2"))
                 .andExpect((status().isOk()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected ="{\"errno\":0,\"data\":{\"id\":1,\"name\":\"预售活动1\",\"shop\":{\"id\":4,\"name\":\"努力向前\"},\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":2,\"name\":\"预售活动2\",\"shop\":{\"id\":4,\"name\":\"努力向前\"},\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -263,13 +263,13 @@ public class AdvanceSaleControllerTest {
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
-    //5.查询activityId为1的预售活动，假设查找OnSale表时找不到
+    //5.查询activityId为2的预售活动，假设查找OnSale表时找不到
     @Test
     @Transactional
     public void getOnlineAdvanceSaleInfoTest5() throws Exception {
         InternalReturnObject<PageInfo<FullOnSaleVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>());
-        Mockito.when(goodsService.getShopOnSaleInfo(4L,1L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
-        String responseString = mvc.perform(get("/advancesales/1"))
+        Mockito.when(goodsService.getShopOnSaleInfo(5L,2L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
+        String responseString = mvc.perform(get("/advancesales/2"))
                 .andExpect((status().isNotFound()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -277,21 +277,22 @@ public class AdvanceSaleControllerTest {
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
+
     //1.根据shopId,productId,beginTime,endTime查询
     @Test
     @Transactional
     public void getShopAdvanceSaleTest1() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
-        Mockito.when(shopService.getShop(4L)).thenReturn(new InternalReturnObject<>(new ShopInfoVo(4L,"努力向前")));
+        adminToken =jwtHelper.createToken(1L,"admin",5L, 1,3600);
+        Mockito.when(shopService.getShop(5L)).thenReturn(new InternalReturnObject<>(new ShopInfoVo(5L,"坚持就是胜利")));
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new InternalReturnObject<>(new PageInfo<>(list1));
-        Mockito.when(goodsService.getAllOnSale(4L,1552L,LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),LocalDateTime.parse("2021-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
-        String responseString = mvc.perform(get("/shops/4/advancesales?productId=1552&beginTime=2021-06-21T17:38:20.000Z&endTime=2021-12-29T17:38:20.000Z")
+        Mockito.when(goodsService.getAllOnSale(5L,1552L,LocalDateTime.parse("2021-06-21T17:38:20.000Z",df),LocalDateTime.parse("2021-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
+        String responseString = mvc.perform(get("/shops/5/advancesales?productId=1552&beginTime=2021-06-21T17:38:20.000Z&endTime=2021-12-29T17:38:20.000Z")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect((status().isOk()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"name\":\"预售活动1\"}]},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"预售活动2\"}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -489,7 +490,7 @@ public class AdvanceSaleControllerTest {
                 .andExpect((status().isOk()))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":1,\"name\":\"预售活动1\",\"shop\":{\"id\":4,\"name\":\"努力向前\"},\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2021-11-11T15:04:04.000\",\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null},\"state\":1},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":1,\"name\":\"预售活动1\",\"shop\":{\"id\":4,\"name\":\"努力向前\"},\"product\":{\"productId\":1,\"name\":\"算法书\",\"imageUrl\":\"helloworld\"},\"payTime\":\"2021-11-12T15:04:04.000\",\"beginTime\":\"2021-06-21T17:38:20.001\",\"endTime\":\"2021-12-29T17:38:20.001\",\"price\":20,\"quantity\":10,\"advancePayPrice\":100,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2021-11-11T15:04:04.000\",\"gmtModified\":null,\"modifier\":{\"id\":null,\"name\":null},\"state\":2},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
