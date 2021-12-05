@@ -42,7 +42,7 @@
         <module>comment</module>
         <module>alipay</module>
         <module>wechatpay</module>
-
+        <module>public-test</module>
     </modules>
 
     <dependencyManagement>
