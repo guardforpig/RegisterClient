@@ -236,12 +236,11 @@ public class ProductDao {
     public PageInfo<ProductPo> getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize);
         ProductPoExample example = new ProductPoExample();
-        ProductPoExample.Criteria criteria=example.createCriteria();
+        ProductPoExample.Criteria criteria=example.createCriteria()
+                .andCategoryIdEqualTo(Long.parseLong(String.valueOf(cid)));
         if (Objects.isNull(did)){
-            criteria.andCategoryIdEqualTo(Long.parseLong(String.valueOf(cid)))
-                    .andShopIdEqualTo(Long.parseLong(String.valueOf(did)));
+            criteria.andShopIdEqualTo(Long.parseLong(String.valueOf(did)));
         }else{
-            criteria.andCategoryIdEqualTo(Long.parseLong(String.valueOf(cid)));
             criteria.andStateEqualTo((byte)(Product.ProductState.ONSHELF.getCode()));
         }
         List<ProductPo> productPos = productMapper.selectByExample(example);
