@@ -2,21 +2,27 @@ package cn.edu.xmu.oomall.coupon.dao;
 
 
 import cn.edu.xmu.oomall.core.model.VoObject;
-import cn.edu.xmu.oomall.core.util.ImgHelper;
-import cn.edu.xmu.oomall.core.util.ReturnNo;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.core.util.*;
 import cn.edu.xmu.oomall.coupon.mapper.CouponActivityPoMapper;
+import cn.edu.xmu.oomall.coupon.mapper.CouponOnsalePoMapper;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
+import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPo;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
+import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePo;
+import cn.edu.xmu.oomall.coupon.model.po.CouponOnsalePoExample;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,13 +30,23 @@ import java.util.Map;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
+
 /**
  * @author RenJieZheng 22920192204334
+ */
+/**
+ * @author qingguo Hu 22920192204208
  */
 @Repository
 public class CouponActivityDao {
     @Autowired
     CouponActivityPoMapper couponActivityPoMapper;
+
+    @Autowired
+    CouponOnsalePoMapper couponOnsalePoMapper;
+
+    @Autowired
+    private RedisUtil redisUtils;
 
     @Value("${oomall.coupon.webdav.user}")
     String webDavUser;
@@ -40,6 +56,19 @@ public class CouponActivityDao {
 
     @Value("${oomall.coupon.webdav.baseurl}")
     String baseUrl;
+
+    @Value("${oomall.coupon.bo.expiretime}")
+    private long boTimeout;
+
+    private static final Logger logger = LoggerFactory.getLogger(CouponActivityDao.class);
+
+    public final static String COUPONACTIVITYKEY = "couponactivity_%d";
+
+    public final static String COUPONONSALEKEY = "coupononsale_%d";
+
+
+
+
     /**
      * 查看优惠活动模块的所有活动
      * @return ReturnObject<List<Map<String, Object>>>
@@ -116,7 +145,7 @@ public class CouponActivityDao {
             if (couponActivityPo == null){
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            return new ReturnObject<>((CouponActivity)cloneVo(couponActivityPo,CouponActivity.class));
+            return new ReturnObject<>((CouponActivity) cloneVo(couponActivityPo,CouponActivity.class));
         }catch(Exception e){
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
         }
@@ -132,7 +161,7 @@ public class CouponActivityDao {
     public ReturnObject<CouponActivityPo> updateImageUrl(Long id, CouponActivity couponActivity, MultipartFile multipartFile){
         int ret;
         try{
-           CouponActivityPo couponActivityPo = couponActivityPoMapper.selectByPrimaryKey(id);
+            CouponActivityPo couponActivityPo = couponActivityPoMapper.selectByPrimaryKey(id);
             // 资源找不到
             if (couponActivityPo == null){
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -164,11 +193,170 @@ public class CouponActivityDao {
             if (ret == 0) {
                 return new ReturnObject<>(ReturnNo.FIELD_NOTVALID);
             } else {
-               return new ReturnObject<>(ReturnNo.OK);
+                return new ReturnObject<>(ReturnNo.OK);
             }
         }catch(Exception e){
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
         }
     }
 
+
+    /**
+     * @author qingguo Hu 22920192204208
+     */
+    public ReturnObject getCouponActivityById(Long id) {
+        try {
+            String key = String.format(COUPONACTIVITYKEY, id);
+            Serializable serializableBo = redisUtils.get(key);
+            if (serializableBo != null) {
+                return new ReturnObject<>((CouponActivity) serializableBo);
+            }
+            ReturnObject<CouponActivity> retCouponActivity = showCouponActivityPoStraight(id);
+            if (!retCouponActivity.getCode().equals(ReturnNo.OK)) {
+                return retCouponActivity;
+            }
+            redisUtils.set(key, retCouponActivity.getData(), boTimeout);
+            return new ReturnObject<>(retCouponActivity.getData());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+    public ReturnObject getCouponOnsaleById(Long id ) {
+        try {
+            CouponOnsalePo po = couponOnsalePoMapper.selectByPrimaryKey(id);
+            if (po == null) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            CouponOnsale couponOnsale = cloneVo(po, CouponOnsale.class);
+            return new ReturnObject<>(couponOnsale);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+    public ReturnObject listCouponOnsalesByActivityId(Long activityId, Integer pageNumber, Integer pageSize) {
+        try {
+            PageHelper.startPage(pageNumber, pageSize, true, false, true);
+            CouponOnsalePoExample example = new CouponOnsalePoExample();
+            example.createCriteria().andActivityIdEqualTo(activityId);
+            List<CouponOnsalePo> poList = couponOnsalePoMapper.selectByExample(example);
+            if (poList.size() == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+
+            ReturnObject ret = new ReturnObject<>(new PageInfo<>(poList));
+            return Common.getPageRetVo(ret, CouponOnsale.class);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+
+    public ReturnObject listCouponActivitiesByOnsaleId(Long onsaleId, Integer pageNumber, Integer pageSize) {
+        try {
+            PageHelper.startPage(pageNumber, pageSize, true, false, true);
+            CouponOnsalePoExample example = new CouponOnsalePoExample();
+            example.createCriteria().andOnsaleIdEqualTo(onsaleId);
+            List<CouponOnsalePo> couponOnsalePoList = couponOnsalePoMapper.selectByExample(example);
+            if (couponOnsalePoList.size() == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            ReturnObject ret = new ReturnObject<>(new PageInfo<>(couponOnsalePoList));
+            List<CouponActivity> couponActivityList = new ArrayList<>();
+            for (CouponOnsalePo couponOnsalePo : couponOnsalePoList) {
+                ReturnObject<CouponActivity> retCouponActivity = getCouponActivityById(couponOnsalePo.getActivityId());
+                if (retCouponActivity.getCode().equals(ReturnNo.OK)) {
+                    couponActivityList.add(retCouponActivity.getData());
+                }
+            }
+            ((PageInfo) ret.getData()).setList(couponActivityList);
+            return Common.getPageRetVo(ret, CouponActivity.class);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+
+    public ReturnObject listCouponOnsalesByOnsaleIdAndActivityId(Long onsaleId, Long activityId, Integer pageNumber, Integer pageSize) {
+        try {
+            PageHelper.startPage(pageNumber, pageSize);
+            CouponOnsalePoExample example = new CouponOnsalePoExample();
+            example.createCriteria().andOnsaleIdEqualTo(onsaleId).andActivityIdEqualTo(activityId);
+            List<CouponOnsalePo> poList = couponOnsalePoMapper.selectByExample(example);
+            if (poList.size() == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+
+            ReturnObject ret = new ReturnObject<>(new PageInfo<>(poList));
+            return Common.getPageRetVo(ret, CouponOnsale.class);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+
+    public ReturnObject updateCouponActivity(CouponActivity couponActivity) {
+        try {
+            String key = String.format(COUPONACTIVITYKEY, couponActivity.getId());
+            CouponActivityPo couponActivityPo = cloneVo(couponActivity, CouponActivityPo.class);
+            int flag = couponActivityPoMapper.updateByPrimaryKeySelective(couponActivityPo);
+            if (flag == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            } else {
+                redisUtils.del(key);
+                return new ReturnObject<>(ReturnNo.OK);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+
+    public ReturnObject insertCouponOnsale(CouponOnsale couponOnsale) {
+        try {
+            CouponOnsalePo couponOnsalePo = cloneVo(couponOnsale, CouponOnsalePo.class);
+            couponOnsalePoMapper.insert(couponOnsalePo);
+            return new ReturnObject<>(ReturnNo.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+    public ReturnObject deleteCouponOnsaleById(Long id) {
+        try {
+            String key = String.format(COUPONONSALEKEY, id);
+            int flag = couponOnsalePoMapper.deleteByPrimaryKey(id);
+            if (flag == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            } else {
+                redisUtils.del(key);
+                return new ReturnObject<>(ReturnNo.OK);
+            }
+        } catch (Exception e) {
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+    public ReturnObject deleteCouponActivityById(Long id) {
+        try {
+            String key = String.format(COUPONACTIVITYKEY, id);
+            int flag = couponActivityPoMapper.deleteByPrimaryKey(id);
+            if (flag == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            } else {
+                redisUtils.del(key);
+                return new ReturnObject<>(ReturnNo.OK);
+            }
+        } catch (Exception e) {
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
 }
