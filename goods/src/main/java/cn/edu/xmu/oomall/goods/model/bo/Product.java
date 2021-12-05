@@ -87,10 +87,10 @@ public class Product implements Serializable {
         /**
          * 共四种状态
          */
-        WAIT_FOR_AUDIT(1,"待审核"),
-        OFFSHELF(2,"下架"),
-        ONSHELF(3,"上架"),
-        BANNED(4,"禁售中");
+        DRAFT(0,"草稿"),
+        OFFSHELF(1,"下架"),
+        ONSHELF(2,"上架"),
+        BANNED(3,"禁售中");
         private int code;
         private String state;
         ProductState(int code, String state) {

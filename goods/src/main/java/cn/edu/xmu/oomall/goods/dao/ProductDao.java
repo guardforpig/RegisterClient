@@ -178,11 +178,11 @@ public class ProductDao {
             if (productDraftPo.getProductId() == 0) {
                 productPo.setId(null);
                 productMapper.insert(productPo);
-                productPo.setState((byte)1);
+                productPo.setState((byte)Product.ProductState.OFFSHELF.getCode());
             } else {
                 productPo.setId(productDraftPo.getProductId());
                 productMapper.updateByPrimaryKey(productPo);
-                productPo.setState((byte)1);
+                productPo.setState((byte)Product.ProductState.OFFSHELF.getCode());
             }
             String key = String.format(GOODSKEY, productPo.getGoodsId());
             redisUtil.del(key);

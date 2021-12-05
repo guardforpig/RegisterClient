@@ -38,7 +38,7 @@ public class ProductService {
         }
         ReturnObject<Product> ret=productDao.publishById(productId);
         if(ret.getData()!=null){
-            ReturnObject temp=productDao.alterProductStates(ret.getData(), (byte) Product.ProductState.OFFSHELF.getCode(),(byte) Product.ProductState.WAIT_FOR_AUDIT.getCode());
+            ReturnObject temp=productDao.alterProductStates(ret.getData(), (byte) Product.ProductState.OFFSHELF.getCode(),(byte) Product.ProductState.DRAFT.getCode());
             if(temp.getData()!=null){
                 return new ReturnObject(ReturnNo.OK);
             }else{
@@ -88,13 +88,12 @@ public class ProductService {
     }
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject allowProduct(Long shopId,Long productId) {
+        if(shopId!=0){
+            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
+        }
         Product product = productDao.getProduct(productId);
         if (product.getState()==(byte)-1) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在");
-        }
-        if(!product.getShopId().equals(shopId))
-        {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
         }
         ReturnObject ret = productDao.alterProductStates(product, (byte) Product.ProductState.OFFSHELF.getCode(), (byte) Product.ProductState.BANNED.getCode());
         if(ret.getData()!=null){
@@ -107,13 +106,12 @@ public class ProductService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject prohibitProduct(Long shopId,Long productId)
     {
+        if(shopId!=0){
+            return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
+        }
         Product product= productDao.getProduct(productId);
         if (product.getState()==(byte)-1) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "货品id不存在");
-        }
-        if(!product.getShopId().equals(shopId))
-        {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"该货品不属于该商铺");
         }
         ReturnObject ret=productDao.alterProductStates(product,(byte)Product.ProductState.BANNED.getCode(),(byte)Product.ProductState.OFFSHELF.getCode(),(byte)Product.ProductState.ONSHELF.getCode());
         if(ret.getData()!=null){
