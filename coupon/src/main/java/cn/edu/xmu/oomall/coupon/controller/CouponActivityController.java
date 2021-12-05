@@ -4,15 +4,20 @@ package cn.edu.xmu.oomall.coupon.controller;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.service.CouponActivityService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
+import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -25,12 +30,18 @@ import java.util.List;
 /**
  * @author RenJieZheng 22920192204334
  */
+/**
+ * @author qingguo Hu 22920192204208
+ */
 @RestController
 @RefreshScope
 @RequestMapping(value = "/",produces = "application/json;charset=UTF-8")
 public class CouponActivityController {
     @Autowired
     CouponActivityService couponActivityService;
+
+    @Autowired
+    private HttpServletResponse httpServletResponse;
 
     static final Integer IMAGE_MAX_SIZE=1000000;
     /**
@@ -188,6 +199,124 @@ public class CouponActivityController {
     }
 
 
+    /**
+     * @author qingguo Hu 22920192204208
+     */
+
+    @ApiOperation(value = "查看优惠活动中的商品")
+    @GetMapping("/couponactivities/{id}/products")
+    public Object listProductsByCouponActivityId(@ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
+                                                 @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
+                                                 @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+
+        ReturnObject<PageInfo<Object>> retPageInfo =
+                couponActivityService.listProductsByCouponActivityId(couponActivityId, pageNumber, pageSize);
+        return Common.decorateReturnObject(retPageInfo);
+
+    }
 
 
+    @ApiOperation(value = "查看商品的上线的优惠活动")
+    @GetMapping("products/{id}/couponactivities")
+    public Object listCouponActivitiesByProductId(@ApiParam(value = "货品ID", required = true) @PathVariable("id") Long productId,
+                                                  @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
+                                                  @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        ReturnObject<PageInfo<Object>> retPageInfo =
+                couponActivityService.listCouponActivitiesByProductId(productId, pageNumber, pageSize);
+
+        return Common.decorateReturnObject(retPageInfo);
+    }
+
+    @ApiOperation(value = "管理员查看优惠活动中的商品")
+    @GetMapping("/shops/{shopId}/couponactivities/{id}/onsales")
+    public Object listOnsalesByCouponActivityId(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
+                                                @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
+                                                @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
+                                                @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize ) {
+
+        ReturnObject returnObject = couponActivityService.listOnsalesByCouponActivityId(shopId, couponActivityId, pageNumber, pageSize);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+
+    @ApiOperation(value = "管理员修改己方某优惠活动")
+    @PutMapping("/shops/{shopId}/couponactivities/{id}")
+    @Audit(departName = "shops")
+    public Object updateCouponActivity(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
+                                       @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
+                                       @ApiParam(value = "可修改的优惠活动信息", required = true) @Validated @RequestBody CouponActivityVo couponActivityVo,
+                                       @LoginUser Long userId, @LoginName String userName, BindingResult bindingResult) {
+
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if (object != null) {
+            return object;
+        }
+
+        if (couponActivityVo.getBeginTime().isAfter(couponActivityVo.getEndTime())) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME));
+        }
+
+        ReturnObject returnObject = couponActivityService.updateCouponActivity(userId, userName, shopId, couponActivityId, couponActivityVo, null);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+
+    @ApiOperation(value = "管理员物理删除己方某优惠活动")
+    @DeleteMapping("/shops/{shopId}/couponactivities/{id}")
+    @Audit(departName = "shops")
+    public Object deleteCouponActivity(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
+                                       @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
+                                       @LoginUser Long userId, @LoginName String userName) {
+
+        ReturnObject returnObject = couponActivityService.deleteCouponActivity(userId, userName, shopId, couponActivityId);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+    @ApiOperation(value = "管理员为己方某优惠券活动新增限定范围")
+    @PostMapping("/shops/{shopId}/couponactivities/{id}/onsales/{sid}")
+    @Audit(departName = "shops")
+    public Object insertCouponOnsale(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
+                                     @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
+                                     @ApiParam(value = "销售活动ID", required = true) @PathVariable("sid") Long onsaleId,
+                                     @LoginUser Long userId, @LoginName String userName) {
+
+        ReturnObject returnObject = couponActivityService.insertCouponOnsale(userId, userName, shopId, couponActivityId, onsaleId);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+
+    @ApiOperation(value = "店家删除己方某优惠券活动的某限定范围")
+    @DeleteMapping("/shops/{shopId}/coupononsale/{id}")
+    @Audit(departName = "shops")
+    public Object deleteCouponOnsale(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
+                                     @ApiParam(value = "couponOnsaleId", required = true) @PathVariable("id") Long couponOnsaleId,
+                                     @LoginUser Long userId, @LoginName String userName) {
+
+        ReturnObject returnObject = couponActivityService.deleteCouponOnsale(userId, userName, shopId, couponOnsaleId);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+
+    @ApiOperation(value = "上线优惠活动")
+    @PutMapping("/shops/{shopId}/couponactivities/{id}/online")
+    @Audit(departName = "shops")
+    public Object updateCouponActivityToOnline(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
+                                               @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
+                                               @LoginUser Long userId, @LoginName String userName) {
+
+        ReturnObject returnObject = couponActivityService.updateCouponActivity(userId, userName, shopId, couponActivityId, null, CouponActivity.State.ONLINE);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+
+    @ApiOperation(value = "下线优惠活动")
+    @PutMapping("/shops/{shopId}/couponactivities/{id}/offline")
+    @Audit(departName = "shops")
+    public Object updateCouponActivityToOffline(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
+                                                @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
+                                                @LoginUser Long userId, @LoginName String userName) {
+
+        ReturnObject returnObject = couponActivityService.updateCouponActivity(userId, userName, shopId, couponActivityId, null, CouponActivity.State.OFFLINE);
+        return Common.decorateReturnObject(returnObject);
+    }
 }

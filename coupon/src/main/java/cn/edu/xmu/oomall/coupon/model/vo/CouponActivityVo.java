@@ -30,11 +30,11 @@ public class CouponActivityVo implements VoObject {
     @Min(value = 0,message = "validTerm最小值为0")
     @Max(value = 1,message = "validTerm最大值为1")
     private Byte validTerm;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private LocalDateTime couponTime;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private LocalDateTime beginTime;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private LocalDateTime endTime;
     @Length(max = 100,message = "strategy字符串最大长度为100")
     private String strategy;
