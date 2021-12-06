@@ -36,7 +36,7 @@ public class Product implements Serializable {
 
 
     private Long categoryId;
-
+    private String categoryName;
     private Long freightId;
 
     private String skuSn;
@@ -78,6 +78,12 @@ public class Product implements Serializable {
 
     private Byte state;
 
+    private Long onSaleId;
+
+    private Long price;
+
+    private Integer quantity;
+
     public enum ProductState
     {
         /**
@@ -96,6 +102,8 @@ public class Product implements Serializable {
         public int getCode(){
             return code;
         }
+
+        public String getState(){return state;}
     }
 
 }
