@@ -11,6 +11,7 @@ import cn.edu.xmu.oomall.shop.service.CategoryService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -201,4 +202,12 @@ public class CategoryController {
         return Common.decorateReturnObject(ret);
     }
 
+    /**
+     * @author 何赟
+     * @date 2021-12-5
+     */
+    @GetMapping("/category/{id}")
+    public Object getCategoryById(@PathVariable("id")Long id){
+        return categoryService.getCategoryById(id);
+    }
 }

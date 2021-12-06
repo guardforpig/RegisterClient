@@ -5,6 +5,9 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.dao.CategoryDao;
 import cn.edu.xmu.oomall.shop.model.bo.Category;
 import cn.edu.xmu.oomall.shop.model.po.CategoryPo;
+import cn.edu.xmu.oomall.shop.model.vo.CategoryVo;
+import cn.edu.xmu.oomall.shop.model.vo.ShopSimpleRetVo;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,5 +112,11 @@ public class CategoryService {
         }
         ReturnObject ret = categoryDao.deleteCategoryById(id.longValue());
         return ret;
+    }
+
+    public Object getCategoryById(Long id) {
+        ReturnObject<Category> ret = categoryDao.getCategoryById(id);
+        Category vo = (Category) cloneVo(ret.getData(), Category.class);
+        return new ReturnObject<>(vo);
     }
 }

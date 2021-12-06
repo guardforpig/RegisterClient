@@ -7,6 +7,7 @@ import cn.edu.xmu.oomall.shop.model.bo.Category;
 import cn.edu.xmu.oomall.shop.model.bo.CategoryList;
 import cn.edu.xmu.oomall.shop.model.po.CategoryPo;
 import cn.edu.xmu.oomall.shop.model.po.CategoryPoExample;
+import cn.edu.xmu.privilegegateway.annotation.util.Common;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
@@ -219,5 +220,24 @@ public class ProductDao {
     }
     public ProductDraftPo getProductDraft(Long id){
         return productDraftPoMapper.selectByPrimaryKey(id);
+    }
+
+    public Object getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize);
+        ProductPoExample example = new ProductPoExample();
+        ProductPoExample.Criteria criteria=example.createCriteria()
+                .andCategoryIdEqualTo(Long.parseLong(String.valueOf(cid)));
+        if (Objects.nonNull(did)){
+            criteria.andShopIdEqualTo(Long.parseLong(String.valueOf(did)));
+        }else{
+            criteria.andStateEqualTo((byte)(Product.ProductState.ONSHELF.getCode()));
+        }
+        List<ProductPo> productPos = null;
+        try {
+            productPos = productMapper.selectByExample(example);
+        } catch (Exception e) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+        return new PageInfo<>(productPos);
     }
 }
