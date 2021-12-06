@@ -12,9 +12,10 @@ import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnNo;
 import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author ziyi guo

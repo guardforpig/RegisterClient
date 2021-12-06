@@ -4,7 +4,7 @@ import cn.edu.xmu.oomall.core.model.VoObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -16,7 +16,7 @@ public class WeChatPayCommon {
     public static Object decorateReturnObject(WeChatPayReturnObject returnObject) {
 
         Object data = returnObject.getData();
-        Map<String, Object> obj = new HashMap<>();
+        Map<String, Object> obj = new LinkedHashMap<>();
         obj.put("errmsg", returnObject.getErrmsg());
 
         switch (returnObject.getCode()) {

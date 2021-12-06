@@ -14,10 +14,11 @@ import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author ziyi guo
@@ -42,8 +43,8 @@ public class WeChatPayService {
 
     @Transactional(rollbackFor=Exception.class)
     public WeChatPayReturnObject createTransaction(WeChatPayTransaction weChatPayTransaction){
-        WeChatPayTransaction wcpt = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayTransaction.getOutTradeNo()).getData();
-        if(wcpt!=null){
+        WeChatPayTransaction transaction = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayTransaction.getOutTradeNo()).getData();
+        if(transaction!=null){
             return new WeChatPayReturnObject(WeChatPayReturnNo.OUT_TRADE_NO_USED);
         }
 
@@ -100,11 +101,11 @@ public class WeChatPayService {
     @Transactional(rollbackFor=Exception.class)
     public WeChatPayReturnObject createRefund(WeChatPayRefund weChatPayRefund){
 
-        WeChatPayTransaction wcpt = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
-        if( wcpt!=null && (wcpt.getTradeState().equals(TRADE_STATE_CLOSE)||wcpt.getTradeState().equals(TRADE_STATE_FAIL)) ){
+        WeChatPayTransaction transaction = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
+        if( transaction!=null && (transaction.getTradeState().equals(TRADE_STATE_CLOSE)||transaction.getTradeState().equals(TRADE_STATE_FAIL)) ){
             return new WeChatPayReturnObject(WeChatPayReturnNo.USER_ACCOUNT_ABNORMAL);
         }
-        weChatPayRefund.setPayerTotal(wcpt.getPayerTotal());
+        weChatPayRefund.setPayerTotal(transaction.getPayerTotal());
 
         List<WeChatPayRefundPo> list = (List<WeChatPayRefundPo>) weChatPayDao.getRefundByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
         int count=0;
@@ -113,7 +114,7 @@ public class WeChatPayService {
                 count += po.getPayerRefund();
             }
         }
-        if(count+ weChatPayRefund.getRefund() > wcpt.getPayerTotal()){
+        if(count+ weChatPayRefund.getRefund() > transaction.getPayerTotal()){
             return new WeChatPayReturnObject(WeChatPayReturnNo.USER_ACCOUNT_ABNORMAL);
         }
 
