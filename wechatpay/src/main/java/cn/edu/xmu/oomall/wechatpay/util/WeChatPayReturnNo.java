@@ -24,6 +24,7 @@ public enum WeChatPayReturnNo {
     SYSTEM_ERROR("系统错误");
 
     private String message;
+
     WeChatPayReturnNo(String message){
         this.message = message;
     }

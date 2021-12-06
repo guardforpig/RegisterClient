@@ -4,7 +4,7 @@ import cn.edu.xmu.oomall.core.model.VoObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -15,35 +15,37 @@ public class WeChatPayCommon {
 
     public static Object decorateReturnObject(WeChatPayReturnObject returnObject) {
 
-        Map<String, Object> obj = new HashMap<>();
+        Object data = returnObject.getData();
+        Map<String, Object> obj = new LinkedHashMap<>();
+        obj.put("errmsg", returnObject.getErrmsg());
+
         switch (returnObject.getCode()) {
             case ORDER_NO_TEXIST:
                 // 404
-                obj.put("errmsg", returnObject.getErrmsg());
                 return new ResponseEntity(obj, HttpStatus.NOT_FOUND);
 
             case SYSTEM_ERROR:
                 // 500
-                obj.put("errmsg", returnObject.getErrmsg());
                 return new ResponseEntity(obj,HttpStatus.INTERNAL_SERVER_ERROR);
 
             case ORDER_CLOSED:
             case PARAM_ERROR:
                 // 400
-                obj.put("errmsg", returnObject.getErrmsg());
                 return new ResponseEntity(obj,HttpStatus.BAD_REQUEST);
 
             case OUT_TRADE_NO_USED:
             case USER_ACCOUNT_ABNORMAL:
                 //403
-                obj.put("errmsg", returnObject.getErrmsg());
                 return new ResponseEntity(obj,HttpStatus.FORBIDDEN);
 
-            default:
+            case OK:
                 // 200
-                Object data = returnObject.getData();
                 obj.put("data", data);
                 return new ResponseEntity(obj,HttpStatus.OK);
+
+            default:
+                obj.put("data", data);
+                return obj;
         }
     }
 

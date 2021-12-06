@@ -9,15 +9,18 @@ import lombok.Getter;
 @Getter
 public class WeChatPayReturnObject<T> {
 
+    /**
+     * 自定义的错误码
+     */
     WeChatPayReturnNo code = WeChatPayReturnNo.OK;
 
     /**
-     * 自定义的错误码
+     * 错误信息
      */
     String errmsg = null;
 
     /**
-     * 返回值
+     * 返回数据
      */
     private T data = null;
 
