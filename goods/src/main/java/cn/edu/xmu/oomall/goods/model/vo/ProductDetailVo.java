@@ -26,7 +26,6 @@ public class ProductDetailVo {
     Long weight;
     Long categoryId;
     Long goodsId;
-    @Min(0)
     String barCode;
     String unit;
     String originPlace;

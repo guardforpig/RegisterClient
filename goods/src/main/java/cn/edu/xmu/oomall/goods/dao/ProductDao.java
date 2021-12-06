@@ -16,6 +16,7 @@ import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.vo.ProductVo;
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -284,11 +285,8 @@ public class ProductDao {
         ProductPoExample example = new ProductPoExample();
         ProductPoExample.Criteria criteria = example.createCriteria();
 
-        if (null != barCode && !"".equals(barCode)) {
+        if (StringUtils.isNotBlank(barCode)) {
             criteria.andBarcodeEqualTo(barCode);
-        }
-        if (null != shopId) {
-            criteria.andShopIdEqualTo(shopId);
         }
 
         List<ProductPo> productPoList = new ArrayList<>();
