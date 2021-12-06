@@ -1,17 +1,14 @@
 package cn.edu.xmu.oomall.goods.controller;
 
-import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.oomall.goods.model.bo.Goods;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.oomall.goods.service.GoodsService;
 import cn.edu.xmu.oomall.goods.service.ProductService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -249,4 +246,54 @@ public class GoodsController {
     {
         return Common.decorateReturnObject(productService.prohibitProduct(shopId,id));
     }
+
+    /**
+     * @author 何赟
+     * @date 2021-12-5
+     */
+    @ApiOperation(value="获得二级分类下的上架商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name="id",value="分类id",required = true,dataType = "integer",paramType = "path"),
+            @ApiImplicitParam(name="page",value="页码",required = true,dataType = "integer",paramType = "query"),
+            @ApiImplicitParam(name="pageSize",value="每页数目",required = true,dataType = "integer",paramType = "query"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 500, message = "服务器内部错误")
+    })
+    @GetMapping(value="categories/{id}/products")
+    @Audit(departName = "shops")
+    public Object getProductOfCategory(@PathVariable("id") Integer id,
+                                 @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        return Common.decorateReturnObject(productService.getProductsOfCategories(null, id,page,pageSize));
+    }
+
+    /**
+     * @author 何赟
+     * @date 2021-12-5
+     */
+    @ApiOperation(value="获得二级分类下的店铺的所有商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name="did",value="商铺id",required = true,dataType = "Long",paramType = "path"),
+            @ApiImplicitParam(name="id",value="分类id",required = true,dataType = "Long",paramType = "path"),
+            @ApiImplicitParam(name="page",value="页码",required = true,dataType = "integer",paramType = "query"),
+            @ApiImplicitParam(name="pageSize",value="每页数目",required = true,dataType = "integer",paramType = "query"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 500, message = "服务器内部错误")
+    })
+    @GetMapping(value="shops/{did}/categories/{id}/products" )
+    @Audit(departName = "shops")
+    public Object getProductOfCategoryInShop(@PathVariable("did") Integer did,@PathVariable("id") Integer cid,
+                                  @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
+        return Common.decorateReturnObject(productService.getProductsOfCategories(did,cid,page,pageSize));
+    }
+
 }

@@ -1,9 +1,16 @@
 package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.goods.GoodsApplication;
+import cn.edu.xmu.oomall.goods.microservice.ShopService;
+import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -13,16 +20,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 /**
  * @author 黄添悦
  **/
@@ -46,7 +54,7 @@ class GoodsControllerTest {
     {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString=this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/0/freightmodels/1/products").header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
+                        .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -58,7 +66,7 @@ class GoodsControllerTest {
     {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString=this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/1/freightmodels/1/products").header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
+                        .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isForbidden())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -70,7 +78,7 @@ class GoodsControllerTest {
     {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString=this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/0/freightmodels/2/products").header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
+                        .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -450,4 +458,87 @@ class GoodsControllerTest {
         String expected="{\"errno\":507,\"errmsg\":\"当前货品状态不支持进行该操作\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
+
+    /**
+     * @author 何赟
+     * @date 2021-12-6
+     */
+    @MockBean
+    private ShopService shopService;
+    @BeforeEach
+    public void init() {
+        CategoryVo categoryVo1 = new CategoryVo();
+        categoryVo1.setId(1L);
+        categoryVo1.setPid(null);
+        CategoryVo categoryVo2 = new CategoryVo();
+        categoryVo2.setId(266L);
+        categoryVo2.setPid(16L);
+        SimpleShopVo simpleShopVo = new SimpleShopVo();
+        simpleShopVo.setId(0L);
+        simpleShopVo.setName("");
+
+
+        Mockito.when(shopService.getCategoryById(1)).thenReturn(new InternalReturnObject(0, "", categoryVo1));
+        Mockito.when(shopService.getCategoryById(266)).thenReturn(new InternalReturnObject(0, "", categoryVo2));
+        Mockito.when(shopService.getCategoryById(3)).thenReturn(new InternalReturnObject(1, "", null));
+        Mockito.when(shopService.getShopInfo(1L)).thenReturn(new InternalReturnObject(1, "", List.of(simpleShopVo)));
+        Mockito.when(shopService.getShopInfo(2L)).thenReturn(new InternalReturnObject(1, "", List.of()));
+        adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void secondProducts1() throws Exception {
+        this.mockMvc.perform(get("/categories/1/products")
+                        .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errno").value(0))
+                .andExpect(jsonPath("$.errmsg").value("成功"));
+    }
+    @Test
+    @Transactional(readOnly = true)
+    public void secondProducts2() throws Exception {
+        this.mockMvc.perform(get("/categories/266/products")
+                        .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errno").value(0))
+                .andExpect(jsonPath("$.errmsg").value("成功"));
+    }
+    @Test
+    @Transactional(readOnly = true)
+    public void secondProducts3() throws Exception {
+        String contentAsString = this.mockMvc.perform(get("/categories/3/products")
+                        .header("authorization", adminToken))
+                .andReturn().getResponse().getContentAsString();
+        String expected="{\"errno\":504,\"errmsg\":\"分类id不存在\"}";
+        JSONAssert.assertEquals(expected,contentAsString,true);
+    }
+    @Test
+    @Transactional(readOnly = true)
+    public void secondShopProducts1() throws Exception {
+        this.mockMvc.perform(get("/shops/1/categories/266/products")
+                        .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errno").value(0))
+                .andExpect(jsonPath("$.errmsg").value("成功"));
+    }
+    @Test
+    @Transactional(readOnly = true)
+    public void secondShopProducts2() throws Exception {
+        String contentAsString = this.mockMvc.perform(get("/shops/1/categories/3/products")
+                        .header("authorization", adminToken))
+                .andReturn().getResponse().getContentAsString();
+        String expected="{\"errno\":504,\"errmsg\":\"分类id不存在\"}";
+        JSONAssert.assertEquals(expected,contentAsString,true);
+    }
+    @Test
+    @Transactional(readOnly = true)
+    public void secondShopProducts3() throws Exception {
+        this.mockMvc.perform(get("/shops/1/categories/1/products")
+                        .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errno").value(0))
+                .andExpect(jsonPath("$.errmsg").value("成功"));
+    }
+
 }
