@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.wechatpay.dao;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.wechatpay.mapper.WeChatPayRefundPoMapper;
 import cn.edu.xmu.oomall.wechatpay.mapper.WeChatPayTransactionPoMapper;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayRefund;
@@ -13,6 +12,7 @@ import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnNo;
 import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class WeChatPayDao {
         try{
             weChatPayTransactionPoMapper.insertSelective(weChatPayTransactionPo);
             WeChatPayTransactionPo newWeChatPayTransactionPo = weChatPayTransactionPoMapper.selectByPrimaryKey(weChatPayTransactionPo.getId());
-            return new WeChatPayReturnObject(Common.cloneVo(newWeChatPayTransactionPo, WeChatPayTransaction.class));
+            return new WeChatPayReturnObject(cloneVo(newWeChatPayTransactionPo, WeChatPayTransaction.class));
         }catch (Exception e){
             return new WeChatPayReturnObject(WeChatPayReturnNo.SYSTEM_ERROR, e.getMessage());
         }
@@ -49,7 +49,7 @@ public class WeChatPayDao {
             if(list.size()==0) {
                 return new WeChatPayReturnObject(WeChatPayReturnNo.ORDER_NO_TEXIST);
             }
-            return new WeChatPayReturnObject(Common.cloneVo(list.get(0), WeChatPayTransaction.class));
+            return new WeChatPayReturnObject(cloneVo(list.get(0), WeChatPayTransaction.class));
         }catch (Exception e){
             return new WeChatPayReturnObject(WeChatPayReturnNo.SYSTEM_ERROR, e.getMessage());
         }
@@ -75,7 +75,7 @@ public class WeChatPayDao {
         try{
             weChatPayRefundPoMapper.insertSelective(weChatPayRefundPo);
             WeChatPayRefundPo newWeChatPayRefundPo = weChatPayRefundPoMapper.selectByPrimaryKey(weChatPayRefundPo.getId());
-            return new WeChatPayReturnObject(Common.cloneVo(newWeChatPayRefundPo, WeChatPayRefund.class));
+            return new WeChatPayReturnObject(cloneVo(newWeChatPayRefundPo, WeChatPayRefund.class));
         }catch (Exception e){
             return new WeChatPayReturnObject(WeChatPayReturnNo.SYSTEM_ERROR, e.getMessage());
         }
@@ -102,7 +102,7 @@ public class WeChatPayDao {
             if(list.size()==0) {
                 return new WeChatPayReturnObject(WeChatPayReturnNo.ORDER_NO_TEXIST);
             }
-            return new WeChatPayReturnObject(Common.cloneVo(list.get(0), WeChatPayRefund.class));
+            return new WeChatPayReturnObject(cloneVo(list.get(0), WeChatPayRefund.class));
         }catch (Exception e){
             return new WeChatPayReturnObject(WeChatPayReturnNo.SYSTEM_ERROR, e.getMessage());
         }
