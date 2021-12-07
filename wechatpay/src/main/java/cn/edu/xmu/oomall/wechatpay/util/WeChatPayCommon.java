@@ -20,26 +20,27 @@ public class WeChatPayCommon {
         obj.put("errmsg", returnObject.getErrmsg());
 
         switch (returnObject.getCode()) {
-            case ORDER_NO_TEXIST:
-                // 404
+            // 404
+            case RESOURCE_NOT_EXISTS:
                 return new ResponseEntity(obj, HttpStatus.NOT_FOUND);
 
+            // 500
             case SYSTEM_ERROR:
-                // 500
                 return new ResponseEntity(obj,HttpStatus.INTERNAL_SERVER_ERROR);
 
+            // 400
             case ORDER_CLOSED:
+            case ORDER_PAID:
             case PARAM_ERROR:
-                // 400
                 return new ResponseEntity(obj,HttpStatus.BAD_REQUEST);
 
+            //403
             case OUT_TRADE_NO_USED:
             case USER_ACCOUNT_ABNORMAL:
-                //403
                 return new ResponseEntity(obj,HttpStatus.FORBIDDEN);
 
+            // 200
             case OK:
-                // 200
                 obj.put("data", data);
                 return new ResponseEntity(obj,HttpStatus.OK);
 

@@ -27,12 +27,13 @@ import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 @Service
 public class WeChatPayService {
 
-    private static final String TRADE_STATE_SUCCESS = String.format("SUCCESS");
-    private static final String TRADE_STATE_FAIL = String.format("NOTPAY");
-    private static final String TRADE_STATE_CLOSE = String.format("CLOSED");
-    private static final String TRADE_STATE_REFUND = String.format("REFUND");
-    private static final String REFUND_STATUS_SUCCESS = String.format("SUCCESS");
-    private static final String REFUND_STATUS_FAIL = String.format("ABNORMAL");
+    private static final String TRADE_STATE_SUCCESS = "SUCCESS";
+    private static final String TRADE_STATE_FAIL = "NOTPAY";
+    private static final String TRADE_STATE_CLOSED = "CLOSED";
+    private static final String TRADE_STATE_REFUND = "REFUND";
+
+    private static final String REFUND_STATUS_SUCCESS = "SUCCESS";
+    private static final String REFUND_STATUS_FAIL = "ABNORMAL";
 
     @Autowired
     private WeChatPayDao weChatPayDao;
@@ -43,8 +44,15 @@ public class WeChatPayService {
 
     @Transactional(rollbackFor=Exception.class)
     public WeChatPayReturnObject createTransaction(WeChatPayTransaction weChatPayTransaction){
+
         WeChatPayTransaction transaction = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayTransaction.getOutTradeNo()).getData();
         if(transaction!=null){
+            if(transaction.getTradeState().equals(TRADE_STATE_SUCCESS)){
+                return new WeChatPayReturnObject(WeChatPayReturnNo.ORDER_PAID);
+            }
+            if(transaction.getTradeState().equals(TRADE_STATE_CLOSED)){
+                return new WeChatPayReturnObject(WeChatPayReturnNo.ORDER_CLOSED);
+            }
             return new WeChatPayReturnObject(WeChatPayReturnNo.OUT_TRADE_NO_USED);
         }
 
@@ -83,26 +91,29 @@ public class WeChatPayService {
         return new WeChatPayReturnObject(new WeChatPayPrepayRetVo());
     }
 
+
     @Transactional(rollbackFor=Exception.class, readOnly = true)
     public WeChatPayReturnObject getTransaction(String outTradeNo){
         WeChatPayReturnObject returnObject = weChatPayDao.getTransactionByOutTradeNo(outTradeNo);
         return returnObject;
     }
 
+
     @Transactional(rollbackFor=Exception.class)
     public WeChatPayReturnObject closeTransaction(String outTradeNo){
         WeChatPayTransactionPo weChatPayTransactionPo = new WeChatPayTransactionPo();
         weChatPayTransactionPo.setOutTradeNo(outTradeNo);
-        weChatPayTransactionPo.setTradeState(TRADE_STATE_CLOSE);
+        weChatPayTransactionPo.setTradeState(TRADE_STATE_CLOSED);
         WeChatPayReturnObject returnObject = weChatPayDao.updateTransactionByOutTradeNo(weChatPayTransactionPo);
         return returnObject;
     }
+
 
     @Transactional(rollbackFor=Exception.class)
     public WeChatPayReturnObject createRefund(WeChatPayRefund weChatPayRefund){
 
         WeChatPayTransaction transaction = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
-        if( transaction!=null && (transaction.getTradeState().equals(TRADE_STATE_CLOSE)||transaction.getTradeState().equals(TRADE_STATE_FAIL)) ){
+        if( transaction!=null && (transaction.getTradeState().equals(TRADE_STATE_CLOSED)||transaction.getTradeState().equals(TRADE_STATE_FAIL)) ){
             return new WeChatPayReturnObject(WeChatPayReturnNo.USER_ACCOUNT_ABNORMAL);
         }
         weChatPayRefund.setPayerTotal(transaction.getPayerTotal());
@@ -154,11 +165,13 @@ public class WeChatPayService {
         return returnObject;
     }
 
+
     @Transactional(rollbackFor=Exception.class, readOnly = true)
     public WeChatPayReturnObject getRefund(String outRefundNo){
         WeChatPayReturnObject returnObject = weChatPayDao.getRefundByOutRefundNo(outRefundNo);
         return returnObject;
     }
+
 
 
     private WeChatPayReturnObject paySuccess(WeChatPayTransaction weChatPayTransaction){
