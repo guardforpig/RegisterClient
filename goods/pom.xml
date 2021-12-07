@@ -161,7 +161,7 @@
                 <version>3.0.0-M5</version>
                 <configuration>
                     <includes>
-                        <include>**/GoodsControllerTest.java</include>
+                        <include>**/*Test.java</include>
                     </includes>
                     <!--                    <skip>true</skip>-->
                 </configuration>
