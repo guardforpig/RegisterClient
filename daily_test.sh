@@ -26,10 +26,6 @@ sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean test
 mvn site:site site:deploy
 
-echo '-------------------initializing oomall database-------------------------'
-cd /home/mingqiu/oomall/sql
-mysql -h 172.16.1.254 -udbuser -p12345678 -D oomall < goods-batch.sql
-
 cd /home/mingqiu/oomall
 git checkout core/pom.xml
 git checkout comment/pom.xml
@@ -39,6 +35,11 @@ git checkout goods/pom.xml
 git checkout coupon/pom.xml
 git checkout activity/pom.xml
 git pull
+
+echo '-------------------initializing oomall database-------------------------'
+cd /home/mingqiu/oomall/sql
+mysql -h 172.16.1.254 -udbuser -p12345678 -D oomall < goods-batch.sql
+
 echo '-------------------building core-------------------------'
 cd /home/mingqiu/oomall/core
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
