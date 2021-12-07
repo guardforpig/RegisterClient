@@ -55,8 +55,10 @@ public class AdvanceSaleDao {
             }
             else {
                 po=advanceSalePoMapper.selectByPrimaryKey(id);
-                bo=(AdvanceSale) cloneVo(po,AdvanceSale.class);
-                redisUtil.set(String.format(ADVANCESALE_KEY,id),bo,categoryTimeout);
+                if(po!=null){
+                    bo=(AdvanceSale) cloneVo(po,AdvanceSale.class);
+                    redisUtil.set(String.format(ADVANCESALE_KEY,id),bo,categoryTimeout);
+                }
             }
             returnObject=new ReturnObject(po);
         }catch(Exception e){

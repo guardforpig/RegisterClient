@@ -51,6 +51,10 @@ public enum ReturnNo {
     CUSTOMERID_NOTEXIST(608,"登录用户id不存在"),
     CUSTOMER_INVALID_ACCOUNT(609, "用户名不存在或者密码错误"),
     CUSTOMER_FORBIDDEN(610,"用户被禁止登录"),
+    CUSTOMER_MOBILEEXIST(611,"电话已被注册"),
+    CUSTOMER_EMAILEXIST(612,"邮箱已被注册"),
+    CUSTOMER_NAMEEXIST(613,"用户名已被注册"),
+    CUSTOMER_PASSWORDSAME(614,"不能与旧密码相同"),
 
     COUPON_NOTBEGIN(630,"未到优惠卷领取时间"),
     COUPON_FINISH(631,"优惠卷领罄"),
