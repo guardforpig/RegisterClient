@@ -75,3 +75,9 @@ oomall:
       expiretime: 10000
     product:
       expiretime: 10000
+
+productservice:
+  webdav:
+    username: oomall
+    password: 123465
+    baseUrl: http://localhost:8080/web/
