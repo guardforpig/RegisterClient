@@ -25,7 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = PublicTestApp.class)
 public class GetAllPrivTest extends BaseTestOomall {
 
-    private static String TESTURL ="/departs/%d/privileges";
+    private static String GETURL ="/privilege/departs/{did}}/privileges";
     /**
      * 获取所有权限（第一页）
      * @throws Exception
@@ -33,7 +33,7 @@ public class GetAllPrivTest extends BaseTestOomall {
     @Test
     public void getAllPriv1() throws Exception{
         String token = this.adminLogin("13088admin", "123456");
-        byte[] responseString = this.mallClient.get().uri(String.format(TESTURL, 0)+"?page=1&pageSize=11").header("authorization",token)
+        byte[] responseString = this.mallClient.get().uri(GETURL+"?page=1&pageSize=11", 0).header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -41,11 +41,20 @@ public class GetAllPrivTest extends BaseTestOomall {
                 .returnResult().getResponseBodyContent();
     }
 
+    /**
+     * 未登录
+     * @throws Exception
+     */
     @Test
     public void getAllPriv2() throws Exception {
-        this.mallClient.get().uri(String.format(TESTURL, 0))
+        this.mallClient.get().uri(GETURL, 0)
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus().isUnauthorized()
+                .expectBody()
+                .jsonPath("$.data.errno").isEqualTo(ReturnNo.AUTH_NEED_LOGIN.getCode())
+                .returnResult().getResponseBodyContent();
+
+
     }
 
     /**
@@ -55,7 +64,9 @@ public class GetAllPrivTest extends BaseTestOomall {
     @Test
     public void getAllPriv3() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(String.format(TESTURL, 0)+"?page=2&pageSize=14").header("authorization", token).exchange()
+        this.mallClient.get().uri(GETURL+"?page=2&pageSize=14", 0).
+                header("authorization", token).
+                exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
@@ -70,7 +81,7 @@ public class GetAllPrivTest extends BaseTestOomall {
     @Test
     public void getAllPriv4() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(String.format(TESTURL, 0)+"?page=2&pageSize=10").header("authorization", token).exchange()
+        this.mallClient.get().uri(GETURL+"?page=2&pageSize=10", 0).header("authorization", token).exchange()
                 .expectStatus().isForbidden()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode())

@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = PublicTestApp.class)
 public class GetDepartsProxiesTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilege/departs/%d/proxies";
+    private static String TESTURL ="/privilege/departs/{id}/proxies";
 
     /**
      * 1
@@ -24,7 +24,7 @@ public class GetDepartsProxiesTest extends BaseTestOomall {
     @Test
     public void getListProxies1() throws Exception {
 
-        this.mallClient.get().uri(String.format(TESTURL,1))
+        this.mallClient.get().uri(TESTURL,1)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -43,7 +43,7 @@ public class GetDepartsProxiesTest extends BaseTestOomall {
     public void getListProxies2() throws Exception {
 
         String token = this.adminLogin("13088admin", "123456");
-        byte[] responseString = this.mallClient.get().uri(String.format(TESTURL,1))
+        byte[] responseString = this.mallClient.get().uri(TESTURL,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -64,7 +64,7 @@ public class GetDepartsProxiesTest extends BaseTestOomall {
     public void getListProxies3() throws Exception {
 
         String token = this.adminLogin("8131600001", "123456");
-        byte[] responseString = this.mallClient.get().uri(String.format(TESTURL,1))
+        byte[] responseString = this.mallClient.get().uri(TESTURL,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -84,7 +84,7 @@ public class GetDepartsProxiesTest extends BaseTestOomall {
     @Test
     public void getListProxies4() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        byte[] responseString = this.mallClient.get().uri(String.format(TESTURL,2))
+        byte[] responseString = this.mallClient.get().uri(TESTURL,2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -104,7 +104,7 @@ public class GetDepartsProxiesTest extends BaseTestOomall {
     public void getListProxies5() throws Exception {
 
         String token = this.adminLogin("norole_user1", "123456");
-        byte[] responseString = this.mallClient.get().uri(String.format(TESTURL,1))
+        byte[] responseString = this.mallClient.get().uri(TESTURL,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -122,7 +122,7 @@ public class GetDepartsProxiesTest extends BaseTestOomall {
      */
     @Test
     public void getListProxies7() throws Exception {
-        byte[] responseString = this.mallClient.get().uri(String.format(TESTURL,0))
+        byte[] responseString = this.mallClient.get().uri(TESTURL,0)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
