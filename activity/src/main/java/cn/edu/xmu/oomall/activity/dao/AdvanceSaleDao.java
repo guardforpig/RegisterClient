@@ -3,7 +3,7 @@ package cn.edu.xmu.oomall.activity.dao;
 import cn.edu.xmu.oomall.activity.mapper.AdvanceSalePoMapper;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSale;
 import cn.edu.xmu.oomall.activity.model.po.AdvanceSalePo;
-import cn.edu.xmu.privilegegateway.annotation.util.Common;
+import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
