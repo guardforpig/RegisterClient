@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.wechatpay.service;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.wechatpay.dao.WeChatPayDao;
 import cn.edu.xmu.oomall.wechatpay.microservice.WeChatPayNotifyService;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayRefund;
@@ -18,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author ziyi guo
@@ -42,8 +43,8 @@ public class WeChatPayService {
 
     @Transactional(rollbackFor=Exception.class)
     public WeChatPayReturnObject createTransaction(WeChatPayTransaction weChatPayTransaction){
-        WeChatPayTransaction wcpt = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayTransaction.getOutTradeNo()).getData();
-        if(wcpt!=null){
+        WeChatPayTransaction transaction = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayTransaction.getOutTradeNo()).getData();
+        if(transaction!=null){
             return new WeChatPayReturnObject(WeChatPayReturnNo.OUT_TRADE_NO_USED);
         }
 
@@ -100,11 +101,11 @@ public class WeChatPayService {
     @Transactional(rollbackFor=Exception.class)
     public WeChatPayReturnObject createRefund(WeChatPayRefund weChatPayRefund){
 
-        WeChatPayTransaction wcpt = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
-        if( wcpt!=null && (wcpt.getTradeState().equals(TRADE_STATE_CLOSE)||wcpt.getTradeState().equals(TRADE_STATE_FAIL)) ){
+        WeChatPayTransaction transaction = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
+        if( transaction!=null && (transaction.getTradeState().equals(TRADE_STATE_CLOSE)||transaction.getTradeState().equals(TRADE_STATE_FAIL)) ){
             return new WeChatPayReturnObject(WeChatPayReturnNo.USER_ACCOUNT_ABNORMAL);
         }
-        weChatPayRefund.setPayerTotal(wcpt.getPayerTotal());
+        weChatPayRefund.setPayerTotal(transaction.getPayerTotal());
 
         List<WeChatPayRefundPo> list = (List<WeChatPayRefundPo>) weChatPayDao.getRefundByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
         int count=0;
@@ -113,7 +114,7 @@ public class WeChatPayService {
                 count += po.getPayerRefund();
             }
         }
-        if(count+ weChatPayRefund.getRefund() > wcpt.getPayerTotal()){
+        if(count+ weChatPayRefund.getRefund() > transaction.getPayerTotal()){
             return new WeChatPayReturnObject(WeChatPayReturnNo.USER_ACCOUNT_ABNORMAL);
         }
 
@@ -164,12 +165,12 @@ public class WeChatPayService {
         weChatPayTransaction.setTradeState(TRADE_STATE_SUCCESS);
         weChatPayTransaction.setPayerTotal(weChatPayTransaction.getTotal()-(int)(Math.random()*2));
         weChatPayTransaction.setSuccessTime(LocalDateTime.now());
-        return weChatPayDao.createTransaction( (WeChatPayTransactionPo)Common.cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
+        return weChatPayDao.createTransaction( (WeChatPayTransactionPo)cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
     }
 
     private WeChatPayReturnObject payFail(WeChatPayTransaction weChatPayTransaction){
         weChatPayTransaction.setTradeState(TRADE_STATE_FAIL);
-        return weChatPayDao.createTransaction( (WeChatPayTransactionPo)Common.cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
+        return weChatPayDao.createTransaction( (WeChatPayTransactionPo)cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
     }
 
     private WeChatPayReturnObject refundSuccess(WeChatPayRefund weChatPayRefund){
@@ -181,13 +182,13 @@ public class WeChatPayService {
         weChatPayRefund.setStatus(REFUND_STATUS_SUCCESS);
         weChatPayRefund.setPayerRefund(weChatPayRefund.getRefund());
         weChatPayRefund.setCreateTime(LocalDateTime.now());
-        return weChatPayDao.createRefund( (WeChatPayRefundPo)Common.cloneVo(weChatPayRefund,WeChatPayRefundPo.class) );
+        return weChatPayDao.createRefund( (WeChatPayRefundPo)cloneVo(weChatPayRefund,WeChatPayRefundPo.class) );
     }
 
     private WeChatPayReturnObject refundFail(WeChatPayRefund weChatPayRefund){
         weChatPayRefund.setStatus(REFUND_STATUS_FAIL);
         weChatPayRefund.setCreateTime(LocalDateTime.now());
-        return weChatPayDao.createRefund( (WeChatPayRefundPo)Common.cloneVo(weChatPayRefund,WeChatPayRefundPo.class) );
+        return weChatPayDao.createRefund( (WeChatPayRefundPo)cloneVo(weChatPayRefund,WeChatPayRefundPo.class) );
     }
 
 }
