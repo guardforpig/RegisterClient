@@ -44,6 +44,11 @@ import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFie
  * @author 王文飞
  * @date 2021/11/25
  */
+
+/**
+ * @author 王言光 22920192204292
+ * @date 2021/12/7
+ */
 @Repository
 public class ProductDao {
     private Logger logger = LoggerFactory.getLogger(OnSaleDao.class);

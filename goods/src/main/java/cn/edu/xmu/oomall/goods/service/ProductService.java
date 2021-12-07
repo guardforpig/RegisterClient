@@ -33,6 +33,10 @@ import static cn.edu.xmu.privilegegateway.annotation.util.Common.*;
 /**
  * @author 王文飞
  */
+/**
+ * @author 王言光 22920192204292
+ * @date 2021/12/7
+ */
 @Service
 public class ProductService {
     @Autowired
