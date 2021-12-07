@@ -8,9 +8,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- *
- * @author wyg
- * @Date 2021/11/13
+ * @author 王言光 22920192204292
+ * @date 2021/12/7
  */
 @Data
 @ApiModel(value = "修改Product视图")
