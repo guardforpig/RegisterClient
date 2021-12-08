@@ -50,7 +50,7 @@ public class WeChatPayRefundRetVo {
     private RefundAmountRetVo amount;
 
     public WeChatPayRefundRetVo(WeChatPayRefund weChatPayRefund){
-        this.refundId = "50000000382019052709732678859";
+        this.refundId = String.valueOf(weChatPayRefund.getId());
         this.outRefundNo = weChatPayRefund.getOutRefundNo();
         this.transactionId = "1217752501201407033233368018";
         this.outTradeNo = weChatPayRefund.getOutTradeNo();

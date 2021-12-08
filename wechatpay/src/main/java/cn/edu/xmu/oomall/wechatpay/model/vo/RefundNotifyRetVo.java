@@ -59,7 +59,7 @@ public class RefundNotifyRetVo {
     private Resource resource;
 
     public RefundNotifyRetVo(WeChatPayRefund weChatPayRefund){
-        this.id = "EV-2018022511223320873";
+        this.id = String.valueOf(weChatPayRefund.getId());
         this.createTime = LocalDateTime.now();
         this.eventType = "Refund." + weChatPayRefund.getStatus();
         this.summary = null;

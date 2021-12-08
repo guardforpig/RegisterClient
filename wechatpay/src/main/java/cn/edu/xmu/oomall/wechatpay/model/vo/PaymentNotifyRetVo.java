@@ -35,7 +35,7 @@ public class PaymentNotifyRetVo {
     private Resource resource;
 
     public PaymentNotifyRetVo(WeChatPayTransaction weChatPayTransaction) {
-        this.id = "EV-2018022511223320873";
+        this.id = String.valueOf(weChatPayTransaction.getId());
         this.createTime = LocalDateTime.now();
         this.eventType = "TRANSACTION." + weChatPayTransaction.getTradeState();
         this.summary = null;

@@ -31,7 +31,6 @@ public class WeChatPayService {
     private static final String TRADE_STATE_FAIL = "NOTPAY";
     private static final String TRADE_STATE_CLOSED = "CLOSED";
     private static final String TRADE_STATE_REFUND = "REFUND";
-
     private static final String REFUND_STATUS_SUCCESS = "SUCCESS";
     private static final String REFUND_STATUS_FAIL = "ABNORMAL";
 
@@ -46,7 +45,7 @@ public class WeChatPayService {
     public WeChatPayReturnObject createTransaction(WeChatPayTransaction weChatPayTransaction){
 
         WeChatPayTransaction transaction = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayTransaction.getOutTradeNo()).getData();
-        if(transaction!=null){
+        if(transaction!=null && !transaction.getTradeState().equals(TRADE_STATE_FAIL)){
             if(transaction.getTradeState().equals(TRADE_STATE_SUCCESS)){
                 return new WeChatPayReturnObject(WeChatPayReturnNo.ORDER_PAID);
             }
@@ -113,8 +112,11 @@ public class WeChatPayService {
     public WeChatPayReturnObject createRefund(WeChatPayRefund weChatPayRefund){
 
         WeChatPayTransaction transaction = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
-        if( transaction!=null && (transaction.getTradeState().equals(TRADE_STATE_CLOSED)||transaction.getTradeState().equals(TRADE_STATE_FAIL)) ){
-            return new WeChatPayReturnObject(WeChatPayReturnNo.USER_ACCOUNT_ABNORMAL);
+        if(transaction==null){
+            return new WeChatPayReturnObject(WeChatPayReturnNo.RESOURCE_NOT_EXISTS);
+        }
+        if( transaction.getTradeState().equals(TRADE_STATE_CLOSED)||transaction.getTradeState().equals(TRADE_STATE_FAIL) ){
+            return new WeChatPayReturnObject(WeChatPayReturnNo.REFUND_TRANSACTION_ERROR);
         }
         weChatPayRefund.setPayerTotal(transaction.getPayerTotal());
 
@@ -125,8 +127,11 @@ public class WeChatPayService {
                 count += po.getPayerRefund();
             }
         }
-        if(count+ weChatPayRefund.getRefund() > transaction.getPayerTotal()){
-            return new WeChatPayReturnObject(WeChatPayReturnNo.USER_ACCOUNT_ABNORMAL);
+        if(count + weChatPayRefund.getRefund() > transaction.getTotal()){
+            return new WeChatPayReturnObject(WeChatPayReturnNo.REFUND_AMOUNT_ERROR);
+        }
+        if(count + weChatPayRefund.getRefund() > transaction.getPayerTotal()){
+            weChatPayRefund.setRefund(transaction.getPayerTotal()-count);
         }
 
         WeChatPayReturnObject returnObject = null;

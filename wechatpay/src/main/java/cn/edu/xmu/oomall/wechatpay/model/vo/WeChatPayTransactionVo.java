@@ -32,10 +32,10 @@ public class WeChatPayTransactionVo {
     private String outTradeNo;
 
     @NotNull
-    private TransactionAmountVo amount = new TransactionAmountVo();
+    private TransactionAmountVo amount;
 
     @NotNull
-    private PayerVo payer = new PayerVo();
+    private PayerVo payer;
 
     @NotBlank
     private String notifyUrl;
