@@ -5,14 +5,16 @@ origin_dir='oomall-testreport'
 daily_dir='daily-report/'$time
 echo $daily_dir
 
-echo '-------------------initializing privilege database-------------------------'
-cd /home/mingqiu/privilegegateway/sql
-mysql -h 172.16.1.254 -udbuser -p12345678 -D privilege_gateway < privilegegateway-batch.sql
 
 cd /home/mingqiu/privilegegateway
 git checkout annotation/pom.xml
 git checkout privilegeservice/pom.xml
 git pull
+
+echo '-------------------initializing privilege database-------------------------'
+cd /home/mingqiu/privilegegateway/sql
+mysql -h 172.16.1.254 -udbuser -p12345678 -D privilege_gateway < privilegegateway-batch.sql
+
 echo '-------------------building annotation-------------------------'
 cd /home/mingqiu/privilegegateway/annotation
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
