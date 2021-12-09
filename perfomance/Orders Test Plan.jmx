@@ -114,6 +114,43 @@
           </collectionProp>
         </HeaderManager>
         <hashTree/>
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
       </hashTree>
       <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp Random Thread Group" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
@@ -331,7 +368,7 @@ ${__setProperty(productId,${product_id})};</stringProp>
           </ResultCollector>
           <hashTree/>
           <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告" enabled="true">
-            <boolProp name="ResultCollector.error_logging">false</boolProp>
+            <boolProp name="ResultCollector.error_logging">true</boolProp>
             <objProp>
               <name>saveConfig</name>
               <value class="SampleSaveConfiguration">
@@ -387,6 +424,15 @@ ${__setProperty(productId,${product_id})};</stringProp>
           </JSONPathAssertion>
           <hashTree/>
         </hashTree>
+        <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="随机变量" enabled="true">
+          <stringProp name="variableName">Test</stringProp>
+          <stringProp name="outputFormat"></stringProp>
+          <stringProp name="minimumValue">1</stringProp>
+          <stringProp name="maximumValue">5</stringProp>
+          <stringProp name="randomSeed"></stringProp>
+          <boolProp name="perThread">false</boolProp>
+        </RandomVariableConfig>
+        <hashTree/>
       </hashTree>
     </hashTree>
   </hashTree>
