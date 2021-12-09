@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.goods.GoodsApplication;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
+import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
@@ -48,23 +49,26 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"price\":53295,\"beginTime\":\"2021-11-11T14:38:20.000\",\"endTime\":\"2022-02-19T14:38:20.000\",\"quantity\":1000,\"activityId\":null,\"shareActId\":null,\"type\":0}]},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"price\":53295,\"beginTime\":\"2021-11-11T14:38:20.000\",\"endTime\":\"2022-02-19T14:38:20.000\",\"quantity\":2000,\"activityId\":null,\"shareActId\":null,\"type\":0}]},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
     @Test
     @Transactional
     public void selectOnsale() throws Exception {
+        SimpleShopVo simpleShopVo=new SimpleShopVo();
+        simpleShopVo.setId(8L);
+        simpleShopVo.setName("商铺8");
         //正常情况
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(shopService.getShopInfo(8L)).thenReturn(new InternalReturnObject(200,"成功","{\"id\":8,\"name\":\"商铺8\"}"));
+        Mockito.when(shopService.getShopInfo(8L)).thenReturn(new InternalReturnObject(simpleShopVo));
         String responseJson=this.mvc.perform(get("/shops/8/onsales/5")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"id\":5,\"price\":3280,\"quantity\":67,\"beginTime\":\"2021-11-11T14:38:20.000\",\"endTime\":\"2022-02-19T14:38:20.000\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":1,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20.000\",\"gmtModified\":null,\"product\":{\"id\":1554,\"name\":\"黑金刚巧力\",\"imageUrl\":null},\"shop\":null,\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"id\":5,\"price\":3280,\"quantity\":67,\"beginTime\":\"2021-11-11T14:38:20.000\",\"endTime\":\"2022-02-19T14:38:20.000\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":1,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20.000\",\"gmtModified\":null,\"product\":{\"id\":1554,\"name\":\"黑金刚巧力\",\"imageUrl\":null},\"shop\":{\"id\":8,\"name\":\"商铺8\"},\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -125,11 +129,8 @@ public class OnSaleGetControllerTest {
     public void selectActivities_beginLaterEnd() throws Exception {
         //开始时间晚于结束时间
         String responseJson=this.mvc.perform(get("/internal/shops/5/activities/3/onsales")
-                .param("state","")
                 .param("beginTime","2021-11-11T14:38:20.000Z")
                 .param("endTime","2021-11-01T14:38:20.000Z")
-                .param("page","1")
-                .param("pageSize","10")
                 .contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -167,31 +168,20 @@ public class OnSaleGetControllerTest {
 
     @Test
     @Transactional
-    public void selectFullOnsales_noRedis() throws Exception {
-        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(shopService.getShopInfo(10L)).thenReturn(new InternalReturnObject(200,"成功","{\"id\":10,\"name\":\"商铺10\"}"));
-        String responseJson=this.mvc.perform(get("/internal/onsales/1")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":1000,\"beginTime\":\"2021-11-11T14:38:20.000\",\"endTime\":\"2022-02-19T14:38:20.000\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":1,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20.000\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
-        JSONAssert.assertEquals(expectedJson, responseJson, false);
-    }
-
-    @Test
-    @Transactional
     public void selectFullOnsales() throws Exception {
+        SimpleShopVo simpleShopVo=new SimpleShopVo();
+        simpleShopVo.setId(10L);
+        simpleShopVo.setName("商铺10");
+        InternalReturnObject obj=new InternalReturnObject(simpleShopVo);
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(shopService.getShopInfo(10L)).thenReturn(new InternalReturnObject(200,"成功","{\"id\":10,\"name\":\"商铺10\"}"));
+        Mockito.when(shopService.getShopInfo(10L)).thenReturn(obj);
         String responseJson=this.mvc.perform(get("/internal/onsales/1")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson= "{\"errno\":0,\"data\":{\"id\":1,\"price\":53295,\"quantity\":1000,\"beginTime\":\"2021-11-11T14:38:20.000\",\"endTime\":\"2022-02-19T14:38:20.000\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":1,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20.000\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":null,\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
+        String expectedJson= "{\"errno\":0,\"errmsg\":\"成功\",\"data\":{\"id\":1,\"price\":53295,\"quantity\":2000,\"beginTime\":\"2021-11-11T14:38:20.000\",\"endTime\":\"2022-02-19T14:38:20.000\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":10,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20.000\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}}}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -213,12 +203,8 @@ public class OnSaleGetControllerTest {
     @Transactional
     public void selectAnyOnsale_beginLaterEnd() throws Exception {
         String responseJson=this.mvc.perform(get("/internal/onsales")
-                .param("shopId","")
-                .param("productId","")
                 .param("beginTime","2021-11-11T14:38:20.000Z")
                 .param("endTime","2021-11-01T14:38:20.000Z")
-                .param("page","1")
-                .param("pageSize","10")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isBadRequest())
