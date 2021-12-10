@@ -99,10 +99,7 @@ cd /home/mingqiu/oomall/activity
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean package
 mvn site:site site:deploy
-
 curl --user ooad_javaee:$1 -T /home/mingqiu/oomall/activity/target/activity-0.0.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
-
-
 
 curl --user ooad_javaee:$1 -T /home/mingqiu/logs/daily_test.log http://172.16.4.1/webdav/daily-report/$time/console.log
 
