@@ -27,6 +27,7 @@ git checkout pom.xml
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean package
 mvn site:site site:deploy
+curl --user ooad_javaee:$1 -T /home/mingqiu/oprivilegegateway/privilegeservice/target/privilegeservice-0.1.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
 
 cd /home/mingqiu/oomall
 git checkout core/pom.xml
@@ -53,30 +54,35 @@ cd /home/mingqiu/oomall/comment
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean package
 mvn site:site site:deploy
+curl --user ooad_javaee:$1 -T /home/mingqiu/oomall/comment/target/comment-0.0.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
 
 echo '-------------------building feight-------------------------'
 cd /home/mingqiu/oomall/freight
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
-mvn clean test
+mvn clean package
 mvn site:site site:deploy
+curl --user ooad_javaee:$1 -T /home/mingqiu/oomall/freight/target/freight-0.0.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
 
 echo '-------------------building shop-------------------------'
 cd /home/mingqiu/oomall/shop
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean package
 mvn site:site site:deploy
+curl --user ooad_javaee:$1 -T /home/mingqiu/oomall/shop/target/shop-0.0.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
 
 echo '-------------------building goods-------------------------'
 cd /home/mingqiu/oomall/goods
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean package
 mvn site:site site:deploy
+curl --user ooad_javaee:$1 -T /home/mingqiu/oomall/goods/target/goods-0.0.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
 
 echo '-------------------building coupon-------------------------'
 cd /home/mingqiu/oomall/coupon
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean package
 mvn site:site site:deploy
+curl --user ooad_javaee:$1 -T /home/mingqiu/oomall/coupon/target/coupon-0.0.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
 
 echo '-------------------building activity-------------------------'
 cd /home/mingqiu/oomall/activity
@@ -84,9 +90,9 @@ sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean package
 mvn site:site site:deploy
 
-curl --user ooad_javaee:12345678 -T /home/mingqiu/oomall/activity/target http://172.16.4.1/webdav/daily-report/$time/console.log
+curl --user ooad_javaee:$1 -T /home/mingqiu/oomall/activity/target/activity-0.0.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
 
 
 
-curl --user ooad_javaee:12345678 -T /home/mingqiu/logs/daily_test.log http://172.16.4.1/webdav/daily-report/$time/console.log
+curl --user ooad_javaee:$1 -T /home/mingqiu/logs/daily_test.log http://172.16.4.1/webdav/daily-report/$time/console.log
 
