@@ -1,4 +1,4 @@
-#|bin/bash
+#!bin/bash
 ## 将文件结尾从CRLF改为LF，解决了cd 错误问题
 time=$(date "+%Y-%m-%d-%H-%M-%S")
 origin_dir='oomall-testreport'
