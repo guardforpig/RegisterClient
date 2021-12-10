@@ -19,18 +19,18 @@ public class OnSaleRetVo{
     private Long id;
     private Long price;
     private Integer quantity;
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime beginTime;
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime endTime;
     private Byte type;
     private Long activityId;
     private Long shareActId;
     private Integer numKey;
     private Integer maxQuantity;
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime gmtCreate;
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime gmtModified;
 
     private SimpleProductRetVo product;
