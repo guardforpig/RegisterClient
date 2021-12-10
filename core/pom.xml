@@ -143,5 +143,4 @@
             <url>dav:http://172.16.4.1/webdav/oomall-testreport/oomall-core</url>
         </site>
     </distributionManagement>
-
 </project>
