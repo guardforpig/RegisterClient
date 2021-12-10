@@ -160,6 +160,15 @@
                     <!--                    <skip>true</skip>-->
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>cn.edu.xmu.oomall.alipay.AliPayApplication</mainClass>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

@@ -376,5 +376,4 @@
             <url>https://maven.aliyun.com/repository/spring-plugin</url>
         </repository>
     </repositories>
-
 </project>
