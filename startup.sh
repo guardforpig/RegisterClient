@@ -43,6 +43,7 @@ export JAVA_HOME
 export JAVA="$JAVA_HOME/bin/java"
 export BASE_DIR=`cd $(dirname $0)/..; pwd`
 
+SERVER = $1-0.0.1-SNAPSHOT
 #===========================================================================================
 # JVM Configuration
 #===========================================================================================
@@ -60,5 +61,5 @@ if [ ! -f "${BASE_DIR}/logs/start.out" ]; then
 fi
 
 # start
-nohup "$JAVA" ${JAVA_OPT} $1 >> ${BASE_DIR}/logs/start.out &
+nohup "$JAVA" ${JAVA_OPT} >> ${BASE_DIR}/logs/start.out &
 echo " is starting，you can check the ${BASE_DIR}/logs/start.out"
