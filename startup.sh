@@ -41,7 +41,7 @@ fi
 
 export JAVA_HOME
 export JAVA="$JAVA_HOME/bin/java"
-export BASE_DIR=`cd $(dirname $0)/..; pwd`
+export BASE_DIR=`pwd`
 
 #===========================================================================================
 # JVM Configuration
