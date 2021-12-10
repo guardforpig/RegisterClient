@@ -21,6 +21,9 @@ sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean install
 mvn site:site site:deploy
 
+cd /home/mingqiu/privilegegateway
+mvn install -Dmaven.test.skip=true
+
 echo '-------------------building comment-------------------------'
 cd /home/mingqiu/privilegegateway/privilegeservice
 git checkout pom.xml
@@ -48,6 +51,9 @@ cd /home/mingqiu/oomall/core
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean install
 mvn site:site site:deploy
+
+cd /home/mingqiu/oomall/
+mvn install -Dmaven.test.skip=true
 
 echo '-------------------building comment-------------------------'
 cd /home/mingqiu/oomall/comment
