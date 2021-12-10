@@ -43,12 +43,11 @@ export JAVA_HOME
 export JAVA="$JAVA_HOME/bin/java"
 export BASE_DIR=`cd $(dirname $0)/..; pwd`
 
-SERVER = $1-0.0.1-SNAPSHOT
 #===========================================================================================
 # JVM Configuration
 #===========================================================================================
 JAVA_OPT="${JAVA_OPT} -Xms512m -Xmx512m -Xmn256m"
-JAVA_OPT="${JAVA_OPT} -jar ${BASE_DIR}/${SERVER}.jar"
+JAVA_OPT="${JAVA_OPT} -jar ${BASE_DIR}/$1.jar"
 JAVA_OPT="${JAVA_OPT} --server.max-http-header-size=524288"
 
 if [ ! -d "${BASE_DIR}/logs" ]; then

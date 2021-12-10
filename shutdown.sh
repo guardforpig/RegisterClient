@@ -2,11 +2,9 @@
 
 target_dir=`pwd`
 
-SERVER=$1-0.0.1-SNAPSHOT
-
-pid=`ps ax | grep -i $SERVER | grep ${target_dir} | grep java | grep -v grep | awk '{print $SERVER}'`
+pid=`ps ax | grep -i $1 | grep ${target_dir} | grep java | grep -v grep | awk '{print $SERVER}'`
 if [ -z "$pid" ] ; then
-        echo "No $SERVER Server running."
+        echo "No $1 Server running."
         exit -1;
 fi
 
