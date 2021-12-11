@@ -1,11 +1,10 @@
 package cn.edu.xmu.oomall.coupon.model.vo;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
-import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
-import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author RenJieZheng 22920192204334
@@ -19,9 +18,12 @@ public class CouponActivityVoInfo implements VoObject {
     private Long id;
     private String name;
     private SimpleShopRetVo shop;
-    private LocalDateTime couponTime;
-    private LocalDateTime beginTime;
-    private LocalDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime beginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime couponTime;
     private Integer quantity;
     private Byte quantityType;
     private Byte validTerm;
@@ -30,27 +32,10 @@ public class CouponActivityVoInfo implements VoObject {
     private Byte state;
     private SimpleUserRetVo createBy;
     private SimpleUserRetVo modifiedBy;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
-
-    public CouponActivityVoInfo(CouponActivity couponActivity) {
-        this.id = couponActivity.getId();
-        this.name = couponActivity.getName();
-        this.beginTime = couponActivity.getBeginTime();
-        this.endTime = couponActivity.getEndTime();
-        this.couponTime = couponActivity.getCouponTime();
-        this.state = couponActivity.getState();
-        this.shop = new SimpleShopRetVo(couponActivity.getShopId(),couponActivity.getShopName());
-        this.quantity = couponActivity.getQuantity();
-        this.validTerm = couponActivity.getValidTerm();
-        this.imageUrl = couponActivity.getImageUrl();
-        this.strategy = couponActivity.getStrategy();
-        this.gmtCreate = couponActivity.getGmtCreate();
-        this.gmtModified = couponActivity.getGmtModified();
-        this.quantityType = couponActivity.getQuantityType();
-        this.createBy = new SimpleUserRetVo(couponActivity.getCreatorId(),couponActivity.getCreatorName());
-        this.modifiedBy = new SimpleUserRetVo(couponActivity.getModifierId(),couponActivity.getModifierName());
-    }
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime gmtCreate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime gmtModified;
 
     @Override
     public Object createVo() {

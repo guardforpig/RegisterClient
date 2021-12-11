@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -77,7 +77,6 @@ public class CouponActivityController {
                 return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME));
             }
         }
-
         // 优惠卷领卷时间晚于活动开始时间
         if(couponActivityVo.getCouponTime()!=null&&couponActivityVo.getBeginTime()!=null){
             if(couponActivityVo.getCouponTime().compareTo(couponActivityVo.getBeginTime()) > 0){
@@ -145,8 +144,8 @@ public class CouponActivityController {
      */
     @GetMapping("couponactivities")
     public Object showOwnCouponActivities(@RequestParam(required = false) Long shopId,
-                                          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime beginTime,
-                                          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime endTime,
+                                          @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX") @RequestParam(required = false) ZonedDateTime beginTime,
+                                          @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX") @RequestParam(required = false) ZonedDateTime endTime,
                                           @RequestParam(required = false,defaultValue = "1") Integer page,
                                           @RequestParam(required = false,defaultValue = "5") Integer pageSize
                                           ){
@@ -172,8 +171,8 @@ public class CouponActivityController {
     @GetMapping("shop/{shopId}/couponactivities")
     public Object showOwnCouponaAtivities1(@PathVariable Long shopId,
                                           @RequestParam(required = false) Byte state,
-                                          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime beginTime,
-                                          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime endTime,
+                                           @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX") @RequestParam(required = false) ZonedDateTime beginTime,
+                                           @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX") @RequestParam(required = false) ZonedDateTime endTime,
                                           @RequestParam(required = false,defaultValue = "1") Integer page,
                                           @RequestParam(required = false,defaultValue = "2") Integer pageSize){
         //对输入数据进行合法性判断
