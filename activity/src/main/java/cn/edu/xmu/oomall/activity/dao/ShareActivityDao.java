@@ -15,11 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import cn.edu.xmu.privilegegateway.annotation.util.Common;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
@@ -76,7 +78,7 @@ public class ShareActivityDao {
             PageHelper.startPage(page, pageSize);
             List<ShareActivityPo> shareActivityPos = shareActivityPoMapper.selectByExample(example);
             PageInfo pageInfo = new PageInfo(shareActivityPos);
-            ReturnObject returnObject = Common.getPageRetVo(new ReturnObject<>(pageInfo),RetShareActivityListVo.class);
+            ReturnObject returnObject = cn.edu.xmu.oomall.core.util.Common.getPageRetVo(new ReturnObject<>(pageInfo),RetShareActivityListVo.class);
             return returnObject;
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -155,7 +157,6 @@ public class ShareActivityDao {
     public ReturnObject getShareActivityByShopIdAndId(Long shopId, Long id) {
         String key = String.format(SHARE_BY_ID_AND_SHOP_ID,id,shopId);
         try {
-            System.out.println(redisUtil.get(key));
             ShareActivityBo shareActivityBo = (ShareActivityBo) redisUtil.get(key);
             if (shareActivityBo != null) {
                 return new ReturnObject(shareActivityBo);
@@ -188,36 +189,24 @@ public class ShareActivityDao {
      * 根据分享活动id查找分享活动
      * @param id 分享活动id
      * @return shareActivity
+     * @author BingShuai Liu 22920192204245
      */
-    public ReturnObject<ShareActivity> selectShareActivityById(Long id){
-        ShareActivityPo shareActivityPo;
-        try {
-            shareActivityPo=shareActivityPoMapper.selectByPrimaryKey(id);
-            if(shareActivityPo==null){
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }
-        }catch (Exception e){
-            logger.error(e.getMessage());
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
-        ShareActivity shareActivity = (ShareActivity) cloneVo(shareActivityPo,ShareActivity.class);
-        return new ReturnObject<>(shareActivity);
+    public ReturnObject<ShareActivityPo> selectShareActivityById(Long id){
+        ShareActivityPo shareActivityPo=shareActivityPoMapper.selectByPrimaryKey(id);
+        return new ReturnObject<>(shareActivityPo);
     }
 
     /**
      * 根据分享活动的id, 修改对应表项
-     * @param id
-     * @param shareActivity
+     * @param shareActivityPo
      * @return
+     * @author BingShuai Liu 22920192204245
      */
-    public ReturnObject modifyShareActivity(ShareActivity shareActivity){
-        ShareActivityPo shareActivityPo;
+    public ReturnObject modifyShareActivity(ShareActivityPo shareActivityPo){
         int ret;
         try {
-            shareActivityPo = (ShareActivityPo) cloneVo(shareActivity,ShareActivityPo.class);
             ret = shareActivityPoMapper.updateByPrimaryKeySelective(shareActivityPo);
         }catch (Exception e){
-            logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
         if(ret == 0){
@@ -232,13 +221,13 @@ public class ShareActivityDao {
      * 需要判断state是否为0(草稿态)
      * @param id
      * @return
+     * @author BingShuai Liu 22920192204245
      */
     public ReturnObject deleteShareActivity(Long id){
         int ret;
         try {
             ret=shareActivityPoMapper.deleteByPrimaryKey(id);
         }catch (Exception e){
-            logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
         if(ret==0){
@@ -248,26 +237,4 @@ public class ShareActivityDao {
         }
     }
 
-    /**
-     * 修改分享活动的state
-     * @param shareActivity
-     * @return
-     */
-    public ReturnObject updateShareActivityState(ShareActivity shareActivity){
-        ShareActivityPo shareActivityPo = (ShareActivityPo)cloneVo(shareActivity,ShareActivityPo.class);
-        int ret;
-        try{
-            shareActivityPo.setGmtModified(LocalDateTime.now());
-            ret = shareActivityPoMapper.updateByPrimaryKey(shareActivityPo);
-        }
-        catch (Exception e){
-            logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
-        if(ret == 0){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-        }else{
-            return new ReturnObject();
-        }
-    }
 }
