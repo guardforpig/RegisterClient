@@ -2,7 +2,9 @@ package cn.edu.xmu.oomall.activity.controller;
 
 import cn.edu.xmu.oomall.activity.ActivityApplication;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
+import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -19,14 +21,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.DocFlavor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @author Lin Jiyuan
@@ -41,11 +43,14 @@ public class GroupOnControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    private static final InternalReturnObject getShopInfoRet1 = new InternalReturnObject(new SimpleShopVo(1L, "OOMALL自营商铺"));
     private static JwtHelper jwtHelper = new JwtHelper();
     private static String adminToken;
 
     @MockBean(name = "cn.edu.xmu.oomall.activity.microservice.GoodsService")
     private GoodsService goodsService;
+    @MockBean(name = "cn.edu.xmu.oomall.activity.microservice.ShopService")
+    private ShopService shopService;
 
 
 
@@ -103,6 +108,9 @@ public class GroupOnControllerTest {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.offlineOnsale(Mockito.anyLong(),
                 Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
+        this.mvc.perform(put("/shops/0/groupons/2/offline").contentType("application/json;charset=UTF-8")
+                .header("authorization", adminToken))
+                .andExpect(status().isOk());
         String responseString = this.mvc.perform(put("/shops/0/groupons/2/offline").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -121,6 +129,15 @@ public class GroupOnControllerTest {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.onlineOnsale(Mockito.anyLong(),
                 Mockito.anyLong())).thenReturn(new InternalReturnObject(ReturnNo.OK));
+
+        Mockito.when(goodsService.offlineOnsale(Mockito.anyLong(),
+                Mockito.anyLong())).thenReturn(new InternalReturnObject(ReturnNo.OK));
+        this.mvc.perform(put("/shops/0/groupons/2/offline").contentType("application/json;charset=UTF-8")
+                .header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+
         String responseString = this.mvc.perform(put("/shops/0/groupons/2/online").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
@@ -170,7 +187,24 @@ public class GroupOnControllerTest {
     public void deleteGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.deleteOnsale(Mockito.anyLong(),Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
-        String responseString = this.mvc.perform(delete("/shops/0/groupons/4")
+        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+        var response = this.mvc.perform(post("/shops/1/groupons")
+                .header("authorization", adminToken)
+                .contentType("application/json;charset=UTF-8")
+                .content("{\"name\":\"测试\",\"beginTime\":\"2021-11-11 00:00:00.000\",\"endTime\":\"2021-11-13 00:00:00.000\",\"strategy\":[{\"quantity\":10,\"percentage\":500}]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errno").value(0))
+                .andReturn().getResponse().getContentAsString();
+        var list = response.split(",|:");
+        var ids = list[4];
+        long id = Long.valueOf(ids);
+
+
+
+
+
+
+        String responseString = this.mvc.perform(delete("/shops/0/groupons/"+id)
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -247,7 +281,20 @@ public class GroupOnControllerTest {
         PageVo<OnsaleVo> po = new PageVo<>(1,5,5,5,list);
         Mockito.when(goodsService.getOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.anyInt(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject<>(po));
         Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new InternalReturnObject(true));
-        String responseString = this.mvc.perform(put("/shops/0/groupons/4").contentType("application/json;charset=UTF-8").content(requestJson)
+        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+        var response = this.mvc.perform(post("/shops/1/groupons")
+                .header("authorization", adminToken)
+                .contentType("application/json;charset=UTF-8")
+                .content("{\"name\":\"测试\",\"beginTime\":\"2021-11-11 00:00:00.000\",\"endTime\":\"2021-11-13 00:00:00.000\",\"strategy\":[{\"quantity\":10,\"percentage\":500}]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errno").value(0))
+                .andReturn().getResponse().getContentAsString();
+        var listResponse = response.split(",|:");
+        var ids = listResponse[4];
+        long id = Long.valueOf(ids);
+
+
+        String responseString = this.mvc.perform(put("/shops/0/groupons/"+id).contentType("application/json;charset=UTF-8").content(requestJson)
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -323,7 +370,19 @@ public class GroupOnControllerTest {
     public void addOnSaleToGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
         Mockito.when(goodsService.addOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(SimpleSaleInfoVo.class))).thenReturn(new InternalReturnObject(true));
-        String responseString = this.mvc.perform(put("/shops/0/products/2/groupons/4/onsale").contentType("application/json;charset=UTF-8")
+
+        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+        var response = this.mvc.perform(post("/shops/1/groupons")
+                .header("authorization", adminToken)
+                .contentType("application/json;charset=UTF-8")
+                .content("{\"name\":\"测试\",\"beginTime\":\"2021-11-11 00:00:00.000\",\"endTime\":\"2021-11-13 00:00:00.000\",\"strategy\":[{\"quantity\":10,\"percentage\":500}]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errno").value(0))
+                .andReturn().getResponse().getContentAsString();
+        var list = response.split(",|:");
+        var ids = list[4];
+        long id = Long.valueOf(ids);
+        String responseString = this.mvc.perform(put("/shops/0/products/2/groupons/"+id+"/onsale").contentType("application/json;charset=UTF-8")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
