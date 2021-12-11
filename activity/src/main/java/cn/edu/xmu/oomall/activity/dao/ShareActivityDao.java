@@ -210,7 +210,7 @@ public class ShareActivityDao {
      * @param shareActivity
      * @return
      */
-    public ReturnObject modifyShareActivity(Long id, ShareActivity shareActivity){
+    public ReturnObject modifyShareActivity(ShareActivity shareActivity){
         ShareActivityPo shareActivityPo;
         int ret;
         try {

@@ -19,7 +19,7 @@
 -- Dumping data for table `oomall_error_payment`
 --
 
-LOCK TABLES `oomall_error_payment` WRITE;
+LOCK TABLES `oomall_error_account` WRITE;
 /*!40000 ALTER TABLE `oomall_error_payment` DISABLE KEYS */;
 /*!40000 ALTER TABLE `oomall_error_payment` ENABLE KEYS */;
 UNLOCK TABLES;
