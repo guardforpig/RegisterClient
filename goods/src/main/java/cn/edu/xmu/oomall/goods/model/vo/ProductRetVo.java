@@ -15,7 +15,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class ProductRetVo {
     private Long id;
-    private Map<String,Object> shop;
+    private SimpleObject shop;
     private Long goodsId;
     private Long onSaleId;
     private String name;
@@ -29,6 +29,6 @@ public class ProductRetVo {
     private String unit;
     private String barCode;
     private String originPlace;
-    private Map<String,Object> category;
+    private SimpleObject category;
     private Boolean shareable;
 }
