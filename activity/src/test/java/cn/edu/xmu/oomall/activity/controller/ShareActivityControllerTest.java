@@ -369,7 +369,11 @@ public class ShareActivityControllerTest {
         JSONAssert.assertEquals(expectString3, responseString3, true);
     }
 
-
+    //--------------------------------------------------------//
+    /**
+     * @author BingShuai Liu 22920192204245
+     * @throws Exception
+     */
     @Test
     @Transactional
     public void addShareActivityOnOnSale_OnSaleOfflineState() throws Exception{
