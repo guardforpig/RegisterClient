@@ -251,10 +251,10 @@ public class ShareActivityService {
      * @param shareActivityVo
      * @return
      */
-    @Transactional(rollbackFor=Exception.class)
     public ReturnObject modifyShareActivity(Long id, ShareActivityVo shareActivityVo,Long loginUser, String loginUsername){
         ShareActivity shareActivity = (ShareActivity)Common.cloneVo(shareActivityVo,ShareActivity.class);
         Common.setPoModifiedFields(shareActivity,loginUser,loginUsername);
+        shareActivity.setId(id);
         var x = getShareActivityByShareActivityId(id).getData();
         if (x==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -262,7 +262,7 @@ public class ShareActivityService {
         if(!x.getState().equals(ShareActivity.State.Draft.getCode().byteValue())){
             return new ReturnObject(ReturnNo.STATENOTALLOW);
         }
-        ReturnObject ret = shareActivityDao.modifyShareActivity(id,shareActivity);
+        ReturnObject ret = shareActivityDao.modifyShareActivity(shareActivity);
         return ret;
     }
 
