@@ -231,6 +231,7 @@ CREATE TABLE `oomall_share` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `sharer_id` bigint(20) DEFAULT NULL,
   `share_act_id` bigint(20) DEFAULT NULL,
+  `product_id` bigint(20) DEFAULT NULL,
   `onsale_id` bigint(20) DEFAULT NULL,
   `quantity` bigint(20) DEFAULT NULL,
   `state` tinyint(4) DEFAULT NULL,
@@ -277,6 +278,7 @@ DROP TABLE IF EXISTS `oomall_successful_share`;
 CREATE TABLE `oomall_successful_share` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `share_id` bigint(20) DEFAULT NULL,
+  `product_id` bigint(20) DEFAULT NULL,
   `onsale_id` bigint(20) DEFAULT NULL,
   `customer_id` bigint(20) DEFAULT NULL,
   `state` tinyint(4) DEFAULT NULL,
