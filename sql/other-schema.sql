@@ -145,6 +145,8 @@ CREATE TABLE `oomall_expenditure_item` (
   `revenue_id` bigint(20) DEFAULT NULL,
   `product_id` bigint(20) DEFAULT NULL,
   `product_name` varchar(128) DEFAULT NULL,
+  `order_id` bigint(20) DEFAULT NULL,
+  `orderitem_id` bigint(20) DEFAULT NULL,
   `account` bigint(20) DEFAULT NULL,
   `express_fee` bigint(20) DEFAULT NULL,
   `commission` bigint(20) DEFAULT NULL,
