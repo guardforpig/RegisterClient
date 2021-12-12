@@ -301,6 +301,19 @@ class GoodsControllerTest {
         String expected="{\"errno\":504,\"errmsg\":\"货品草稿不存在\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
+
+    @Test
+    @Transactional
+    public void PUB_testProduct04() throws Exception {
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
+        String responseString = this.mockMvc.perform(put("/shops/0/products/1576/publish").header("authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expected="{\"errno\":0,\"errmsg\":\"成功\"}";
+        JSONAssert.assertEquals(expected,responseString,true);
+    }
+
     @Test
     @Transactional
     public void ONSHELF_testProduct01() throws Exception {
