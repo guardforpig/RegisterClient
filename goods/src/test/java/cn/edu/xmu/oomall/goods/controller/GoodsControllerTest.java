@@ -1,10 +1,12 @@
 package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.goods.GoodsApplication;
+import cn.edu.xmu.oomall.goods.microservice.CategroyService;
 import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.FreightModel;
+import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
@@ -61,6 +63,9 @@ class GoodsControllerTest {
 
     @MockBean
     private FreightService freightService;
+
+    @MockBean
+    private CategroyService categroyService;
 
     @Test
     public void ListByfreightIdTest1() throws Exception
@@ -778,6 +783,12 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void getShopProductDetail() throws Exception {
+        Mockito.when(categroyService.getCategoryById(270L)).thenReturn(
+                new InternalReturnObject<>(
+                        new SimpleCategoryVo(270L,"订餐服务")
+                )
+        );
+
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         String responseString = this.mockMvc.perform(get("/shops/10/products/1576")
                 .header("authorization", adminToken)
@@ -785,7 +796,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":null,\"goodsId\":null,\"onSaleId\":null,\"name\":null,\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":null,\"weight\":null,\"state\":null,\"unit\":null,\"barCode\":null,\"originPlace\":null,\"category\":null,\"createBy\":null,\"gmtCreate\":null,\"gmtModified\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"订餐服务\"},\"createBy\":null,\"gmtCreate\":\"2021-11-11T13:12:48.000\",\"gmtModified\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 

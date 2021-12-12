@@ -386,9 +386,7 @@ public class ProductService {
         Product product = (Product) ret.getData();
 
         InternalReturnObject object = categroyService.getCategoryById(product.getCategoryId());
-        if(!object.getErrno().equals(0)){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-        }
+
         SimpleCategoryVo categoryVo = (SimpleCategoryVo) object.getData();
         product.setCategoryName(categoryVo.getName());
 

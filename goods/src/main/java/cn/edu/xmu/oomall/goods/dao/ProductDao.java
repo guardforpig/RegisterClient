@@ -322,11 +322,10 @@ public class ProductDao {
      * @Date 2021/11/12
      */
     public ReturnObject<Product> getProductDetailsById(Long id, Long shopId){
-        ProductPo productPo;
         Product product;
         try {
             if(shopId!=null) {
-                ReturnObject ret = matchProductShop(shopId, id);
+                ReturnObject ret = matchProductShop(id, shopId);
                 if (ret.getCode() != ReturnNo.OK) {
                     return new ReturnObject<>(ret.getCode());
                 }
