@@ -1,8 +1,10 @@
 package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.goods.GoodsApplication;
+import cn.edu.xmu.oomall.goods.microservice.CategroyService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
@@ -56,7 +58,8 @@ class GoodsControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private RedisUtil redisUtil;
-
+    @MockBean
+    private CategroyService categroyService;
     @Test
     public void ListByfreightIdTest1() throws Exception
     {
@@ -622,15 +625,20 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void getProductDetail() throws Exception {
+        SimpleCategoryVo simpleCategoryVo = new SimpleCategoryVo();
+        simpleCategoryVo.setId(1L);
+        simpleCategoryVo.setName("test");
+
+        Mockito.when(categroyService.getCategoryById(190L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         //正常
-        String responseString = this.mockMvc.perform(get("/products/1576")
+        String responseString = this.mockMvc.perform(get("/products/1550")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":null,\"goodsId\":null,\"onSaleId\":null,\"name\":null,\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":null,\"weight\":null,\"price\":null,\"quantity\":null,\"state\":null,\"unit\":null,\"barCode\":null,\"originPlace\":null,\"category\":null,\"shareable\":null},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":1550,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":447,\"onSaleId\":1,\"name\":\"欢乐家久宝桃罐头\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":59337,\"weight\":700,\"price\":53295,\"quantity\":1000,\"state\":2,\"unit\":\"瓶\",\"barCode\":null,\"originPlace\":\"广东\",\"category\":{\"id\":190,\"name\":\"test\"},\"shareable\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
