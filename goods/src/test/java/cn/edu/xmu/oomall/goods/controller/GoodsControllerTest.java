@@ -907,7 +907,7 @@ class GoodsControllerTest {
     public void loadSecondKillProduct() throws Exception {
         CustomComparator CUSTOM_COMPARATOR = new CustomComparator(JSONCompareMode.LENIENT,
                 new Customization("data.id", (o1, o2) -> true));
-        String responseString = this.mockMvc.perform(get("/internal/secondkillproducts/load?beginTime=2021-11-11 15:01:02.000&endTime=2021-11-11 15:01:02.000")
+        String responseString = this.mockMvc.perform(get("/internal/secondkillproducts/load?beginTime=2021-11-11 15:01:02&endTime=2021-11-11 15:01:02")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
