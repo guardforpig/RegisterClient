@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.freight.controller;
 
+import cn.edu.xmu.oomall.freight.util.ValidList;
 import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.freight.FreightApplication;
@@ -20,9 +21,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -604,5 +609,39 @@ class FreightModelControllerTest {
                 .contentType("application/json;charset=UTF-8")
                 .content(json))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void validListTest() throws Exception {
+        ValidList<String> list = new ValidList<>();
+        list.add("3");
+        list.add(0, "0");
+        list.addAll(1, List.of("1", "2"));
+        list.addAll(List.of("4", "5", "6", "7"));
+        list.removeIf(x -> Integer.parseInt(x) % 2 == 0);
+        list.remove(0);
+        list.remove("5");
+        list.removeAll(List.of());
+        Assert.isTrue(list.getList().equals(List.of("3", "7")), "");
+        Assert.isTrue(!list.isEmpty(), "");
+        Assert.isTrue(list.size() == 2, "");
+        Assert.isTrue(list.contains("3"), "");
+        Assert.isTrue(list.containsAll(List.of("3", "7")), "");
+        String[] arr = {"3", "7"};
+        Assert.isTrue(Arrays.equals(list.toArray(), arr), "");
+        Assert.isTrue(Arrays.equals(list.toArray(new String[0]), arr), "");
+        Assert.isTrue(list.get(0).equals("3"), "");
+        Assert.isTrue(list.indexOf("3") == 0, "");
+        Assert.isTrue(list.lastIndexOf("3") == 0, "");
+        list.setList(list.subList(0, 2));
+        list.set(1, "4");
+        var it = list.listIterator();
+        Assert.isTrue(it.next().equals("3"), "");
+        it = list.listIterator(1);
+        Assert.isTrue(it.next().equals("4"), "");
+        list.retainAll(List.of("4"));
+        list.clear();
+        Assert.isTrue(list.equals(new ValidList<>()), "");
+        Assert.isTrue(list.toString().equals("ValidList(list=[])"), list.toString());
     }
 }
