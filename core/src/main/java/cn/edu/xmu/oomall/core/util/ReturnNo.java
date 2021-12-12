@@ -1,5 +1,8 @@
 package cn.edu.xmu.oomall.core.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 返回的错误码
  * @author Ming Qiu
@@ -59,6 +62,7 @@ public enum ReturnNo {
     COUPON_NOTBEGIN(630,"未到优惠卷领取时间"),
     COUPON_FINISH(631,"优惠卷领罄"),
     COUPON_END(632,"优惠卷活动终止"),
+    COUPON_EXIST(633,"不可重复领优惠卷"),
     /***************************************************
      *    订单模块错误码
      **************************************************/
@@ -98,6 +102,13 @@ public enum ReturnNo {
 
     private int code;
     private String message;
+    private static final Map<Integer, ReturnNo> returnNoMap;
+    static {
+        returnNoMap = new HashMap();
+        for (ReturnNo enum1 : values()) {
+            returnNoMap.put(enum1.code, enum1);
+        }
+    }
     ReturnNo(int code, String message){
         this.code = code;
         this.message = message;
@@ -111,6 +122,9 @@ public enum ReturnNo {
             }
         }
         return null;
+    }
+    public static ReturnNo getReturnNoByCode(int code){
+        return returnNoMap.get(code);
     }
     public int getCode() {
         return code;

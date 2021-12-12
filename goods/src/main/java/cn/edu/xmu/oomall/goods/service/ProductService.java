@@ -422,11 +422,7 @@ public class ProductService {
      */
     @Transactional(readOnly = true)
     public Object loadSecondKillProduct(LocalDateTime beginTime, LocalDateTime endTime) {
-        try {
             return productDao.loadSecondKillProduct(beginTime,endTime);
-        }catch(Exception e){
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
     }
 
     @Transactional(readOnly = true)

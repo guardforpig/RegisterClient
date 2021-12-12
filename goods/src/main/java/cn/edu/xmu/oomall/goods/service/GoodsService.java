@@ -34,10 +34,10 @@ public class GoodsService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject insertGoods(Long shopId,GoodsVo goodsVo,Long loginUserId,String loginUserName)
     {
-        Goods goods=(Goods)cloneVo(goodsVo,Goods.class);
+        Goods goods=cloneVo(goodsVo,Goods.class);
         setPoCreatedFields(goods,loginUserId,loginUserName);
         goods.setShopId(shopId);
-        ReturnObject<Goods> ret=goodsDao.createNewGoods(goods);
+        ReturnObject ret=goodsDao.createNewGoods(goods);
         if(ret.getData()!=null){
             CreateGoodsVo goodsVo1=(CreateGoodsVo)cloneVo(ret.getData(),CreateGoodsVo.class);
             return new ReturnObject(goodsVo1);
@@ -55,7 +55,7 @@ public class GoodsService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject updateGoods(Long shopId,Long id,GoodsVo goodsVo,Long loginUser,String loginUserName)
     {
-        Goods goods = (Goods)cloneVo(goodsVo,Goods.class);
+        Goods goods = cloneVo(goodsVo,Goods.class);
         goods.setId(id);
         goods.setShopId(shopId);
        setPoModifiedFields(goods,loginUser,loginUserName);

@@ -84,7 +84,6 @@ public class CouponControllerTest {
         Mockito.when(goodsService.getOnsaleById(12L)).thenReturn(onsaleVo6);
 
         adminToken = jwtHelper.createToken(1L,"admin",1L, 1,3600);
-        System.out.println(adminToken);
     }
 
 
@@ -150,7 +149,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":0,\"imageUrl\":null},{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":0,\"imageUrl\":null},{\"id\":6,\"name\":\"优惠活动6\",\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":0,\"imageUrl\":null},{\"id\":3,\"name\":\"优惠活动3\",\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        expectString = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":6,\"name\":\"优惠活动6\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":3,\"name\":\"优惠活动3\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 正常，走redis
@@ -158,7 +157,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":0,\"imageUrl\":null},{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":0,\"imageUrl\":null},{\"id\":6,\"name\":\"优惠活动6\",\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":0,\"imageUrl\":null},{\"id\":3,\"name\":\"优惠活动3\",\"beginTime\":null,\"endTime\":null,\"couponTime\":null,\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        expectString = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":6,\"name\":\"优惠活动6\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":3,\"name\":\"优惠活动3\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
     }
