@@ -435,9 +435,9 @@ public class ProductService {
         }
         Product p = productDao.getProduct(id);
         if (p.getFreightId() != null) {
-            return freightService.getFreightModel(shopId,p.getFreightId());
+            return new ReturnObject(freightService.getFreightModel(shopId,p.getFreightId())) ;
         } else {
-            return freightService.getDefaultFreightModel(shopId);
+            return new ReturnObject( freightService.getDefaultFreightModel(shopId));
         }
     }
 
