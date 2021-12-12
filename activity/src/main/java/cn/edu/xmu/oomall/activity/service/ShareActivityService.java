@@ -89,14 +89,14 @@ public class ShareActivityService {
         if (productId != null) {
             //TODO:openfeign获得分享活动id
             InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, 10);
-            if (onSalesByProductId.getData() == null) {
-                return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,onSalesByProductId.getErrmsg());
+            if (onSalesByProductId.getErrno()!=0) {
+                return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
             }
             int total = (int) onSalesByProductId.getData().get("total");
             if (total != 0) {
                 onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, total > 500 ? 500 : total);
-                if (onSalesByProductId.getData() == null) {
-                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,onSalesByProductId.getErrmsg());
+                if (onSalesByProductId.getErrno()!=0) {
+                    return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
                 }
                 List<SimpleSaleInfoVo> list = (List<SimpleSaleInfoVo>) onSalesByProductId.getData().get("list");
                 for (SimpleSaleInfoVo simpleSaleInfoVO : list) {
@@ -125,15 +125,15 @@ public class ShareActivityService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject addShareAct(String createName, Long createId,
                                     Long shopId, ShareActivityVo shareActivityVo) {
-        ShareActivityBo shareActivityBo = (ShareActivityBo) cloneVo(shareActivityVo, ShareActivityBo.class);
+        ShareActivityBo shareActivityBo = cloneVo(shareActivityVo, ShareActivityBo.class);
         setPoCreatedFields(shareActivityBo, createId, createName);
         setPoModifiedFields(shareActivityBo, createId, createName);
         shareActivityBo.setState(ShareActivityStatesBo.DRAFT.getCode());
         shareActivityBo.setShopId(shopId);
         //TODO:通过商铺id弄到商铺名称
         InternalReturnObject<ShopInfoVo> shop = shopService.getShop(shopId);
-        if (shop.getData() == null) {
-            return new ReturnObject<>(ReturnNo.FIELD_NOTVALID, "不存在该商铺");
+        if (shop.getErrno()!=0) {
+            return new ReturnObject(ReturnNo.getByCode(shop.getErrno()));
         }
         String shopName = shop.getData().getName();
         shareActivityBo.setShopName(shopName);
@@ -143,7 +143,7 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo1 = (ShareActivityBo) returnObject.getData();
-        RetShareActivityInfoVo retShareActivityInfoVo = (RetShareActivityInfoVo) cloneVo(shareActivityBo1, RetShareActivityInfoVo.class);
+        RetShareActivityInfoVo retShareActivityInfoVo = cloneVo(shareActivityBo1, RetShareActivityInfoVo.class);
         retShareActivityInfoVo.setShop(new ShopVo(shareActivityBo1.getShopId(), shareActivityBo1.getShopName()));
         return new ReturnObject(retShareActivityInfoVo);
     }
@@ -161,7 +161,7 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
-        RetShareActivityInfoVo retShareActivityInfoVo = (RetShareActivityInfoVo) cloneVo(shareActivityBo, RetShareActivityInfoVo.class);
+        RetShareActivityInfoVo retShareActivityInfoVo = cloneVo(shareActivityBo, RetShareActivityInfoVo.class);
         retShareActivityInfoVo.setShop(new ShopVo(shareActivityBo.getShopId(), shareActivityBo.getShopName()));
         return new ReturnObject(retShareActivityInfoVo);
     }
@@ -180,7 +180,7 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
-        RetShareActivitySpecificInfoVo retShareActivitySpecificInfoVo = (RetShareActivitySpecificInfoVo) cloneVo(shareActivityBo, RetShareActivitySpecificInfoVo.class);
+        RetShareActivitySpecificInfoVo retShareActivitySpecificInfoVo = cloneVo(shareActivityBo, RetShareActivitySpecificInfoVo.class);
         retShareActivitySpecificInfoVo.setShop(new ShopVo(shareActivityBo.getShopId(), shareActivityBo.getShopName()));
         retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getCreatorId(), shareActivityBo.getCreatorName()));
         retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getModifierId(), shareActivityBo.getModifierName()));

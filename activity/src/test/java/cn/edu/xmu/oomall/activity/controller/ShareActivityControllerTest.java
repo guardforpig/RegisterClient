@@ -245,10 +245,10 @@ public class ShareActivityControllerTest {
         //shopId没有
         String requestJson9 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
         String responseString9 = mvc.perform(post("/shops/11/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson9))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString9 = "{\"errno\":503,\"errmsg\":\"不存在该商铺\"}";
+        String expectString9 = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expectString9, responseString9, true);
 
     }
@@ -330,6 +330,13 @@ public class ShareActivityControllerTest {
         String expectString1 = "{\"errno\":0,\"data\":{\"id\":10,\"shop\":{\"id\":2,\"name\":\"甜蜜之旅\"},\"name\":\"分享活动10\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"strategy\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString1, responseString1, true);
 
+        String responseString2 = mvc.perform(get("/shareactivities/2").header("authorization", token).contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectString2 = "{\"errno\":0,\"data\":{\"id\":2,\"shop\":{\"id\":3,\"name\":\"向往时刻\"},\"name\":\"分享活动2\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]},\"errmsg\":\"成功\"}";
+        JSONAssert.assertEquals(expectString2,responseString2, true);
+
 
         String responseString3 = mvc.perform(get("/shareactivities/111111").header("authorization", token).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isNotFound())
@@ -360,6 +367,12 @@ public class ShareActivityControllerTest {
         String expectString1 = "{\"errno\":0,\"data\":{\"id\":10,\"shop\":{\"id\":2,\"name\":\"甜蜜之旅\"},\"name\":\"分享活动10\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"state\":1,\"createdBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11 15:01:23.000\",\"gmtModified\":null,\"modifiedBy\":null,\"strategy\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString1, responseString1, true);
 
+        String responseString2 = mvc.perform(get("/shops/3/shareactivities/2").header("authorization", token).contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectString2 = " {\"errno\":0,\"data\":{\"id\":2,\"shop\":{\"id\":3,\"name\":\"向往时刻\"},\"name\":\"分享活动2\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"state\":2,\"createdBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11 15:01:23.000\",\"gmtModified\":null,\"modifiedBy\":null,\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]},\"errmsg\":\"成功\"}";
+        JSONAssert.assertEquals(expectString2,responseString2, true);
 
         String responseString3 = mvc.perform(get("/shops/2/shareactivities/11111").header("authorization", token).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isNotFound())
@@ -503,7 +516,7 @@ public class ShareActivityControllerTest {
     @Test
     @Transactional
     public void modifyShareActivity_NotDraftState() throws Exception{
-        StrategyVo shareActivityStrategyVo=new StrategyVo(10L,10L);
+        StrategyVo shareActivityStrategyVo=new StrategyVo(10,10);
         List<StrategyVo> list = new ArrayList<>();
         list.add(shareActivityStrategyVo);
         ShareActivityVo shareActivityVo = new ShareActivityVo();
@@ -527,7 +540,7 @@ public class ShareActivityControllerTest {
     @Test
     @Transactional
     public void modifyShareActivity_BeginTimeAfterEndTime() throws Exception{
-        StrategyVo shareActivityStrategyVo=new StrategyVo(10L,10L);
+        StrategyVo shareActivityStrategyVo=new StrategyVo(10,10);
         List<StrategyVo> list = new ArrayList<>();
         list.add(shareActivityStrategyVo);
         ShareActivityVo shareActivityVo = new ShareActivityVo();
@@ -550,7 +563,7 @@ public class ShareActivityControllerTest {
     @Test
     @Transactional
     public void modifyShareActivity_ShareActivityIdNotFound() throws Exception{
-        StrategyVo shareActivityStrategyVo=new StrategyVo(10L,10L);
+        StrategyVo shareActivityStrategyVo=new StrategyVo(10,10);
         List<StrategyVo> list = new ArrayList<>();
         list.add(shareActivityStrategyVo);
         ShareActivityVo shareActivityVo = new ShareActivityVo();
@@ -574,7 +587,7 @@ public class ShareActivityControllerTest {
     @Test
     @Transactional
     public void modifyShareActivity_Success() throws Exception{
-        StrategyVo shareActivityStrategyVo=new StrategyVo(10L,10L);
+        StrategyVo shareActivityStrategyVo=new StrategyVo(10,10);
         List<StrategyVo> list = new ArrayList<>();
         list.add(shareActivityStrategyVo);
         ShareActivityVo shareActivityVo = new ShareActivityVo();
