@@ -1,8 +1,8 @@
 package cn.edu.xmu.oomall;
 
+import cn.edu.xmu.oomall.core.util.ReturnNo;
+import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
-import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
-import cn.edu.xmu.privilegegateway.annotation.util.ReturnObject;
 import org.junit.jupiter.api.Test;
 
 /**
