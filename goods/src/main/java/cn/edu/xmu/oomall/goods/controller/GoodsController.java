@@ -6,6 +6,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductChangeVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductDetailVo;
+import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
 import cn.edu.xmu.oomall.goods.service.GoodsService;
 import cn.edu.xmu.oomall.goods.service.ProductService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
