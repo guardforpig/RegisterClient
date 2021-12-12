@@ -472,6 +472,7 @@ public class CouponActivityService {
         if (couponActivity.getState().equals(CouponActivity.State.OFFLINE.getCode())) {
             return new ReturnObject<>(ReturnNo.STATENOTALLOW);
         }
+
         // 通过CouponActivityId和OnsaleId，创建一个CouponOnsale
         CouponOnsale newCouponOnsale = new CouponOnsale();
         newCouponOnsale.setActivityId(couponActivityId);

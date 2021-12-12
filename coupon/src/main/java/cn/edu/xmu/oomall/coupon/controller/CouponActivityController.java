@@ -151,7 +151,7 @@ public class CouponActivityController {
                                           ){
         //对输入数据进行合法性判断
         // 如果开始时间晚于结束时间
-        if(beginTime.compareTo(endTime) > 0){
+        if(beginTime != null && beginTime.compareTo(endTime) > 0){
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME));
         }
         return Common.getPageRetObject(couponActivityService.showOwnCouponActivities(shopId,beginTime,endTime,page,pageSize));
@@ -203,7 +203,7 @@ public class CouponActivityController {
      */
 
     @ApiOperation(value = "查看优惠活动中的商品")
-    @GetMapping("/couponactivities/{id}/products")
+    @GetMapping("couponactivities/{id}/products")
     public Object listProductsByCouponActivityId(@ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
                                                  @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
                                                  @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
@@ -239,7 +239,7 @@ public class CouponActivityController {
 
 
     @ApiOperation(value = "管理员修改己方某优惠活动")
-    @PutMapping("/shops/{shopId}/couponactivities/{id}")
+    @PutMapping("shops/{shopId}/couponactivities/{id}")
     @Audit(departName = "shops")
     public Object updateCouponActivity(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                        @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
@@ -251,8 +251,10 @@ public class CouponActivityController {
             return object;
         }
 
-        if (couponActivityVo.getBeginTime().isAfter(couponActivityVo.getEndTime())) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME));
+        if (couponActivityVo.getBeginTime() != null && couponActivityVo.getEndTime() != null) {
+            if (couponActivityVo.getBeginTime().isAfter(couponActivityVo.getEndTime())) {
+                return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME));
+            }
         }
 
         ReturnObject returnObject = couponActivityService.updateCouponActivity(userId, userName, shopId, couponActivityId, couponActivityVo, null);
@@ -261,7 +263,7 @@ public class CouponActivityController {
 
 
     @ApiOperation(value = "管理员物理删除己方某优惠活动")
-    @DeleteMapping("/shops/{shopId}/couponactivities/{id}")
+    @DeleteMapping("shops/{shopId}/couponactivities/{id}")
     @Audit(departName = "shops")
     public Object deleteCouponActivity(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                        @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
@@ -272,7 +274,7 @@ public class CouponActivityController {
     }
 
     @ApiOperation(value = "管理员为己方某优惠券活动新增限定范围")
-    @PostMapping("/shops/{shopId}/couponactivities/{id}/onsales/{sid}")
+    @PostMapping("shops/{shopId}/couponactivities/{id}/onsales/{sid}")
     @Audit(departName = "shops")
     public Object insertCouponOnsale(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                      @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
@@ -285,7 +287,7 @@ public class CouponActivityController {
 
 
     @ApiOperation(value = "店家删除己方某优惠券活动的某限定范围")
-    @DeleteMapping("/shops/{shopId}/coupononsale/{id}")
+    @DeleteMapping("shops/{shopId}/coupononsale/{id}")
     @Audit(departName = "shops")
     public Object deleteCouponOnsale(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                      @ApiParam(value = "couponOnsaleId", required = true) @PathVariable("id") Long couponOnsaleId,
@@ -297,7 +299,7 @@ public class CouponActivityController {
 
 
     @ApiOperation(value = "上线优惠活动")
-    @PutMapping("/shops/{shopId}/couponactivities/{id}/online")
+    @PutMapping("shops/{shopId}/couponactivities/{id}/online")
     @Audit(departName = "shops")
     public Object updateCouponActivityToOnline(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                                @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
@@ -309,7 +311,7 @@ public class CouponActivityController {
 
 
     @ApiOperation(value = "下线优惠活动")
-    @PutMapping("/shops/{shopId}/couponactivities/{id}/offline")
+    @PutMapping("shops/{shopId}/couponactivities/{id}/offline")
     @Audit(departName = "shops")
     public Object updateCouponActivityToOffline(@ApiParam(value = "商店ID", required = true) @PathVariable("shopId") Long shopId,
                                                 @ApiParam(value = "优惠活动ID", required = true) @PathVariable("id") Long couponActivityId,
