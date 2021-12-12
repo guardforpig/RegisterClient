@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * modifiedBy 陈晓如 2020/11/30 13:42
  **/
 @SpringBootTest(classes = PublicTestApp.class)   //标识本类是一个SpringBootTest
-public class PutSelfUsersTest extends BaseTestOomall {
+public class SelfUsersTest extends BaseTestOomall {
 
     private static String TESTURL = "/privilege/self/users";
 
@@ -74,5 +74,6 @@ public class PutSelfUsersTest extends BaseTestOomall {
                 .getResponseBodyContent();
 
     }
+
 }
 

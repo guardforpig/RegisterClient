@@ -21,45 +21,46 @@ import cn.edu.xmu.oomall.PublicTestApp;
 import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(classes = PublicTestApp.class)
-public class LogoutTest extends BaseTestOomall {
+public class SelfRolesTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilege/logout";
+    private static String TESTURL = "/privilege/self/roles";
 
     /**
-     * @author Song Runhan
-     * @date Created in 2020/11/4/ 16:00
+     * 查看自己的角色测试1
+     * @throws Exception
+     * @author Xianwei Wang
      */
     @Test
-    public void logout1() throws  Exception{
-        byte[] responseString = null;
-        WebTestClient.RequestHeadersSpec res = null;
+    public void getSelfUserRoleTest1() throws Exception {
+        String token = this.adminLogin("13088admin", "123456");
 
-        String token = this.adminLogin("13088admin","123456");
-
-        //region 用户正常登出
-        res = this.mallClient.get().uri(TESTURL).header("authorization",token);
-        res.exchange().expectStatus().isOk()
+        byte[] responseString = this.mallClient.get().uri(TESTURL).header("authorization",token)
+                .exchange()
+                .expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.errmsg").isEqualTo("成功")
+                .jsonPath("$.data.list[?(@.id == 1)]").exists()
                 .returnResult().getResponseBodyContent();
-        //endregion
     }
 
+    /**
+     * 查看自己的角色测试2
+     * @throws Exception
+     * @author Xianwei Wang
+     */
     @Test
-    public void logout2() throws  Exception{
-        String token = "this is test";
-        WebTestClient.RequestHeadersSpec res = null;
-        res = this.mallClient.get().uri(TESTURL).header("authorization",token);
-        res.exchange().expectStatus().isUnauthorized()
+    public void getSelfUserRoleTest2() throws Exception {
+        String token = this.adminLogin("8532600003", "123456");
+        byte[] responseString = this.mallClient.get().uri(TESTURL).header("authorization",token)
+                .exchange()
+                .expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_JWT.getCode())
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .jsonPath("$.data.list[?(@.id == 4)]").exists()
                 .returnResult().getResponseBodyContent();
-        //endregion
     }
 }

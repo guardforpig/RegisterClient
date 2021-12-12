@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @ApiModel(value = "Product详细视图")
 public class ProductDetailVo {
-
     String skuSn;
     @NotBlank
     @NotNull

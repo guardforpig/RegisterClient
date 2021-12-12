@@ -14,7 +14,7 @@ import java.util.Objects;
 @SpringBootTest(classes = PublicTestApp.class)   //标识本类是一个SpringBootTest
 public class GetDepartUsersTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilege/departs/%d/users";
+    private static String TESTURL ="/privilege/departs/{did}/users";
 
     /***
      * 正确查找用户
@@ -27,16 +27,15 @@ public class GetDepartUsersTest extends BaseTestOomall {
 
         this.mallClient
                 .get()
-                .uri(String.format(TESTURL, 1)+"?userName=13088admin")
+                .uri(TESTURL+"?userName=13088admin", 1)
                 .header("authorization", token)
                 .exchange()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
-                .expectStatus().isNotFound()
+                .expectStatus().isOk()
                 .expectBody()
-                .returnResult()
-                .getResponseBodyContent();
-
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .jsonPath("$.data.list.length()").isEqualTo(0);
     }
 
     /***
@@ -50,7 +49,7 @@ public class GetDepartUsersTest extends BaseTestOomall {
 
         this.mallClient
                 .get()
-                .uri(String.format(TESTURL,1)+"?userName=8131600001")
+                .uri(TESTURL+"?userName=8131600001",1)
                 .header("authorization", token)
                 .exchange()
                 .expectHeader()
@@ -58,10 +57,8 @@ public class GetDepartUsersTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data[?(@.name == \"店铺1超级管理员\")]").exists()
-                .jsonPath("$.data[?(@.sign == 0)]").exists()
-                .returnResult()
-                .getResponseBodyContent();
+                .jsonPath("$.data.list[?(@.name == \"店铺1超级管理员\" && @.sign == 0)]").exists()
+                .jsonPath("$.data.list.length()").isEqualTo(1);
     }
 
     /***
@@ -73,9 +70,8 @@ public class GetDepartUsersTest extends BaseTestOomall {
 
         String token = this.adminLogin("13088admin", "123456");
 
-        String response = new String(Objects.requireNonNull(this.mallClient
-                .get()
-                .uri(String.format(TESTURL,1)+"?userName=wrong_sign")
+        this.mallClient.get()
+                .uri(TESTURL+"?userName=wrong_sign",1)
                 .header("authorization", token)
                 .exchange()
                 .expectHeader()
@@ -83,10 +79,7 @@ public class GetDepartUsersTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_FALSIFY.getCode())
-                .jsonPath("$.data[?(@.name == \"签名错误\")]").exists()
-                .jsonPath("$.data[?(@.sign == 1)]").exists()
-                .returnResult()
-                .getResponseBodyContent()));
+                .jsonPath("$.data[?(@.name == \"签名错误\" && @.sign == 1)]").exists();
     }
 
     /***
@@ -98,17 +91,14 @@ public class GetDepartUsersTest extends BaseTestOomall {
 
         String token = this.adminLogin("2721900002", "123456");
 
-        String response = new String(Objects.requireNonNull(this.mallClient
-                .get()
-                .uri(String.format(TESTURL,1)+"?userName=change_user")
+        this.mallClient.get()
+                .uri(TESTURL+"?userName=change_user",1)
                 .header("authorization", token)
                 .exchange()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectStatus().isForbidden()
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode())
-                .returnResult()
-                .getResponseBodyContent()));
+                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode());
     }
 }

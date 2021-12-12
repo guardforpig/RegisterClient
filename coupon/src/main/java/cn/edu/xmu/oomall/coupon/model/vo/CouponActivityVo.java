@@ -10,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author RenJieZheng 22920192204334
@@ -30,12 +30,15 @@ public class CouponActivityVo implements VoObject {
     @Min(value = 0,message = "validTerm最小值为0")
     @Max(value = 1,message = "validTerm最大值为1")
     private Byte validTerm;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    private LocalDateTime couponTime;
+    private ZonedDateTime couponTime;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    private LocalDateTime beginTime;
+    private ZonedDateTime beginTime;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    private LocalDateTime endTime;
+    private ZonedDateTime endTime;
     @Length(max = 100,message = "strategy字符串最大长度为100")
     private String strategy;
 

@@ -78,6 +78,6 @@ oomall:
 
 productservice:
   webdav:
-    username: oomall
-    password: 123465
-    baseUrl: http://localhost:8080/web/
+    username: ooad_javaee
+    password: 12345678
+    baseUrl: http://172.16.4.1/webdav/test/

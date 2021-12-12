@@ -42,7 +42,7 @@ public class GetUsersStates extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data[?(@.list.length() > 0)]").exists()
+                .jsonPath("$.data.list.length()").isEqualTo(4)
                 .returnResult()
                 .getResponseBodyContent();
     }
