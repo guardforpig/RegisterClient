@@ -62,7 +62,7 @@ class GoodsControllerTest {
     {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString=this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/0/freightmodels/1/products").header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
+                        .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -74,7 +74,7 @@ class GoodsControllerTest {
     {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString=this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/1/freightmodels/1/products").header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
+                        .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isForbidden())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -86,7 +86,7 @@ class GoodsControllerTest {
     {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString=this.mockMvc.perform(MockMvcRequestBuilders.get("/shops/0/freightmodels/2/products").header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
+                        .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -493,7 +493,7 @@ class GoodsControllerTest {
     @Transactional(readOnly = true)
     public void secondProducts1() throws Exception {
         this.mockMvc.perform(get("/categories/1/products")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.errno").value(0))
                 .andExpect(jsonPath("$.errmsg").value("成功"));
@@ -502,7 +502,7 @@ class GoodsControllerTest {
     @Transactional(readOnly = true)
     public void secondProducts2() throws Exception {
         String contentAsString = this.mockMvc.perform(get("/categories/266/products")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         String expected="{\"errno\":0,\"data\":{\"total\":46,\"pages\":5,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1561,\"name\":\"奥利奥（桶装）\",\"imageUrl\":null},{\"id\":1567,\"name\":\"六神花露水\",\"imageUrl\":null},{\"id\":1765,\"name\":\"康师傅包（爆椒）\",\"imageUrl\":null},{\"id\":1935,\"name\":\"50立白儿童牙膏\",\"imageUrl\":null},{\"id\":1970,\"name\":\"凯达空气清新剂\",\"imageUrl\":null},{\"id\":1971,\"name\":\"凯达桂花空气清新剂\",\"imageUrl\":null},{\"id\":2056,\"name\":\"彩虹果汁糖\",\"imageUrl\":null},{\"id\":2088,\"name\":\"不锈钢口杯\",\"imageUrl\":null},{\"id\":2118,\"name\":\"达能王子草莓饼干\",\"imageUrl\":null},{\"id\":2255,\"name\":\"双汇清真鸡肉肠400\",\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
@@ -512,7 +512,7 @@ class GoodsControllerTest {
     @Transactional(readOnly = true)
     public void secondProducts3() throws Exception {
         String contentAsString = this.mockMvc.perform(get("/categories/3/products")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andReturn().getResponse().getContentAsString();
         String expected="{\"errno\":504,\"errmsg\":\"分类id不存在\"}";
         JSONAssert.assertEquals(expected,contentAsString,true);
@@ -521,7 +521,7 @@ class GoodsControllerTest {
     @Transactional(readOnly = true)
     public void secondShopProducts1() throws Exception {
         String contentAsString = this.mockMvc.perform(get("/shops/1/categories/266/products")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         String expected="{\"errno\":0,\"data\":{\"total\":6,\"list\":[{\"id\":1561,\"shopId\":1,\"shopName\":\"OOMALL自营商铺\",\"goodsId\":453,\"categoryId\":266,\"freightId\":1,\"skuSn\":null,\"name\":\"奥利奥（桶装）\",\"originalPrice\":69902,\"weight\":55,\"imageUrl\":null,\"barcode\":\"6901668053893\",\"unit\":\"桶\",\"originPlace\":\"江苏\",\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":\"2021-11-11T13:12:48\",\"gmtModified\":null,\"state\":2},{\"id\":1971,\"shopId\":1,\"shopName\":\"OOMALL自营商铺\",\"goodsId\":281,\"categoryId\":266,\"freightId\":1,\"skuSn\":null,\"name\":\"凯达桂花空气清新剂\",\"originalPrice\":74787,\"weight\":320,\"imageUrl\":null,\"barcode\":\"6901064060082\",\"unit\":\"瓶\",\"originPlace\":\"广东\",\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":\"2021-11-11T13:12:48\",\"gmtModified\":null,\"state\":2},{\"id\":2739,\"shopId\":1,\"shopName\":\"OOMALL自营商铺\",\"goodsId\":66,\"categoryId\":266,\"freightId\":1,\"skuSn\":null,\"name\":\"迎华牌中老年无糖麦\",\"originalPrice\":2403,\"weight\":800,\"imageUrl\":null,\"barcode\":\"6928793900076\",\"unit\":\"\",\"originPlace\":\"\",\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":\"2021-11-11T13:12:48\",\"gmtModified\":null,\"state\":2},{\"id\":3407,\"shopId\":1,\"shopName\":\"OOMALL自营商铺\",\"goodsId\":333,\"categoryId\":266,\"freightId\":1,\"skuSn\":null,\"name\":\"金龙鱼AE营养菜籽油5000\",\"originalPrice\":41072,\"weight\":4,\"imageUrl\":null,\"barcode\":\"6902969887552\",\"unit\":\"桶\",\"originPlace\":\"\",\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":\"2021-11-11T13:12:48\",\"gmtModified\":null,\"state\":2},{\"id\":4560,\"shopId\":1,\"shopName\":\"OOMALL自营商铺\",\"goodsId\":130,\"categoryId\":266,\"freightId\":1,\"skuSn\":null,\"name\":\"400鹰威饼干\",\"originalPrice\":63334,\"weight\":18,\"imageUrl\":null,\"barcode\":\"6921094995314\",\"unit\":\"包\",\"originPlace\":\"\",\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":\"2021-11-11T13:12:48\",\"gmtModified\":null,\"state\":2},{\"id\":5124,\"shopId\":1,\"shopName\":\"OOMALL自营商铺\",\"goodsId\":180,\"categoryId\":266,\"freightId\":1,\"skuSn\":null,\"name\":\"金顺昌壮乡桂圆糕150\",\"originalPrice\":35653,\"weight\":150,\"imageUrl\":null,\"barcode\":\"6922791100148\",\"unit\":\"盒\",\"originPlace\":\"桂林\",\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":\"2021-11-11T13:12:48\",\"gmtModified\":null,\"state\":2}],\"pageNum\":1,\"pageSize\":10,\"size\":6,\"startRow\":1,\"endRow\":6,\"pages\":1,\"prePage\":0,\"nextPage\":0,\"isFirstPage\":true,\"isLastPage\":true,\"hasPreviousPage\":false,\"hasNextPage\":false,\"navigatePages\":8,\"navigatepageNums\":[1],\"navigateFirstPage\":1,\"navigateLastPage\":1},\"errmsg\":\"成功\"}";
@@ -531,7 +531,7 @@ class GoodsControllerTest {
     @Transactional(readOnly = true)
     public void secondShopProducts2() throws Exception {
         String contentAsString = this.mockMvc.perform(get("/shops/1/categories/3/products")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andReturn().getResponse().getContentAsString();
         String expected="{\"errno\":504,\"errmsg\":\"分类id不存在\"}";
         JSONAssert.assertEquals(expected,contentAsString,true);
@@ -540,7 +540,7 @@ class GoodsControllerTest {
     @Transactional(readOnly = true)
     public void secondShopProducts3() throws Exception {
         this.mockMvc.perform(get("/shops/1/categories/1/products")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.errno").value(0))
                 .andExpect(jsonPath("$.errmsg").value("成功"));
