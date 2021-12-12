@@ -33,7 +33,7 @@ public class GetRolesStates extends BaseTestOomall {
      * @throws Exception
      */
     @Test
-    public void findAdminUserState() throws Exception {
+    public void findRoleState() throws Exception {
         byte[] responseString = this.mallClient.get().uri(TESTURL)
                 .exchange()
                 .expectHeader()
@@ -41,7 +41,7 @@ public class GetRolesStates extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data[?(@.list.length() > 0)]").exists()
+                .jsonPath("$.data.list.length()").isEqualTo(2)
                 .returnResult()
                 .getResponseBodyContent();
     }
