@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.core.util;
 
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import lombok.Getter;
 
 /**
@@ -90,5 +91,15 @@ public class ReturnObject<T> {
             return this.code.getMessage();
         }
     }
-
+    public ReturnObject(InternalReturnObject<T> internalReturnObject){
+        ReturnNo[] all= ReturnNo.values();
+        for (ReturnNo returnNo :all) {
+            if (returnNo.getCode()==internalReturnObject.getErrno()) {
+                this.code=returnNo;
+                break;
+            }
+        }
+        this.errmsg=internalReturnObject.getErrmsg();
+        this.data=internalReturnObject.getData();
+    }
 }
