@@ -246,13 +246,13 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void PUT_testGoods04() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",10L, 3600,0);
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String requestJson="{\"name\":\"修改商品\"}";
-        String responseString = this.mockMvc.perform(put("/shops/5/goods/21").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
-                .andExpect(status().isForbidden())
+        String responseString = this.mockMvc.perform(put("/shops/4/goods/21").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
+                .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":503,\"errmsg\":\"departId不匹配\"}";
+        String expected="{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -382,18 +382,18 @@ class GoodsControllerTest {
     @Transactional
     public void BANSHELF_testProduct01() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/1/products/1553/prohibit").header("authorization", adminToken))
-                .andExpect(status().isForbidden())
+        String responseString = this.mockMvc.perform(put("/shops/0/products/1553/prohibit").header("authorization", adminToken))
+                .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":505,\"errmsg\":\"此商铺没有发布货品的权限\"}";
+        String expected="{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
     @Transactional
     public void BANSHELF_testProduct02() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/5/products/1553/prohibit").header("authorization", adminToken))
+        String responseString = this.mockMvc.perform(put("/shops/1/products/1553/prohibit").header("authorization", adminToken))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -404,11 +404,11 @@ class GoodsControllerTest {
     @Transactional
     public void BANSHELF_testProduct03() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/1/products/20000/prohibit").header("authorization", adminToken))
-                .andExpect(status().isForbidden())
+        String responseString = this.mockMvc.perform(put("/shops/0/products/20000/prohibit").header("authorization", adminToken))
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":505,\"errmsg\":\"此商铺没有发布货品的权限\"}";
+        String expected="{\"errno\":504,\"errmsg\":\"货品id不存在\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -437,7 +437,7 @@ class GoodsControllerTest {
     @Transactional
     public void UNBANSHELF_testProduct02() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/0/products/1554/allow").header("authorization", adminToken))
+        String responseString = this.mockMvc.perform(put("/shops/0/products/1553/allow").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -447,7 +447,6 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void UNBANSHELF_testProduct03() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String responseString = this.mockMvc.perform(put("/shops/0/products/20000/allow").header("authorization", adminToken))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -459,11 +458,11 @@ class GoodsControllerTest {
     @Transactional
     public void UNBANSHELF_testProduct05() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/0/products/1555/allow").header("authorization", adminToken))
-                .andExpect(status().isOk())
+        String responseString = this.mockMvc.perform(put("/shops/1/products/1555/allow").header("authorization", adminToken))
+                .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":507,\"errmsg\":\"当前货品状态不支持进行该操作\"}";
+        String expected="{\"errno\":505,\"errmsg\":\"此商铺没有发布货品的权限\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
 
