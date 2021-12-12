@@ -277,6 +277,10 @@ class GoodsControllerTest {
         JSONAssert.assertEquals(expected,responseString,true);
     }
 
+    /**
+     * @modifier YuJie
+     * @date 2021-12-13
+     */
     //ProductController
     @Test
     @Transactional
@@ -780,6 +784,10 @@ class GoodsControllerTest {
      * @author wyg
      * @Date 2021/11/13
      */
+    /**
+     * @modifier YuJie
+     * @date 2021-12-13
+     */
     @Test
     @Transactional
     public void getShopProductDetail() throws Exception {
@@ -947,6 +955,10 @@ class GoodsControllerTest {
     }
 
 
+    /**
+     * @modifier YuJie
+     * @date 2021-12-13
+     */
     @Test
     @Transactional
     public void getFreightModels() throws Exception {
