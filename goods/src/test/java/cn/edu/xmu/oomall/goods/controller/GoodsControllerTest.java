@@ -277,10 +277,7 @@ class GoodsControllerTest {
         JSONAssert.assertEquals(expected,responseString,true);
     }
 
-    /**
-     * @modifier YuJie
-     * @date 2021-12-13
-     */
+
     //ProductController
     @Test
     @Transactional
@@ -316,6 +313,11 @@ class GoodsControllerTest {
         JSONAssert.assertEquals(expected,responseString,true);
     }
 
+
+    /**
+     * @modifier YuJie
+     * @date 2021-12-13
+     */
     @Test
     @Transactional
     public void PUB_testProduct04() throws Exception {
