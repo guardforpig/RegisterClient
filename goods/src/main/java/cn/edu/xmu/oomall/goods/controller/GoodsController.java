@@ -581,8 +581,8 @@ public class GoodsController {
     })
     @GetMapping("/internal/secondkillproducts/load")
     public Object loadSecondKillProduct(
-            @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss:SSSZ") @RequestParam(required = false) LocalDateTime beginTime,
-            @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss:SSSZ") @RequestParam(required = false) LocalDateTime endTime) {
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime beginTime,
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime endTime) {
         Object ret;
         if(beginTime == null || endTime == null){
             ret = new InternalReturnObject(510, ReturnNo.PARAMETER_MISSED.getMessage());
