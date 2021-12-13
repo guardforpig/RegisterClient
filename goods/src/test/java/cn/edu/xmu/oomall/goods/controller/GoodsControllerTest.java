@@ -1,5 +1,7 @@
 package cn.edu.xmu.oomall.goods.controller;
 
+import cn.edu.xmu.oomall.core.util.ReturnNo;
+import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.GoodsApplication;
 import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.CategroyService;
@@ -8,9 +10,7 @@ import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.FreightModel;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
-import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
-import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
-import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.*;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -648,7 +648,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":null,\"goodsId\":null,\"onSaleId\":null,\"name\":null,\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":null,\"weight\":null,\"price\":null,\"quantity\":null,\"state\":null,\"unit\":null,\"barCode\":null,\"originPlace\":null,\"category\":null,\"shareable\":null},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"price\":4938,\"quantity\":36,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"test\"},\"shareable\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
