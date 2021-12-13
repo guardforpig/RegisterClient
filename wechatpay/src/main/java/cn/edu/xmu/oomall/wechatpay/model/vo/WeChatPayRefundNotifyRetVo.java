@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-public class RefundNotifyRetVo {
+public class WeChatPayRefundNotifyRetVo {
 
     @Data
     @NoArgsConstructor
@@ -58,7 +58,7 @@ public class RefundNotifyRetVo {
     private String resourceType;
     private Resource resource;
 
-    public RefundNotifyRetVo(WeChatPayRefund weChatPayRefund){
+    public WeChatPayRefundNotifyRetVo(WeChatPayRefund weChatPayRefund){
         this.id = String.valueOf(weChatPayRefund.getId());
         this.createTime = LocalDateTime.now();
         this.eventType = "Refund." + weChatPayRefund.getStatus();

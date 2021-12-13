@@ -36,6 +36,7 @@ public class WeChatPayCommon {
 
             //403
             case OUT_TRADE_NO_USED:
+            case OUT_REFUND_NO_USED:
             case REFUND_TRANSACTION_ERROR:
             case REFUND_AMOUNT_ERROR:
                 return new ResponseEntity(obj,HttpStatus.FORBIDDEN);

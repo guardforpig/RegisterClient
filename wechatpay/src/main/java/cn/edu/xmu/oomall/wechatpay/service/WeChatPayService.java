@@ -6,8 +6,8 @@ import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayRefund;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayTransaction;
 import cn.edu.xmu.oomall.wechatpay.model.po.WeChatPayRefundPo;
 import cn.edu.xmu.oomall.wechatpay.model.po.WeChatPayTransactionPo;
-import cn.edu.xmu.oomall.wechatpay.model.vo.PaymentNotifyRetVo;
-import cn.edu.xmu.oomall.wechatpay.model.vo.RefundNotifyRetVo;
+import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayPaymentNotifyRetVo;
+import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayRefundNotifyRetVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayPrepayRetVo;
 import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnNo;
 import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnObject;
@@ -62,7 +62,7 @@ public class WeChatPayService {
             {
                 WeChatPayReturnObject returnObject = paySuccess(weChatPayTransaction);
                 if(returnObject.getData()!=null) {
-                    weChatPayNotifyService.paymentNotify(new PaymentNotifyRetVo( (WeChatPayTransaction) returnObject.getData() ));
+                    weChatPayNotifyService.paymentNotify(new WeChatPayPaymentNotifyRetVo( (WeChatPayTransaction) returnObject.getData() ));
                 }
                 break;
             }
@@ -75,7 +75,7 @@ public class WeChatPayService {
             {
                 WeChatPayReturnObject returnObject = payFail(weChatPayTransaction);
                 if(returnObject.getData()!=null) {
-                    weChatPayNotifyService.paymentNotify(new PaymentNotifyRetVo( (WeChatPayTransaction) returnObject.getData() ));
+                    weChatPayNotifyService.paymentNotify(new WeChatPayPaymentNotifyRetVo( (WeChatPayTransaction) returnObject.getData() ));
                 }
                 break;
             }
@@ -111,6 +111,15 @@ public class WeChatPayService {
     @Transactional(rollbackFor=Exception.class)
     public WeChatPayReturnObject createRefund(WeChatPayRefund weChatPayRefund){
 
+        if(weChatPayRefund.getRefund()>weChatPayRefund.getTotal() || weChatPayRefund.getRefund()<=0){
+            return new WeChatPayReturnObject(WeChatPayReturnNo.REFUND_AMOUNT_ERROR);
+        }
+
+        WeChatPayRefund refund = (WeChatPayRefund) weChatPayDao.getRefundByOutRefundNo(weChatPayRefund.getOutRefundNo()).getData();
+        if(refund!=null){
+            return new WeChatPayReturnObject(WeChatPayReturnNo.OUT_REFUND_NO_USED);
+        }
+
         WeChatPayTransaction transaction = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
         if(transaction==null){
             return new WeChatPayReturnObject(WeChatPayReturnNo.RESOURCE_NOT_EXISTS);
@@ -131,7 +140,7 @@ public class WeChatPayService {
             return new WeChatPayReturnObject(WeChatPayReturnNo.REFUND_AMOUNT_ERROR);
         }
         if(count + weChatPayRefund.getRefund() > transaction.getPayerTotal()){
-            weChatPayRefund.setRefund(transaction.getPayerTotal()-count);
+            weChatPayRefund.setPayerRefund(transaction.getPayerTotal()-count);
         }
 
         WeChatPayReturnObject returnObject = null;
@@ -142,7 +151,7 @@ public class WeChatPayService {
             {
                 returnObject = refundSuccess(weChatPayRefund);
                 if(returnObject.getData()!=null) {
-                    weChatPayNotifyService.refundNotify(new RefundNotifyRetVo( (WeChatPayRefund) returnObject.getData() ));
+                    weChatPayNotifyService.refundNotify(new WeChatPayRefundNotifyRetVo( (WeChatPayRefund) returnObject.getData() ));
                 }
                 break;
             }
@@ -155,7 +164,7 @@ public class WeChatPayService {
             {
                 returnObject = refundFail(weChatPayRefund);
                 if(returnObject.getData()!=null) {
-                    weChatPayNotifyService.refundNotify(new RefundNotifyRetVo( (WeChatPayRefund) returnObject.getData() ));
+                    weChatPayNotifyService.refundNotify(new WeChatPayRefundNotifyRetVo( (WeChatPayRefund) returnObject.getData() ));
                 }
                 break;
             }
@@ -183,12 +192,12 @@ public class WeChatPayService {
         weChatPayTransaction.setTradeState(TRADE_STATE_SUCCESS);
         weChatPayTransaction.setPayerTotal(weChatPayTransaction.getTotal()-(int)(Math.random()*2));
         weChatPayTransaction.setSuccessTime(LocalDateTime.now());
-        return weChatPayDao.createTransaction( (WeChatPayTransactionPo)cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
+        return weChatPayDao.createTransaction( cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
     }
 
     private WeChatPayReturnObject payFail(WeChatPayTransaction weChatPayTransaction){
         weChatPayTransaction.setTradeState(TRADE_STATE_FAIL);
-        return weChatPayDao.createTransaction( (WeChatPayTransactionPo)cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
+        return weChatPayDao.createTransaction( cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
     }
 
     private WeChatPayReturnObject refundSuccess(WeChatPayRefund weChatPayRefund){
@@ -200,13 +209,13 @@ public class WeChatPayService {
         weChatPayRefund.setStatus(REFUND_STATUS_SUCCESS);
         weChatPayRefund.setPayerRefund(weChatPayRefund.getRefund());
         weChatPayRefund.setCreateTime(LocalDateTime.now());
-        return weChatPayDao.createRefund( (WeChatPayRefundPo)cloneVo(weChatPayRefund,WeChatPayRefundPo.class) );
+        return weChatPayDao.createRefund( cloneVo(weChatPayRefund,WeChatPayRefundPo.class) );
     }
 
     private WeChatPayReturnObject refundFail(WeChatPayRefund weChatPayRefund){
         weChatPayRefund.setStatus(REFUND_STATUS_FAIL);
         weChatPayRefund.setCreateTime(LocalDateTime.now());
-        return weChatPayDao.createRefund( (WeChatPayRefundPo)cloneVo(weChatPayRefund,WeChatPayRefundPo.class) );
+        return weChatPayDao.createRefund( cloneVo(weChatPayRefund,WeChatPayRefundPo.class) );
     }
 
 }

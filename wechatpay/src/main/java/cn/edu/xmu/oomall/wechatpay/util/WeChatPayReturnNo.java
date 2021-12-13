@@ -16,6 +16,7 @@ public enum WeChatPayReturnNo {
 
     //403
     OUT_TRADE_NO_USED("商户订单号重复"),
+    OUT_REFUND_NO_USED("商户退款单号重复"),
     REFUND_TRANSACTION_ERROR("对应支付单未成功支付"),
     REFUND_AMOUNT_ERROR("退款金额错误"),
 
