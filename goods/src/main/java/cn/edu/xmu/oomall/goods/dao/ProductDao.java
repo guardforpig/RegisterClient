@@ -192,12 +192,12 @@ public class ProductDao {
             ProductPo productPo = (ProductPo) cloneVo(productDraftPo, ProductPo.class);
             if (productDraftPo.getProductId() == 0) {
                 productPo.setId(null);
-                productPo.setState((byte)Product.ProductState.DRAFT.getCode());
                 productMapper.insert(productPo);
+                productPo.setState((byte)Product.ProductState.OFFSHELF.getCode());
             } else {
                 productPo.setId(productDraftPo.getProductId());
-                productPo.setState((byte)Product.ProductState.DRAFT.getCode());
                 productMapper.updateByPrimaryKey(productPo);
+                productPo.setState((byte)Product.ProductState.OFFSHELF.getCode());
             }
             String key = String.format(GOODSKEY, productPo.getGoodsId());
             redisUtil.del(key);
@@ -322,10 +322,11 @@ public class ProductDao {
      * @Date 2021/11/12
      */
     public ReturnObject<Product> getProductDetailsById(Long id, Long shopId){
+        ProductPo productPo;
         Product product;
         try {
             if(shopId!=null) {
-                ReturnObject ret = matchProductShop(id, shopId);
+                ReturnObject ret = matchProductShop(shopId, id);
                 if (ret.getCode() != ReturnNo.OK) {
                     return new ReturnObject<>(ret.getCode());
                 }
@@ -511,20 +512,6 @@ public class ProductDao {
             return new InternalReturnObject();
         } catch (Exception e) {
             logger.error("selectGoods: DataAccessException:" + e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
-        }
-    }
-
-    public ReturnObject<List<ProductDraftPo>> getProductDraftByProductId(Long productId) {
-        try{
-            ProductDraftPoExample oe=new ProductDraftPoExample();
-            ProductDraftPoExample.Criteria cr=oe.createCriteria();
-            cr.andProductIdEqualTo(productId);
-            List<ProductDraftPo> pos=productDraftPoMapper.selectByExample(oe);
-            return new ReturnObject<>(pos);
-        }
-        catch (Exception e) {
-            logger.error("getProductDraftByProductId: DataAccessException:" + e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
