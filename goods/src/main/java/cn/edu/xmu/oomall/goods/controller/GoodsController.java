@@ -172,7 +172,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误"),
             @ApiResponse(code=505,message = "操作的资源id不是自己的对象")
     })
-    @PutMapping(value="shops/{shopId}/products/{id}/publish")
+    @PutMapping(value="shops/{shopId}/draftproducts/{id}/publish")
     @Audit(departName = "shops")
     public Object publishProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {

@@ -272,7 +272,7 @@ class GoodsControllerTest {
     @Transactional
     public void PUB_testProduct01() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/0/products/70/publish").header("authorization", adminToken))
+        String responseString = this.mockMvc.perform(put("/shops/0/draftproducts/70/publish").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
