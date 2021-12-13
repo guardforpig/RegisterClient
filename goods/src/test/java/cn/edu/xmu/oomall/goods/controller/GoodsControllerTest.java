@@ -152,7 +152,7 @@ class GoodsControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected="{\"errno\":0,\"data\":{\"name\":\"新建商品\"},\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected,responseString,true);
+        JSONAssert.assertEquals(expected,responseString,false);
     }
     @Test
     @Transactional
@@ -302,7 +302,7 @@ class GoodsControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":504,\"errmsg\":\"货品草稿不存在\"}";
+        String expected="{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
