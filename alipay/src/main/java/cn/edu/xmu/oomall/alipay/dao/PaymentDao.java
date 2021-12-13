@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static cn.edu.xmu.oomall.core.util.Common.cloneVo;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 @Repository
 public class PaymentDao {
@@ -25,7 +25,7 @@ public class PaymentDao {
     {
         try
         {
-            AlipayPaymentPo alipayPaymentPo= (AlipayPaymentPo) Common.cloneVo(payment,AlipayPaymentPo.class);
+            AlipayPaymentPo alipayPaymentPo= cloneVo(payment,AlipayPaymentPo.class);
             alipayPaymentPoMapper.insertSelective(alipayPaymentPo);
             return true;
         }
@@ -65,7 +65,7 @@ public class PaymentDao {
     public void updatePayment(Payment payment)
     {
         try{
-            AlipayPaymentPo alipayPaymentPo= (AlipayPaymentPo) Common.cloneVo(payment,AlipayPaymentPo.class);
+            AlipayPaymentPo alipayPaymentPo= cloneVo(payment,AlipayPaymentPo.class);
             alipayPaymentPoMapper.updateByPrimaryKeySelective(alipayPaymentPo);
         }
         catch (Exception e)
