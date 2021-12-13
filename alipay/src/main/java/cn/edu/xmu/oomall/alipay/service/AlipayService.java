@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
-
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 /**
  * @author xucangbai
  * @date 2021/11/20
@@ -63,7 +63,7 @@ public class AlipayService {
     public PayRetVo pay(String biz_content)
     {
         PayVo payVo= (PayVo) GetJsonInstance.getInstance(biz_content,PayVo.class);
-        Payment payment = (Payment) Common.cloneVo(payVo, Payment.class);
+        Payment payment = cloneVo(payVo, Payment.class);
         Payment existingPayment=paymentDao.selectPaymentByOutTradeNo(payment.getOutTradeNo());
         //如果此订单号已经存在，不能再下单
         if(existingPayment!=null)
@@ -110,7 +110,7 @@ public class AlipayService {
             default:
                 break;
         }
-        PayRetVo payRetVo = (PayRetVo) Common.cloneVo(payment,PayRetVo.class);
+        PayRetVo payRetVo = cloneVo(payment,PayRetVo.class);
         payRetVo.setDefault();
         return payRetVo;
     }
@@ -123,7 +123,7 @@ public class AlipayService {
         //如果查询的交易号存在
         if(payment!=null)
         {
-            PayQueryRetVo payQueryRetVo = (PayQueryRetVo) Common.cloneVo(payment,PayQueryRetVo.class);
+            PayQueryRetVo payQueryRetVo = cloneVo(payment,PayQueryRetVo.class);
             payQueryRetVo.setTradeStatus(payment.getTradeStatus().getDescription());
             payQueryRetVo.setDefault();
             return payQueryRetVo;
@@ -159,7 +159,7 @@ public class AlipayService {
                 //关单
                 paymentDao.updatePayment(payment);
 
-                CloseRetVo closeRetVo= (CloseRetVo) Common.cloneVo(closeVo,CloseRetVo.class);
+                CloseRetVo closeRetVo= cloneVo(closeVo,CloseRetVo.class);
                 closeRetVo.setDefault();
                 return closeRetVo;
             }
@@ -174,12 +174,18 @@ public class AlipayService {
         refundDao.insertRefund(refund);
     }
 
-
+    private void refundFailed(Refund refund)
+    {
+        refund.setGmtRefundPay(LocalDateTime.now());
+        refund.setRefundStatus(null);
+        //默认插入成功，因为支付宝没有服务器错误的状态码
+        refundDao.insertRefund(refund);
+    }
     @Transactional(rollbackFor = Exception.class)
     public RefundRetVo refund(String biz_content)
     {
         RefundVo refundVo=(RefundVo) GetJsonInstance.getInstance(biz_content,RefundVo.class);
-        Refund refund = (Refund) Common.cloneVo(refundVo, Refund.class);
+        Refund refund = cloneVo(refundVo, Refund.class);
 
         //此订单号是否存在
         Payment payment = paymentDao.selectPaymentByOutTradeNo(refund.getOutTradeNo());
@@ -209,21 +215,25 @@ public class AlipayService {
         {
             Random r = new Random();
             //生成随机数，2种情况
-            Integer integer = r.nextInt(2);
+            Integer integer = r.nextInt(3);
             switch (integer){
-                //不回调
+                //成功不回调
                 case 0:
                     refundSuccess(refund);
                     break;
-                //回调
+                //成功回调
                 case 1:
                     refundSuccess(refund);
                     paymentFeightService.notify(new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"TRADE_SUCCESS",refund.getOutRequestNo()));
                     break;
+                //失败不回调
+                case 2:
+                    refundFailed(refund);
+                    break;
                 default:
                     break;
             }
-            RefundRetVo refundRetVo= (RefundRetVo) Common.cloneVo(refund,RefundRetVo.class);
+            RefundRetVo refundRetVo= cloneVo(refund,RefundRetVo.class);
             //设置当前已经退款的总额
             refundRetVo.setRefundFee(totalRefund);
             refundRetVo.setDefault();
@@ -249,7 +259,7 @@ public class AlipayService {
 
         else
         {
-            RefundQueryRetVo refundQueryRetVo= (RefundQueryRetVo) Common.cloneVo(refund,RefundQueryRetVo.class);
+            RefundQueryRetVo refundQueryRetVo=cloneVo(refund,RefundQueryRetVo.class);
             refundQueryRetVo.setRefundStatus(refund.getRefundStatus().getDescription());
             refundQueryRetVo.setDefault();
             return refundQueryRetVo;
