@@ -1,8 +1,12 @@
 package cn.edu.xmu.oomall.goods.controller;
 
+import cn.edu.xmu.oomall.core.util.ReturnNo;
+import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.GoodsApplication;
+import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.FreightModel;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
@@ -468,6 +472,8 @@ class GoodsControllerTest {
 
     @MockBean
     private ShopService shopService;
+    @MockBean
+    private FreightService freightService;
     @BeforeEach
     public void init() {
         CategoryVo categoryVo1 = new CategoryVo();
@@ -486,6 +492,13 @@ class GoodsControllerTest {
         Mockito.when(shopService.getCategoryById(3)).thenReturn(new InternalReturnObject(1, "", null));
         Mockito.when(shopService.getShopInfo(1L)).thenReturn(new InternalReturnObject(1, "", List.of(simpleShopVo)));
         Mockito.when(shopService.getShopInfo(2L)).thenReturn(new InternalReturnObject(1, "", List.of()));
+
+        FreightModel freightModel = new FreightModel();
+        freightModel.setId(1L);
+        freightModel.setName("123");
+        freightModel.setType((byte)1);
+
+        Mockito.when(freightService.getFreightModel(10L,1L)).thenReturn(new ReturnObject(ReturnNo.OK, "成功", freightModel));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
     }
 
