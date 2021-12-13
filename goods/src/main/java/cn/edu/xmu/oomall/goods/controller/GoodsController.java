@@ -6,6 +6,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductChangeVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductDetailVo;
+import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
 import cn.edu.xmu.oomall.goods.service.GoodsService;
 import cn.edu.xmu.oomall.goods.service.ProductService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
@@ -278,9 +279,11 @@ public class GoodsController {
     @GetMapping(value="categories/{id}/products")
     @Audit(departName = "shops")
     public Object getProductOfCategory(@PathVariable("id") Integer id,
-                                 @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        return Common.decorateReturnObject(productService.getProductsOfCategories(null, id,page,pageSize));
+                                       @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        ReturnObject ret = productService.getProductsOfCategories(null, id,page,pageSize);
+        ret = Common.getPageRetVo(ret, SimpleProductRetVo.class);
+        return Common.decorateReturnObject(ret);
     }
 
     /**
@@ -303,8 +306,8 @@ public class GoodsController {
     @GetMapping(value="shops/{did}/categories/{id}/products" )
     @Audit(departName = "shops")
     public Object getProductOfCategoryInShop(@PathVariable("did") Integer did,@PathVariable("id") Integer cid,
-                                  @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
+                                             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
         return Common.decorateReturnObject(productService.getProductsOfCategories(did,cid,page,pageSize));
     }
 

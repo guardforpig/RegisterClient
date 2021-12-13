@@ -186,23 +186,27 @@ public class ProductDao {
      * @author 王文飞
      * @date 2021/11/25
      */
-    public ReturnObject<Product> publishById(Long id) {
+    public ReturnObject publishById(Long id) {
         try {
             ProductDraftPo productDraftPo = productDraftPoMapper.selectByPrimaryKey(id);
+            if(productDraftPo==null)
+            {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
             ProductPo productPo = (ProductPo) cloneVo(productDraftPo, ProductPo.class);
             if (productDraftPo.getProductId() == 0) {
                 productPo.setId(null);
-                productMapper.insert(productPo);
                 productPo.setState((byte)Product.ProductState.OFFSHELF.getCode());
+                productMapper.insert(productPo);
             } else {
                 productPo.setId(productDraftPo.getProductId());
-                productMapper.updateByPrimaryKey(productPo);
                 productPo.setState((byte)Product.ProductState.OFFSHELF.getCode());
+                productMapper.updateByPrimaryKey(productPo);
             }
             String key = String.format(GOODSKEY, productPo.getGoodsId());
             redisUtil.del(key);
             productDraftPoMapper.deleteByPrimaryKey(id);
-            return new ReturnObject<Product>((Product) cloneVo(productPo, Product.class));
+            return new ReturnObject((Product) cloneVo(productPo, Product.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
