@@ -141,7 +141,6 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void POST_testGoods01() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String requestJson="{\"name\":\"新建商品\"}";
         String responseString = this.mockMvc.perform(post("/shops/5/goods").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
