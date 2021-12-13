@@ -179,7 +179,6 @@ public class AlipayService {
     private void refundFailed(Refund refund)
     {
         refund.setGmtRefundPay(null);
-        refund.setRefundStatus(null);
         //默认插入成功，因为支付宝没有服务器错误的状态码
         refundDao.insertRefund(refund);
     }
