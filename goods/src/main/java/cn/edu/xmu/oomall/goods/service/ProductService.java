@@ -74,12 +74,10 @@ public class ProductService {
         if(shopId!=0){
             return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
         }
-        if(productDao.getProductDraftByProductId(productId)==null
-                ||productDao.getProductDraftByProductId(productId).getData().size()==0){
+        if(productDao.getProductDraft(productId)==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"货品草稿不存在");
         }
-        ProductDraftPo po=productDao.getProductDraftByProductId(productId).getData().get(0);
-        ReturnObject<Product> ret=productDao.publishById(po.getId());
+        ReturnObject<Product> ret=productDao.publishById(productId);
         if(ret.getData()!=null){
             ReturnObject temp=productDao.alterProductStates(ret.getData(), (byte) Product.ProductState.OFFSHELF.getCode(),(byte) Product.ProductState.DRAFT.getCode());
             if(temp.getData()!=null){
@@ -386,7 +384,9 @@ public class ProductService {
         Product product = (Product) ret.getData();
 
         InternalReturnObject object = categroyService.getCategoryById(product.getCategoryId());
-
+        if(!object.getErrno().equals(0)){
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
         SimpleCategoryVo categoryVo = (SimpleCategoryVo) object.getData();
         product.setCategoryName(categoryVo.getName());
 
@@ -433,9 +433,9 @@ public class ProductService {
         }
         Product p = productDao.getProduct(id);
         if (p.getFreightId() != null) {
-            return new ReturnObject(freightService.getFreightModel(shopId,p.getFreightId())) ;
+            return freightService.getFreightModel(shopId,p.getFreightId());
         } else {
-            return new ReturnObject( freightService.getDefaultFreightModel(shopId));
+            return freightService.getDefaultFreightModel(shopId);
         }
     }
 

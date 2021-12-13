@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.goods.microservice.vo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class SimpleCategoryVo {
     private Long id;
 
