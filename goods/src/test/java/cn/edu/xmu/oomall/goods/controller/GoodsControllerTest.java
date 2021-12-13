@@ -298,7 +298,7 @@ class GoodsControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":504,\"errmsg\":\"货品草稿不存在\"}";
+        String expected="{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
