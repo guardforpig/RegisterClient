@@ -19,11 +19,14 @@ package cn.edu.xmu.oomall.privilege;
 import cn.edu.xmu.oomall.BaseTestOomall;
 import cn.edu.xmu.oomall.PublicTestApp;
 import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = PublicTestApp.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GetDepartsRolesBaseRolesTest extends BaseTestOomall {
 
     private static String TESTURL ="/privilgege/departs/{did}/roles/{id}/baseroles";

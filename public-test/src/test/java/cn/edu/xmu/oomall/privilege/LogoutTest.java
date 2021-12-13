@@ -28,6 +28,9 @@ public class LogoutTest extends BaseTestOomall {
 
     private static String TESTURL ="/privilege/logout";
 
+    private static String NEWURL ="/privilege/departs/{did}/users/new";
+
+
     /**
      * @author Song Runhan
      * @date Created in 2020/11/4/ 16:00
@@ -40,26 +43,36 @@ public class LogoutTest extends BaseTestOomall {
         String token = this.adminLogin("13088admin","123456");
 
         //region 用户正常登出
-        res = this.mallClient.get().uri(TESTURL).header("authorization",token);
-        res.exchange().expectStatus().isOk()
+        this.mallClient.get().uri(TESTURL)
+                .header("authorization",token)
+                .exchange().expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.errmsg").isEqualTo("成功")
-                .returnResult().getResponseBodyContent();
-        //endregion
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        this.mallClient
+                .get()
+                .uri(NEWURL+"?userName=departuser2", 2)
+                .header("authorization", token)
+                .exchange()
+                .expectHeader()
+                .contentType("application/json;charset=UTF-8")
+                .expectStatus().isUnauthorized()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_JWT.getCode());
     }
+
 
     @Test
     public void logout2() throws  Exception{
         String token = "this is test";
-        WebTestClient.RequestHeadersSpec res = null;
-        res = this.mallClient.get().uri(TESTURL).header("authorization",token);
-        res.exchange().expectStatus().isUnauthorized()
+
+        this.mallClient.get().uri(TESTURL)
+                .header("authorization",token)
+                .exchange()
+                .expectStatus().isUnauthorized()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_JWT.getCode())
-                .returnResult().getResponseBodyContent();
-        //endregion
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_JWT.getCode());
     }
 }
