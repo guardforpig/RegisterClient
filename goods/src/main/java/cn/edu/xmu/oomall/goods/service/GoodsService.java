@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.goods.service;
 
+import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.GoodsDao;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
@@ -38,7 +39,7 @@ public class GoodsService {
         setPoCreatedFields(goods,loginUserId,loginUserName);
         goods.setShopId(shopId);
         ReturnObject ret=goodsDao.createNewGoods(goods);
-        if(ret.getData()!=null){
+        if(ret.getCode().equals(ReturnNo.OK)){
             CreateGoodsVo goodsVo1=(CreateGoodsVo)cloneVo(ret.getData(),CreateGoodsVo.class);
             return new ReturnObject(goodsVo1);
         }else{

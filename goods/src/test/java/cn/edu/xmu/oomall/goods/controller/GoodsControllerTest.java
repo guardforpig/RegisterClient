@@ -145,7 +145,6 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void POST_testGoods01() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String requestJson="{\"name\":\"新建商品\"}";
         String responseString = this.mockMvc.perform(post("/shops/5/goods").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
@@ -276,7 +275,7 @@ class GoodsControllerTest {
     @Transactional
     public void PUB_testProduct01() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/0/products/70/publish").header("authorization", adminToken))
+        String responseString = this.mockMvc.perform(put("/shops/0/draftproducts/70/publish").header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -287,18 +286,18 @@ class GoodsControllerTest {
     @Transactional
     public void PUB_testProduct02() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/1/products/1550/publish").header("authorization", adminToken))
+        String responseString = this.mockMvc.perform(put("/shops/1/draftproducts/1550/publish").header("authorization", adminToken))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":505,\"errmsg\":\"此商铺没有发布货品的权限\"}";
+        String expected="{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
     @Transactional
     public void PUB_testProduct03() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/0/products/20000/publish").header("authorization", adminToken))
+        String responseString = this.mockMvc.perform(put("/shops/0/draftproducts/20000/publish").header("authorization", adminToken))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
