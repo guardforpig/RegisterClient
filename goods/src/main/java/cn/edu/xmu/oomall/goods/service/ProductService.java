@@ -74,21 +74,14 @@ public class ProductService {
         if(shopId!=0){
             return new ReturnObject<Product>(ReturnNo.RESOURCE_ID_OUTSCOPE,"此商铺没有发布货品的权限");
         }
-        if(productDao.getProductDraft(productId)==null){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"货品草稿不存在");
-        }
         ReturnObject<Product> ret=productDao.publishById(productId);
-        if(ret.getData()!=null){
-            ReturnObject temp=productDao.alterProductStates(ret.getData(), (byte) Product.ProductState.OFFSHELF.getCode(),(byte) Product.ProductState.DRAFT.getCode());
-            if(temp.getData()!=null){
-                return new ReturnObject(ReturnNo.OK);
-            }else{
-                return temp;
-            }
-        }
-        else{
+        if(!ret.getCode().equals(ReturnNo.OK))
+        {
             return ret;
         }
+        Product product= ret.getData();
+        ProductVo productVo=cloneVo(product,ProductVo.class);
+        return new ReturnObject(productVo);
     }
 
     @Transactional(rollbackFor=Exception.class)
