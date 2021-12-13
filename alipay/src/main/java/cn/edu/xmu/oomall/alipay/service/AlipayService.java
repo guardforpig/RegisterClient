@@ -181,7 +181,7 @@ public class AlipayService {
 
     private void refundFailed(Refund refund)
     {
-        refund.setGmtRefundPay(LocalDateTime.now());
+        refund.setGmtRefundPay(null);
         refund.setRefundStatus(null);
         //默认插入成功，因为支付宝没有服务器错误的状态码
         refundDao.insertRefund(refund);
@@ -220,7 +220,7 @@ public class AlipayService {
         {
             Random r = new Random();
             //生成随机数，2种情况
-            Integer integer = r.nextInt(3);
+            Integer integer = r.nextInt(4);
             switch (integer){
                 //成功不回调
                 case 0:
@@ -234,7 +234,7 @@ public class AlipayService {
                     notifyBody1.setTotal_amount(payment.getTotalAmount());
                     notifyBody1.setGmt_payment(payment.getSendPayDate());
                     notifyBody1.setGmt_refund(LocalDateTime.now());
-                    notifyBody1.setRefund_fee(refund.getRefundAmount());
+                    notifyBody1.setRefund_fee(totalRefund);
                     paymentFeightService.notify(notifyBody1);
                     break;
                 //失败回调
