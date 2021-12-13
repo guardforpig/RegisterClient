@@ -629,16 +629,16 @@ class GoodsControllerTest {
         simpleCategoryVo.setId(1L);
         simpleCategoryVo.setName("test");
 
-        Mockito.when(categroyService.getCategoryById(190L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
+        Mockito.when(categroyService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         //正常
-        String responseString = this.mockMvc.perform(get("/products/1550")
+        String responseString = this.mockMvc.perform(get("/products/1576")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = " {\"errno\":0,\"data\":{\"id\":1550,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":447,\"onSaleId\":1,\"name\":\"欢乐家久宝桃罐头\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":59337,\"weight\":700,\"price\":53295,\"quantity\":2000,\"state\":2,\"unit\":\"瓶\",\"barCode\":null,\"originPlace\":\"广东\",\"category\":{\"id\":190,\"name\":\"test\"},\"shareable\":null},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"price\":4938,\"quantity\":36,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"test\"},\"shareable\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
