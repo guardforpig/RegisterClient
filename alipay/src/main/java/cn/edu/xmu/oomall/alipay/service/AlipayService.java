@@ -90,7 +90,11 @@ public class AlipayService {
                 //随机产生支付金额
                 payment.setBuyerPayAmount(payment.getTotalAmount()-r.nextInt(2));
                 paySuccess(payment);
-                paymentFeightService.notify(new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"TRADE_SUCCESS",null));
+                NotifyBody notifyBody1=new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"TRADE_SUCCESS",null);
+                notifyBody1.setBuyer_pay_amount(payment.getBuyerPayAmount());
+                notifyBody1.setTotal_amount(payment.getTotalAmount());
+                notifyBody1.setGmt_payment(LocalDateTime.now());
+                paymentFeightService.notify(notifyBody1);
                 break;
             //支付成功不回调
             case 1:
@@ -101,7 +105,8 @@ public class AlipayService {
             //支付失败回调
             case 2:
                 payFailed(payment);
-                paymentFeightService.notify(new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"WAIT_BUYER_PAY",null));
+                NotifyBody notifyBody2=new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"WAIT_BUYER_PAY",null);
+                paymentFeightService.notify(notifyBody2);
                 break;
             //支付失败不回调
             case 3:
@@ -224,10 +229,24 @@ public class AlipayService {
                 //成功回调
                 case 1:
                     refundSuccess(refund);
-                    paymentFeightService.notify(new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"TRADE_SUCCESS",refund.getOutRequestNo()));
+                    NotifyBody notifyBody1=new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"TRADE_SUCCESS",refund.getOutRequestNo());
+                    notifyBody1.setBuyer_pay_amount(payment.getBuyerPayAmount());
+                    notifyBody1.setTotal_amount(payment.getTotalAmount());
+                    notifyBody1.setGmt_payment(payment.getSendPayDate());
+                    notifyBody1.setGmt_refund(LocalDateTime.now());
+                    notifyBody1.setRefund_fee(refund.getRefundAmount());
+                    paymentFeightService.notify(notifyBody1);
+                    break;
+                //失败回调
+                case 2:
+                    NotifyBody notifyBody2=new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"TRADE_SUCCESS",refund.getOutRequestNo());
+                    notifyBody2.setBuyer_pay_amount(payment.getBuyerPayAmount());
+                    notifyBody2.setTotal_amount(payment.getTotalAmount());
+                    notifyBody2.setGmt_payment(payment.getSendPayDate());
+                    refundFailed(refund);
                     break;
                 //失败不回调
-                case 2:
+                case 3:
                     refundFailed(refund);
                     break;
                 default:
