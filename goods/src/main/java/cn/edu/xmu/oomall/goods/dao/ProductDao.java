@@ -92,12 +92,7 @@ public class ProductDao {
     public ReturnObject matchProductShop(Long productId, Long shopId) {
         try{
             ProductPo productPo=productMapper.selectByPrimaryKey(productId);
-            if(productPo!=null){
-            return new ReturnObject(shopId.equals(productPo.getShopId())) ;}
-            else
-            {
-                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }
+            return new ReturnObject(shopId.equals(productPo.getShopId())) ;
         }
         catch (Exception e) {
             logger.error(e.getMessage());
