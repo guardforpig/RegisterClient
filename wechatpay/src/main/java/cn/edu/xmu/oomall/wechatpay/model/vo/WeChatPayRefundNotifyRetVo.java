@@ -59,13 +59,13 @@ public class WeChatPayRefundNotifyRetVo {
     private Resource resource;
 
     public WeChatPayRefundNotifyRetVo(WeChatPayRefund weChatPayRefund){
-        this.id = String.valueOf(weChatPayRefund.getId());
+        this.id = "EV-2018022511223320873";
         this.createTime = LocalDateTime.now();
         this.eventType = "Refund." + weChatPayRefund.getStatus();
         this.summary = null;
         this.resourceType = null;
         this.resource = new Resource("AEAD_AES_256_GCM","transaction",
-                new Ciphertext("1230000109", weChatPayRefund.getOutTradeNo(), "1217752501201407033233368018", weChatPayRefund.getOutRefundNo(), "1217752501201407033233368018", weChatPayRefund.getStatus(), "招商银行信用卡0403",
+                new Ciphertext("1230000109", weChatPayRefund.getOutTradeNo(), "1217752501201407033233368018", weChatPayRefund.getOutRefundNo(), String.valueOf(weChatPayRefund.getId()), weChatPayRefund.getStatus(), "招商银行信用卡0403",
                         new Amount(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getPayerRefund())),
                 "fdasfjihihihlkja484w");
     }
