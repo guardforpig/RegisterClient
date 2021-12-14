@@ -147,7 +147,7 @@ class GoodsControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected="{\"errno\":0,\"data\":{\"name\":\"新建商品\"},\"errmsg\":\"成功\"}";
-        JSONAssert.assertEquals(expected,responseString,true);
+        JSONAssert.assertEquals(expected,responseString,false);
     }
     @Test
     @Transactional
