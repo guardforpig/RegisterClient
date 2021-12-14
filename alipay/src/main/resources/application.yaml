@@ -61,7 +61,7 @@ pagehelper:
 rocketmq:
   name-server: 192.168.31.241:9876
   producer:
-    group: producer_group
+    group: alipay_callback_group
     max-message-size: 4096
     send-message-timeout: 3000
 
