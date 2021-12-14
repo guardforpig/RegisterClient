@@ -4,6 +4,7 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.model.bo.Category;
+import cn.edu.xmu.oomall.shop.model.vo.CategoryDetailRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryVo;
 import cn.edu.xmu.oomall.shop.service.CategoryService;
@@ -217,7 +218,7 @@ public class CategoryController {
      */
     @GetMapping("/internal/categories/{categoryId}")
     public Object getCategoryDetailById(@PathVariable Long categoryId) {
-        System.out.println("lzl");
-        return Common.decorateReturnObject(new ReturnObject(categoryService.getCategoryById_1(categoryId)));
+        ReturnObject ret=categoryService.getCategoryById_1(categoryId);
+        return Common.decorateReturnObject(ret);
     }
 }

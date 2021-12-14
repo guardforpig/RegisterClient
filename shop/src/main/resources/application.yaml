@@ -6,7 +6,7 @@ management:
 
 
 server:
-  port: 8087
+  port: 8088
   tomcat:
     threads:
       max: 500
