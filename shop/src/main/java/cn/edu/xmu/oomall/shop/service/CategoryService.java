@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.dao.CategoryDao;
 import cn.edu.xmu.oomall.shop.model.bo.Category;
 import cn.edu.xmu.oomall.shop.model.po.CategoryPo;
+import cn.edu.xmu.oomall.shop.model.vo.CategoryDetailRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopSimpleRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -118,5 +119,12 @@ public class CategoryService {
         ReturnObject<Category> ret = categoryDao.getCategoryById(id);
         Category vo = (Category) cloneVo(ret.getData(), Category.class);
         return new ReturnObject<>(vo);
+    }
+
+    public Object getCategoryById_1(Long id) {
+        ReturnObject<Category> ret = categoryDao.getCategoryById(id);
+        CategoryDetailRetVo c = cloneVo(ret.getData(), CategoryDetailRetVo.class);
+        System.out.println(c.getGmtCreate());
+        return new ReturnObject<>(c);
     }
 }

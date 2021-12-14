@@ -8,6 +8,7 @@ import cn.edu.xmu.oomall.goods.dao.ProductDao;
 import cn.edu.xmu.oomall.goods.microservice.CategroyService;
 import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
+import cn.edu.xmu.oomall.goods.microservice.vo.CategoryDetailRetVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
@@ -440,5 +441,24 @@ public class ProductService {
         p.setFreightId(fid);
         ReturnObject ret = productDao.addDraftProduct(p,loginUser,loginUsername);
         return ret;
+    }
+
+    /**
+     * 根据productId获取种类利率
+     * @author 李智樑
+     */
+    public ReturnObject getCommissionRateByProductId(Long id) {
+        Product product = productDao.getProduct(id);
+
+        if (product.getState().equals((byte)-1)) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
+        System.out.println(product.getCategoryName());
+        CategoryDetailRetVo categoryRetVo =
+                shopService.getCategoryDetailById(product.getCategoryId()).getData();
+
+        System.out.println(categoryRetVo);
+
+        return new ReturnObject(categoryRetVo.getCommissionRatio());
     }
 }
