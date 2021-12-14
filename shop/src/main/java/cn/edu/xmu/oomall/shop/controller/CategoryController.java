@@ -210,4 +210,14 @@ public class CategoryController {
     public Object getCategoryById(@PathVariable("id")Long id){
         return categoryService.getCategoryById(id);
     }
+
+    /**
+     * 获取分类的所有信息
+     * @author 李智樑
+     */
+    @GetMapping("/internal/categories/{categoryId}")
+    public Object getCategoryDetailById(@PathVariable Long categoryId) {
+        System.out.println("lzl");
+        return Common.decorateReturnObject(new ReturnObject(categoryService.getCategoryById_1(categoryId)));
+    }
 }

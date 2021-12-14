@@ -648,4 +648,14 @@ public class GoodsController {
         return Common.decorateReturnObject(returnObject);
     }
 
+    /**
+     * 根据productId获取商品平台抽成比例
+     * @return ReturnObject<Integer>
+     * @author 李智樑
+     */
+    @GetMapping("/internal/products/{id}/commissonrate")
+    Object getCommissionRate(@PathVariable Long id){
+        return Common.decorateReturnObject(productService.getCommissionRateByProductId(id));
+    }
+
 }
