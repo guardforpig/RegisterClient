@@ -1,6 +1,10 @@
 package cn.edu.xmu.oomall.goods.controller;
 
+import cn.edu.xmu.oomall.core.util.ReturnNo;
+import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.GoodsApplication;
+import cn.edu.xmu.oomall.goods.microservice.CategroyService;
+import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.CategroyService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
@@ -60,6 +64,9 @@ class GoodsControllerTest {
     private RedisUtil redisUtil;
     @MockBean
     private CategroyService categroyService;
+    @MockBean
+    private FreightService freightService;
+
     @Test
     public void ListByfreightIdTest1() throws Exception
     {
@@ -932,15 +939,15 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void getFreightModels() throws Exception {
-        CustomComparator CUSTOM_COMPARATOR = new CustomComparator(JSONCompareMode.LENIENT,
-                new Customization("data.id", (o1, o2) -> true));
+        Mockito.when(freightService.getFreightModel(10L,1L)).thenReturn(new ReturnObject<>(ReturnNo.OK));
+
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         String responseString = this.mockMvc.perform(get("/shops/10/products/1576/freightmodels").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected = "{\"errno\": 0,\"errmsg\": \"成功\"}";
-        JSONAssert.assertEquals(expected, responseString, CUSTOM_COMPARATOR);
+        JSONAssert.assertEquals(expected, responseString, true);
     }
 
     @Test
