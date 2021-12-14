@@ -117,7 +117,6 @@ public class ShareActivityDao {
     public ReturnObject getShareActivityById(Long id) {
         String key = String.format(SHARE_BY_ID,id);
         try {
-            System.out.println(redisUtil.get(key));
             ShareActivityBo shareActivityBo = (ShareActivityBo) redisUtil.get(key);
             if (shareActivityBo != null) {
                 return new ReturnObject(shareActivityBo);
