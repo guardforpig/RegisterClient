@@ -1,7 +1,8 @@
 spring:
   cloud:
     nacos:
-      server-addr: 172.16.4.136:8848
+      config:
+        server-addr: 101.132.164.244:8888
   application:
     name: wechatpay-service
   profiles:
