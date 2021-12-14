@@ -1,7 +1,10 @@
 package cn.edu.xmu.oomall.goods.controller;
 
+import cn.edu.xmu.oomall.core.util.ReturnNo;
+import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.GoodsApplication;
 import cn.edu.xmu.oomall.goods.microservice.CategroyService;
+import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
@@ -59,7 +62,7 @@ class GoodsControllerTest {
     @MockBean
     private RedisUtil redisUtil;
     @MockBean
-    private CategroyService categroyService;
+    private FreightService freightService;
 
     @Test
     public void ListByfreightIdTest1() throws Exception
