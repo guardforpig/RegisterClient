@@ -24,7 +24,7 @@ public class WeChatPayRefund implements VoObject, Serializable {
     private String outTradeNo;
     private String channel;
     private String userReceivedAccount;
-    private LocalDateTime createTime;
+    private LocalDateTime successTime;
     private String status;
     private Integer total;
     private Integer refund;
