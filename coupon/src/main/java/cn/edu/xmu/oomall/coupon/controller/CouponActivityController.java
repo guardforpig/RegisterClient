@@ -324,12 +324,23 @@ public class CouponActivityController {
     /**
     * @author jxy
     * @create 2021/12/14 8:30 PM
+     * 根据优惠活动id查看优惠活动详细信息
     */
-    @Audit
     @GetMapping("/internal/couponactivities/{id}")
     public Object getCouponActivityById(@PathVariable Long id){
         return Common.decorateReturnObject(couponActivityService.getCouponActivityById(id));
     }
+
+    /**
+    * @author jxy
+    * @create 2021/12/14 10:11 PM
+    */
+    @PutMapping("/internal/couponactivities/{id}/derc")
+    public Object decreaseCoupons(@PathVariable Long id){
+        return Common.decorateReturnObject(couponActivityService.decreaseCoupons(id));
+    }
+
+
 
 
 

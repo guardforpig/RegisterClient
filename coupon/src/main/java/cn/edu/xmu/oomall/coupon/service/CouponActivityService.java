@@ -581,6 +581,29 @@ public class CouponActivityService {
         return new ReturnObject(cloneVo(couponActivity, CouponActivityDetailRetVo.class));
     }
 
+    /**
+    * @author jxy
+    * @create 2021/12/14 10:14 PM
+    */
+    //todo:可能发生并发读写问题
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject decreaseCoupons(Long id){
+        ReturnObject returnObject = couponActivityDao.showCouponActivityPoStraight(id);
+        if(returnObject.getCode()!= ReturnNo.OK){
+            return returnObject;
+        }
+        CouponActivity couponActivity = (CouponActivity) returnObject.getData();
+
+        //下线状态不给返回
+        if(couponActivity.getState()==CouponActivity.State.OFFLINE.getCode().byteValue()){
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
+        couponActivity.setQuantity(couponActivity.getQuantity()-1);
+        return couponActivityDao.updateCouponActivity(couponActivity);
+
+    }
+
+
 
 
 
