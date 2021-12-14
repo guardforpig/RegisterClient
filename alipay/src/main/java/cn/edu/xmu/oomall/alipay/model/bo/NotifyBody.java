@@ -21,6 +21,10 @@ public class NotifyBody {
      */
     private String out_trade_no;
     /**
+     * 订单实际支付金额
+     */
+    private Long total_amount;
+    /**
      * 交易状态:
      * TRADE_SUCCESS（交易成功）
      * TRADE_FAILED（交易失败）
@@ -35,8 +39,24 @@ public class NotifyBody {
     /**
      * 订单实际支付金额
      */
-    private String buyer_pay_amount;
+    private Long buyer_pay_amount;
 
+    /**
+     * 订单退款金额
+     */
+    private Long refund_fee;
+
+    /**
+     * 退款时间
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd HH:mm:ss" ,timezone = "GMT+8")
+    private LocalDateTime gmt_refund;
+
+    /**
+     * 支付时间
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd HH:mm:ss" ,timezone = "GMT+8")
+    private LocalDateTime gmt_payment;
 
     /**
      * 通知的类型固定:trade_status_sync
