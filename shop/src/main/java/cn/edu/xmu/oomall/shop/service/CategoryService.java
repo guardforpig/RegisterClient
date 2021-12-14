@@ -121,10 +121,9 @@ public class CategoryService {
         return new ReturnObject<>(vo);
     }
 
-    public Object getCategoryById_1(Long id) {
+    public ReturnObject getCategoryById_1(Long id) {
         ReturnObject<Category> ret = categoryDao.getCategoryById(id);
         CategoryDetailRetVo c = cloneVo(ret.getData(), CategoryDetailRetVo.class);
-        System.out.println(c.getGmtCreate());
-        return new ReturnObject<>(c);
+        return new ReturnObject(c);
     }
 }

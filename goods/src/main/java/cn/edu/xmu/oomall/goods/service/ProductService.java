@@ -453,11 +453,8 @@ public class ProductService {
         if (product.getState().equals((byte)-1)) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        System.out.println(product.getCategoryName());
         CategoryDetailRetVo categoryRetVo =
                 shopService.getCategoryDetailById(product.getCategoryId()).getData();
-
-        System.out.println(categoryRetVo);
 
         return new ReturnObject(categoryRetVo.getCommissionRatio());
     }
