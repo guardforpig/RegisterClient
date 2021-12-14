@@ -58,6 +58,13 @@ mybatis:
 pagehelper:
   helper-dialect: mysql
 
+rocketmq:
+  name-server: 192.168.31.241:9876
+  producer:
+    group: producer_group
+    max-message-size: 4096
+    send-message-timeout: 3000
+
 oomall:
   alipay:
     downloadurl: https://dwbillcenter.alipay.com/downloadBillFile
