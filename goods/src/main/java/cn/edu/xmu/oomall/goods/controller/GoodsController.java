@@ -84,8 +84,8 @@ public class GoodsController {
             @ApiResponse(code=503,message = "字段不合法"),
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
+
     @PostMapping("shops/{id}/goods")
-    @ResponseBody
     @Audit(departName = "shops")
     public Object insertGoods(@PathVariable("id") Long shopId, @Validated @RequestBody GoodsVo goodsVo, BindingResult bindingResult, @LoginUser Long loginUserId, @LoginName String loginUserName)
     {
