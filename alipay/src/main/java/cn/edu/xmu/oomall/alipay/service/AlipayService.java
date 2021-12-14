@@ -96,7 +96,7 @@ public class AlipayService {
                 notifyBody1.setBuyer_pay_amount(payment.getBuyerPayAmount());
                 notifyBody1.setTotal_amount(payment.getTotalAmount());
                 notifyBody1.setGmt_payment(LocalDateTime.now());
-                rocketMQTemplate.syncSend("notify-topic", MessageBuilder.withPayload(notifyBody1).build(), 2000, 4);
+                rocketMQTemplate.sendOneWay("alipay-notify-topic", MessageBuilder.withPayload(notifyBody1).build());
                 break;
             //支付成功不回调
             case 1:
@@ -109,7 +109,7 @@ public class AlipayService {
                 payFailed(payment);
                 NotifyBody notifyBody2=new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"WAIT_BUYER_PAY",null);
 //                paymentFeightService.notify(notifyBody2);
-                rocketMQTemplate.syncSend("notify-topic", MessageBuilder.withPayload(notifyBody2).build(), 2000, 4);
+                rocketMQTemplate.sendOneWay("alipay-notify-topic", MessageBuilder.withPayload(notifyBody2).build());
                 break;
             //支付失败不回调
             case 3:
@@ -237,7 +237,7 @@ public class AlipayService {
                     notifyBody1.setGmt_payment(payment.getSendPayDate());
                     notifyBody1.setGmt_refund(LocalDateTime.now());
                     notifyBody1.setRefund_fee(totalRefund);
-                    rocketMQTemplate.syncSend("notify-topic", MessageBuilder.withPayload(notifyBody1).build(), 2000, 4);
+                    rocketMQTemplate.sendOneWay("alipay-notify-topic", MessageBuilder.withPayload(notifyBody1).build());
                     break;
                 //失败回调
                 case 2:
@@ -246,7 +246,7 @@ public class AlipayService {
                     notifyBody2.setTotal_amount(payment.getTotalAmount());
                     notifyBody2.setGmt_payment(payment.getSendPayDate());
                     refundFailed(refund);
-                    rocketMQTemplate.syncSend("notify-topic", MessageBuilder.withPayload(notifyBody2).build(), 2000, 4);
+                    rocketMQTemplate.sendOneWay("alipay-notify-topic", MessageBuilder.withPayload(notifyBody2).build());
                     break;
                 //失败不回调
                 case 3:

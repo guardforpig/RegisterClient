@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 @Service
-@RocketMQMessageListener(topic = "notify-topic", consumeMode = ConsumeMode.CONCURRENTLY, consumerGroup = "notify-group")
+@RocketMQMessageListener(topic = "alipay-notify-topic", consumeMode = ConsumeMode.CONCURRENTLY, consumerGroup = "alipay-notify-group")
 public class NotifyService implements RocketMQListener<NotifyBody> {
     @Resource
     PaymentFeightService paymentFeightService;
