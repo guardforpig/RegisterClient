@@ -105,7 +105,7 @@ public class DepartsRolesUsersTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 46)]").exists();
+                .jsonPath("$.data.list[?(@.id == '46')]").exists();
     }
 
     /**
@@ -123,7 +123,7 @@ public class DepartsRolesUsersTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 47)]").exists();
+                .jsonPath("$.data.list[?(@.id == '47')]").exists();
     }
 
 }

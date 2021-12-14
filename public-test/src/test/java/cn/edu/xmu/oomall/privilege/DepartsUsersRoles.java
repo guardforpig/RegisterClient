@@ -105,7 +105,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112)]").exists();
+                .jsonPath("$.data.list[?(@.id == '112')]").exists();
     }
 
     /**
@@ -125,7 +125,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112)]").exists();
+                .jsonPath("$.data.list[?(@.id == '112')]").exists();
     }
 
     /**
@@ -168,7 +168,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 111)]").exists();
+                .jsonPath("$.data.list[?(@.id == '111')]").exists();
     }
 
     /**
@@ -195,7 +195,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112)]").exists();
+                .jsonPath("$.data.list[?(@.id == '112')]").exists();
     }
 
 
@@ -234,7 +234,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 111)]").doesNotExist();
+                .jsonPath("$.data.list[?(@.id == '111')]").doesNotExist();
 
         //权限不够
         this.mallClient.get().uri(GETDEPARTROLEURL,1).header("authorization", token1)
@@ -283,7 +283,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112)]").doesNotExist();
+                .jsonPath("$.data.list[?(@.id == '112')]").doesNotExist();
 
         //权限不够
         this.mallClient.get().uri(GETDEPARTROLEURL,2).header("authorization", token1)
@@ -333,7 +333,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112)]").exists();
+                .jsonPath("$.data.list[?(@.id == '112')]").exists();
 
         this.mallClient.get().uri(GETDEPARTROLEURL,2).header("authorization", token1)
                 .exchange()
@@ -380,7 +380,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 111)]").exists();
+                .jsonPath("$.data.list[?(@.id == '111')]").exists();
 
         this.mallClient.get().uri(GETDEPARTROLEURL,1).header("authorization", token1)
                 .exchange()
@@ -415,6 +415,6 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 107)]").doesNotExist();
+                .jsonPath("$.data.list[?(@.id == '107')]").doesNotExist();
     }
 }

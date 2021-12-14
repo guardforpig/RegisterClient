@@ -44,8 +44,8 @@ public class GetDepartsRolesBaseRolesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 92)]").exists()
-                .jsonPath("$.data.list[?(@.id == 93)]").exists()
+                .jsonPath("$.data.list[?(@.id == '92')]").exists()
+                .jsonPath("$.data.list[?(@.id == '93')]").exists()
                 .jsonPath("$.data.list.length()").isEqualTo(2);
     }
 
@@ -62,8 +62,8 @@ public class GetDepartsRolesBaseRolesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 92)]").exists()
-                .jsonPath("$.data.list[?(@.id == 93)]").exists()
+                .jsonPath("$.data.list[?(@.id == '92')]").exists()
+                .jsonPath("$.data.list[?(@.id == '93')]").exists()
                 .jsonPath("$.data.list.length()").isEqualTo(2);
     }
 

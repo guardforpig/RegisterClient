@@ -110,10 +110,10 @@ public class DepartsRolesParentsTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 88) ]").exists()
-                .jsonPath("$.data.list[?(@.id == 89) ]").exists()
-                .jsonPath("$.data.list[?(@.id == 90) ]").exists()
-                .jsonPath("$.data.list[?(@.id == 91) ]").exists();
+                .jsonPath("$.data.list[?(@.id == '88') ]").exists()
+                .jsonPath("$.data.list[?(@.id == '89') ]").exists()
+                .jsonPath("$.data.list[?(@.id == '90') ]").exists()
+                .jsonPath("$.data.list[?(@.id == '91') ]").exists();
     }
 
     /**
@@ -131,8 +131,8 @@ public class DepartsRolesParentsTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 92) ]").exists()
-                .jsonPath("$.data.list[?(@.id == 93) ]").exists();
+                .jsonPath("$.data.list[?(@.id == '92') ]").exists()
+                .jsonPath("$.data.list[?(@.id == '93') ]").exists();
     }
 
     /**
@@ -199,7 +199,7 @@ public class DepartsRolesParentsTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 111) ]").doesNotExist();
+                .jsonPath("$.data.list[?(@.id == '111') ]").doesNotExist();
 
         this.mallClient.post().uri(ROLEINHURL,1, 111,119)
                 .header("authorization", token)
@@ -214,7 +214,7 @@ public class DepartsRolesParentsTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 111) ]").exists();
+                .jsonPath("$.data.list[?(@.id == '111') ]").exists();
     }
 
     /**
@@ -230,8 +230,8 @@ public class DepartsRolesParentsTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 97)]").exists()
-                .jsonPath("$.data.list[?(@.id == 99)]").exists()
+                .jsonPath("$.data.list[?(@.id == '97')]").exists()
+                .jsonPath("$.data.list[?(@.id == '99')]").exists()
                 .jsonPath("$.data.list.length()").isEqualTo(2);
     }
 
@@ -267,7 +267,7 @@ public class DepartsRolesParentsTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112) ]").doesNotExist();
+                .jsonPath("$.data.list[?(@.id == '112') ]").doesNotExist();
 
         this.mallClient.post().uri(ROLEINHURL,2, 112,120)
                 .header("authorization", token)
@@ -282,7 +282,7 @@ public class DepartsRolesParentsTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112) ]").exists();
+                .jsonPath("$.data.list[?(@.id == '112') ]").exists();
     }
 
     /**
@@ -298,8 +298,8 @@ public class DepartsRolesParentsTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 97)]").exists()
-                .jsonPath("$.data.list[?(@.id == 99)]").exists()
+                .jsonPath("$.data.list[?(@.id == '97')]").exists()
+                .jsonPath("$.data.list[?(@.id == '99')]").exists()
                 .jsonPath("$.data.list.length()").isEqualTo(2);
     }
 

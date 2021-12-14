@@ -2,6 +2,8 @@ package cn.edu.xmu.oomall.privilege;
 
 import cn.edu.xmu.oomall.BaseTestOomall;
 import cn.edu.xmu.oomall.PublicTestApp;
+import cn.edu.xmu.oomall.privilege.vo.RoleRetVo;
+import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -9,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Ming Qiu
@@ -28,6 +33,9 @@ public class DepartsRolesTest extends BaseTestOomall {
 
     private static String GETURLDEPARTURL = "/privilege/departs/{did}/groups";
 
+    private Long depart1RoleId = null;
+    private Long depart2RoleId = null;
+    private Long platformRoleId = null;
 
     /**
      * 未登录查询角色信息
@@ -77,7 +85,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.list.length()").isEqualTo(1)
-                .jsonPath("$.data.list[?(@.id == 11)]").exists();
+                .jsonPath("$.data.list[?(@.id == '11')]").exists();
     }
 
     /**
@@ -95,7 +103,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.list.length()").isEqualTo(1)
-                .jsonPath("$.data.list[?(@.id == 11)]").exists();
+                .jsonPath("$.data.list[?(@.id == '11')]").exists();
     }
 
     /**
@@ -127,6 +135,153 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
     }
 
+    /**
+     * 25
+     * 不同部门管理员增加角色
+     * Li Zihan
+     */
+    @Test
+    public void insertRoleTest1() throws Exception {
+        String token = this.adminLogin("2721900002", "123456");
+        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
+        this.mallClient.post().uri(GETURL, 1)
+                .header("authorization", token)
+                .bodyValue(roleJson)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode());
+    }
+
+    /**
+     * 23
+     * 平台管理员新增角色
+     * @author Li Zihan
+     */
+    @Test
+    @Order(3)
+    public void insertRoleTest2() throws Exception {
+        String token = this.adminLogin("13088admin", "123456");
+        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"管理员\"}";
+        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GETURL, 0)
+                .header("authorization", token)
+                .bodyValue(roleJson)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .returnResult().getResponseBody()),"UTF-8");
+
+        RoleRetVo vo = JacksonUtil.parseObject(ret, "data", RoleRetVo.class);
+        this.platformRoleId = vo.getId();
+
+        this.mallClient.get().uri(IDURL, 0, this.platformRoleId)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .jsonPath("$.data.name").isEqualTo("管理员")
+                .jsonPath("$.data.descr").isEqualTo("管理员test");
+    }
+
+    /**
+     * 24
+     * 平台管理员新增部门1角色
+     * @author Li Zihan
+     */
+    @Test
+    @Order(4)
+    public void insertRoleTest3() throws Exception {
+        String token = this.adminLogin("13088admin", "123456");
+        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
+        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GETURL, 1)
+                .header("authorization", token)
+                .bodyValue(roleJson)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .returnResult().getResponseBody()),"UTF-8");
+
+        RoleRetVo vo = JacksonUtil.parseObject(ret, "data", RoleRetVo.class);
+        this.depart1RoleId = vo.getId();
+
+        this.mallClient.get().uri(IDURL, 1, this.depart1RoleId)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .jsonPath("$.data.name").isEqualTo("hello")
+                .jsonPath("$.data.descr").isEqualTo("管理员test");
+    }
+
+    /**
+     * 24
+     * 部门管理员新增部门2角色
+     * @author Li Zihan
+     */
+    @Test
+    @Order(5)
+    public void insertRoleTest4() throws Exception {
+        String token = this.adminLogin("2721900002", "123456");
+        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello2\"}";
+        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GETURL, 2)
+                .header("authorization", token)
+                .bodyValue(roleJson)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .returnResult().getResponseBody()),"UTF-8");
+
+        RoleRetVo vo = JacksonUtil.parseObject(ret, "data", RoleRetVo.class);
+        this.depart2RoleId = vo.getId();
+
+        this.mallClient.get().uri(IDURL, 2, this.depart2RoleId)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .jsonPath("$.data.name").isEqualTo("hello2")
+                .jsonPath("$.data.descr").isEqualTo("管理员test");
+    }
+
+    /**
+     * 25
+     * 未登录新增角色
+     * Li Zihan
+     */
+    @Test
+    public void insertRoleTest5() throws Exception {
+        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"\"}";
+        this.mallClient.post().uri(GETURL, 0)
+                .bodyValue(roleJson)
+                .exchange()
+                .expectStatus().isUnauthorized()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NEED_LOGIN.getCode());
+    }
+
+    /**
+     * 24
+     * 无权限管理员新增部门2角色
+     */
+    @Test
+    public void insertRoleTest6() throws Exception {
+        String token = this.adminLogin("shop2_adv", "123456");
+        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
+        this.mallClient.post().uri(GETURL, 2)
+                .header("authorization", token)
+                .bodyValue(roleJson)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
+
+    }
 
     /**
      * 平台管理员修改角色
@@ -136,11 +291,12 @@ public class DepartsRolesTest extends BaseTestOomall {
      * modifiedBy 王纬策 2020/11/30 12:46
      */
     @Test
-    @Order(2)
+    @Order(6)
     public void updateRoleTest1() throws Exception {
         String token = adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"testU\",\"name\": \"testU\"}";
-        this.mallClient.put().uri(IDURL, 1, 108)
+        assertNotNull(this.depart1RoleId);
+        this.mallClient.put().uri(IDURL, 1, this.depart1RoleId)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -148,13 +304,14 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(GETURL, 1)
+        this.mallClient.get().uri(IDURL, 1, this.depart2RoleId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 108 && @.name == \"testU\" && @.departId == 1)]").isEqualTo(ReturnNo.OK.getCode());
+                .jsonPath("$.data.name").isEqualTo("testU")
+                .jsonPath("$.data.descr").isEqualTo("testU");
     }
 
     /**
@@ -272,34 +429,16 @@ public class DepartsRolesTest extends BaseTestOomall {
     }
 
     /**
-     * 25
-     * 不同部门管理员增加角色
-     * Li Zihan
+     * 部门管理员修改角色
+     *
      */
     @Test
-    public void insertRoleTest1() throws Exception {
-        String token = this.adminLogin("2721900002", "123456");
-        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
-        this.mallClient.post().uri(GETURL, 1)
-                .header("authorization", token)
-                .bodyValue(roleJson)
-                .exchange()
-                .expectStatus().isForbidden()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode());
-    }
-
-    /**
-     * 23
-     * 平台管理员新增角色
-     * @author Li Zihan
-     */
-    @Test
-    @Order(3)
-    public void insertRoleTest2() throws Exception {
-        String token = this.adminLogin("13088admin", "123456");
-        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"管理员\"}";
-        this.mallClient.post().uri(GETURL, 0)
+    @Order(7)
+    public void updateRoleTest9() throws Exception {
+        String token = adminLogin("13088admin", "123456");
+        String roleJson = "{\"descr\": \"testU\",\"name\": \"testU\"}";
+        assertNotNull(this.depart2RoleId);
+        this.mallClient.put().uri(IDURL, 2, this.depart2RoleId)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -307,103 +446,15 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(GETURL, 0)
+        this.mallClient.get().uri(IDURL, 2, this.depart2RoleId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.name == \"管理员\")]").exists();
+                .jsonPath("$.data.name").isEqualTo("testU")
+                .jsonPath("$.data.descr").isEqualTo("testU");
     }
-
-    /**
-     * 24
-     * 平台管理员新增部门1角色
-     * @author Li Zihan
-     */
-    @Test
-    @Order(4)
-    public void insertRoleTest3() throws Exception {
-        String token = this.adminLogin("13088admin", "123456");
-        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
-        this.mallClient.post().uri(GETURL,1)
-                .header("authorization", token)
-                .bodyValue(roleJson)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
-
-        this.mallClient.get().uri(GETURL, 1)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.name == \"hello\")]").exists();
-    }
-
-    /**
-     * 24
-     * 部门管理员新增部门2角色
-     * @author Li Zihan
-     */
-    @Test
-    @Order(5)
-    public void insertRoleTest4() throws Exception {
-        String token = this.adminLogin("2721900002", "123456");
-        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
-        this.mallClient.post().uri(GETURL, 2)
-                .header("authorization", token)
-                .bodyValue(roleJson)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
-
-        this.mallClient.get().uri(GETURL, 2)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.name == \"hello\")]").exists();
-    }
-
-    /**
-     * 25
-     * 未登录新增角色
-     * Li Zihan
-     */
-    @Test
-    public void insertRoleTest5() throws Exception {
-        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"\"}";
-        this.mallClient.post().uri(GETURL, 0)
-                .bodyValue(roleJson)
-                .exchange()
-                .expectStatus().isUnauthorized()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NEED_LOGIN.getCode());
-    }
-
-    /**
-     * 24
-     * 无权限管理员新增部门2角色
-     */
-    @Test
-    public void insertRoleTest6() throws Exception {
-        String token = this.adminLogin("shop2_adv", "123456");
-        String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
-        this.mallClient.post().uri(GETURL, 2)
-                .header("authorization", token)
-                .bodyValue(roleJson)
-                .exchange()
-                .expectStatus().isForbidden()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
-
-    }
-
     /**
      * 25
      * 不同部门管理员禁止角色
@@ -426,7 +477,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * @author Li Zihan
      */
     @Test
-    @Order(6)
+    @Order(8)
     public void forbidRoleTest2() throws Exception {
 
         //禁止前 有部门管理权限
@@ -461,7 +512,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * @author Li Zihan
      */
     @Test
-    @Order(7)
+    @Order(9)
     public void forbidRoleTest3() throws Exception {
 
         //禁止前 有部门管理权限
@@ -510,7 +561,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * 禁止已禁止的角色
      */
     @Test
-    @Order(8)
+    @Order(10)
     public void forbidRoleTest5() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
         this.mallClient.put().uri(FORBIDURL, 2,110)
@@ -572,7 +623,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * 平台管理员解禁角色
      */
     @Test
-    @Order(9)
+    @Order(11)
     public void releaseRoleTest2() throws Exception {
 
         //解禁前 无部门管理权限
@@ -607,7 +658,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * 部门管理员解禁角色
      */
     @Test
-    @Order(10)
+    @Order(12)
     public void releaseRoleTest3() throws Exception {
 
         //解禁前 无部门管理权限
@@ -657,7 +708,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * 解禁已解禁的角色
      */
     @Test
-    @Order(11)
+    @Order(13)
     public void releaseRoleTest5() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
         this.mallClient.put().uri(RELEASEURL, 2,110)
@@ -773,7 +824,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * modifiedBy 王纬策 2020/11/30 12:46
      */
     @Test
-    @Order(12)
+    @Order(14)
     public void deleteRoleTest6() throws Exception {
         //判断用户有权限
         String token1 = this.adminLogin("delrole_user11", "123456");
@@ -798,7 +849,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 109)]").doesNotExist();
+                .jsonPath("$.data.list[?(@.id == '109')]").doesNotExist();
 
         this.mallClient.get().uri(GETURL,1)
                 .header("authorization", token1)
@@ -817,7 +868,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * modifiedBy 王纬策 2020/11/30 12:46
      */
     @Test
-    @Order(13)
+    @Order(15)
     public void deleteRoleTest7() throws Exception {
         //判断用户有权限
         String token1 = this.adminLogin("delrole_user22", "123456");
@@ -842,7 +893,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 110)]").doesNotExist();
+                .jsonPath("$.data.list[?(@.id == '110')]").doesNotExist();
 
         this.mallClient.get().uri(GETURL,2)
                 .header("authorization", token1)

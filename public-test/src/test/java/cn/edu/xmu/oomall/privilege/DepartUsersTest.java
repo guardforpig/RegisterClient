@@ -7,7 +7,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Objects;
 
 /**
  * @author XQChen
@@ -15,7 +14,7 @@ import java.util.Objects;
  */
 @SpringBootTest(classes = PublicTestApp.class)   //标识本类是一个SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class GetDepartUsersTest extends BaseTestOomall {
+public class DepartUsersTest extends BaseTestOomall {
 
     private static String TESTURL ="/privilege/departs/{did}/users";
     private static String NEWURL ="/privilege/departs/{did}/users/new";
@@ -38,8 +37,8 @@ public class GetDepartUsersTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list.length()").isEqualTo(1)
-                .jsonPath("$.data.list[?(@.id == 1)]").exists();
+                .jsonPath("$.data.list.length").isEqualTo(1)
+                .jsonPath("$.data.list[?(@.id == '1')]").exists();
     }
 
     /***
@@ -61,8 +60,9 @@ public class GetDepartUsersTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.name == \"店铺1超级管理员\" && @.sign == 0 && @.id == 46)]").exists()
-                .jsonPath("$.data.list.length()").isEqualTo(1);
+                .jsonPath("$.data.list[?(@.name == '店铺1超级管理员')].id").isEqualTo(46)
+                .jsonPath("$.data.list[?(@.name == '店铺1超级管理员')].sign").isEqualTo(0)
+                .jsonPath("$.data.list.length").isEqualTo(1);
     }
 
     /***
@@ -126,7 +126,7 @@ public class GetDepartUsersTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.list.length()").isEqualTo(0)
-                .jsonPath("$.data.list[?(@.id == 24)]").exists();
+                .jsonPath("$.data.list[?(@.id == '24')]").exists();
     }
 
 
@@ -150,7 +150,7 @@ public class GetDepartUsersTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.list.length()").isEqualTo(0)
-                .jsonPath("$.data.list[?(@.id == 25)]").exists();
+                .jsonPath("$.data.list[?(@.id == '25')]").exists();
     }
 
     /***
