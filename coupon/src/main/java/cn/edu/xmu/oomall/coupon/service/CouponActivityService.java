@@ -12,6 +12,7 @@ import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
+import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityDetailRetVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVoInfo;
@@ -558,4 +559,29 @@ public class CouponActivityService {
         redisUtils.del(String.format(COUPONACTIVITYLISTKEY, tempOnsaleVo.getData().getProduct().getId()));
         return new ReturnObject<>(ReturnNo.OK);
     }
+
+    /**
+    * @author jxy
+    * @create 2021/12/14 8:31 PM
+    */
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public ReturnObject<CouponActivityVoInfo> getCouponActivityById(Long id){
+        ReturnObject returnObject = couponActivityDao.showCouponActivityPoStraight(id);
+        if(returnObject.getCode()!= ReturnNo.OK){
+            return returnObject;
+        }
+        CouponActivity couponActivity = (CouponActivity) returnObject.getData();
+
+        //下线状态不给返回
+        if(couponActivity.getState()==CouponActivity.State.OFFLINE.getCode().byteValue()){
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
+
+        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转
+        return new ReturnObject(cloneVo(couponActivity, CouponActivityDetailRetVo.class));
+    }
+
+
+
+
 }

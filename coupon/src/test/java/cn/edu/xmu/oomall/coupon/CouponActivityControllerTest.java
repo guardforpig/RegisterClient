@@ -22,6 +22,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -405,4 +406,24 @@ public class CouponActivityControllerTest {
         JSONAssert.assertEquals(expectedString2,responseString2,false);
 
     }
+    @Test
+    public void getCouponActivityById() throws Exception
+    {
+        JwtHelper jwtHelper = new JwtHelper();
+        adminToken = jwtHelper.createToken(1L, "13088admin", 0L, 1, 3600);
+
+        String responseString2;
+        responseString2 = this.mockMvc.perform(MockMvcRequestBuilders.get("/internal/couponactivities/1")
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedString2 = "{\n" +
+                "\"errno\": 0,\n" +
+                "\"errmsg\": \"成功\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedString2,responseString2,false);
+    }
+
 }

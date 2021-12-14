@@ -320,4 +320,29 @@ public class CouponActivityController {
         ReturnObject returnObject = couponActivityService.updateCouponActivity(userId, userName, shopId, couponActivityId, null, CouponActivity.State.OFFLINE);
         return Common.decorateReturnObject(returnObject);
     }
+
+    /**
+    * @author jxy
+    * @create 2021/12/14 8:30 PM
+    */
+    @Audit
+    @GetMapping("/internal/couponactivities/{id}")
+    public Object getCouponActivityById(@PathVariable Long id){
+        return Common.decorateReturnObject(couponActivityService.getCouponActivityById(id));
+    }
+
+
+
+//    /**
+//    * @author jxy
+//    * @create 2021/12/14 8:12 PM
+//    */
+//    @ApiOperation(value = "根据productid查询当前时间有效的优惠活动")
+//    @GetMapping("/internal/products/{id}/couponactivities")
+//    public Object getCouponActivitiesByProductId(@PathVariable("id") Long productId)
+//    {
+//        ReturnObject returnObject = couponActivityService.getCouponActivitiesByProductId(productId);
+//        return Common.decorateReturnObject(returnObject);
+//    }
+
 }

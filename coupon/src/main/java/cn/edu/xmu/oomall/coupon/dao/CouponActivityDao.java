@@ -360,4 +360,5 @@ public class CouponActivityDao {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
+
 }
