@@ -1,12 +1,12 @@
 package cn.edu.xmu.oomall.goods.controller;
 
+import cn.edu.xmu.oomall.core.util.ReturnNo;
+import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.GoodsApplication;
 import cn.edu.xmu.oomall.goods.microservice.FreightService;
-import cn.edu.xmu.oomall.goods.microservice.CategroyService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.FreightModel;
-import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
@@ -60,8 +60,7 @@ class GoodsControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private RedisUtil redisUtil;
-    @MockBean
-    private CategroyService categroyService;
+
     @Test
     public void ListByfreightIdTest1() throws Exception
     {
@@ -302,7 +301,7 @@ class GoodsControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":504,\"errmsg\":\"货品草稿不存在\"}";
+        String expected="{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -635,11 +634,6 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void getProductDetail() throws Exception {
-        SimpleCategoryVo simpleCategoryVo = new SimpleCategoryVo();
-        simpleCategoryVo.setId(1L);
-        simpleCategoryVo.setName("test");
-
-        Mockito.when(categroyService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         //正常
         String responseString = this.mockMvc.perform(get("/products/1576")
