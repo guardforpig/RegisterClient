@@ -175,7 +175,7 @@ public class WeChatPayControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().contentType("application/json;charset=UTF-8"))
                     .andReturn().getResponse().getContentAsString();
-            expectedResponse = "{\"data\":{\"outRefundNo\":\""+i+"\",\"transactionId\":\"1217752501201407033233368018\",\"outTradeNo\":\""+i+"\",\"channel\":\"ORIGINAL\",\"userReceivedAccount\":\"招商银行信用卡0403\",\"amount\":{\"total\":100,\"refund\":100,\"payerTotal\":100,\"settlementRefund\":null,\"settlementTotal\":null,\"discountRefund\":null,\"currency\":null}}}";
+            expectedResponse = "{\"data\":{\"outRefundNo\":\""+i+"\",\"transactionId\":\"1217752501201407033233368018\",\"outTradeNo\":\""+i+"\",\"channel\":\"ORIGINAL\",\"userReceivedAccount\":\"招商银行信用卡0403\",\"amount\":{\"total\":null,\"refund\":100,\"payerTotal\":100,\"settlementRefund\":null,\"settlementTotal\":null,\"discountRefund\":null,\"currency\":null}}}";
             JSONAssert.assertEquals(expectedResponse, responseString, false);
         }
 
@@ -252,7 +252,7 @@ public class WeChatPayControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"data\":{\"refundId\":\"1\",\"outRefundNo\":\"10\",\"transactionId\":\"1217752501201407033233368018\",\"outTradeNo\":\"10\",\"channel\":\"ORIGINAL\",\"userReceivedAccount\":\"招商银行信用卡0403\",\"createTime\":\"2021-12-02T15:08:42.000\",\"status\":\"SUCCESS\",\"amount\":{\"total\":100,\"refund\":100,\"payerTotal\":100,\"payerRefund\":100,\"settlementRefund\":null,\"settlementTotal\":null,\"discountRefund\":null,\"currency\":null}},\"errmsg\":\"成功\"}";
+        String expectedResponse = "{\"data\":{\"refundId\":\"1\",\"outRefundNo\":\"10\",\"transactionId\":\"1217752501201407033233368018\",\"outTradeNo\":\"10\",\"channel\":\"ORIGINAL\",\"userReceivedAccount\":\"招商银行信用卡0403\",\"successTime\":\"2021-12-02T15:08:42.000\",\"status\":\"SUCCESS\",\"amount\":{\"total\":null,\"refund\":100,\"payerTotal\":100,\"payerRefund\":null,\"settlementRefund\":null,\"settlementTotal\":null,\"discountRefund\":null,\"currency\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
