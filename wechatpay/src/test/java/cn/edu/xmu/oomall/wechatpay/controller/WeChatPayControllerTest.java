@@ -1,13 +1,16 @@
 package cn.edu.xmu.oomall.wechatpay.controller;
 
 import cn.edu.xmu.oomall.wechatpay.WeChatPayApplication;
+import cn.edu.xmu.oomall.wechatpay.microservice.WeChatPayNotifyService;
 import cn.edu.xmu.oomall.wechatpay.model.vo.*;
 import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,10 +32,14 @@ public class WeChatPayControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    @MockBean
+    private WeChatPayNotifyService weChatPayNotifyService;
 
     @Test
     @Transactional
     public void createTransactionTest1() throws Exception{
+
+        Mockito.when(weChatPayNotifyService.paymentNotify(Mockito.any())).thenReturn(null);
 
         WeChatPayTransactionVo vo = new WeChatPayTransactionVo();
         vo.setAppid("wxd678efh567hg6787");
@@ -152,6 +159,8 @@ public class WeChatPayControllerTest {
     @Transactional
     public void createRefundTest1() throws Exception{
 
+        Mockito.when(weChatPayNotifyService.refundNotify(Mockito.any())).thenReturn(null);
+
         WeChatPayRefundVo vo = new WeChatPayRefundVo();
         vo.setNotifyUrl("/wechat/refund/notify");
         vo.setAmount(new RefundAmountVo(100,100,"CNY"));
@@ -176,6 +185,8 @@ public class WeChatPayControllerTest {
     @Transactional
     public void createRefundTest2() throws Exception{
 
+        Mockito.when(weChatPayNotifyService.refundNotify(Mockito.any())).thenReturn(null);
+
         WeChatPayRefundVo vo = new WeChatPayRefundVo();
         vo.setNotifyUrl("/wechat/refund/notify");
         vo.setAmount(new RefundAmountVo(120,100,"CNY"));
@@ -195,6 +206,8 @@ public class WeChatPayControllerTest {
     @Transactional
     public void createRefundTest3() throws Exception{
 
+        Mockito.when(weChatPayNotifyService.refundNotify(Mockito.any())).thenReturn(null);
+
         WeChatPayRefundVo vo = new WeChatPayRefundVo();
         vo.setNotifyUrl("/wechat/refund/notify");
         vo.setAmount(new RefundAmountVo(100,100,"CNY"));
@@ -213,6 +226,8 @@ public class WeChatPayControllerTest {
     @Test
     @Transactional
     public void createRefundTest4() throws Exception{
+
+        Mockito.when(weChatPayNotifyService.refundNotify(Mockito.any())).thenReturn(null);
 
         WeChatPayRefundVo vo = new WeChatPayRefundVo();
         vo.setNotifyUrl("/wechat/refund/notify");
