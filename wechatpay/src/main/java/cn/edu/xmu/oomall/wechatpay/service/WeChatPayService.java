@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.wechatpay.service;
 
 import cn.edu.xmu.oomall.wechatpay.dao.WeChatPayDao;
-import cn.edu.xmu.oomall.wechatpay.microservice.WeChatPayNotifyService;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayRefund;
 import cn.edu.xmu.oomall.wechatpay.model.bo.WeChatPayTransaction;
 import cn.edu.xmu.oomall.wechatpay.model.po.WeChatPayRefundPo;
@@ -9,6 +8,7 @@ import cn.edu.xmu.oomall.wechatpay.model.po.WeChatPayTransactionPo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayPaymentNotifyRetVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayRefundNotifyRetVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayPrepayRetVo;
+import cn.edu.xmu.oomall.wechatpay.mq.RocketMQService;
 import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnNo;
 import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class WeChatPayService {
     private WeChatPayDao weChatPayDao;
 
     @Autowired
-    private WeChatPayNotifyService weChatPayNotifyService;
+    private RocketMQService rocketMQService;
 
 
     @Transactional(rollbackFor=Exception.class)
@@ -62,7 +62,7 @@ public class WeChatPayService {
             {
                 WeChatPayReturnObject returnObject = paySuccess(weChatPayTransaction);
                 if(returnObject.getData()!=null) {
-                    weChatPayNotifyService.paymentNotify(new WeChatPayPaymentNotifyRetVo( (WeChatPayTransaction) returnObject.getData() ));
+                    rocketMQService.sendWeChatPayPaymentMessage(new WeChatPayPaymentNotifyRetVo( (WeChatPayTransaction) returnObject.getData() ));
                 }
                 break;
             }
@@ -75,7 +75,7 @@ public class WeChatPayService {
             {
                 WeChatPayReturnObject returnObject = payFail(weChatPayTransaction);
                 if(returnObject.getData()!=null) {
-                    weChatPayNotifyService.paymentNotify(new WeChatPayPaymentNotifyRetVo( (WeChatPayTransaction) returnObject.getData() ));
+                    rocketMQService.sendWeChatPayPaymentMessage(new WeChatPayPaymentNotifyRetVo( (WeChatPayTransaction) returnObject.getData() ));
                 }
                 break;
             }
@@ -111,7 +111,7 @@ public class WeChatPayService {
     @Transactional(rollbackFor=Exception.class)
     public WeChatPayReturnObject createRefund(WeChatPayRefund weChatPayRefund){
 
-        if(weChatPayRefund.getRefund()>weChatPayRefund.getTotal() || weChatPayRefund.getRefund()<=0){
+        if(weChatPayRefund.getRefund()<=0){
             return new WeChatPayReturnObject(WeChatPayReturnNo.REFUND_AMOUNT_ERROR);
         }
 
@@ -130,17 +130,14 @@ public class WeChatPayService {
         weChatPayRefund.setPayerTotal(transaction.getPayerTotal());
 
         List<WeChatPayRefundPo> list = (List<WeChatPayRefundPo>) weChatPayDao.getRefundByOutTradeNo(weChatPayRefund.getOutTradeNo()).getData();
-        int count=0;
+        int totalRefund=0;
         if(list!=null){
             for(WeChatPayRefundPo po:list){
-                count += po.getPayerRefund();
+                totalRefund += po.getPayerRefund();
             }
         }
-        if(count + weChatPayRefund.getRefund() > transaction.getTotal()){
+        if(totalRefund + weChatPayRefund.getRefund() > transaction.getPayerTotal()){
             return new WeChatPayReturnObject(WeChatPayReturnNo.REFUND_AMOUNT_ERROR);
-        }
-        if(count + weChatPayRefund.getRefund() > transaction.getPayerTotal()){
-            weChatPayRefund.setPayerRefund(transaction.getPayerTotal()-count);
         }
 
         WeChatPayReturnObject returnObject = null;
@@ -151,7 +148,7 @@ public class WeChatPayService {
             {
                 returnObject = refundSuccess(weChatPayRefund);
                 if(returnObject.getData()!=null) {
-                    weChatPayNotifyService.refundNotify(new WeChatPayRefundNotifyRetVo( (WeChatPayRefund) returnObject.getData() ));
+                    rocketMQService.sendWeChatPayRefundMessage(new WeChatPayRefundNotifyRetVo( (WeChatPayRefund) returnObject.getData() ));
                 }
                 break;
             }
@@ -164,7 +161,7 @@ public class WeChatPayService {
             {
                 returnObject = refundFail(weChatPayRefund);
                 if(returnObject.getData()!=null) {
-                    weChatPayNotifyService.refundNotify(new WeChatPayRefundNotifyRetVo( (WeChatPayRefund) returnObject.getData() ));
+                    rocketMQService.sendWeChatPayRefundMessage(new WeChatPayRefundNotifyRetVo( (WeChatPayRefund) returnObject.getData() ));
                 }
                 break;
             }
