@@ -244,4 +244,15 @@ public class RegionController {
 
         return Common.decorateReturnObject(returnObject);
     }
+
+    /**
+     *@author jxy
+     *@create 2021/12/10 4:42 PM
+     */
+    @ApiOperation(value = "根据regionId获取地区信息",  produces="application/json;charset=UTF-8")
+    @GetMapping("/internal/region/{id}")
+    public Object getSimpleRegionById(@PathVariable("id") Long id) {
+        ReturnObject returnObject = regionService.getSimpleRegionById(id);
+        return Common.decorateReturnObject(returnObject);
+    }
 }
