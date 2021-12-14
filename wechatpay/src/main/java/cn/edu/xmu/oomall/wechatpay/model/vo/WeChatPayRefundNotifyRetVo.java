@@ -38,6 +38,8 @@ public class WeChatPayRefundNotifyRetVo {
         private String refundStatus;
         private String userReceivedAccount;
         private Amount amount;
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd'T'HH:mm:ss.SSS" ,timezone = "GMT+8")
+        private LocalDateTime successTime;
     }
 
     @Data
@@ -66,7 +68,7 @@ public class WeChatPayRefundNotifyRetVo {
         this.resourceType = null;
         this.resource = new Resource("AEAD_AES_256_GCM","transaction",
                 new Ciphertext("1230000109", weChatPayRefund.getOutTradeNo(), "1217752501201407033233368018", weChatPayRefund.getOutRefundNo(), String.valueOf(weChatPayRefund.getId()), weChatPayRefund.getStatus(), "招商银行信用卡0403",
-                        new Amount(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getPayerRefund())),
+                        new Amount(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getPayerRefund()),weChatPayRefund.getSuccessTime()),
                 "fdasfjihihihlkja484w");
     }
 

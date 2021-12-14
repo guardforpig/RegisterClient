@@ -1,5 +1,5 @@
 LOCK TABLES `oomall_wechatpay_refund` WRITE;
-INSERT INTO `oomall_wechatpay_refund` VALUES (1, '10', '10', 'SUCCESS', 100, 100, 100, 100, '2021-12-02 15:08:42');
+INSERT INTO `oomall_wechatpay_refund` VALUES (1, '10', '10', 'SUCCESS', 100, 100, '2021-12-02 15:08:42');
 UNLOCK TABLES;
 
 LOCK TABLES `oomall_wechatpay_transaction` WRITE;

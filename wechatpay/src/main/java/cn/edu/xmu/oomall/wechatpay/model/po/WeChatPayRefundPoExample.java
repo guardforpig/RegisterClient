@@ -465,66 +465,6 @@ public class WeChatPayRefundPoExample {
             return (Criteria) this;
         }
 
-        public Criteria andTotalIsNull() {
-            addCriterion("`total` is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalIsNotNull() {
-            addCriterion("`total` is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalEqualTo(Integer value) {
-            addCriterion("`total` =", value, "total");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalNotEqualTo(Integer value) {
-            addCriterion("`total` <>", value, "total");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalGreaterThan(Integer value) {
-            addCriterion("`total` >", value, "total");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalGreaterThanOrEqualTo(Integer value) {
-            addCriterion("`total` >=", value, "total");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalLessThan(Integer value) {
-            addCriterion("`total` <", value, "total");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalLessThanOrEqualTo(Integer value) {
-            addCriterion("`total` <=", value, "total");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalIn(List<Integer> values) {
-            addCriterion("`total` in", values, "total");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalNotIn(List<Integer> values) {
-            addCriterion("`total` not in", values, "total");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalBetween(Integer value1, Integer value2) {
-            addCriterion("`total` between", value1, value2, "total");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalNotBetween(Integer value1, Integer value2) {
-            addCriterion("`total` not between", value1, value2, "total");
-            return (Criteria) this;
-        }
-
         public Criteria andRefundIsNull() {
             addCriterion("`refund` is null");
             return (Criteria) this;
@@ -645,123 +585,63 @@ public class WeChatPayRefundPoExample {
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundIsNull() {
-            addCriterion("`payer_refund` is null");
+        public Criteria andSuccessTimeIsNull() {
+            addCriterion("`success_time` is null");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundIsNotNull() {
-            addCriterion("`payer_refund` is not null");
+        public Criteria andSuccessTimeIsNotNull() {
+            addCriterion("`success_time` is not null");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundEqualTo(Integer value) {
-            addCriterion("`payer_refund` =", value, "payerRefund");
+        public Criteria andSuccessTimeEqualTo(LocalDateTime value) {
+            addCriterion("`success_time` =", value, "successTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundNotEqualTo(Integer value) {
-            addCriterion("`payer_refund` <>", value, "payerRefund");
+        public Criteria andSuccessTimeNotEqualTo(LocalDateTime value) {
+            addCriterion("`success_time` <>", value, "successTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundGreaterThan(Integer value) {
-            addCriterion("`payer_refund` >", value, "payerRefund");
+        public Criteria andSuccessTimeGreaterThan(LocalDateTime value) {
+            addCriterion("`success_time` >", value, "successTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundGreaterThanOrEqualTo(Integer value) {
-            addCriterion("`payer_refund` >=", value, "payerRefund");
+        public Criteria andSuccessTimeGreaterThanOrEqualTo(LocalDateTime value) {
+            addCriterion("`success_time` >=", value, "successTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundLessThan(Integer value) {
-            addCriterion("`payer_refund` <", value, "payerRefund");
+        public Criteria andSuccessTimeLessThan(LocalDateTime value) {
+            addCriterion("`success_time` <", value, "successTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundLessThanOrEqualTo(Integer value) {
-            addCriterion("`payer_refund` <=", value, "payerRefund");
+        public Criteria andSuccessTimeLessThanOrEqualTo(LocalDateTime value) {
+            addCriterion("`success_time` <=", value, "successTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundIn(List<Integer> values) {
-            addCriterion("`payer_refund` in", values, "payerRefund");
+        public Criteria andSuccessTimeIn(List<LocalDateTime> values) {
+            addCriterion("`success_time` in", values, "successTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundNotIn(List<Integer> values) {
-            addCriterion("`payer_refund` not in", values, "payerRefund");
+        public Criteria andSuccessTimeNotIn(List<LocalDateTime> values) {
+            addCriterion("`success_time` not in", values, "successTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundBetween(Integer value1, Integer value2) {
-            addCriterion("`payer_refund` between", value1, value2, "payerRefund");
+        public Criteria andSuccessTimeBetween(LocalDateTime value1, LocalDateTime value2) {
+            addCriterion("`success_time` between", value1, value2, "successTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayerRefundNotBetween(Integer value1, Integer value2) {
-            addCriterion("`payer_refund` not between", value1, value2, "payerRefund");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeIsNull() {
-            addCriterion("`create_time` is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeIsNotNull() {
-            addCriterion("`create_time` is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeEqualTo(LocalDateTime value) {
-            addCriterion("`create_time` =", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeNotEqualTo(LocalDateTime value) {
-            addCriterion("`create_time` <>", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeGreaterThan(LocalDateTime value) {
-            addCriterion("`create_time` >", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeGreaterThanOrEqualTo(LocalDateTime value) {
-            addCriterion("`create_time` >=", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeLessThan(LocalDateTime value) {
-            addCriterion("`create_time` <", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeLessThanOrEqualTo(LocalDateTime value) {
-            addCriterion("`create_time` <=", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeIn(List<LocalDateTime> values) {
-            addCriterion("`create_time` in", values, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeNotIn(List<LocalDateTime> values) {
-            addCriterion("`create_time` not in", values, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeBetween(LocalDateTime value1, LocalDateTime value2) {
-            addCriterion("`create_time` between", value1, value2, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeNotBetween(LocalDateTime value1, LocalDateTime value2) {
-            addCriterion("`create_time` not between", value1, value2, "createTime");
+        public Criteria andSuccessTimeNotBetween(LocalDateTime value1, LocalDateTime value2) {
+            addCriterion("`success_time` not between", value1, value2, "successTime");
             return (Criteria) this;
         }
     }

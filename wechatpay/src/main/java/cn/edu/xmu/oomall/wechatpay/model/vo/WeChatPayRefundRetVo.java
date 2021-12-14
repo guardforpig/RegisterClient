@@ -43,7 +43,7 @@ public class WeChatPayRefundRetVo {
     private String userReceivedAccount;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd'T'HH:mm:ss.SSS" ,timezone = "GMT+8")
-    private LocalDateTime createTime;
+    private LocalDateTime successTime;
 
     private String status;
 
@@ -56,7 +56,7 @@ public class WeChatPayRefundRetVo {
         this.outTradeNo = weChatPayRefund.getOutTradeNo();
         this.channel = "ORIGINAL";
         this.userReceivedAccount = "招商银行信用卡0403";
-        this.createTime = weChatPayRefund.getCreateTime();
+        this.successTime = weChatPayRefund.getSuccessTime();
         this.status = weChatPayRefund.getStatus();
         this.amount = new RefundAmountRetVo(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getPayerRefund(), null, null, null, null);
     }
