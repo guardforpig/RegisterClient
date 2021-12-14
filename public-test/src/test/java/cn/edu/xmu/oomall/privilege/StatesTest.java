@@ -25,77 +25,78 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = PublicTestApp.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class GetDepartsUsersBaseRolesTest extends BaseTestOomall {
+public class StatesTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilgege/departs/{did}/users/{id}/baseroles";
+    private static String GROUPURL ="/privilege/groups/sates";
+    private static String ROLEURL ="/privilege/roles/sates";
+    private static String USERURL ="/privilege/users/sates";
+    private static String PRIVURL ="/privilege/privileges/sates";
 
     /**
-     * 29 管理员查看用户拥有的权限
-     * 查找用户 Li ZiHan
+     * 28 获得管理员用户的所有状态
+     * Li ZiHan
      * @throws Exception
      */
     @Test
-    public void findUserPrivs1() throws Exception {
-        String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(TESTURL+"?page=1&pageSize=4",0,1).header("authorization", token)
+    public void findPrivilegeState() throws Exception {
+        this.mallClient.get().uri(PRIVURL)
                 .exchange()
-                .expectStatus().isOk()
                 .expectHeader()
-                .contentType("application/json")
+                .contentType("application/json;charset=UTF-8")
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .jsonPath("$.data.list.length()").isEqualTo(2);
+    }
+    
+    /**
+     * 28 获得管理员用户的所有状态
+     * Li ZiHan
+     * @throws Exception
+     */
+    @Test
+    public void findAdminUserState() throws Exception {
+        this.mallClient.get().uri(USERURL)
+                .exchange()
+                .expectHeader()
+                .contentType("application/json;charset=UTF-8")
+                .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.list.length()").isEqualTo(4);
     }
 
     /**
-     * 30 同部门管理员查看用户拥有的权限
+     * 28 获得管理员用户的所有状态
      * Li ZiHan
      * @throws Exception
      */
     @Test
-    public void findUserPrivs2() throws Exception {
-        String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(TESTURL+"?page=1&pageSize=4",1,46).header("authorization", token)
+    public void findRoleState() throws Exception {
+        this.mallClient.get().uri(ROLEURL)
                 .exchange()
-                .expectStatus().isOk()
                 .expectHeader()
-                .contentType("application/json")
+                .contentType("application/json;charset=UTF-8")
+                .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list.length()").isEqualTo(4);
+                .jsonPath("$.data.list.length()").isEqualTo(2);
     }
 
     /**
-     * 31 不同部门管理员获得用户拥有的权限
+     * 28 获得管理员用户的所有状态
      * Li ZiHan
      * @throws Exception
      */
     @Test
-    public void findUserPrivs3() throws Exception {
-        String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(TESTURL,2,47).header("authorization", token)
+    public void findGroupState() throws Exception {
+        this.mallClient.get().uri(GROUPURL)
                 .exchange()
-                .expectStatus().isForbidden()
                 .expectHeader()
-                .contentType("application/json")
+                .contentType("application/json;charset=UTF-8")
+                .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode());
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .jsonPath("$.data.list.length()").isEqualTo(2);
     }
-
-    /**
-     * 不登录
-     * @throws Exception
-     */
-    @Test
-    public void findUserPrivs4() throws Exception {
-        this.mallClient.get().uri(TESTURL,2,47)
-                .exchange()
-                .expectStatus().isUnauthorized()
-                .expectHeader()
-                .contentType("application/json")
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NEED_LOGIN.getCode());
-    }
-
 }

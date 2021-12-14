@@ -141,7 +141,6 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void POST_testGoods01() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
         String requestJson="{\"name\":\"新建商品\"}";
         String responseString = this.mockMvc.perform(post("/shops/5/goods").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
@@ -272,33 +271,33 @@ class GoodsControllerTest {
     @Transactional
     public void PUB_testProduct01() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/0/products/1550/publish").header("authorization", adminToken))
-                .andExpect(status().isNotFound())
+        String responseString = this.mockMvc.perform(put("/shops/0/draftproducts/70/publish").header("authorization", adminToken))
+                .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":504,\"errmsg\":\"货品草稿不存在\"}";
+        String expected="{\"errno\":0,\"data\":{\"id\":1576,\"name\":null,\"imageUrl\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
     @Transactional
     public void PUB_testProduct02() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/1/products/1550/publish").header("authorization", adminToken))
+        String responseString = this.mockMvc.perform(put("/shops/1/draftproducts/1550/publish").header("authorization", adminToken))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":505,\"errmsg\":\"此商铺没有发布货品的权限\"}";
+        String expected="{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
     @Transactional
     public void PUB_testProduct03() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/0/products/20000/publish").header("authorization", adminToken))
+        String responseString = this.mockMvc.perform(put("/shops/0/draftproducts/20000/publish").header("authorization", adminToken))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":504,\"errmsg\":\"货品草稿不存在\"}";
+        String expected="{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expected,responseString,true);
     }
     @Test
@@ -505,7 +504,7 @@ class GoodsControllerTest {
                         .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":0,\"data\":{\"total\":1,\"list\":[{\"id\":1561,\"shopId\":1,\"shopName\":\"OOMALL自营商铺\",\"goodsId\":453,\"categoryId\":266,\"freightId\":1,\"skuSn\":null,\"name\":\"奥利奥（桶装）\",\"originalPrice\":69902,\"weight\":55,\"imageUrl\":null,\"barcode\":\"6901668053893\",\"unit\":\"桶\",\"originPlace\":\"江苏\",\"creatorId\":1,\"creatorName\":\"admin\",\"modifierId\":null,\"modifierName\":null,\"gmtCreate\":\"2021-11-11T13:12:48\",\"gmtModified\":null,\"state\":3}],\"pageNum\":1,\"pageSize\":10,\"size\":1,\"startRow\":1,\"endRow\":1,\"pages\":1,\"prePage\":0,\"nextPage\":0,\"isFirstPage\":true,\"isLastPage\":true,\"hasPreviousPage\":false,\"hasNextPage\":false,\"navigatePages\":8,\"navigatepageNums\":[1],\"navigateFirstPage\":1,\"navigateLastPage\":1},\"errmsg\":\"成功\"}";
+        String expected="{\"errno\":0,\"data\":{\"total\":46,\"pages\":5,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1561,\"name\":\"奥利奥（桶装）\",\"imageUrl\":null},{\"id\":1567,\"name\":\"六神花露水\",\"imageUrl\":null},{\"id\":1765,\"name\":\"康师傅包（爆椒）\",\"imageUrl\":null},{\"id\":1935,\"name\":\"50立白儿童牙膏\",\"imageUrl\":null},{\"id\":1970,\"name\":\"凯达空气清新剂\",\"imageUrl\":null},{\"id\":1971,\"name\":\"凯达桂花空气清新剂\",\"imageUrl\":null},{\"id\":2056,\"name\":\"彩虹果汁糖\",\"imageUrl\":null},{\"id\":2088,\"name\":\"不锈钢口杯\",\"imageUrl\":null},{\"id\":2118,\"name\":\"达能王子草莓饼干\",\"imageUrl\":null},{\"id\":2255,\"name\":\"双汇清真鸡肉肠400\",\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,contentAsString,true);
     }
     @Test
@@ -665,7 +664,7 @@ class GoodsControllerTest {
      * @author wyg
      * @Date 2021/11/13
      */
-    @Test
+/*    @Test
     @Transactional
     public void upLoadImage() throws Exception {
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
@@ -676,7 +675,7 @@ class GoodsControllerTest {
                 .contentType("application/json;charset=UTF-8"));
         MvcResult mvcResult = resultActions.andDo(MockMvcResultHandlers.print()).andExpect(status().isInternalServerError()).andReturn();
         String responseString = mvcResult.getResponse().getContentAsString();
-    }
+    }*/
 
     /**
      * 管理员或店家物理删除审核态的Products

@@ -22,6 +22,13 @@ public class DepartsRolesTest extends BaseTestOomall {
 
     private static String IDURL="/privilege/departs/{did}/roles/{id}";
 
+    private static String FORBIDURL="/privilege/departs/{did}/roles/{id}/forbid";
+
+    private static String RELEASEURL="/privilege/departs/{did}/roles/{id}/release";
+
+    private static String GETURLDEPARTURL = "/privilege/departs/{did}/groups";
+
+
     /**
      * 未登录查询角色信息
      *
@@ -120,160 +127,6 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
     }
 
-    /**
-     * 管理员删除角色id不存在
-     *
-     * @author 24320182203281 王纬策
-     * createdBy 王纬策 2020/11/30 12:46
-     * modifiedBy 王纬策 2020/11/30 12:46
-     */
-    @Test
-    public void deleteRoleTest2() throws Exception {
-        String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.delete().uri(IDURL, 1, 1009)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isNotFound()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_NOTEXIST.getCode());
-    }
-
-    /**
-     * 管理员删除角色id与部门id不匹配
-     *
-     * @author 24320182203281 王纬策
-     * createdBy 王纬策 2020/11/30 12:46
-     * modifiedBy 王纬策 2020/11/30 12:46
-     */
-    @Test
-    public void deleteRoleTest3() throws Exception {
-        String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.delete().uri(IDURL, 1, 109)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isForbidden()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode());
-    }
-
-    /**
-     * 未登录删除角色
-     *
-     * @author 24320182203281 王纬策
-     * createdBy 王纬策 2020/11/30 12:46
-     * modifiedBy 王纬策 2020/11/30 12:46
-     */
-    @Test
-    public void deleteRoleTest4() throws Exception {
-        this.mallClient.delete().uri(IDURL, 1, 109)
-                .exchange()
-                .expectStatus().isUnauthorized()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NEED_LOGIN.getCode());    }
-
-    /**
-     * 伪造token删除角色
-     *
-     * @author 24320182203281 王纬策
-     * createdBy 王纬策 2020/11/30 12:46
-     * modifiedBy 王纬策 2020/11/30 12:46
-     */
-    @Test
-    public void deleteRoleTest5() throws Exception {
-        this.mallClient.delete().uri(IDURL, 1, 109)
-                .header("authorization", "test")
-                .exchange()
-                .expectStatus().isUnauthorized()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_JWT.getCode());
-    }
-
-    /**
-     * 平台管理员删除角色
-     *
-     * @author 24320182203281 王纬策
-     * createdBy 王纬策 2020/11/30 12:46
-     * modifiedBy 王纬策 2020/11/30 12:46
-     */
-    @Test
-    @Order(2)
-    public void deleteRoleTest6() throws Exception {
-        //判断用户有权限
-        String token1 = this.adminLogin("delrole_user11", "123456");
-        this.mallClient.get().uri(GETURL,1)
-                .header("authorization", token1)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
-
-        String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.delete().uri(IDURL, 1, 109)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
-
-        this.mallClient.get().uri(GETURL,1)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 109)]").doesNotExist();
-
-        this.mallClient.get().uri(GETURL,1)
-                .header("authorization", token1)
-                .exchange()
-                .expectStatus().isForbidden()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
-
-    }
-
-    /**
-     * 同店铺管理员删除角色
-     *
-     * @author 24320182203281 王纬策
-     * createdBy 王纬策 2020/11/30 12:46
-     * modifiedBy 王纬策 2020/11/30 12:46
-     */
-    @Test
-    @Order(3)
-    public void deleteRoleTest7() throws Exception {
-        //判断用户有权限
-        String token1 = this.adminLogin("delrole_user22", "123456");
-        this.mallClient.get().uri(GETURL,2)
-                .header("authorization", token1)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
-
-        String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.delete().uri(IDURL, 2, 110)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
-
-        this.mallClient.get().uri(GETURL,2)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 110)]").doesNotExist();
-
-        this.mallClient.get().uri(GETURL,2)
-                .header("authorization", token1)
-                .exchange()
-                .expectStatus().isForbidden()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
-    }
 
     /**
      * 平台管理员修改角色
@@ -283,7 +136,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * modifiedBy 王纬策 2020/11/30 12:46
      */
     @Test
-    @Order(4)
+    @Order(2)
     public void updateRoleTest1() throws Exception {
         String token = adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"testU\",\"name\": \"testU\"}";
@@ -442,7 +295,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * @author Li Zihan
      */
     @Test
-    @Order(5)
+    @Order(3)
     public void insertRoleTest2() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"管理员test\",\"name\": \"管理员\"}";
@@ -469,7 +322,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * @author Li Zihan
      */
     @Test
-    @Order(6)
+    @Order(4)
     public void insertRoleTest3() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
@@ -496,7 +349,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      * @author Li Zihan
      */
     @Test
-    @Order(7)
+    @Order(5)
     public void insertRoleTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
         String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
@@ -549,6 +402,454 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
+    }
+
+    /**
+     * 25
+     * 不同部门管理员禁止角色
+     * Li Zihan
+     */
+    @Test
+    public void forbidRoleTest1() throws Exception {
+        String token = this.adminLogin("2721900002", "123456");
+        this.mallClient.put().uri(FORBIDURL, 1,2)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode());
+    }
+
+    /**
+     * 23
+     * 平台管理员禁止角色
+     * @author Li Zihan
+     */
+    @Test
+    @Order(6)
+    public void forbidRoleTest2() throws Exception {
+
+        //禁止前 有部门管理权限
+        String token1 = this.adminLogin("delrole_user11", "123456");
+        this.mallClient.get().uri(GETURLDEPARTURL, 1)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        String token = this.adminLogin("13088admin", "123456");
+        this.mallClient.put().uri(FORBIDURL, 1,109)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        //禁止后
+        this.mallClient.get().uri(GETURLDEPARTURL, 1)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
+    }
+
+    /**
+     * 23
+     * 部门管理员禁止角色
+     * @author Li Zihan
+     */
+    @Test
+    @Order(7)
+    public void forbidRoleTest3() throws Exception {
+
+        //禁止前 有部门管理权限
+        String token1 = this.adminLogin("delrole_user22", "123456");
+        this.mallClient.get().uri(GETURLDEPARTURL, 2)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        String token = this.adminLogin("2721900002", "123456");
+        this.mallClient.put().uri(FORBIDURL, 2,110)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        //禁止后
+        this.mallClient.get().uri(GETURLDEPARTURL, 2)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
+    }
+
+    /**
+     * 24
+     * 禁止不存在的角色
+     */
+    @Test
+    public void forbidRoleTest4() throws Exception {
+        String token = this.adminLogin("13088admin", "123456");
+        this.mallClient.put().uri(FORBIDURL, 2,98635)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_NOTEXIST.getCode());
+    }
+
+    /**
+     * 24
+     * 禁止已禁止的角色
+     */
+    @Test
+    @Order(8)
+    public void forbidRoleTest5() throws Exception {
+        String token = this.adminLogin("2721900002", "123456");
+        this.mallClient.put().uri(FORBIDURL, 2,110)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.STATENOTALLOW.getCode());
+    }
+
+    /**
+     * 25
+     * 未登录禁止
+     * Li Zihan
+     */
+    @Test
+    public void forbidRoleTest6() throws Exception {
+
+        this.mallClient.put().uri(FORBIDURL, 2,110)
+                .exchange()
+                .expectStatus().isUnauthorized()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NEED_LOGIN.getCode());
+    }
+
+    /**
+     * 24
+     * 无权限管理员
+     */
+    @Test
+    public void forbidRoleTest7() throws Exception {
+        String token = this.adminLogin("shop2_adv", "123456");
+        this.mallClient.put().uri(FORBIDURL, 2,3)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
+    }
+
+    /**
+     * 25
+     * 不同部门管理员解禁角色
+     * Li Zihan
+     */
+    @Test
+    public void releaseRoleTest1() throws Exception {
+        String token = this.adminLogin("2721900002", "123456");
+        this.mallClient.put().uri(RELEASEURL, 1,2)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode());
+    }
+
+    /**
+     * 23
+     * 平台管理员解禁角色
+     */
+    @Test
+    @Order(9)
+    public void releaseRoleTest2() throws Exception {
+
+        //解禁前 无部门管理权限
+        String token1 = this.adminLogin("delrole_user11", "123456");
+        this.mallClient.get().uri(GETURLDEPARTURL, 1)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
+
+        String token = this.adminLogin("13088admin", "123456");
+        this.mallClient.put().uri(RELEASEURL, 1,109)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        //解禁后
+        this.mallClient.get().uri(GETURLDEPARTURL, 1)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+    }
+
+    /**
+     * 23
+     * 部门管理员解禁角色
+     */
+    @Test
+    @Order(10)
+    public void releaseRoleTest3() throws Exception {
+
+        //解禁前 无部门管理权限
+        String token1 = this.adminLogin("delrole_user22", "123456");
+        this.mallClient.get().uri(GETURLDEPARTURL, 2)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
+
+        String token = this.adminLogin("2721900002", "123456");
+        this.mallClient.put().uri(RELEASEURL, 2,110)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        //解禁后
+        this.mallClient.get().uri(GETURLDEPARTURL, 2)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+    }
+
+    /**
+     * 24
+     * 解禁不存在的角色
+     */
+    @Test
+    public void releaseRoleTest4() throws Exception {
+        String token = this.adminLogin("13088admin", "123456");
+        this.mallClient.put().uri(RELEASEURL, 2,98635)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_NOTEXIST.getCode());
+    }
+
+    /**
+     * 24
+     * 解禁已解禁的角色
+     */
+    @Test
+    @Order(11)
+    public void releaseRoleTest5() throws Exception {
+        String token = this.adminLogin("2721900002", "123456");
+        this.mallClient.put().uri(RELEASEURL, 2,110)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.STATENOTALLOW.getCode());
+    }
+
+    /**
+     * 25
+     * 未登录解禁
+     */
+    @Test
+    public void releaseRoleTest6() throws Exception {
+
+        this.mallClient.put().uri(RELEASEURL, 2,110)
+                .exchange()
+                .expectStatus().isUnauthorized()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NEED_LOGIN.getCode());
+    }
+
+    /**
+     * 24
+     * 无权限管理员
+     */
+    @Test
+    public void releaseRoleTest7() throws Exception {
+        String token = this.adminLogin("shop2_adv", "123456");
+        this.mallClient.put().uri(RELEASEURL, 2,3)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
+    }
+
+    /**
+     * 管理员删除角色id不存在
+     *
+     * @author 24320182203281 王纬策
+     * createdBy 王纬策 2020/11/30 12:46
+     * modifiedBy 王纬策 2020/11/30 12:46
+     */
+    @Test
+    public void deleteRoleTest2() throws Exception {
+        String token = this.adminLogin("13088admin", "123456");
+        this.mallClient.delete().uri(IDURL, 1, 1009)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_NOTEXIST.getCode());
+    }
+
+    /**
+     * 管理员删除角色id与部门id不匹配
+     *
+     * @author 24320182203281 王纬策
+     * createdBy 王纬策 2020/11/30 12:46
+     * modifiedBy 王纬策 2020/11/30 12:46
+     */
+    @Test
+    public void deleteRoleTest3() throws Exception {
+        String token = this.adminLogin("2721900002", "123456");
+        this.mallClient.delete().uri(IDURL, 1, 109)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode());
+    }
+
+    /**
+     * 未登录删除角色
+     *
+     * @author 24320182203281 王纬策
+     * createdBy 王纬策 2020/11/30 12:46
+     * modifiedBy 王纬策 2020/11/30 12:46
+     */
+    @Test
+    public void deleteRoleTest4() throws Exception {
+        this.mallClient.delete().uri(IDURL, 1, 109)
+                .exchange()
+                .expectStatus().isUnauthorized()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NEED_LOGIN.getCode());    }
+
+    /**
+     * 伪造token删除角色
+     *
+     * @author 24320182203281 王纬策
+     * createdBy 王纬策 2020/11/30 12:46
+     * modifiedBy 王纬策 2020/11/30 12:46
+     */
+    @Test
+    public void deleteRoleTest5() throws Exception {
+        this.mallClient.delete().uri(IDURL, 1, 109)
+                .header("authorization", "test")
+                .exchange()
+                .expectStatus().isUnauthorized()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_JWT.getCode());
+    }
+
+    /**
+     * 平台管理员删除角色
+     *
+     * @author 24320182203281 王纬策
+     * createdBy 王纬策 2020/11/30 12:46
+     * modifiedBy 王纬策 2020/11/30 12:46
+     */
+    @Test
+    @Order(12)
+    public void deleteRoleTest6() throws Exception {
+        //判断用户有权限
+        String token1 = this.adminLogin("delrole_user11", "123456");
+        this.mallClient.get().uri(GETURL,1)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        String token = this.adminLogin("13088admin", "123456");
+        this.mallClient.delete().uri(IDURL, 1, 109)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        this.mallClient.get().uri(GETURL,1)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .jsonPath("$.data.list[?(@.id == 109)]").doesNotExist();
+
+        this.mallClient.get().uri(GETURL,1)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
+
+    }
+
+    /**
+     * 同店铺管理员删除角色
+     *
+     * @author 24320182203281 王纬策
+     * createdBy 王纬策 2020/11/30 12:46
+     * modifiedBy 王纬策 2020/11/30 12:46
+     */
+    @Test
+    @Order(13)
+    public void deleteRoleTest7() throws Exception {
+        //判断用户有权限
+        String token1 = this.adminLogin("delrole_user22", "123456");
+        this.mallClient.get().uri(GETURL,2)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        String token = this.adminLogin("2721900002", "123456");
+        this.mallClient.delete().uri(IDURL, 2, 110)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+
+        this.mallClient.get().uri(GETURL,2)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
+                .jsonPath("$.data.list[?(@.id == 110)]").doesNotExist();
+
+        this.mallClient.get().uri(GETURL,2)
+                .header("authorization", token1)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
     }
 
 }

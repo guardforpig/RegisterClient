@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.alipay.controller;
 
-import cn.edu.xmu.oomall.alipay.model.vo.PayRetVo;
 import cn.edu.xmu.oomall.alipay.util.WarpRetObject;
 import cn.edu.xmu.oomall.alipay.service.AlipayService;
 import io.swagger.annotations.*;
