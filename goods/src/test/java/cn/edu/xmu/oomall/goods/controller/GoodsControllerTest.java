@@ -1,8 +1,10 @@
 package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.goods.GoodsApplication;
+import cn.edu.xmu.oomall.goods.microservice.CategroyService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
@@ -56,6 +58,8 @@ class GoodsControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private RedisUtil redisUtil;
+    @MockBean
+    private CategroyService categroyService;
 
     @Test
     public void ListByfreightIdTest1() throws Exception
@@ -621,15 +625,20 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void getProductDetail() throws Exception {
+        SimpleCategoryVo simpleCategoryVo = new SimpleCategoryVo();
+        simpleCategoryVo.setId(1L);
+        simpleCategoryVo.setName("test");
+
+        Mockito.when(categroyService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         //正常
         String responseString = this.mockMvc.perform(get("/products/1576")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":null,\"goodsId\":null,\"onSaleId\":null,\"name\":null,\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":null,\"weight\":null,\"price\":null,\"quantity\":null,\"state\":null,\"unit\":null,\"barCode\":null,\"originPlace\":null,\"category\":null,\"shareable\":null},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"price\":4938,\"quantity\":36,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"test\"},\"shareable\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
