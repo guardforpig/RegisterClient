@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class CreateGoodsVo {
+    private Long id;
     String name;
 }

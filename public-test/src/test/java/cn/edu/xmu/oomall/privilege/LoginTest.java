@@ -24,15 +24,11 @@ public class LoginTest extends BaseTestOomall {
     public void login1() throws Exception {
         String requireJson = null;
 
-        requireJson = "{\"userName\":\"wrong_sign\",\"password\":\"123456\"}";
-        byte[] ret = this.mallClient.post().uri(TESTURL).bodyValue(requireJson).exchange()
+        requireJson = "{\"name\":\"wrong_sign\",\"password\":\"123456\"}";
+        this.mallClient.post().uri(TESTURL).bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_FALSIFY.getCode())
-                .jsonPath("$.data").doesNotExist()
-                .returnResult()
-                .getResponseBodyContent();
-        //endregion
+                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_FALSIFY.getCode());
     }
 
 
@@ -46,15 +42,13 @@ public class LoginTest extends BaseTestOomall {
         WebTestClient.RequestHeadersSpec res = null;
 
         //region 密码错误的用户登录
-        requireJson = "{\"userName\":\"13088admin\",\"password\":\"000000\"}";
-        res = this.mallClient.post().uri(TESTURL).bodyValue(requireJson);
-        res.exchange()
+        requireJson = "{\"name\":\"13088admin\",\"password\":\"000000\"}";
+        this.mallClient.post().uri(TESTURL)
+                .bodyValue(requireJson)
+                .exchange()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_ACCOUNT.getCode())
-                .jsonPath("$.data").doesNotExist()
-                .returnResult().getResponseBodyContent();
-        //endregion
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_ACCOUNT.getCode());
     }
 
     /**
@@ -65,18 +59,15 @@ public class LoginTest extends BaseTestOomall {
     public void login3() throws Exception {
         String requireJson = null;
 
-        WebTestClient.RequestHeadersSpec res = null;
-
         //region 用户名错误的用户登录
-        requireJson = "{\"userName\":\"NotExist\",\"password\":\"123456\"}";
-        res = this.mallClient.post().uri(TESTURL).bodyValue(requireJson);
-        res.exchange().expectStatus().isOk()
+        requireJson = "{\"name\":\"NotExist\",\"password\":\"123456\"}";
+        this.mallClient.post().uri(TESTURL)
+                .bodyValue(requireJson)
+                .exchange()
+                .expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_ACCOUNT.getCode())
-                .jsonPath("$.data").doesNotExist()
-                .returnResult().getResponseBodyContent();
-        //endregion
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_ACCOUNT.getCode());
     }
 
     /**
@@ -90,14 +81,12 @@ public class LoginTest extends BaseTestOomall {
 
         //region 没有输入用户名的用户登录
         requireJson = "{\"password\":\"123456\"}";
-        res = this.mallClient.post().uri(TESTURL).bodyValue(requireJson);
-        res.exchange().expectStatus().isBadRequest()
+        this.mallClient.post().uri(TESTURL)
+                .bodyValue(requireJson)
+                .exchange().expectStatus().isBadRequest()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.FIELD_NOTVALID.getCode())
-                .jsonPath("$.errmsg").isEqualTo("必须输入用户名;")
-                .returnResult().getResponseBodyContent();
-        //endregion
+                .jsonPath("$.errno").isEqualTo(ReturnNo.FIELD_NOTVALID.getCode());
     }
 
     /**
@@ -110,15 +99,13 @@ public class LoginTest extends BaseTestOomall {
         WebTestClient.RequestHeadersSpec res = null;
 
         //region 没有输入密码（密码空）的用户登录
-        requireJson = "{\"userName\":\"537300010\",\"password\":\"\"}";
-        res = this.mallClient.post().uri(TESTURL).bodyValue(requireJson);
-        res.exchange().expectStatus().isBadRequest()
+        requireJson = "{\"name\":\"537300010\",\"password\":\"\"}";
+        this.mallClient.post().uri(TESTURL)
+                .bodyValue(requireJson)
+                .exchange().expectStatus().isBadRequest()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.FIELD_NOTVALID.getCode())
-                .jsonPath("$.errmsg").isEqualTo("必须输入密码;")
-                .returnResult().getResponseBodyContent();
-        //endregion
+                .jsonPath("$.errno").isEqualTo(ReturnNo.FIELD_NOTVALID.getCode());
     }
 
     /**
@@ -128,23 +115,19 @@ public class LoginTest extends BaseTestOomall {
     @Test
     public void login6() throws Exception {
         String requireJson = null;
-        byte[] response = null;
-        WebTestClient.RequestHeadersSpec res = null;
 
         //region 用户重复登录
-        requireJson = "{\"userName\":\"13088admin\",\"password\":\"123456\"}";
-        res = this.mallClient.post().uri(TESTURL).bodyValue(requireJson);
-        response = res.exchange().expectStatus().isCreated()
+        requireJson = "{\"name\":\"13088admin\",\"password\":\"123456\"}";
+        byte[] response = this.mallClient.post().uri(TESTURL)
+                .bodyValue(requireJson)
+                .exchange()
+                .expectStatus().isCreated()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.errmsg").isEqualTo("成功")
-                .jsonPath("$.data").exists()
                 .returnResult().getResponseBodyContent();
 
-        res = this.mallClient.post().uri("/login").bodyValue(requireJson);
-
-        byte[] response1 = res.exchange().expectStatus().isCreated()
+        byte[] response1 = this.mallClient.post().uri(TESTURL).bodyValue(requireJson).exchange().expectStatus().isCreated()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
@@ -157,6 +140,7 @@ public class LoginTest extends BaseTestOomall {
     }
 
     /**
+     * 被封禁的用户
      * @author Song Runhan
      * @date Created in 2020/11/4 16:00
      */
@@ -165,21 +149,43 @@ public class LoginTest extends BaseTestOomall {
         String requireJson = null;
         WebTestClient.RequestHeadersSpec res = null;
         //region 当前状态不可登录的用户登录
-        requireJson = "{\"userName\":\"5264500009\",\"password\":\"123456\"}";
-        res = this.mallClient.post().uri(TESTURL).bodyValue(requireJson);
-
-        res.exchange().expectStatus().isOk()
+        requireJson = "{\"name\":\"5264500009\",\"password\":\"123456\"}";
+        this.mallClient.post().uri(TESTURL)
+                .bodyValue(requireJson)
+                .exchange().expectStatus().isForbidden()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_USER_FORBIDDEN.getCode())
-                .jsonPath("$.data").doesNotExist()
-                .returnResult().getResponseBodyContent();
-        //endregion
+                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_USER_FORBIDDEN.getCode());
     }
 
+    /**
+     * 用邮箱登录
+     */
+    @Test
+    public void login8() throws Exception {
 
+        String requireJson =  "{\"name\":\"asdewetsa@tttt\",\"password\":\"123456\"}";
+        this.mallClient.post().uri(TESTURL)
+                .bodyValue(requireJson)
+                .exchange().expectStatus().isOk()
+                .expectHeader().contentType("application/json;charset=UTF-8")
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+}
 
+    /**
+     * 电话登录
+     */
+    @Test
+    public void login9() throws Exception {
 
-
+        String requireJson =  "{\"name\":\"223477788\",\"password\":\"123456\"}";
+        this.mallClient.post().uri(TESTURL)
+                .bodyValue(requireJson)
+                .exchange().expectStatus().isOk()
+                .expectHeader().contentType("application/json;charset=UTF-8")
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
+    }
 
 }
