@@ -683,7 +683,7 @@ class GoodsControllerTest {
      * @author wyg
      * @Date 2021/11/13
      */
-    @Test
+/*    @Test
     @Transactional
     public void upLoadImage() throws Exception {
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
@@ -694,7 +694,7 @@ class GoodsControllerTest {
                 .contentType("application/json;charset=UTF-8"));
         MvcResult mvcResult = resultActions.andDo(MockMvcResultHandlers.print()).andExpect(status().isInternalServerError()).andReturn();
         String responseString = mvcResult.getResponse().getContentAsString();
-    }
+    }*/
 
     /**
      * 管理员或店家物理删除审核态的Products
