@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -480,6 +481,24 @@ public class RegionControllerTest {
         String expectedResponse = "{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
 
         JSONAssert.assertEquals(expectedResponse, responseString, true);
+
+    }
+    /**
+    * @author jxy
+    * @create 2021/12/14 5:17 PM
+    */
+    @Test
+    public void getSimpleRegionByIdTest() throws Exception {
+
+        String responseString = this.mvc.perform(get("/internal/region/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+
+        String expectedResponse = "{\"errno\":0,\"errmsg\":\"成功\"}";
+
+        JSONAssert.assertEquals(expectedResponse, responseString, false);
 
     }
 

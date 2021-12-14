@@ -6,6 +6,7 @@ import cn.edu.xmu.oomall.freight.mapper.RegionPoMapper;
 import cn.edu.xmu.oomall.freight.model.bo.Region;
 import cn.edu.xmu.oomall.freight.model.po.RegionPo;
 import cn.edu.xmu.oomall.freight.model.po.RegionPoExample;
+import cn.edu.xmu.oomall.freight.model.vo.SimpleRegionRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -292,6 +293,23 @@ public class RegionDao {
             redisUtil.del(redisKeyForChildRegion + redisUtil.get(subKey) );
         }
         redisUtil.del(subKey);
+    }
+    /**
+     *@author jxy
+     *@create 2021/12/10 4:55 PM
+     */
+    public ReturnObject getSimpleRegionById(Long id) {
+        RegionPo rp=regionPoMapper.selectByPrimaryKey(id);
+        if (rp == null) {
+            ReturnObject retObj = new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            return retObj;
+        }
+//        if (rp.getState().equals(STATE_ABANDONED)) {
+//            ReturnObject retObj = new ReturnObject(ReturnNo.STATENOTALLOW);
+//            return retObj;
+//        }
+        SimpleRegionRetVo simpleRegionRetVo=cloneVo(rp,SimpleRegionRetVo.class);
+        return new ReturnObject<>(simpleRegionRetVo);
     }
 
 }

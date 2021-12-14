@@ -137,5 +137,14 @@ public class RegionService {
 
         return regionDao.modiStateRegion( (RegionPo) cloneVo(region, RegionPo.class), userId,userName);
     }
+    /**
+     *@author jxy
+     *@create 2021/12/10 4:54 PM
+     */
+    @Transactional(readOnly = true,rollbackFor=Exception.class)
+    public ReturnObject getSimpleRegionById(Long id) {
+        return regionDao.getSimpleRegionById(id);
+    }
+
 
 }
