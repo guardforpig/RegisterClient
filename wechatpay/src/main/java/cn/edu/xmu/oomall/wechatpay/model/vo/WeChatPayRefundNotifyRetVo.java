@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-public class RefundNotifyRetVo {
+public class WeChatPayRefundNotifyRetVo {
 
     @Data
     @NoArgsConstructor
@@ -38,6 +38,8 @@ public class RefundNotifyRetVo {
         private String refundStatus;
         private String userReceivedAccount;
         private Amount amount;
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern ="yyyy-MM-dd'T'HH:mm:ss.SSS" ,timezone = "GMT+8")
+        private LocalDateTime successTime;
     }
 
     @Data
@@ -58,15 +60,15 @@ public class RefundNotifyRetVo {
     private String resourceType;
     private Resource resource;
 
-    public RefundNotifyRetVo(WeChatPayRefund weChatPayRefund){
+    public WeChatPayRefundNotifyRetVo(WeChatPayRefund weChatPayRefund){
         this.id = "EV-2018022511223320873";
         this.createTime = LocalDateTime.now();
         this.eventType = "Refund." + weChatPayRefund.getStatus();
         this.summary = null;
         this.resourceType = null;
         this.resource = new Resource("AEAD_AES_256_GCM","transaction",
-                new Ciphertext("1230000109", weChatPayRefund.getOutTradeNo(), "1217752501201407033233368018", weChatPayRefund.getOutRefundNo(), "1217752501201407033233368018", weChatPayRefund.getStatus(), "招商银行信用卡0403",
-                        new Amount(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getPayerRefund())),
+                new Ciphertext("1230000109", weChatPayRefund.getOutTradeNo(), "1217752501201407033233368018", weChatPayRefund.getOutRefundNo(), String.valueOf(weChatPayRefund.getId()), weChatPayRefund.getStatus(), "招商银行信用卡0403",
+                        new Amount(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getPayerRefund()),weChatPayRefund.getSuccessTime()),
                 "fdasfjihihihlkja484w");
     }
 

@@ -79,10 +79,10 @@ public class WeChatPayControllerTest {
         vo.setNotifyUrl("/wechat/payment/notify");
 
         String responseString = this.mvc.perform(post("/internal/wechat/pay/transactions/jsapi").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
-                .andExpect(status().isForbidden())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errmsg\":\"商户订单号重复\"}";
+        String expectedResponse = "{\"errmsg\":\"订单已支付\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
@@ -115,7 +115,7 @@ public class WeChatPayControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errmsg\":\"成功\",\"data\":{\"appid\":\"wxd678efh567hg6787\",\"mchid\":\"1230000109\",\"outTradeNo\":\"1\",\"transactionId\":\"1217752501201407033233368018\",\"tradeType\":\"JSAPI\",\"tradeState\":\"SUCCESS\",\"tradeStateDesc\":null,\"amount\":{\"total\":100,\"payerTotal\":100,\"currency\":\"CNY\",\"payerCurrency\":\"CNY\"},\"payer\":{\"openid\":\"oUpF8uMuAJO_M2pxb1Q9zNjWeS6o\"},\"successTime\":\"2021-12-02T13:02:47.000\"}}";
+        String expectedResponse = "{\"errmsg\":\"成功\",\"data\":{\"appid\":\"wxd678efh567hg6787\",\"mchid\":\"1230000109\",\"outTradeNo\":\"1\",\"transactionId\":\"1\",\"tradeType\":\"JSAPI\",\"tradeState\":\"SUCCESS\",\"tradeStateDesc\":null,\"amount\":{\"total\":100,\"payerTotal\":100,\"currency\":\"CNY\",\"payerCurrency\":\"CNY\"},\"payer\":{\"openid\":\"oUpF8uMuAJO_M2pxb1Q9zNjWeS6o\"},\"successTime\":\"2021-12-02T13:02:47.000\"}}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
@@ -127,7 +127,7 @@ public class WeChatPayControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errmsg\":\"订单不存在\"}";
+        String expectedResponse = "{\"errmsg\":\"查询的资源不存在\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
@@ -151,7 +151,7 @@ public class WeChatPayControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errmsg\":\"订单不存在\"}";
+        String expectedResponse = "{\"errmsg\":\"查询的资源不存在\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
@@ -175,7 +175,7 @@ public class WeChatPayControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().contentType("application/json;charset=UTF-8"))
                     .andReturn().getResponse().getContentAsString();
-            expectedResponse = "{\"data\":{\"refundId\":\"50000000382019052709732678859\",\"outRefundNo\":\""+i+"\",\"transactionId\":\"1217752501201407033233368018\",\"outTradeNo\":\""+i+"\",\"channel\":\"ORIGINAL\",\"userReceivedAccount\":\"招商银行信用卡0403\",\"amount\":{\"total\":100,\"refund\":100,\"payerTotal\":100,\"settlementRefund\":null,\"settlementTotal\":null,\"discountRefund\":null,\"currency\":null}}}";
+            expectedResponse = "{\"data\":{\"outRefundNo\":\""+i+"\",\"transactionId\":\"1217752501201407033233368018\",\"outTradeNo\":\""+i+"\",\"channel\":\"ORIGINAL\",\"userReceivedAccount\":\"招商银行信用卡0403\",\"amount\":{\"total\":null,\"refund\":100,\"payerTotal\":100,\"settlementRefund\":null,\"settlementTotal\":null,\"discountRefund\":null,\"currency\":null}}}";
             JSONAssert.assertEquals(expectedResponse, responseString, false);
         }
 
@@ -197,7 +197,7 @@ public class WeChatPayControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errmsg\":\"退款请求失败\"}";
+        String expectedResponse = "{\"errmsg\":\"退款金额错误\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
 
     }
@@ -218,7 +218,7 @@ public class WeChatPayControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errmsg\":\"退款请求失败\"}";
+        String expectedResponse = "{\"errmsg\":\"对应支付单未成功支付\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
 
     }
@@ -252,7 +252,7 @@ public class WeChatPayControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"data\":{\"refundId\":\"50000000382019052709732678859\",\"outRefundNo\":\"10\",\"transactionId\":\"1217752501201407033233368018\",\"outTradeNo\":\"10\",\"channel\":\"ORIGINAL\",\"userReceivedAccount\":\"招商银行信用卡0403\",\"createTime\":\"2021-12-02T15:08:42.000\",\"status\":\"SUCCESS\",\"amount\":{\"total\":100,\"refund\":100,\"payerTotal\":100,\"payerRefund\":100,\"settlementRefund\":null,\"settlementTotal\":null,\"discountRefund\":null,\"currency\":null}},\"errmsg\":\"成功\"}";
+        String expectedResponse = "{\"data\":{\"refundId\":\"1\",\"outRefundNo\":\"10\",\"transactionId\":\"1217752501201407033233368018\",\"outTradeNo\":\"10\",\"channel\":\"ORIGINAL\",\"userReceivedAccount\":\"招商银行信用卡0403\",\"successTime\":\"2021-12-02T15:08:42.000\",\"status\":\"SUCCESS\",\"amount\":{\"total\":null,\"refund\":100,\"payerTotal\":100,\"payerRefund\":null,\"settlementRefund\":null,\"settlementTotal\":null,\"discountRefund\":null,\"currency\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 
@@ -264,7 +264,7 @@ public class WeChatPayControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"errmsg\":\"订单不存在\"}";
+        String expectedResponse = "{\"errmsg\":\"查询的资源不存在\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 

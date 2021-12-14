@@ -89,7 +89,7 @@ public class ProductDao {
 
     }
 
-    public ReturnObject matchProductShop(Long productId, Long shopId) {
+    public ReturnObject matchProductShop(Long shopId, Long productId) {
         try{
             ProductPo productPo=productMapper.selectByPrimaryKey(productId);
             return new ReturnObject(shopId.equals(productPo.getShopId())) ;
