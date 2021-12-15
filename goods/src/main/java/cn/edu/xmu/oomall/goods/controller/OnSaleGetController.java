@@ -125,15 +125,11 @@ public class OnSaleGetController {
         return Common.decorateReturnObject(returnObject);
     }
 
-//    @GetMapping("/internal/products/{id}/onsaleprice")
-//    public Object getValidNowOnsaleByProductId(@PathVariable Long id){
-//    if(beginTime!=null&&endTime!=null&&beginTime.isAfter(endTime)){
-//            ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
-//            return Common.decorateReturnObject(returnObjectNotValid);
-//        }
-//        ReturnObject returnObject= onSaleService.selectAnyOnsale(shopId,productId,beginTime,endTime,page,pageSize);
-//        return Common.decorateReturnObject(returnObject);
-//    }
+    @GetMapping("/internal/products/{id}/onsale")
+    public Object getValidNowOnsaleByProductId(@PathVariable Long id){
+        ReturnObject returnObject= onSaleService.getValidNowOnsaleByProductId(id);
+        return Common.decorateReturnObject(returnObject);
+    }
 
 
 
