@@ -9,7 +9,6 @@ import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,18 +17,12 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 /**
@@ -486,8 +477,8 @@ class GoodsControllerTest {
         Mockito.when(shopService.getCategoryById(1)).thenReturn(new InternalReturnObject(0, "", categoryVo1));
         Mockito.when(shopService.getCategoryById(266)).thenReturn(new InternalReturnObject(0, "", categoryVo2));
         Mockito.when(shopService.getCategoryById(3)).thenReturn(new InternalReturnObject(1, "", null));
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(new InternalReturnObject(1, "", List.of(simpleShopVo)));
-        Mockito.when(shopService.getShopInfo(2L)).thenReturn(new InternalReturnObject(1, "", List.of()));
+        Mockito.when(shopService.getSimpleShopById(1L)).thenReturn(new InternalReturnObject(1, "", List.of(simpleShopVo)));
+        Mockito.when(shopService.getSimpleShopById(2L)).thenReturn(new InternalReturnObject(1, "", List.of()));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
     }
 

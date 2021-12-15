@@ -102,10 +102,9 @@ public class OnSaleGetController {
      * 内部API- 查询特定价格浮动的详情，该方法加入redis
      * @return 所有类型都会返回
      */
-    @Audit(departName = "shops")
     @GetMapping( "internal/onsales/{id}")
-    public InternalReturnObject selectFullOnsale(@LoginUser Long loginUser, @LoginName String loginUsername, @PathVariable("id")Long id) {
-        return onSaleService.selectFullOnsale(id);
+    public Object selectFullOnsale(@PathVariable("id")Long id) {
+        return Common.decorateReturnObject(onSaleService.selectFullOnsale(id));
     }
 
     /**
