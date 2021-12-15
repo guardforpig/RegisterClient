@@ -312,11 +312,9 @@ public class CouponActivityService {
                 onlineCouponActivityList.add((CouponActivity) serializable);
             }
         } else {
-
             redisUtils.del(key);
             InternalReturnObject<List<OnsaleVo>> retOnsaleVoPageInfo =
                     goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
-
             if (!retOnsaleVoPageInfo.getErrno().equals(ReturnNo.OK.getCode())) {
                 return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
             }
