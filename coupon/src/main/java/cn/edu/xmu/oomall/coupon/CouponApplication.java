@@ -23,12 +23,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class CouponApplication {
 
     public static void main(String[] args) {
-        try {
             SpringApplication.run(CouponApplication.class, args);
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 
 }
