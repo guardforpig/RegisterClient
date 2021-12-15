@@ -102,19 +102,17 @@ public class OnSaleGetController {
      * 内部API- 查询特定价格浮动的详情，该方法加入redis
      * @return 所有类型都会返回
      */
-    @Audit(departName = "shops")
     @GetMapping( "internal/onsales/{id}")
-    public InternalReturnObject selectFullOnsale(@LoginUser Long loginUser, @LoginName String loginUsername, @PathVariable("id")Long id) {
-        return onSaleService.selectFullOnsale(id);
+    public Object selectFullOnsale(@PathVariable("id")Long id) {
+        return Common.decorateReturnObject(onSaleService.selectFullOnsale(id));
     }
 
     /**
      * 管理员查询所有商品的价格浮动
      */
-    @Audit(departName = "shops")
+
     @GetMapping("internal/onsales")
-    public Object selectAnyOnsale(@LoginUser Long loginUser, @LoginName String loginUsername,
-                                  @RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
+    public Object selectAnyOnsale(@RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
                                   @RequestParam(value = "beginTime",required = false) @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime beginTime,
                                   @RequestParam(value = "endTime",required = false) @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")LocalDateTime endTime,
                                   @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
@@ -126,6 +124,16 @@ public class OnSaleGetController {
         ReturnObject returnObject= onSaleService.selectAnyOnsale(shopId,productId,beginTime,endTime,page,pageSize);
         return Common.decorateReturnObject(returnObject);
     }
+
+//    @GetMapping("/internal/products/{id}/onsaleprice")
+//    public Object getValidNowOnsaleByProductId(@PathVariable Long id){
+//    if(beginTime!=null&&endTime!=null&&beginTime.isAfter(endTime)){
+//            ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
+//            return Common.decorateReturnObject(returnObjectNotValid);
+//        }
+//        ReturnObject returnObject= onSaleService.selectAnyOnsale(shopId,productId,beginTime,endTime,page,pageSize);
+//        return Common.decorateReturnObject(returnObject);
+//    }
 
 
 

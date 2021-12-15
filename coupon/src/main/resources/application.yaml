@@ -17,9 +17,8 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 101.132.164.244:8888
-        username: nacos
-        password: ooad_javaee201
+        server-addr: 121.36.53.115
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://101.132.164.244:3306/oomall?serverTimezone=GMT%2B8

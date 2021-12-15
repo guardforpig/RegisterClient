@@ -7,7 +7,9 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.PageVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ShopRetVo;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
@@ -149,13 +151,13 @@ public class CouponActivityService {
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addCouponActivity(Long userId, String userName, Long shopId, CouponActivityVo couponActivityVo){
-        InternalReturnObject<Shop> returnObject;
+        InternalReturnObject returnObject;
         try{
-            returnObject = shopFeignService.getShopById(shopId);
+            returnObject = shopFeignService.getSimpleShopById(shopId);
         }catch(Exception e){
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        Shop shop = returnObject.getData();
+        ShopRetVo shop = (ShopRetVo) returnObject.getData();
         CouponActivity couponActivity = cloneVo(couponActivityVo,CouponActivity.class);
         // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转,一下几行行代码需删除
         //将时区时间转为UTC时间并转成localdatetime
@@ -313,13 +315,12 @@ public class CouponActivityService {
             }
         } else {
             redisUtils.del(key);
-            InternalReturnObject<List<OnsaleVo>> retOnsaleVoPageInfo =
+            InternalReturnObject<PageVo<OnsaleVo>> retOnsaleVoPageInfo =
                     goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
             if (!retOnsaleVoPageInfo.getErrno().equals(ReturnNo.OK.getCode())) {
-                return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
+                return new ReturnObject(retOnsaleVoPageInfo);
             }
-            Map<String, Object> retOnsaleMap = (Map<String, Object>) retOnsaleVoPageInfo.getData();
-            List<OnsaleVo> onsaleVoList = (List<OnsaleVo>) retOnsaleMap.get("list");
+            List<OnsaleVo> onsaleVoList = retOnsaleVoPageInfo.getData().getList();
             for (OnsaleVo onsaleVo : onsaleVoList) {
                 if (onsaleVo.getState().equals(OnsaleVo.State.ONLINE.getCode())) {
                     ReturnObject<PageInfo<CouponActivity>> retCouponActivityListPage =

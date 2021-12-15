@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.coupon;
 
+import cn.edu.xmu.oomall.coupon.microservice.vo.ShopRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
@@ -93,10 +94,10 @@ public class CouponActivityControllerTest {
     public void addCouponActivity()throws Exception{
         JwtHelper jwtHelper = new JwtHelper();
         String adminToken = jwtHelper.createToken(1L, "13088admin", 0L, 1, 3600);
-        Shop shop = new Shop();
+        ShopRetVo shop = new ShopRetVo();
         shop.setId(1L);
         shop.setName("fasdfs");
-        Mockito.when(shopFeignService.getShopById(1L)).thenReturn(new InternalReturnObject<>(shop));
+        Mockito.when(shopFeignService.getSimpleShopById(1L)).thenReturn(new InternalReturnObject<>(shop));
         //以下是正常情况
         ZonedDateTime couponTime = ZonedDateTime.parse("2021-11-10T11:00:00.000+08:00");
         ZonedDateTime beginTime = ZonedDateTime.parse("2021-11-10T12:00:00.000+08:00");
