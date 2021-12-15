@@ -280,6 +280,7 @@ DROP TABLE IF EXISTS `oomall_successful_share`;
 CREATE TABLE `oomall_successful_share` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `share_id` bigint(20) DEFAULT NULL,
+  `sharer_id` bigint(20) DEFAULT NULL,
   `product_id` bigint(20) DEFAULT NULL,
   `onsale_id` bigint(20) DEFAULT NULL,
   `customer_id` bigint(20) DEFAULT NULL,
