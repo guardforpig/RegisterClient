@@ -57,8 +57,8 @@ public class OnSaleGetService {
         if(onSale.getType().equals(OnSaleGetBo.Type.NOACTIVITY)||onSale.getType().equals(OnSaleGetBo.Type.SECKILL)){
             OnSaleRetVo onSaleRetVo=cloneVo(onSale,OnSaleRetVo.class);
             //设置product字段
-            InternalReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
-            if(returnObjectProduct.getErrno().equals(0)){
+            ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
+            if(returnObjectProduct.getCode().equals(0)){
                 Product product=(Product) returnObjectProduct.getData();
                 SimpleProductRetVo simpleProduct=cloneVo(product,SimpleProductRetVo.class);
                 onSaleRetVo.setProduct(simpleProduct);
@@ -96,16 +96,16 @@ public class OnSaleGetService {
      * 内部API- 查询特定价格浮动的详情，该方法加入redis
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public InternalReturnObject selectFullOnsale(Long id){
-        InternalReturnObject returnObject=onSaleDao.selectOnSaleRedis(id);
-        if(!returnObject.getErrno().equals(0)) {
+    public ReturnObject selectFullOnsale(Long id){
+        ReturnObject returnObject=onSaleDao.selectOnSaleRedis(id);
+        if(!returnObject.getCode().equals(ReturnNo.OK)) {
             return returnObject;
         }
         OnSaleGetBo onSale=(OnSaleGetBo) returnObject.getData();
         OnSaleRetVo onSaleRetVo=cloneVo(onSale,OnSaleRetVo.class);
         //设置product字段
-        InternalReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
-        if(returnObjectProduct.getErrno().equals(0)){
+        ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
+        if(returnObjectProduct.getCode().equals(ReturnNo.OK)){
             Product product=(Product) returnObjectProduct.getData();
             SimpleProductRetVo simpleProduct=cloneVo(product,SimpleProductRetVo.class);
             onSaleRetVo.setProduct(simpleProduct);
@@ -116,7 +116,7 @@ public class OnSaleGetService {
             SimpleShopVo simpleShopVo = (SimpleShopVo)internalObj.getData();
             onSaleRetVo.setShop(simpleShopVo);
         }
-        return new InternalReturnObject(onSaleRetVo);
+        return new ReturnObject(onSaleRetVo);
     }
 
     /**

@@ -68,7 +68,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":{\"id\":5,\"price\":3280,\"quantity\":67,\"beginTime\":\"2021-11-11T14:38:20.000\",\"endTime\":\"2022-02-19T14:38:20.000\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":1,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20.000\",\"gmtModified\":null,\"product\":{\"id\":1554,\"name\":\"黑金刚巧力\",\"imageUrl\":null},\"shop\":{\"id\":8,\"name\":\"商铺8\"},\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":{\"id\":5,\"price\":3280,\"quantity\":67,\"beginTime\":\"2021-11-11T14:38:20\",\"endTime\":\"2022-02-19T14:38:20\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":1,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20\",\"gmtModified\":null,\"product\":null,\"shop\":{\"id\":8,\"name\":\"商铺8\"},\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
@@ -181,7 +181,7 @@ public class OnSaleGetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson= "{\"errno\":0,\"errmsg\":\"成功\",\"data\":{\"id\":1,\"price\":53295,\"quantity\":2000,\"beginTime\":\"2021-11-11T14:38:20.000\",\"endTime\":\"2022-02-19T14:38:20.000\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":10,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20.000\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}}}\n";
+        String expectedJson= "{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"id\":1,\"price\":53295,\"quantity\":2000,\"beginTime\":\"2021-11-11T14:38:20\",\"endTime\":\"2022-02-19T14:38:20\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":10,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}}}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
