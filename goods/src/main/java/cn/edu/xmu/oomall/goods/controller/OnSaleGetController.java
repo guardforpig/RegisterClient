@@ -73,12 +73,15 @@ public class OnSaleGetController {
                 return Common.decorateReturnObject(returnObjectNotValid);
             }
         }
-        if(beginTime!=null&&endTime!=null&&beginTime.isAfter(endTime)){
-            ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
-            return Common.decorateReturnObject(returnObjectNotValid);
+        LocalDateTime begin=null,end=null;
+        if(beginTime!=null&&endTime!=null){
+            if(beginTime.isAfter(endTime)){
+                ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
+                return Common.decorateReturnObject(returnObjectNotValid);
+            }
+            begin = beginTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+            end = endTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
         }
-        LocalDateTime begin = beginTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-        LocalDateTime end = endTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
         ReturnObject returnObject= onSaleService.selectActivities(id,did,state,begin,end,page,pageSize);
         return Common.decorateReturnObject(returnObject);
     }
@@ -123,12 +126,15 @@ public class OnSaleGetController {
                                   @RequestParam(value = "endTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime endTime,
                                   @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                   @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
-        if(beginTime!=null&&endTime!=null&&beginTime.isAfter(endTime)){
-            ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
-            return Common.decorateReturnObject(returnObjectNotValid);
+        LocalDateTime begin=null,end=null;
+        if(beginTime!=null&&endTime!=null){
+            if(beginTime.isAfter(endTime)){
+                ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
+                return Common.decorateReturnObject(returnObjectNotValid);
+            }
+            begin = beginTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+            end = endTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
         }
-        LocalDateTime begin = beginTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-        LocalDateTime end = endTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
         ReturnObject returnObject= onSaleService.selectAnyOnsale(shopId,productId,begin,end,page,pageSize);
         return Common.decorateReturnObject(returnObject);
     }
