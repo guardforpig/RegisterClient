@@ -7,6 +7,7 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.PageVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
@@ -313,13 +314,12 @@ public class CouponActivityService {
             }
         } else {
             redisUtils.del(key);
-            InternalReturnObject<List<OnsaleVo>> retOnsaleVoPageInfo =
+            InternalReturnObject<PageVo<OnsaleVo>> retOnsaleVoPageInfo =
                     goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
             if (!retOnsaleVoPageInfo.getErrno().equals(ReturnNo.OK.getCode())) {
-                return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
+                return new ReturnObject(retOnsaleVoPageInfo);
             }
-            Map<String, Object> retOnsaleMap = (Map<String, Object>) retOnsaleVoPageInfo.getData();
-            List<OnsaleVo> onsaleVoList = (List<OnsaleVo>) retOnsaleMap.get("list");
+            List<OnsaleVo> onsaleVoList = retOnsaleVoPageInfo.getData().getList();
             for (OnsaleVo onsaleVo : onsaleVoList) {
                 if (onsaleVo.getState().equals(OnsaleVo.State.ONLINE.getCode())) {
                     ReturnObject<PageInfo<CouponActivity>> retCouponActivityListPage =

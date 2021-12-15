@@ -59,14 +59,14 @@ public class CouponControllerTest {
         Mockito.when(goodsService.getOnsaleById(3914L)).thenReturn(OnsaleVo2);
 
         // 返回OnsaleVoList
-        InternalReturnObject<List<OnsaleVo>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
-        Mockito.when(goodsService.listOnsale(1550L,1, 100)).thenReturn(onsaleVoList1);
-        InternalReturnObject<List<OnsaleVo>> onsaleVoList2 = CreateObject.createOnsaleVoList2();
-        Mockito.when(goodsService.listOnsale(10000L, 1, 100)).thenReturn(onsaleVoList2);
-        InternalReturnObject<List<OnsaleVo>> onsaleVoList3 = CreateObject.createOnsaleVoList3();
-        Mockito.when(goodsService.listOnsale(1549L,1, 100)).thenReturn(onsaleVoList3);
-        InternalReturnObject<List<OnsaleVo>> onsaleVoList4 = CreateObject.createOnsaleVoList4();
-        Mockito.when(goodsService.listOnsale(1548L, 1, 100)).thenReturn(onsaleVoList4);
+//        InternalReturnObject<List<OnsaleVo>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
+//        Mockito.when(goodsService.listOnsale(1550L,1, 100)).thenReturn(onsaleVoList1);
+//        InternalReturnObject<List<OnsaleVo>> onsaleVoList2 = CreateObject.createOnsaleVoList2();
+//        Mockito.when(goodsService.listOnsale(10000L, 1, 100)).thenReturn(onsaleVoList2);
+//        InternalReturnObject<List<OnsaleVo>> onsaleVoList3 = CreateObject.createOnsaleVoList3();
+//        Mockito.when(goodsService.listOnsale(1549L,1, 100)).thenReturn(onsaleVoList3);
+//        InternalReturnObject<List<OnsaleVo>> onsaleVoList4 = CreateObject.createOnsaleVoList4();
+//        Mockito.when(goodsService.listOnsale(1548L, 1, 100)).thenReturn(onsaleVoList4);
 
         // 返回OnsaleVo
         InternalReturnObject<OnsaleVo> onsaleVo1 = CreateObject.createOnsaleVo1();

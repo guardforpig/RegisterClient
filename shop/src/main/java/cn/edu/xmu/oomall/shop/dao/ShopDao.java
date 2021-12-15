@@ -29,6 +29,9 @@ public class ShopDao {
         ShopPo shopPo;
         try {
             shopPo = shopPoMapper.selectByPrimaryKey(id);
+            if (shopPo == null) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
         } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
         }
