@@ -71,7 +71,7 @@ public class OnsaleVo {
 
     private Long id;
 
-    private ShopVo shop;
+    private ShopRetVo shop;
 
     private ProductVo product;
 
