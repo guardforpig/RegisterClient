@@ -37,5 +37,7 @@ public class ModifyOnSaleVo {
     @Min(1)
     private Integer numKey;
 
+    private Long shareActId;
+
 
 }
