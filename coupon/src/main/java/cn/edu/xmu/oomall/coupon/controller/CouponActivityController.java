@@ -222,7 +222,6 @@ public class CouponActivityController {
                                                   @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         ReturnObject<PageInfo<Object>> retPageInfo =
                 couponActivityService.listCouponActivitiesByProductId(productId, pageNumber, pageSize);
-
         return Common.decorateReturnObject(retPageInfo);
     }
 

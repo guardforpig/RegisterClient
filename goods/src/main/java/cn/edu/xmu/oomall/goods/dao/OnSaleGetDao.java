@@ -41,46 +41,46 @@ public class OnSaleGetDao {
     private long onsaleTimeout;
 
     private static final Logger logger = LoggerFactory.getLogger(OnSaleDao.class);
-    private final static String ONSALE_ID="o_%d";
+    private final static String ONSALE_ID = "o_%d";
 
     /**
      * 无redis的onsale查询
      */
-    public ReturnObject selectOnSale(Long id){
+    public ReturnObject selectOnSale(Long id) {
         try {
-            OnSalePo onSalePo=onSalePoMapper.selectByPrimaryKey(id);
-            if(onSalePo==null){
+            OnSalePo onSalePo = onSalePoMapper.selectByPrimaryKey(id);
+            if (onSalePo == null) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }else{
-                OnSaleGetBo onSale=(OnSaleGetBo) cloneVo(onSalePo, OnSaleGetBo.class);
+            } else {
+                OnSaleGetBo onSale = (OnSaleGetBo) cloneVo(onSalePo, OnSaleGetBo.class);
                 return new ReturnObject(onSale);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
     /**
      * 有redis的onsale查询
      */
-    public ReturnObject selectOnSaleRedis(Long id){
+    public ReturnObject selectOnSaleRedis(Long id) {
         try {
-            String key = String.format(ONSALE_ID,id);
-            OnSaleGetBo onSale=(OnSaleGetBo) redisUtil.get(key);
-            if(null!=onSale){
+            String key = String.format(ONSALE_ID, id);
+            OnSaleGetBo onSale = (OnSaleGetBo) redisUtil.get(key);
+            if (null != onSale) {
                 return new ReturnObject(onSale);
-            }else{
-                OnSalePo onSalePo=onSalePoMapper.selectByPrimaryKey(id);
-                if(onSalePo==null){
+            } else {
+                OnSalePo onSalePo = onSalePoMapper.selectByPrimaryKey(id);
+                if (onSalePo == null) {
                     return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-                }else{
-                    OnSaleGetBo onSaleGetBo=cloneVo(onSalePo, OnSaleGetBo.class);
-                    redisUtil.set(key,onSaleGetBo,onsaleTimeout);
+                } else {
+                    OnSaleGetBo onSaleGetBo = cloneVo(onSalePo, OnSaleGetBo.class);
+                    redisUtil.set(key, onSaleGetBo, onsaleTimeout);
                     return new ReturnObject(onSaleGetBo);
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
@@ -89,83 +89,106 @@ public class OnSaleGetDao {
     /**
      * 根据poexample返回pageinfo
      */
-    private ReturnObject selectOnsaleByExampleWithPageInfo(OnSalePoExample onSalePoExample,Class voClass,
-                                                           Integer page,Integer pageSize){
-        try{
-            PageHelper.startPage(page,pageSize);
-            List<OnSalePo>onSalePos=onSalePoMapper.selectByExample(onSalePoExample);
-            PageInfo<OnSalePo>pageInfo=new PageInfo<OnSalePo>(onSalePos);
+    private ReturnObject selectOnsaleByExampleWithPageInfo(OnSalePoExample onSalePoExample, Class voClass,
+                                                           Integer page, Integer pageSize) {
+        try {
+            PageHelper.startPage(page, pageSize);
+            List<OnSalePo> onSalePos = onSalePoMapper.selectByExample(onSalePoExample);
+            PageInfo<OnSalePo> pageInfo = new PageInfo<OnSalePo>(onSalePos);
             ReturnObject ret = new ReturnObject(pageInfo);
             return Common.getPageRetVo(ret, voClass);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
-    public ReturnObject selectCertainOnsale(Long shopId,Long id,Integer page,Integer pageSize){
+    public ReturnObject selectCertainOnsale(Long shopId, Long id, Integer page, Integer pageSize) {
         OnSalePoExample onSalePoExample = new OnSalePoExample();
         OnSalePoExample.Criteria criteria = onSalePoExample.createCriteria();
         criteria.andShopIdEqualTo(shopId);
         criteria.andProductIdEqualTo(id);
-        List<Byte> types = Arrays.asList(OnSaleGetBo.Type.NOACTIVITY.getCode(),OnSaleGetBo.Type.SECKILL.getCode());
+        List<Byte> types = Arrays.asList(OnSaleGetBo.Type.NOACTIVITY.getCode(), OnSaleGetBo.Type.SECKILL.getCode());
         criteria.andTypeIn(types);
-        ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample,SimpleOnSaleRetVo.class, page, pageSize);
+        ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample, SimpleOnSaleRetVo.class, page, pageSize);
         return returnObject;
     }
 
-    public ReturnObject selectActivities(Long id,Long did,Byte state,
-                                         LocalDateTime beginTime,LocalDateTime endTime,
-                                         Integer page,Integer pageSize){
-        OnSalePoExample onSalePoExample=new OnSalePoExample();
-        OnSalePoExample.Criteria criteria=onSalePoExample.createCriteria();
+    public ReturnObject selectActivities(Long id, Long did, Byte state,
+                                         LocalDateTime beginTime, LocalDateTime endTime,
+                                         Integer page, Integer pageSize) {
+        OnSalePoExample onSalePoExample = new OnSalePoExample();
+        OnSalePoExample.Criteria criteria = onSalePoExample.createCriteria();
         criteria.andActivityIdEqualTo(id);
         criteria.andShopIdEqualTo(did);
-        List<Byte>types=Arrays.asList(OnSaleGetBo.Type.GROUPON.getCode(),OnSaleGetBo.Type.PRESALE.getCode());
+        List<Byte> types = Arrays.asList(OnSaleGetBo.Type.GROUPON.getCode(), OnSaleGetBo.Type.PRESALE.getCode());
         criteria.andTypeIn(types);
-        if(state!=null){
+        if (state != null) {
             criteria.andStateEqualTo(state);
         }
-        if(beginTime!=null){
+        if (beginTime != null) {
             criteria.andBeginTimeGreaterThanOrEqualTo(beginTime);
         }
-        if(endTime!=null){
+        if (endTime != null) {
             criteria.andEndTimeLessThanOrEqualTo(endTime);
         }
-        ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample,SimpleOnSaleRetVo.class, page, pageSize);
+        ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample, SimpleOnSaleRetVo.class, page, pageSize);
         return returnObject;
     }
 
-    public ReturnObject selectShareActivities(Long did,Long id,Byte state,Integer page,Integer pageSize){
-        OnSalePoExample onSalePoExample=new OnSalePoExample();
-        OnSalePoExample.Criteria criteria=onSalePoExample.createCriteria();
+    public ReturnObject selectShareActivities(Long did, Long id, Byte state, Integer page, Integer pageSize) {
+        OnSalePoExample onSalePoExample = new OnSalePoExample();
+        OnSalePoExample.Criteria criteria = onSalePoExample.createCriteria();
         criteria.andShareActIdEqualTo(id);
         criteria.andShopIdEqualTo(did);
-        if(state!=null){
+        if (state != null) {
             criteria.andStateEqualTo(state);
         }
-        ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample, SimpleOnSaleRetVo.class,page, pageSize);
+        ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample, SimpleOnSaleRetVo.class, page, pageSize);
         return returnObject;
     }
 
-    public ReturnObject selectAnyOnsale(Long shopId,Long productId,LocalDateTime beginTime,
-                                        LocalDateTime endTime,Integer page,Integer pageSize){
-        OnSalePoExample onSalePoExample=new OnSalePoExample();
-        OnSalePoExample.Criteria criteria=onSalePoExample.createCriteria();
-        if(shopId!=null){
+    public ReturnObject selectAnyOnsale(Long shopId, Long productId, LocalDateTime beginTime,
+                                        LocalDateTime endTime, Integer page, Integer pageSize) {
+        OnSalePoExample onSalePoExample = new OnSalePoExample();
+        OnSalePoExample.Criteria criteria = onSalePoExample.createCriteria();
+        if (shopId != null) {
             criteria.andShopIdEqualTo(shopId);
         }
-        if(productId!=null){
+        if (productId != null) {
             criteria.andProductIdEqualTo(productId);
         }
-        if(beginTime!=null){
+        if (beginTime != null) {
             criteria.andBeginTimeGreaterThanOrEqualTo(beginTime);
         }
-        if(endTime!=null){
+        if (endTime != null) {
             criteria.andEndTimeLessThanOrEqualTo(endTime);
         }
-        ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample,SimpleOnSaleRetVo.class, page, pageSize);
+        ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample, SimpleOnSaleRetVo.class, page, pageSize);
         return returnObject;
+    }
+
+    public ReturnObject getValidNowOnsaleByProductId(Long id) {
+        OnSalePoExample onSalePoExample = new OnSalePoExample();
+        OnSalePoExample.Criteria criteria = onSalePoExample.createCriteria();
+
+        if (id != null) {
+            criteria.andProductIdEqualTo(id);
+        }
+        criteria.andBeginTimeLessThanOrEqualTo(LocalDateTime.now());
+
+        criteria.andEndTimeGreaterThanOrEqualTo(LocalDateTime.now());
+
+        try{
+            List<OnSalePo> onSalePos=onSalePoMapper.selectByExample(onSalePoExample);
+            if(onSalePos.size()==0)
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            return new ReturnObject(cloneVo(onSalePos.get(0),SimpleOnSaleRetVo.class));
+        }
+       catch (Exception e)
+       {
+           return  new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
+       }
     }
 
 }

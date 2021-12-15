@@ -5,7 +5,7 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
-import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ShopRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageInfo;
 
@@ -112,7 +112,7 @@ public class CreateObject {
 
     public static InternalReturnObject createOnsaleVo2() {
         OnsaleVo onsaleVo = new OnsaleVo();
-        ShopVo shopVo = new ShopVo();
+        ShopRetVo shopVo = new ShopRetVo();
         ProductVo productVo = new ProductVo();
         productVo.setId(10L);
         onsaleVo.setProduct(productVo);
@@ -125,7 +125,7 @@ public class CreateObject {
 
     public static InternalReturnObject<OnsaleVo> createOnsaleVo3() {
         OnsaleVo onsaleVo = new OnsaleVo();
-        ShopVo shopVo = new ShopVo();
+        ShopRetVo shopVo = new ShopRetVo();
         shopVo.setId(2L);
         onsaleVo.setId(2L);
         onsaleVo.setShop(shopVo);
@@ -135,7 +135,7 @@ public class CreateObject {
 
     public static InternalReturnObject<OnsaleVo> createOnsaleVo4() {
         OnsaleVo onsaleVo = new OnsaleVo();
-        ShopVo shopVo = new ShopVo();
+        ShopRetVo shopVo = new ShopRetVo();
         shopVo.setId(2L);
         onsaleVo.setId(3912L);
         onsaleVo.setShop(shopVo);
@@ -145,7 +145,7 @@ public class CreateObject {
 
     public static InternalReturnObject<OnsaleVo> createOnsaleVo5() {
         OnsaleVo onsaleVo = new OnsaleVo();
-        ShopVo shopVo = new ShopVo();
+        ShopRetVo shopVo = new ShopRetVo();
         ProductVo productVo = new ProductVo();
         productVo.setId(10L);
         shopVo.setId(3L);
@@ -158,7 +158,7 @@ public class CreateObject {
 
     public static InternalReturnObject<OnsaleVo> createOnsaleVo6() {
         OnsaleVo onsaleVo = new OnsaleVo();
-        ShopVo shopVo = new ShopVo();
+        ShopRetVo shopVo = new ShopRetVo();
         ProductVo productVo = new ProductVo();
         productVo.setId(10L);
         shopVo.setId(1L);
