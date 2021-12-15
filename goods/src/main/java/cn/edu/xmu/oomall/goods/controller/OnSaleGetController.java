@@ -110,7 +110,8 @@ public class OnSaleGetController {
     /**
      * 管理员查询所有商品的价格浮动
      */
-    @Audit(departName = "shops")
+
+    @GetMapping("internal/onsales")
     public Object selectAnyOnsale(@RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
                                   @RequestParam(value = "beginTime",required = false) @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime beginTime,
                                   @RequestParam(value = "endTime",required = false) @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")LocalDateTime endTime,
