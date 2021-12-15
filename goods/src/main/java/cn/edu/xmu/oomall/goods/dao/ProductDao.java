@@ -107,25 +107,25 @@ public class ProductDao {
      * @param id
      * @return 返回的是Product类型
      */
-    public InternalReturnObject getProductInfo(Long id){
+    public ReturnObject getProductInfo(Long id){
         try{
             String  key = String.format(PRODUCT_ID,id);
             Product product=(Product) redisUtil.get(key);
             if(null!=product){
-                return new InternalReturnObject(product);
+                return new ReturnObject(product);
             }else {
                 ProductPo productPo = productMapper.selectByPrimaryKey(id);
                 if (productPo == null) {
-                    return new InternalReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
                 } else {
                     Product pro=cloneVo(productPo,Product.class);
                     redisUtil.set(key,pro,productTimeout);
-                    return new InternalReturnObject(pro);
+                    return new ReturnObject(pro);
                 }
             }
         }catch (Exception e){
             logger.error(e.getMessage());
-            return new InternalReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
     }
     /**
