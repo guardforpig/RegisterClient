@@ -220,8 +220,12 @@ public class CouponActivityController {
     public Object listCouponActivitiesByProductId(@ApiParam(value = "货品ID", required = true) @PathVariable("id") Long productId,
                                                   @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
                                                   @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        System.out.println(productId);
+        System.out.println(pageNumber);
+        System.out.println(pageSize);
         ReturnObject<PageInfo<Object>> retPageInfo =
                 couponActivityService.listCouponActivitiesByProductId(productId, pageNumber, pageSize);
+        System.out.println(retPageInfo.getData());
 
         return Common.decorateReturnObject(retPageInfo);
     }

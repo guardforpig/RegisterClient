@@ -64,25 +64,25 @@ public class OnSaleGetDao {
     /**
      * 有redis的onsale查询
      */
-    public InternalReturnObject selectOnSaleRedis(Long id){
+    public ReturnObject selectOnSaleRedis(Long id){
         try {
             String key = String.format(ONSALE_ID,id);
             OnSaleGetBo onSale=(OnSaleGetBo) redisUtil.get(key);
             if(null!=onSale){
-                return new InternalReturnObject(onSale);
+                return new ReturnObject(onSale);
             }else{
                 OnSalePo onSalePo=onSalePoMapper.selectByPrimaryKey(id);
                 if(onSalePo==null){
-                    return new InternalReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
                 }else{
-                    OnSaleGetBo onSaleGetBo=(OnSaleGetBo) cloneVo(onSalePo, OnSaleGetBo.class);
+                    OnSaleGetBo onSaleGetBo=cloneVo(onSalePo, OnSaleGetBo.class);
                     redisUtil.set(key,onSaleGetBo,onsaleTimeout);
-                    return new InternalReturnObject(onSaleGetBo);
+                    return new ReturnObject(onSaleGetBo);
                 }
             }
         }catch (Exception e){
             logger.error(e.getMessage());
-            return new InternalReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
     }
 

@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -34,7 +35,8 @@ public class OnSaleGetControllerTest {
 
     @Autowired
     private MockMvc mvc;
-    @MockBean
+//    @MockBean
+    @Autowired
     private ShopService shopService;
     @MockBean
     private RedisUtil redisUtil;
@@ -61,7 +63,7 @@ public class OnSaleGetControllerTest {
         simpleShopVo.setName("商铺8");
         //正常情况
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(shopService.getShopInfo(8L)).thenReturn(new InternalReturnObject(simpleShopVo));
+        Mockito.when(shopService.getSimpleShopById(8L)).thenReturn(new InternalReturnObject(simpleShopVo));
         String responseJson=this.mvc.perform(get("/shops/8/onsales/5")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
@@ -174,14 +176,15 @@ public class OnSaleGetControllerTest {
         simpleShopVo.setName("商铺10");
         InternalReturnObject obj=new InternalReturnObject(simpleShopVo);
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(shopService.getShopInfo(10L)).thenReturn(obj);
+//        Mockito.when(shopService.getSimpleShopById(10L)).thenReturn(obj);
         String responseJson=this.mvc.perform(get("/internal/onsales/1")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8"))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson= "{\"errno\":0,\"errmsg\":\"成功\",\"data\":{\"id\":1,\"price\":53295,\"quantity\":2000,\"beginTime\":\"2021-11-11T14:38:20.000\",\"endTime\":\"2022-02-19T14:38:20.000\",\"type\":0,\"activityId\":null,\"shareActId\":null,\"numKey\":10,\"maxQuantity\":50,\"gmtCreate\":\"2021-11-11T14:38:20.000\",\"gmtModified\":null,\"product\":{\"id\":1550,\"name\":\"欢乐家久宝桃罐头\",\"imageUrl\":null},\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"creator\":{\"id\":1,\"name\":\"admin\",\"sign\":null},\"modifier\":{\"id\":null,\"name\":null,\"sign\":null}}}\n";
+        String expectedJson= "{\"errno\":0,\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 

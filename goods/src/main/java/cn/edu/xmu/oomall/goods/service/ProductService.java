@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.goods.service;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ImgHelper;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -243,7 +242,7 @@ public class ProductService {
         Product product = (Product) ret.getData();
 
         //查找shopName
-        InternalReturnObject object = shopService.getShopInfo(product.getShopId());
+        InternalReturnObject object = shopService.getSimpleShopById(product.getShopId());
         if(!object.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
