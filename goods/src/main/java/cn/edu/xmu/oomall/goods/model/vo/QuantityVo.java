@@ -11,6 +11,5 @@ import javax.validation.constraints.Min;
 @Data
 public class QuantityVo {
 
-    @Min(1)
     private  Integer quantity;
 }

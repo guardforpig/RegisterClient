@@ -8,6 +8,7 @@ import cn.edu.xmu.oomall.goods.dao.ProductDao;
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleAllVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -343,7 +344,10 @@ public class OnsaleService {
         return onsaleDao.increaseOnSaleQuantity(id,quantity,groupNum);
 
     }
-
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject updateOnsaleQuantity(Long id, Integer quantity, Long userId, String userName){
+        return onsaleDao.updateOnsaleQuantity(id,quantity,userId,userName);
+    }
 
 }
 

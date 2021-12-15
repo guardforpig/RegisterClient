@@ -320,5 +320,30 @@ public class OnSaleController {
         return decorateReturnObject(onsaleService.increaseOnSale(did, id, quantity, loginUserId, loginUserName));
     }
 
+    /**
+     * 加减库存
+     * gyt
+     * @param id
+     * @param vo
+     * @param loginUserId
+     * @param loginUserName
+     * @param bindingResult
+     * @return
+     */
+    @Audit(departName = "shops")
+    @PutMapping("internal/onsales/{id}/stock")
+    public Object updateOnsaleQuantity(@PathVariable Long id,
+                                       @Validated @RequestBody QuantityVo vo,
+                                       @LoginUser Long loginUserId,
+                                       @LoginName String loginUserName,
+                                       BindingResult bindingResult){
+        Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
+        if (null != returnObject) {
+            return returnObject;
+        }
+        Integer quantity = vo.getQuantity();
+        return decorateReturnObject(onsaleService.updateOnsaleQuantity(id, quantity, loginUserId, loginUserName));
+    }
+
 
 }
