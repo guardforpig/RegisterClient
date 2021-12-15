@@ -117,12 +117,18 @@ public class CategoryService {
 
     public Object getCategoryById(Long id) {
         ReturnObject<Category> ret = categoryDao.getCategoryById(id);
-        Category vo = (Category) cloneVo(ret.getData(), Category.class);
+        if(ret.getCode()!=ReturnNo.OK){
+            return ret;
+        }
+        Category vo = cloneVo(ret.getData(), Category.class);
         return new ReturnObject<>(vo);
     }
 
     public ReturnObject getCategoryById_1(Long id) {
         ReturnObject<Category> ret = categoryDao.getCategoryById(id);
+        if(ret.getCode()!=ReturnNo.OK){
+            return ret;
+        }
         CategoryDetailRetVo c = cloneVo(ret.getData(), CategoryDetailRetVo.class);
         return new ReturnObject(c);
     }

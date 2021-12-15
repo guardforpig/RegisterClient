@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**
  * @author wyg
  */
-@FeignClient(name = "Category")
+@FeignClient(name = "shop-service")
 public interface CategroyService {
     /**
      * 需要内部接口，通过cateoryId获取SimpleCategory
