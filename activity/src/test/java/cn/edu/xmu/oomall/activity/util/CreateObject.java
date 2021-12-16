@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.activity.util;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 
 import java.util.ArrayList;
@@ -39,11 +40,11 @@ public class CreateObject {
         return new InternalReturnObject(map);
     }
 
-    public static InternalReturnObject<ShopInfoVo> createShopInfoDTO(Long id) {
+    public static InternalReturnObject<SimpleShopVo> createShopInfoDTO(Long id) {
         if(id<=0){
             return new InternalReturnObject(504,"不存在该商铺");
         }
-        return new InternalReturnObject<>(new ShopInfoVo(id,"良耳的商铺"));
+        return new InternalReturnObject<>(new SimpleShopVo(id,"良耳的商铺"));
     }
 
 }

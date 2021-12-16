@@ -8,6 +8,7 @@ import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
@@ -148,13 +149,13 @@ public class CouponActivityService {
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addCouponActivity(Long userId, String userName, Long shopId, CouponActivityVo couponActivityVo){
-        InternalReturnObject<Shop> returnObject;
+        InternalReturnObject<ShopVo> returnObject;
         try{
             returnObject = shopFeignService.getShopById(shopId);
         }catch(Exception e){
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        Shop shop = returnObject.getData();
+        ShopVo shop = returnObject.getData();
         CouponActivity couponActivity = cloneVo(couponActivityVo,CouponActivity.class);
         couponActivity.setShopId(shopId);
         couponActivity.setShopName(shop.getName());
