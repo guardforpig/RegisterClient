@@ -4,7 +4,6 @@ import cn.edu.xmu.oomall.core.util.ImgHelper;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
-import cn.edu.xmu.oomall.goods.microservice.CategroyService;
 import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
@@ -44,9 +43,6 @@ public class ProductService {
 
     @Autowired
     private ShopService shopService;
-
-    @Autowired
-    private CategroyService categroyService;
 
     @Autowired
     private FreightService freightService;
@@ -211,7 +207,7 @@ public class ProductService {
         Product product = (Product) ret.getData();
 
         //查找categoryName
-        InternalReturnObject object = categroyService.getCategoryById(product.getCategoryId());
+        InternalReturnObject object = shopService.getCategoryById(product.getCategoryId());
 
         if (!object.getErrno().equals(0)) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -249,7 +245,7 @@ public class ProductService {
         SimpleShopVo simpleShopVo = (SimpleShopVo) cloneVo(object.getData(),SimpleShopVo.class);
         product.setShopName(simpleShopVo.getName());
         //查找categoryName
-        InternalReturnObject object1 = categroyService.getCategoryById(product.getCategoryId());
+        InternalReturnObject object1 = shopService.getCategoryById(product.getCategoryId());
         if(!object.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
@@ -376,7 +372,7 @@ public class ProductService {
 
         Product product = (Product) ret.getData();
 
-        InternalReturnObject object = categroyService.getCategoryById(product.getCategoryId());
+        InternalReturnObject object = shopService.getCategoryById(product.getCategoryId());
         if(!object.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
@@ -426,9 +422,9 @@ public class ProductService {
         }
         Product p = productDao.getProduct(id);
         if (p.getFreightId() != null) {
-            return freightService.getFreightModel(shopId,p.getFreightId());
+            return new ReturnObject(freightService.getFreightModel(shopId,p.getFreightId()).getData());
         } else {
-            return freightService.getDefaultFreightModel(shopId);
+            return new ReturnObject(freightService.getDefaultFreightModel(shopId).getData());
         }
     }
 

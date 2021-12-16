@@ -38,4 +38,6 @@ public class SimpleOnSaleInfoVo {
 
     @ApiModelProperty(value = "类型")
     private String type;
+
+    private Byte state;
 }

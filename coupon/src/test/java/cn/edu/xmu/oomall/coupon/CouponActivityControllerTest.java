@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.coupon;
 
+import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
@@ -92,7 +93,7 @@ public class CouponActivityControllerTest {
     public void addCouponActivity()throws Exception{
         JwtHelper jwtHelper = new JwtHelper();
         String adminToken = jwtHelper.createToken(1L, "13088admin", 0L, 1, 3600);
-        Shop shop = new Shop();
+        ShopVo shop = new ShopVo();
         shop.setId(1L);
         shop.setName("fasdfs");
         Mockito.when(shopFeignService.getShopById(1L)).thenReturn(new InternalReturnObject<>(shop));
