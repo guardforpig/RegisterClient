@@ -29,9 +29,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartsUsersRoles extends BaseTestOomall {
 
-    private static String IDURL ="/privilege/departs/{did}/users/{uid}/roles/{rid}";
-    private static String GETURL= "/privilege/departs/{did}/users/{id}/roles";
-    private static String GETDEPARTROLEURL = "/privilege/departs/{did}/roles";
+    private static final String IDURL ="/privilege/departs/{did}/users/{uid}/roles/{rid}";
+    private static final String GETURL= "/privilege/departs/{did}/users/{id}/roles";
+    private static final String GETDEPARTROLEURL = "/privilege/departs/{did}/roles";
 
 
     /**

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 @SpringBootTest(classes = PublicTestApp.class)
 public class LoginTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilege/login";
+    private static final String TESTURL ="/privilege/login";
 
 
     /**

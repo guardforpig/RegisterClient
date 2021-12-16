@@ -41,25 +41,25 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SelfTest extends BaseTestOomall {
 
-    private static String USERURL = "/privilege/self/users";
+    private static final String USERURL = "/privilege/self/users";
 
-    private static String ROLEURL = "/privilege/self/roles";
+    private static final String ROLEURL = "/privilege/self/roles";
 
-    private static String BROLEURL = "/privilege/self/baseroles";
+    private static final String BROLEURL = "/privilege/self/baseroles";
 
-    private static String IMGURL = "/privilege/self/users/uploadImg";
+    private static final String IMGURL = "/privilege/self/users/uploadImg";
 
-    private static String GROUPURL = "/privilege/self/groups";
+    private static final String GROUPURL = "/privilege/self/groups";
 
-    private static String PASSURL = "/privilege/self/password";
+    private static final String PASSURL = "/privilege/self/password";
 
-    private static String RESETURL = "/privilege/self/password/reset";
+    private static final  String RESETURL = "/privilege/self/password/reset";
 
-    private static String SELFPROXYURL = "/privilege/self/proxies";
+    private static final String SELFPROXYURL = "/privilege/self/proxies";
 
-    private static String SELFIDURL = "/privilege/self/proxies/{id}";
+    private static final String SELFIDURL = "/privilege/self/proxies/{id}";
 
-    private static String DEPARTURL ="/privilege/departs/{id}/proxies";
+    private static final String DEPARTURL ="/privilege/departs/{id}/proxies";
 
     /**
      * 查看自己的角色测试1

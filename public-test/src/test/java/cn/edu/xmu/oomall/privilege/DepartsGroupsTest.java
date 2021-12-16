@@ -36,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartsGroupsTest extends BaseTestOomall {
 
-    private static String GROUPURL = "/privilege/departs/{did}/groups";
-    private static String IDURL = "/privilege/departs/{did}/groups/{id}";
+    private static final String GROUPURL = "/privilege/departs/{did}/groups";
+    private static final String IDURL = "/privilege/departs/{did}/groups/{id}";
 
     private Long platformGroupId = null;
     private Long depart1GroupId = null;

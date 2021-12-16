@@ -26,9 +26,9 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @SpringBootTest(classes = PublicTestApp.class)
 public class LogoutTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilege/logout";
+    private static final String TESTURL ="/privilege/logout";
 
-    private static String NEWURL ="/privilege/departs/{did}/users/new";
+    private static final String NEWURL ="/privilege/departs/{did}/users/new";
 
 
     /**

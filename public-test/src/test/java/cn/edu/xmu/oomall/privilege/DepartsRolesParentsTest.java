@@ -29,11 +29,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartsRolesParentsTest extends BaseTestOomall {
 
-    private static String PARENTURL = "/departs/{did}/roles/{id}/parents";
+    private static final String PARENTURL = "/departs/{did}/roles/{id}/parents";
 
-    private static String ROLEINHURL = "/privilege/departs/{did}/roles/{pid}/childroles/{cid}";
+    private static final String ROLEINHURL = "/privilege/departs/{did}/roles/{pid}/childroles/{cid}";
 
-    private static String BASEROLEURL ="/privilgege/departs/{did}/roles/{id}/baseroles";
+    private static final String BASEROLEURL ="/privilgege/departs/{did}/roles/{id}/baseroles";
 
 
     /**

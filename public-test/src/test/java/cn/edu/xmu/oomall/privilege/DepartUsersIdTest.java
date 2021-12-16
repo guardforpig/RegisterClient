@@ -35,14 +35,14 @@ import java.util.Objects;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartUsersIdTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilege/departs/{did}/users/{id}";
-    private static String IDURL = "/privilege/departs/{did}/users/{id}";
-    private static String GETURL = "/privilege/users";
-    private static String NEWUSERURL = "/privilege/departs/{did}/newusers/{id}";
-    private static String APPROVEUSERURL = "/privilege/departs/{did}/newusers/{id}/approve";
-    private static String USERURL = "/privilege/departs/{did}/users";
-    private static String FORBIDURL = "/privilege/departs/{did}/newusers/{id}/forbid";
-    private static String RELEASEURL = "/privilege/departs/{did}/newusers/{id}/release";
+    private static final  String TESTURL ="/privilege/departs/{did}/users/{id}";
+    private static final String IDURL = "/privilege/departs/{did}/users/{id}";
+    private static final String GETURL = "/privilege/users";
+    private static final String NEWUSERURL = "/privilege/departs/{did}/newusers/{id}";
+    private static final String APPROVEUSERURL = "/privilege/departs/{did}/newusers/{id}/approve";
+    private static final String USERURL = "/privilege/departs/{did}/users";
+    private static final String FORBIDURL = "/privilege/departs/{did}/newusers/{id}/forbid";
+    private static final String RELEASEURL = "/privilege/departs/{did}/newusers/{id}/release";
     /***
      * 查找用户
      * @throws Exception
