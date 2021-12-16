@@ -29,7 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GetDepartsRolesBaseRolesTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilgege/departs/{did}/roles/{id}/baseroles";
+    private static final String TESTURL ="/privilgege/departs/{did}/roles/{id}/baseroles";
 
     /**
      * 32 管理员查看角色拥有的权限

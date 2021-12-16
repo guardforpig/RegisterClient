@@ -61,4 +61,6 @@ public class FullOnSaleVo {
 
     @ApiModelProperty(value = "修改者")
     private SimpleUserRetVo modifier;
+
+    private Byte state;
 }

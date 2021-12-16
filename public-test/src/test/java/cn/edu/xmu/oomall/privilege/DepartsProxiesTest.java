@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartsProxiesTest extends BaseTestOomall {
 
-    private static String DEPARTURL ="/privilege/departs/{id}/proxies";
-    private static String DEPARTIDURL = "/departs/{did}/proxies/{id}";
-    private static String PROXYURL ="/privilege/users/{id}/proxies";
-    private static String IDURL ="/privilege/departs/{did}/users/{aid}/proxyusers/{bid}";
+    private static final String DEPARTURL ="/privilege/departs/{id}/proxies";
+    private static final String DEPARTIDURL = "/departs/{did}/proxies/{id}";
+    private static final String PROXYURL ="/privilege/users/{id}/proxies";
+    private static final String IDURL ="/privilege/departs/{did}/users/{aid}/proxyusers/{bid}";
 
 
     /**

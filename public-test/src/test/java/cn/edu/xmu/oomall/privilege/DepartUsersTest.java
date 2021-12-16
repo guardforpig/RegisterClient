@@ -16,8 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartUsersTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilege/departs/{did}/users";
-    private static String NEWURL ="/privilege/departs/{did}/users/new";
+    private static final String TESTURL ="/privilege/departs/{did}/users";
+    private static final String NEWURL ="/privilege/departs/{did}/users/new";
     /***
      * 正确查找用户
      * @throws Exception

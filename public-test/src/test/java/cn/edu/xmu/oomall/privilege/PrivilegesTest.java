@@ -36,12 +36,12 @@ import java.util.Objects;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PrivilegesTest extends BaseTestOomall {
 
-    private static String TESTURL = "/privilege/departs/{did}}/privileges";
-    private static String IDURL = "/privilege/departs/{did}}/privileges/{id}";
-    private static String FORBIDURL = "/privilege/departs/{did}}/privileges/{id}/forbid";
-    private static String RELEASEURL = "/privilege/departs/{did}}/privileges/{id}/release";
+    private static final String TESTURL = "/privilege/departs/{did}}/privileges";
+    private static final String IDURL = "/privilege/departs/{did}}/privileges/{id}";
+    private static final String FORBIDURL = "/privilege/departs/{did}}/privileges/{id}/forbid";
+    private static final String RELEASEURL = "/privilege/departs/{did}}/privileges/{id}/release";
 
-    private static String USERURL = "/privilege/departs/{did}/users/{id}";
+    private static final String USERURL = "/privilege/departs/{did}/users/{id}";
     private Long privId = null;
 
     /**

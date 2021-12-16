@@ -27,10 +27,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = PublicTestApp.class)
 public class StatesTest extends BaseTestOomall {
 
-    private static String GROUPURL ="/privilege/groups/sates";
-    private static String ROLEURL ="/privilege/roles/sates";
-    private static String USERURL ="/privilege/users/sates";
-    private static String PRIVURL ="/privilege/privileges/sates";
+    private static final String GROUPURL ="/privilege/groups/sates";
+    private static final String ROLEURL ="/privilege/roles/sates";
+    private static final String USERURL ="/privilege/users/sates";
+    private static final String PRIVURL ="/privilege/privileges/sates";
 
     /**
      * 28 获得管理员用户的所有状态

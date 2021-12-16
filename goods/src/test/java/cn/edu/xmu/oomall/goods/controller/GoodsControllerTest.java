@@ -3,7 +3,6 @@ package cn.edu.xmu.oomall.goods.controller;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.GoodsApplication;
-import cn.edu.xmu.oomall.goods.microservice.CategroyService;
 import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
@@ -53,7 +52,7 @@ class GoodsControllerTest {
     @MockBean
     private RedisUtil redisUtil;
     @MockBean
-    private CategroyService categroyService;
+    private ShopService shopService;
     @MockBean
     private FreightService freightService;
 
@@ -465,8 +464,6 @@ class GoodsControllerTest {
         JSONAssert.assertEquals(expected,responseString,true);
     }
 
-    @MockBean
-    private ShopService shopService;
     @BeforeEach
     public void init() {
         CategoryVo categoryVo2 = new CategoryVo();
@@ -599,7 +596,7 @@ class GoodsControllerTest {
         SimpleCategoryVo simpleCategoryVo = new SimpleCategoryVo();
         simpleCategoryVo.setId(1L);
         simpleCategoryVo.setName("test");
-        Mockito.when(categroyService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
+        Mockito.when(shopService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         //正常
         String responseString = this.mockMvc.perform(get("/products/1576")
@@ -742,7 +739,7 @@ class GoodsControllerTest {
         simpleCategoryVo.setId(1L);
         simpleCategoryVo.setName("test");
 
-        Mockito.when(categroyService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
+        Mockito.when(shopService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         String responseString = this.mockMvc.perform(get("/shops/10/products/1576")
                 .header("authorization", adminToken)
@@ -904,7 +901,7 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void getFreightModels() throws Exception {
-        Mockito.when(freightService.getFreightModel(10L,1L)).thenReturn(new ReturnObject<>(ReturnNo.OK));
+        Mockito.when(freightService.getFreightModel(10L,1L)).thenReturn(new InternalReturnObject(ReturnNo.OK));
 
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         String responseString = this.mockMvc.perform(get("/shops/10/products/1576/freightmodels").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))

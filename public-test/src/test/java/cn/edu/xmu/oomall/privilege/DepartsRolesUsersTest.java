@@ -29,7 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartsRolesUsersTest extends BaseTestOomall {
 
-    private static String ROLEUSER = "/departs/{did}/roles/{id}/users";
+    private static final String ROLEUSER = "/departs/{did}/roles/{id}/users";
 
     /**
      * 未登录

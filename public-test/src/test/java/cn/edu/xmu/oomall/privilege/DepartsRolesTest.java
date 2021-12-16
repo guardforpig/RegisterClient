@@ -23,15 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartsRolesTest extends BaseTestOomall {
 
-    private static String GETURL="/privilege/departs/{did}/roles";
+    private static final String GETURL="/privilege/departs/{did}/roles";
 
-    private static String IDURL="/privilege/departs/{did}/roles/{id}";
+    private static final String IDURL="/privilege/departs/{did}/roles/{id}";
 
-    private static String FORBIDURL="/privilege/departs/{did}/roles/{id}/forbid";
+    private static final String FORBIDURL="/privilege/departs/{did}/roles/{id}/forbid";
 
-    private static String RELEASEURL="/privilege/departs/{did}/roles/{id}/release";
+    private static final String RELEASEURL="/privilege/departs/{did}/roles/{id}/release";
 
-    private static String GETURLDEPARTURL = "/privilege/departs/{did}/groups";
+    private static final String GETURLDEPARTURL = "/privilege/departs/{did}/groups";
 
     private Long depart1RoleId = null;
     private Long depart2RoleId = null;

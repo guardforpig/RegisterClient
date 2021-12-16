@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartsBaseRolePrivTest extends BaseTestOomall {
 
-    private static String TESTURL = "/privilege/departs/{did}/baseroles/{id}/privileges";
-    private static String BASEROLEURL = "/privilege/departs/{did}/baseroles";
-    private static String IDURL = "/privilege/departs/{did}/baseroles/{id}/privileges/{pid}";
+    private static final String TESTURL = "/privilege/departs/{did}/baseroles/{id}/privileges";
+    private static final String BASEROLEURL = "/privilege/departs/{did}/baseroles";
+    private static final String IDURL = "/privilege/departs/{did}/baseroles/{id}/privileges/{pid}";
 
 
     private Long roleId = null;

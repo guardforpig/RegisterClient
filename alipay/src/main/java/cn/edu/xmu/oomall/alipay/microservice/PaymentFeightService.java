@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Component
-@FeignClient(value = "payment")
+@FeignClient(value = "payment-service")
 public interface PaymentFeightService {
     /**
      * 回调,退款只有成功的回调，支付有不成功和成功的回调
