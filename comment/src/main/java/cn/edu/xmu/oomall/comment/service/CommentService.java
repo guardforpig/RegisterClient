@@ -37,7 +37,7 @@ public class CommentService {
      *
      * @return
      */
-    @Transactional(readOnly = true, rollbackFor = Exception.class)
+//    @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject getCommentStates() {
         return commentDao.getCommentStates();
     }
