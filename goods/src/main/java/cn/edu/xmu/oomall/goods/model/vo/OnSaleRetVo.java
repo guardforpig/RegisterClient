@@ -33,6 +33,7 @@ public class OnSaleRetVo{
     private LocalDateTime gmtCreate;
     @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
     private LocalDateTime gmtModified;
+    private Byte state;
 
     private SimpleProductRetVo product;
     private SimpleShopVo shop;
