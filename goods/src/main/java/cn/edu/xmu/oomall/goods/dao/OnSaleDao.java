@@ -207,7 +207,7 @@ public class OnSaleDao {
             setPoModifiedFields(po, userId, userName);
             onSalePoMapper.updateByPrimaryKeySelective(po);
 
-            if(po.getShareActId()==-1){
+            if(po.getShareActId()!=null&& po.getShareActId().equals(-1L)){
                 OnSalePo newPo= onSalePoMapper.selectByPrimaryKey(po.getId());
                 newPo.setShareActId(null);
                 onSalePoMapper.updateByPrimaryKey(newPo);
