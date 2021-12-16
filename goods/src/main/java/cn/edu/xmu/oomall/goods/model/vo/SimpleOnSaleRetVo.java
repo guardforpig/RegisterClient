@@ -26,6 +26,7 @@ public class SimpleOnSaleRetVo implements VoObject {
     private Long activityId;
     private Long shareActId;
     private Byte type;
+    private Byte state;
 
     @Override
     public Object createVo() {
