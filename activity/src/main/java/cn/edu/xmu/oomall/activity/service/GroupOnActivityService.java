@@ -4,6 +4,7 @@ package cn.edu.xmu.oomall.activity.service;
 import cn.edu.xmu.oomall.activity.constant.GroupOnState;
 import cn.edu.xmu.oomall.activity.dao.GroupActivityDao;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
+import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleCreatedVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
 import cn.edu.xmu.oomall.activity.model.bo.GroupOnActivity;
 import cn.edu.xmu.oomall.activity.model.vo.*;
@@ -112,7 +113,7 @@ public class GroupOnActivityService {
             endTime = groupOnActivity.getEndTime();
             onsaleModifyVo.setEndtime(endTime);
         }
-        InternalReturnObject<PageVo<OnsaleVo>> retObj = goodsService.getOnsale(shopId,groupOnActivity.getId(),1,1,10);
+        InternalReturnObject<PageVo<OnsaleVo>> retObj = goodsService.getShopOnSaleInfo(shopId,groupOnActivity.getId(),(byte)1,null,null,1,10);
         if(retObj.getErrno()==0&&retObj.getData().getTotal()>0){
             long onSaleId;
             for(var onSaleObj:retObj.getData().getList())
@@ -240,7 +241,7 @@ public class GroupOnActivityService {
         }
 
 
-        SimpleSaleInfoVo simpleOnSaleInfoVo = new SimpleSaleInfoVo();
+        OnSaleCreatedVo simpleOnSaleInfoVo = new OnSaleCreatedVo();
         LocalDateTime nowTime = LocalDateTime.now();
         LocalDateTime beginTime = obj.getData().getBeginTime();
         LocalDateTime endTime = obj.getData().getEndTime();
@@ -250,7 +251,7 @@ public class GroupOnActivityService {
         simpleOnSaleInfoVo.setEndTime(endTime);
         simpleOnSaleInfoVo.setBeginTime(beginTime);
         simpleOnSaleInfoVo.setActivityId(id);
-        InternalReturnObject result = goodsService.addOnsale(shopId,pid,simpleOnSaleInfoVo);
+        InternalReturnObject result = goodsService.addOnSale(shopId,pid,simpleOnSaleInfoVo);
         if(result.getErrno()!=0){
             obj=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
         }else{
