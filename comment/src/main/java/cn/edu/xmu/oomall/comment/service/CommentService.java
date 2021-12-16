@@ -37,7 +37,7 @@ public class CommentService {
      *
      * @return
      */
-//    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject getCommentStates() {
         return commentDao.getCommentStates();
     }
@@ -135,7 +135,7 @@ public class CommentService {
         commentPo.setAuditId(loginUser);
         commentPo.setAuditName(loginUserName);
         commentPo.setAuditTime(LocalDateTime.now());
-       setPoModifiedFields(commentPo, loginUser, loginUserName);
+        setPoModifiedFields(commentPo, loginUser, loginUserName);
         ReturnObject ret = commentDao.updateCommentState(commentPo);
         return ret;
     }
