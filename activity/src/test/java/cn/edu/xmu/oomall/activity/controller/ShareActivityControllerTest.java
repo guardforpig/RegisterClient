@@ -523,8 +523,8 @@ public class ShareActivityControllerTest {
         shareActivityVo.setStrategy(list);
         String json= JacksonUtil.toJson(shareActivityVo);
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/1")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8").content(json))
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8").content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -547,8 +547,8 @@ public class ShareActivityControllerTest {
         shareActivityVo.setStrategy(list);
         String json= JacksonUtil.toJson(shareActivityVo);
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/4")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8").content(json))
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8").content(json))
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expectedString="{\n" +
@@ -570,8 +570,8 @@ public class ShareActivityControllerTest {
         shareActivityVo.setStrategy(list);
         String json= JacksonUtil.toJson(shareActivityVo);
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/-1")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8").content(json))
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8").content(json))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -594,8 +594,8 @@ public class ShareActivityControllerTest {
         shareActivityVo.setStrategy(list);
         String json= JacksonUtil.toJson(shareActivityVo);
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/4")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8").content(json))
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8").content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -609,7 +609,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void deleteShareActivity_ShareActivityIdNotFound() throws Exception{
         String responseString=this.mvc.perform(delete("/shops/1/shareactivities/-1")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -623,7 +623,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void deleteShareActivity_NotDraftState() throws Exception{
         String responseString=this.mvc.perform(delete("/shops/1/shareactivities/1")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -637,7 +637,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void deleteShareActivity_Success() throws Exception{
         String responseString=this.mvc.perform(delete("/shops/1/shareactivities/4")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -651,7 +651,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOnline_NotOfflineState() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/1/online")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -665,7 +665,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOnline_ShareActivityIdNotFound() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/-1/online")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -679,7 +679,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOnline_Success() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/2/online")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -693,7 +693,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOffline_NotOnlineState() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/3/offline")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -707,7 +707,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOffline_ShareActivityIdNotFound() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/-1/offline")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -721,7 +721,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOffline_Success() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/1/offline")
-                .header("authorization", adminToken))
+                        .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
