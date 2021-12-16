@@ -61,6 +61,7 @@ public class OnsaleService {
         OnSale bo = (OnSale) cloneVo(newOnSaleVO,OnSale.class);
         bo.setShopId(shopId);
         bo.setProductId(productId);
+        bo.setState(OnSale.State.DRAFT);
 
         // 判断是否有冲突的销售情况
         ret= onsaleDao.timeCollided(bo);
@@ -98,6 +99,7 @@ public class OnsaleService {
         OnSale bo = (OnSale) cloneVo(newOnSaleAllVo,OnSale.class);
         bo.setShopId(shopId);
         bo.setProductId(productId);
+        bo.setState(OnSale.State.DRAFT);
 
         // 判断是否有冲突的销售情况
         ret= onsaleDao.timeCollided(bo);
