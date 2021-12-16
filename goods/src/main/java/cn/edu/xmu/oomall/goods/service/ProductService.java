@@ -1,6 +1,5 @@
 package cn.edu.xmu.oomall.goods.service;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ImgHelper;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -23,7 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.*;
 
@@ -156,19 +156,19 @@ public class ProductService {
         }
     }
     @Transactional(readOnly = true)
-    public ReturnObject getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
-        InternalReturnObject<CategoryVo> categoryById = shopService.getCategoryById(cid);
-        Integer errno = categoryById.getErrno();
-        if(0 == errno){
-            CategoryVo categoryVo = categoryById.getData();
-            if (Objects.isNull(categoryVo)) {
-                new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "分类id不存在");
-            }
-                Long voId = categoryVo.getPid();
-            return Objects.isNull(voId)?new ReturnObject<>(ReturnNo.OK):
-                    new ReturnObject<>(ReturnNo.OK,productDao.getProductsOfCategories(did, cid,page,pageSize));
+    public ReturnObject<Object> getProductsOfCategories(Long did, Long cid, Integer page, Integer pageSize) {
+        InternalReturnObject<List<CategoryVo>> categoryReturnObj = shopService.getSecondCategory(0L);
+        Integer errno = categoryReturnObj.getErrno();
+        if (errno != 0){
+            return new ReturnObject<Object>(categoryReturnObj);
         }
-        return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"分类id不存在");
+        List<CategoryVo> categoryVos = categoryReturnObj.getData()
+                .stream().filter(row-> row.getId().equals(cid))
+                .collect(Collectors.toList());
+        if (categoryVos.isEmpty()) {
+           return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "分类id不存在");
+        }
+       return new ReturnObject<>(productDao.getProductsOfCategories(did, cid,page,pageSize));
     }
 
     /**
