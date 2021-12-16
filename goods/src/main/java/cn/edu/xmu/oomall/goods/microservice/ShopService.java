@@ -7,6 +7,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 /**
  * @author Zijun Min
  * @description
@@ -16,11 +18,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface ShopService {
     @GetMapping("/shops/{id}")
     InternalReturnObject<SimpleShopVo> getShopInfo(@PathVariable("id")Long id);
+
     /**
      * @author 何赟
      * @date 2021-12-5
      */
-    @GetMapping("/category/{id}")
-    InternalReturnObject<CategoryVo> getCategoryById(@PathVariable("id")Integer id);
+    @GetMapping("/shops/{shopId}/orphoncategorie")
+    InternalReturnObject<List<CategoryVo>> getSecondCategory(@PathVariable Long shopId);
 
 }

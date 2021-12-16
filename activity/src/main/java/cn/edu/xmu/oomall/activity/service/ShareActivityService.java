@@ -10,6 +10,7 @@ import cn.edu.xmu.oomall.activity.model.bo.OnSale;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivity;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityStatesBo;
+import cn.edu.xmu.oomall.activity.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.privilegegateway.annotation.util.Common;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -88,14 +89,14 @@ public class ShareActivityService {
         if (productId != null) {
             //TODO:openfeign获得分享活动id
             InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, 10);
-            if (onSalesByProductId.getData() == null) {
-                return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,onSalesByProductId.getErrmsg());
+            if (onSalesByProductId.getErrno()!=0) {
+                return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
             }
             int total = (int) onSalesByProductId.getData().get("total");
             if (total != 0) {
                 onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, total > 500 ? 500 : total);
-                if (onSalesByProductId.getData() == null) {
-                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,onSalesByProductId.getErrmsg());
+                if (onSalesByProductId.getErrno()!=0) {
+                    return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
                 }
                 List<SimpleSaleInfoVo> list = (List<SimpleSaleInfoVo>) onSalesByProductId.getData().get("list");
                 for (SimpleSaleInfoVo simpleSaleInfoVO : list) {
@@ -124,15 +125,15 @@ public class ShareActivityService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject addShareAct(String createName, Long createId,
                                     Long shopId, ShareActivityVo shareActivityVo) {
-        ShareActivityBo shareActivityBo = (ShareActivityBo) cloneVo(shareActivityVo, ShareActivityBo.class);
+        ShareActivityBo shareActivityBo = cloneVo(shareActivityVo, ShareActivityBo.class);
         setPoCreatedFields(shareActivityBo, createId, createName);
-       setPoModifiedFields(shareActivityBo, createId, createName);
+        setPoModifiedFields(shareActivityBo, createId, createName);
         shareActivityBo.setState(ShareActivityStatesBo.DRAFT.getCode());
         shareActivityBo.setShopId(shopId);
         //TODO:通过商铺id弄到商铺名称
         InternalReturnObject<ShopInfoVo> shop = shopService.getShop(shopId);
-        if (shop.getData() == null) {
-            return new ReturnObject<>(ReturnNo.FIELD_NOTVALID, "不存在该商铺");
+        if (shop.getErrno()!=0) {
+            return new ReturnObject(ReturnNo.getByCode(shop.getErrno()));
         }
         String shopName = shop.getData().getName();
         shareActivityBo.setShopName(shopName);
@@ -142,7 +143,7 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo1 = (ShareActivityBo) returnObject.getData();
-        RetShareActivityInfoVo retShareActivityInfoVo = (RetShareActivityInfoVo) cloneVo(shareActivityBo1, RetShareActivityInfoVo.class);
+        RetShareActivityInfoVo retShareActivityInfoVo = cloneVo(shareActivityBo1, RetShareActivityInfoVo.class);
         retShareActivityInfoVo.setShop(new ShopVo(shareActivityBo1.getShopId(), shareActivityBo1.getShopName()));
         return new ReturnObject(retShareActivityInfoVo);
     }
@@ -160,7 +161,7 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
-        RetShareActivityInfoVo retShareActivityInfoVo = (RetShareActivityInfoVo) cloneVo(shareActivityBo, RetShareActivityInfoVo.class);
+        RetShareActivityInfoVo retShareActivityInfoVo = cloneVo(shareActivityBo, RetShareActivityInfoVo.class);
         retShareActivityInfoVo.setShop(new ShopVo(shareActivityBo.getShopId(), shareActivityBo.getShopName()));
         return new ReturnObject(retShareActivityInfoVo);
     }
@@ -179,7 +180,7 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
-        RetShareActivitySpecificInfoVo retShareActivitySpecificInfoVo = (RetShareActivitySpecificInfoVo) cloneVo(shareActivityBo, RetShareActivitySpecificInfoVo.class);
+        RetShareActivitySpecificInfoVo retShareActivitySpecificInfoVo = cloneVo(shareActivityBo, RetShareActivitySpecificInfoVo.class);
         retShareActivitySpecificInfoVo.setShop(new ShopVo(shareActivityBo.getShopId(), shareActivityBo.getShopName()));
         retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getCreatorId(), shareActivityBo.getCreatorName()));
         retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getModifierId(), shareActivityBo.getModifierName()));
@@ -187,9 +188,20 @@ public class ShareActivityService {
     }
 
 
+    /**
+     * 根据ID获取分享活动
+     * @param id
+     * @return
+     * @author BingShuai Liu 22920192204245
+     */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject<ShareActivity> getShareActivityByShareActivityId(Long id){
-        return shareActivityDao.selectShareActivityById(id);
+        ReturnObject ret = shareActivityDao.selectShareActivityById(id);
+        if (ret.getData()!=null){
+            ShareActivity shareActivity = cloneVo((ShareActivityPo)ret.getData(),ShareActivity.class);
+            return new ReturnObject<>(shareActivity);
+        }
+        return ret;
     }
 
     /**
@@ -197,6 +209,7 @@ public class ShareActivityService {
      * @param id OnSale id
      * @param sid 分享活动 id
      * @return OnSale
+     * @author BingShuai Liu 22920192204245
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addShareActivityOnOnSale(Long id, Long sid, Long loginUser, String loginUsername){
@@ -228,6 +241,7 @@ public class ShareActivityService {
      * @param id
      * @param sid
      * @return
+     * @author BingShuai Liu 22920192204245
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject deleteShareActivityOnOnSale(Long id, Long sid, Long loginUser, String loginUsername){
@@ -250,11 +264,13 @@ public class ShareActivityService {
      * @param id
      * @param shareActivityVo
      * @return
+     * @author BingShuai Liu 22920192204245
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject modifyShareActivity(Long id, ShareActivityVo shareActivityVo,Long loginUser, String loginUsername){
-        ShareActivity shareActivity = (ShareActivity)Common.cloneVo(shareActivityVo,ShareActivity.class);
-        Common.setPoModifiedFields(shareActivity,loginUser,loginUsername);
+        ShareActivityPo shareActivityPo = Common.cloneVo(shareActivityVo,ShareActivityPo.class);
+        Common.setPoModifiedFields(shareActivityPo,loginUser,loginUsername);
+        shareActivityPo.setId(id);
         var x = getShareActivityByShareActivityId(id).getData();
         if (x==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -262,7 +278,7 @@ public class ShareActivityService {
         if(!x.getState().equals(ShareActivity.State.Draft.getCode().byteValue())){
             return new ReturnObject(ReturnNo.STATENOTALLOW);
         }
-        ReturnObject ret = shareActivityDao.modifyShareActivity(id,shareActivity);
+        ReturnObject ret = shareActivityDao.modifyShareActivity(shareActivityPo);
         return ret;
     }
 
@@ -270,6 +286,7 @@ public class ShareActivityService {
      * 管理员删除草稿状态的分享活动
      * @param id
      * @return
+     * @author BingShuai Liu 22920192204245
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject deleteShareActivity(Long id,Long loginUser, String loginUsername){
@@ -288,6 +305,7 @@ public class ShareActivityService {
      * 根据分享活动id上线分享活动
      * @param id 分享活动id
      * @return 执行结果
+     * @author BingShuai Liu 22920192204245
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject onlineShareActivity(Long id,Long loginUser, String loginUsername){
@@ -298,9 +316,10 @@ public class ShareActivityService {
         if(x.getState().equals(ShareActivity.State.Online.getCode())){
             return new ReturnObject(ReturnNo.STATENOTALLOW);
         }
-        x.setState((byte) 1);
-        Common.setPoModifiedFields(x,loginUser,loginUsername);
-        ReturnObject ret=shareActivityDao.updateShareActivityState(x);
+        ShareActivityPo shareActivityPo = cloneVo(x,ShareActivityPo.class);
+        shareActivityPo.setState((byte)1);
+        Common.setPoModifiedFields(shareActivityPo,loginUser,loginUsername);
+        ReturnObject ret=shareActivityDao.modifyShareActivity(shareActivityPo);
         return ret;
     }
 
@@ -308,6 +327,7 @@ public class ShareActivityService {
      * 根据分享活动id下线分享活动
      * @param id 分享活动id
      * @return 执行结果
+     * @author BingShuai Liu 22920192204245
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject offlineShareActivity(Long id,Long loginUser, String loginUsername){
@@ -318,9 +338,10 @@ public class ShareActivityService {
         if(x.getState().equals(ShareActivity.State.Offline.getCode())){
             return new ReturnObject(ReturnNo.STATENOTALLOW);
         }
-        x.setState((byte) 2);
-        Common.setPoModifiedFields(x,loginUser,loginUsername);
-        ReturnObject ret=shareActivityDao.updateShareActivityState(x);
+        ShareActivityPo shareActivityPo = cloneVo(x,ShareActivityPo.class);
+        shareActivityPo.setState((byte)2);
+        Common.setPoModifiedFields(shareActivityPo,loginUser,loginUsername);
+        ReturnObject ret=shareActivityDao.modifyShareActivity(shareActivityPo);
         return ret;
     }
 }

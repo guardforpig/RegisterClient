@@ -97,7 +97,8 @@ public class CouponActivityDao {
             List<CouponActivityPo>list = couponActivityPoMapper.selectByExample(example);
             List<VoObject>list1 = new ArrayList<>();
             for(CouponActivityPo couponActivityPo:list){
-                CouponActivityRetVo couponActivityRetVo = (CouponActivityRetVo) cloneVo(couponActivityPo,CouponActivityRetVo.class);
+                // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转
+                CouponActivityRetVo couponActivityRetVo = cloneVo(couponActivityPo,CouponActivityRetVo.class);
                 list1.add(couponActivityRetVo);
             }
             PageInfo<VoObject> pageInfo = new PageInfo<>(list1);

@@ -4,7 +4,7 @@ import cn.edu.xmu.oomall.alipay.mapper.AlipayRefundPoMapper;
 import cn.edu.xmu.oomall.alipay.model.bo.Refund;
 import cn.edu.xmu.oomall.alipay.model.po.AlipayRefundPo;
 import cn.edu.xmu.oomall.alipay.model.po.AlipayRefundPoExample;
-import cn.edu.xmu.oomall.core.util.Common;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class RefundDao {
             {
                 return null;
             }
-            return (Refund) Common.cloneVo(alipayRefundPoList.get(0),Refund.class);
+            return cloneVo(alipayRefundPoList.get(0),Refund.class);
         }
         catch (Exception e)
         {
@@ -58,7 +58,7 @@ public class RefundDao {
     public void insertRefund(Refund refund)
     {
         try{
-            AlipayRefundPo alipayRefundPo= (AlipayRefundPo) Common.cloneVo(refund,AlipayRefundPo.class);
+            AlipayRefundPo alipayRefundPo= cloneVo(refund,AlipayRefundPo.class);
             alipayRefundPoMapper.insertSelective(alipayRefundPo);
         }
         catch (Exception e)

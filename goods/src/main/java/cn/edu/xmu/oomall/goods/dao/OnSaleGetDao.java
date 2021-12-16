@@ -8,6 +8,7 @@ import cn.edu.xmu.oomall.goods.model.bo.OnSaleGetBo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
 import cn.edu.xmu.oomall.goods.model.vo.SimpleOnSaleRetVo;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -44,8 +45,6 @@ public class OnSaleGetDao {
 
     /**
      * 无redis的onsale查询
-     * @param id
-     * @return
      */
     public ReturnObject selectOnSale(Long id){
         try {
@@ -64,8 +63,6 @@ public class OnSaleGetDao {
 
     /**
      * 有redis的onsale查询
-     * @param id
-     * @return
      */
     public ReturnObject selectOnSaleRedis(Long id){
         try {
@@ -85,17 +82,12 @@ public class OnSaleGetDao {
             }
         }catch (Exception e){
             logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
     }
 
     /**
      * 根据poexample返回pageinfo
-     * @param onSalePoExample
-     * @param voClass
-     * @param page
-     * @param pageSize
-     * @return
      */
     private ReturnObject selectOnsaleByExampleWithPageInfo(OnSalePoExample onSalePoExample,Class voClass,
                                                            Integer page,Integer pageSize){

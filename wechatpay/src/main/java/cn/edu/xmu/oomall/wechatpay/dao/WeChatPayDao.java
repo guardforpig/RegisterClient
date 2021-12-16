@@ -48,7 +48,7 @@ public class WeChatPayDao {
             criteria.andOutTradeNoEqualTo(outTradeNo);
             List<WeChatPayTransactionPo> list = weChatPayTransactionPoMapper.selectByExample(example);
             if(list.size()==0) {
-                return new WeChatPayReturnObject(WeChatPayReturnNo.ORDER_NO_TEXIST);
+                return new WeChatPayReturnObject(WeChatPayReturnNo.RESOURCE_NOT_EXISTS);
             }
             return new WeChatPayReturnObject(cloneVo(list.get(0), WeChatPayTransaction.class));
         }catch (Exception e){
@@ -63,7 +63,7 @@ public class WeChatPayDao {
             criteria.andOutTradeNoEqualTo(weChatPayTransactionPo.getOutTradeNo());
             int ret = weChatPayTransactionPoMapper.updateByExampleSelective(weChatPayTransactionPo,example);
             if (ret == 0) {
-                return new WeChatPayReturnObject(WeChatPayReturnNo.ORDER_NO_TEXIST);
+                return new WeChatPayReturnObject(WeChatPayReturnNo.RESOURCE_NOT_EXISTS);
             } else {
                 return new WeChatPayReturnObject(WeChatPayReturnNo.OK);
             }
@@ -101,7 +101,7 @@ public class WeChatPayDao {
             criteria.andOutRefundNoEqualTo(outRefundNo);
             List<WeChatPayRefundPo> list = weChatPayRefundPoMapper.selectByExample(example);
             if(list.size()==0) {
-                return new WeChatPayReturnObject(WeChatPayReturnNo.ORDER_NO_TEXIST);
+                return new WeChatPayReturnObject(WeChatPayReturnNo.RESOURCE_NOT_EXISTS);
             }
             return new WeChatPayReturnObject(cloneVo(list.get(0), WeChatPayRefund.class));
         }catch (Exception e){

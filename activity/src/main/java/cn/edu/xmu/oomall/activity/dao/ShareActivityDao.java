@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.activity.dao;
 
 import cn.edu.xmu.oomall.activity.mapper.ShareActivityPoMapper;
-import cn.edu.xmu.oomall.activity.model.bo.ShareActivity;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.activity.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.activity.model.po.ShareActivityPoExample;
@@ -17,9 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import cn.edu.xmu.oomall.core.util.Common;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
@@ -91,20 +91,16 @@ public class ShareActivityDao {
      * @return
      */
     public ReturnObject addShareAct(ShareActivityBo shareActivityBo) {
-        ShareActivityPo shareActivityPo = (ShareActivityPo) cloneVo(shareActivityBo, ShareActivityPo.class);
+        ShareActivityPo shareActivityPo = cloneVo(shareActivityBo, ShareActivityPo.class);
         shareActivityPo.setStrategy(JacksonUtil.toJson(shareActivityBo.getStrategy()));
         try {
             int flag = shareActivityPoMapper.insert(shareActivityPo);
-            if (flag == 0) {
-                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
-            }
-            ShareActivityBo shareActivityBo1 = (ShareActivityBo) cloneVo(shareActivityPo, ShareActivityBo.class);
+            shareActivityBo = cloneVo(shareActivityPo, ShareActivityBo.class);
             if (shareActivityPo.getStrategy() != null) {
                 List<StrategyVo> strategyVos = (List<StrategyVo>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
-                shareActivityBo1.setStrategy(strategyVos);
+                shareActivityBo.setStrategy(strategyVos);
             }
-
-            return new ReturnObject(shareActivityBo1);
+            return new ReturnObject(shareActivityBo);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -130,13 +126,19 @@ public class ShareActivityDao {
             if (shareActivityPo == null) {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            //使用clonevo
-            shareActivityBo = (ShareActivityBo) cloneVo(shareActivityPo, ShareActivityBo.class);
+            shareActivityBo = cloneVo(shareActivityPo, ShareActivityBo.class);
+            List<StrategyVo> strategy=new ArrayList<>();
             if (shareActivityPo.getStrategy() != null) {
-                List<StrategyVo> strategyVos = (List<StrategyVo>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
-                shareActivityBo.setStrategy(strategyVos);
+                List<HashMap<String,Integer>> strategyVos = (List<HashMap<String, Integer>>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
+                if(strategyVos!=null){
+                    for(int i=0;i<strategyVos.size();i++){
+                        HashMap<String, Integer> stringObjectHashMap = strategyVos.get(i);
+                        StrategyVo strategyVo = new StrategyVo(stringObjectHashMap.get("quantity"), stringObjectHashMap.get("percentage"));
+                        strategy.add(strategyVo);
+                    }
+                    shareActivityBo.setStrategy(strategy);
+                }
             }
-            //查不到插入redis设置超时时间
             redisUtil.set(key, shareActivityBo, shareActivityExpireTime);
             return new ReturnObject(shareActivityBo);
         } catch (Exception e) {
@@ -155,7 +157,6 @@ public class ShareActivityDao {
     public ReturnObject getShareActivityByShopIdAndId(Long shopId, Long id) {
         String key = String.format(SHARE_BY_ID_AND_SHOP_ID,id,shopId);
         try {
-            System.out.println(redisUtil.get(key));
             ShareActivityBo shareActivityBo = (ShareActivityBo) redisUtil.get(key);
             if (shareActivityBo != null) {
                 return new ReturnObject(shareActivityBo);
@@ -169,10 +170,18 @@ public class ShareActivityDao {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             ShareActivityPo shareActivityPo = shareActivityPos.get(0);
-            shareActivityBo = (ShareActivityBo) cloneVo(shareActivityPo, ShareActivityBo.class);
+            shareActivityBo = cloneVo(shareActivityPo, ShareActivityBo.class);
+            List<StrategyVo> strategy=new ArrayList<>();
             if (shareActivityPo.getStrategy() != null) {
-                List<StrategyVo> strategyVos = (List<StrategyVo>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
-                shareActivityBo.setStrategy(strategyVos);
+                List<HashMap<String,Integer>> strategyVos = (List<HashMap<String, Integer>>) JacksonUtil.toObj(shareActivityPo.getStrategy(), new ArrayList<StrategyVo>().getClass());
+                if (strategyVos!=null){
+                    for(int i=0;i<strategyVos.size();i++){
+                        HashMap<String, Integer> stringObjectHashMap = strategyVos.get(i);
+                        StrategyVo strategyVo = new StrategyVo(stringObjectHashMap.get("quantity"), stringObjectHashMap.get("percentage"));
+                        strategy.add(strategyVo);
+                    }
+                    shareActivityBo.setStrategy(strategy);
+                }
             }
             redisUtil.set(key, shareActivityBo, shareActivityExpireTime);
             return new ReturnObject(shareActivityBo);
@@ -188,36 +197,24 @@ public class ShareActivityDao {
      * 根据分享活动id查找分享活动
      * @param id 分享活动id
      * @return shareActivity
+     * @author BingShuai Liu 22920192204245
      */
-    public ReturnObject<ShareActivity> selectShareActivityById(Long id){
-        ShareActivityPo shareActivityPo;
-        try {
-            shareActivityPo=shareActivityPoMapper.selectByPrimaryKey(id);
-            if(shareActivityPo==null){
-                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-            }
-        }catch (Exception e){
-            logger.error(e.getMessage());
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
-        ShareActivity shareActivity = (ShareActivity) cloneVo(shareActivityPo,ShareActivity.class);
-        return new ReturnObject<>(shareActivity);
+    public ReturnObject<ShareActivityPo> selectShareActivityById(Long id){
+        ShareActivityPo shareActivityPo=shareActivityPoMapper.selectByPrimaryKey(id);
+        return new ReturnObject<>(shareActivityPo);
     }
 
     /**
      * 根据分享活动的id, 修改对应表项
-     * @param id
-     * @param shareActivity
+     * @param shareActivityPo
      * @return
+     * @author BingShuai Liu 22920192204245
      */
-    public ReturnObject modifyShareActivity(Long id, ShareActivity shareActivity){
-        ShareActivityPo shareActivityPo;
+    public ReturnObject modifyShareActivity(ShareActivityPo shareActivityPo){
         int ret;
         try {
-            shareActivityPo = (ShareActivityPo) cloneVo(shareActivity,ShareActivityPo.class);
             ret = shareActivityPoMapper.updateByPrimaryKeySelective(shareActivityPo);
         }catch (Exception e){
-            logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
         if(ret == 0){
@@ -232,13 +229,13 @@ public class ShareActivityDao {
      * 需要判断state是否为0(草稿态)
      * @param id
      * @return
+     * @author BingShuai Liu 22920192204245
      */
     public ReturnObject deleteShareActivity(Long id){
         int ret;
         try {
             ret=shareActivityPoMapper.deleteByPrimaryKey(id);
         }catch (Exception e){
-            logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
         if(ret==0){
@@ -248,26 +245,4 @@ public class ShareActivityDao {
         }
     }
 
-    /**
-     * 修改分享活动的state
-     * @param shareActivity
-     * @return
-     */
-    public ReturnObject updateShareActivityState(ShareActivity shareActivity){
-        ShareActivityPo shareActivityPo = (ShareActivityPo)cloneVo(shareActivity,ShareActivityPo.class);
-        int ret;
-        try{
-            shareActivityPo.setGmtModified(LocalDateTime.now());
-            ret = shareActivityPoMapper.updateByPrimaryKey(shareActivityPo);
-        }
-        catch (Exception e){
-            logger.error(e.getMessage());
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
-        if(ret == 0){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-        }else{
-            return new ReturnObject();
-        }
-    }
 }

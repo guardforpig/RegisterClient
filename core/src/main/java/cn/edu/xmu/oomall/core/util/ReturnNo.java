@@ -1,5 +1,8 @@
 package cn.edu.xmu.oomall.core.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 返回的错误码
  * @author Ming Qiu
@@ -51,10 +54,15 @@ public enum ReturnNo {
     CUSTOMERID_NOTEXIST(608,"登录用户id不存在"),
     CUSTOMER_INVALID_ACCOUNT(609, "用户名不存在或者密码错误"),
     CUSTOMER_FORBIDDEN(610,"用户被禁止登录"),
+    CUSTOMER_MOBILEEXIST(611,"电话已被注册"),
+    CUSTOMER_EMAILEXIST(612,"邮箱已被注册"),
+    CUSTOMER_NAMEEXIST(613,"用户名已被注册"),
+    CUSTOMER_PASSWORDSAME(614,"不能与旧密码相同"),
 
     COUPON_NOTBEGIN(630,"未到优惠卷领取时间"),
     COUPON_FINISH(631,"优惠卷领罄"),
     COUPON_END(632,"优惠卷活动终止"),
+    COUPON_EXIST(633,"不可重复领优惠卷"),
     /***************************************************
      *    订单模块错误码
      **************************************************/
@@ -94,6 +102,13 @@ public enum ReturnNo {
 
     private int code;
     private String message;
+    private static final Map<Integer, ReturnNo> returnNoMap;
+    static {
+        returnNoMap = new HashMap();
+        for (ReturnNo enum1 : values()) {
+            returnNoMap.put(enum1.code, enum1);
+        }
+    }
     ReturnNo(int code, String message){
         this.code = code;
         this.message = message;
@@ -107,6 +122,9 @@ public enum ReturnNo {
             }
         }
         return null;
+    }
+    public static ReturnNo getReturnNoByCode(int code){
+        return returnNoMap.get(code);
     }
     public int getCode() {
         return code;

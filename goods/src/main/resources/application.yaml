@@ -75,3 +75,9 @@ oomall:
       expiretime: 10000
     product:
       expiretime: 10000
+
+productservice:
+  webdav:
+    username: ooad_javaee
+    password: 12345678
+    baseUrl: http://172.16.4.1/webdav/test/

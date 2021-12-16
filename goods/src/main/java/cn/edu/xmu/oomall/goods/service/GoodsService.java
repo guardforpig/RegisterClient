@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.goods.service;
 
+import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.GoodsDao;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
@@ -34,11 +35,11 @@ public class GoodsService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject insertGoods(Long shopId,GoodsVo goodsVo,Long loginUserId,String loginUserName)
     {
-        Goods goods=(Goods)cloneVo(goodsVo,Goods.class);
+        Goods goods=cloneVo(goodsVo,Goods.class);
         setPoCreatedFields(goods,loginUserId,loginUserName);
         goods.setShopId(shopId);
-        ReturnObject<Goods> ret=goodsDao.createNewGoods(goods);
-        if(ret.getData()!=null){
+        ReturnObject ret=goodsDao.createNewGoods(goods);
+        if(ret.getCode().equals(ReturnNo.OK)){
             CreateGoodsVo goodsVo1=(CreateGoodsVo)cloneVo(ret.getData(),CreateGoodsVo.class);
             return new ReturnObject(goodsVo1);
         }else{
@@ -55,7 +56,7 @@ public class GoodsService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject updateGoods(Long shopId,Long id,GoodsVo goodsVo,Long loginUser,String loginUserName)
     {
-        Goods goods = (Goods)cloneVo(goodsVo,Goods.class);
+        Goods goods = cloneVo(goodsVo,Goods.class);
         goods.setId(id);
         goods.setShopId(shopId);
        setPoModifiedFields(goods,loginUser,loginUserName);

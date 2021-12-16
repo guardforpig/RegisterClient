@@ -28,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -89,7 +91,7 @@ public class CouponActivityService {
      * @return 优惠活动列表
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<PageInfo<VoObject>> showOwnCouponActivities(Long shopId, LocalDateTime beginTime,LocalDateTime endTime, Integer page, Integer pageSize){
+    public ReturnObject<PageInfo<VoObject>> showOwnCouponActivities(Long shopId, ZonedDateTime beginTime, ZonedDateTime endTime, Integer page, Integer pageSize){
         //添加查询条件
         CouponActivityPoExample example = new CouponActivityPoExample();
         CouponActivityPoExample.Criteria criteria = example.createCriteria();
@@ -97,10 +99,10 @@ public class CouponActivityService {
             criteria.andShopIdEqualTo(shopId);
         }
         if(beginTime!=null){
-            criteria.andBeginTimeGreaterThan(beginTime);
+            criteria.andBeginTimeGreaterThan(beginTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
         }
         if(endTime!=null){
-            criteria.andBeginTimeLessThan(endTime);
+            criteria.andBeginTimeLessThan(endTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
         }
         //上线状态
         criteria.andStateEqualTo(CouponActivity.State.ONLINE.getCode().byteValue());
@@ -118,7 +120,7 @@ public class CouponActivityService {
      * @return 优惠活动列表 List<CouponActivityRetVo>
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<PageInfo<VoObject>> showOwnCouponActivities1(Long shopId,LocalDateTime beginTime,LocalDateTime endTime,Byte state,Integer page,Integer pageSize){
+    public ReturnObject<PageInfo<VoObject>> showOwnCouponActivities1(Long shopId,ZonedDateTime beginTime,ZonedDateTime endTime,Byte state,Integer page,Integer pageSize){
         //查询条件
         CouponActivityPoExample example = new CouponActivityPoExample();
         CouponActivityPoExample.Criteria criteria = example.createCriteria();
@@ -126,10 +128,10 @@ public class CouponActivityService {
             criteria.andShopIdEqualTo(shopId);
         }
         if(beginTime!=null){
-            criteria.andBeginTimeGreaterThan(beginTime);
+            criteria.andBeginTimeGreaterThan(beginTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
         }
         if(endTime!=null){
-            criteria.andBeginTimeLessThan(endTime);
+            criteria.andBeginTimeLessThan(endTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
         }
         if(state!=null){
             criteria.andStateEqualTo(state);
@@ -153,7 +155,15 @@ public class CouponActivityService {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
         Shop shop = returnObject.getData();
-        CouponActivity couponActivity = (CouponActivity) cloneVo(couponActivityVo,CouponActivity.class);
+        CouponActivity couponActivity = cloneVo(couponActivityVo,CouponActivity.class);
+        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转,一下几行行代码需删除
+        //将时区时间转为UTC时间并转成localdatetime
+        LocalDateTime couponTime = couponActivityVo.getCouponTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();;
+        LocalDateTime beginTime = couponActivityVo.getBeginTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+        LocalDateTime endTime = couponActivityVo.getBeginTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+        couponActivity.setCouponTime(couponTime);
+        couponActivity.setBeginTime(beginTime);
+        couponActivity.setEndTime(endTime);
         couponActivity.setShopId(shopId);
         couponActivity.setShopName(shop.getName());
         // 新建优惠时默认是草稿
@@ -210,7 +220,8 @@ public class CouponActivityService {
         if(!couponActivity.getCreatorId().equals(userId)){
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
-        return new ReturnObject<>(new CouponActivityVoInfo(couponActivity));
+        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转
+        return new ReturnObject<>(cloneVo(couponActivity,CouponActivityVoInfo.class));
     }
 
     /**
@@ -461,6 +472,7 @@ public class CouponActivityService {
         if (couponActivity.getState().equals(CouponActivity.State.OFFLINE.getCode())) {
             return new ReturnObject<>(ReturnNo.STATENOTALLOW);
         }
+
         // 通过CouponActivityId和OnsaleId，创建一个CouponOnsale
         CouponOnsale newCouponOnsale = new CouponOnsale();
         newCouponOnsale.setActivityId(couponActivityId);

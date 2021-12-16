@@ -38,11 +38,6 @@ public class OnSaleGetService {
 
     /**
      * 管理员查询特定商品的价格浮动
-     * @param shopId
-     * @param id
-     * @param page
-     * @param pageSize
-     * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject selectCertainOnsale(Long shopId, Long id,Integer page,Integer pageSize){
@@ -51,9 +46,6 @@ public class OnSaleGetService {
 
     /**
      * 管理员查询特定价格浮动的详情
-     * @param shopId
-     * @param id
-     * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject selectOnsale(Long shopId, Long id){
@@ -63,17 +55,17 @@ public class OnSaleGetService {
         }
         OnSaleGetBo onSale=(OnSaleGetBo) returnObject.getData();
         if(onSale.getType().equals(OnSaleGetBo.Type.NOACTIVITY)||onSale.getType().equals(OnSaleGetBo.Type.SECKILL)){
-            OnSaleRetVo onSaleRetVo=(OnSaleRetVo)cloneVo(onSale,OnSaleRetVo.class);
+            OnSaleRetVo onSaleRetVo=cloneVo(onSale,OnSaleRetVo.class);
             //设置product字段
             ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
-            if(returnObjectProduct.getCode().equals(ReturnNo.OK)){
+            if(returnObjectProduct.getCode().equals(0)){
                 Product product=(Product) returnObjectProduct.getData();
-                SimpleProductRetVo simpleProduct=(SimpleProductRetVo)cloneVo(product,SimpleProductRetVo.class);
+                SimpleProductRetVo simpleProduct=cloneVo(product,SimpleProductRetVo.class);
                 onSaleRetVo.setProduct(simpleProduct);
             }
             //设置shop字段
             InternalReturnObject internalObj=shopService.getShopInfo(onSale.getShopId());
-            if(internalObj.getErrno().equals(ReturnNo.OK)) {
+            if(internalObj.getErrno().equals(0)) {
                 SimpleShopVo simpleShopVo = (SimpleShopVo)internalObj.getData();
                 onSaleRetVo.setShop(simpleShopVo);
             }
@@ -85,11 +77,6 @@ public class OnSaleGetService {
 
     /**
      * 查询团购预售活动的所有价格浮动
-     * @param id
-     * @param state
-     * @param page
-     * @param pageSize
-     * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject selectActivities(Long id, Long did, Byte state, LocalDateTime beginTime,
@@ -99,11 +86,6 @@ public class OnSaleGetService {
 
     /**
      * 内部API-查询特定活动的所有价格浮动
-     * @param id
-     * @param state
-     * @param page
-     * @param pageSize
-     * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject selectShareActivities(Long did,Long id,Byte state,Integer page,Integer pageSize){
@@ -112,8 +94,6 @@ public class OnSaleGetService {
 
     /**
      * 内部API- 查询特定价格浮动的详情，该方法加入redis
-     * @param id
-     * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject selectFullOnsale(Long id){
@@ -122,17 +102,17 @@ public class OnSaleGetService {
             return returnObject;
         }
         OnSaleGetBo onSale=(OnSaleGetBo) returnObject.getData();
-        OnSaleRetVo onSaleRetVo=(OnSaleRetVo)cloneVo(onSale,OnSaleRetVo.class);
+        OnSaleRetVo onSaleRetVo=cloneVo(onSale,OnSaleRetVo.class);
         //设置product字段
         ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
         if(returnObjectProduct.getCode().equals(ReturnNo.OK)){
             Product product=(Product) returnObjectProduct.getData();
-            SimpleProductRetVo simpleProduct=(SimpleProductRetVo)cloneVo(product,SimpleProductRetVo.class);
+            SimpleProductRetVo simpleProduct=cloneVo(product,SimpleProductRetVo.class);
             onSaleRetVo.setProduct(simpleProduct);
         }
         //设置shop字段
         InternalReturnObject internalObj=shopService.getShopInfo(onSale.getShopId());
-        if(internalObj.getErrno().equals(ReturnNo.OK)) {
+        if(internalObj.getErrno().equals(0)) {
             SimpleShopVo simpleShopVo = (SimpleShopVo)internalObj.getData();
             onSaleRetVo.setShop(simpleShopVo);
         }
@@ -141,13 +121,6 @@ public class OnSaleGetService {
 
     /**
      * 管理员查询所有商品的价格浮动
-     * @param shopId
-     * @param productId
-     * @param beginTime
-     * @param endTime
-     * @param page
-     * @param pageSize
-     * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject selectAnyOnsale(Long shopId,Long productId,LocalDateTime beginTime,
