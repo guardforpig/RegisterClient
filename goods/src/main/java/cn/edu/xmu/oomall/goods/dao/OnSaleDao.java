@@ -58,7 +58,7 @@ public class OnSaleDao {
         try {
             OnSalePo onsalePo = (OnSalePo) cloneVo(onSale, OnSalePo.class);
             setPoCreatedFields(onsalePo, userId, userName);
-            onSalePoMapper.insert(onsalePo);
+            onSalePoMapper.insertSelective(onsalePo);
             return new ReturnObject((OnSale) cloneVo(onsalePo, OnSale.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
