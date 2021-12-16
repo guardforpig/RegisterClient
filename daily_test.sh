@@ -29,12 +29,12 @@ cd /home/mingqiu/privilegegateway/privilegeservice
 sed -i 's#'''$origin_dir'''#'''$daily_dir'''#g' pom.xml
 mvn clean package
 mvn site:site site:deploy
-curl --user ooad_javaee:$1 -T /home/mingqiu/oprivilegegateway/privilegeservice/target/privilegeservice-0.1.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
+curl --user ooad_javaee:$1 -T /home/mingqiu/privilegegateway/privilegeservice/target/privilegeservice-0.1.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
 
 echo '-------------------building gateway-------------------------'
 cd /home/mingqiu/privilegegateway/gateway
 mvn clean package
-curl --user ooad_javaee:$1 -T /home/mingqiu/oprivilegegateway/gateway/target/gateway-0.1.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
+curl --user ooad_javaee:$1 -T /home/mingqiu/privilegegateway/gateway/target/gateway-0.1.1-SNAPSHOT.jar http://172.16.4.1/webdav/deploy/
 
 cd /home/mingqiu/oomall
 git checkout core/pom.xml
