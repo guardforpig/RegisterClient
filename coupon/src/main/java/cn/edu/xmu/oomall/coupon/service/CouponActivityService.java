@@ -8,6 +8,7 @@ import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
@@ -148,22 +149,14 @@ public class CouponActivityService {
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addCouponActivity(Long userId, String userName, Long shopId, CouponActivityVo couponActivityVo){
-        InternalReturnObject<Shop> returnObject;
+        InternalReturnObject<ShopVo> returnObject;
         try{
             returnObject = shopFeignService.getShopById(shopId);
         }catch(Exception e){
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        Shop shop = returnObject.getData();
+        ShopVo shop = returnObject.getData();
         CouponActivity couponActivity = cloneVo(couponActivityVo,CouponActivity.class);
-        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转,一下几行行代码需删除
-        //将时区时间转为UTC时间并转成localdatetime
-        LocalDateTime couponTime = couponActivityVo.getCouponTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();;
-        LocalDateTime beginTime = couponActivityVo.getBeginTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-        LocalDateTime endTime = couponActivityVo.getBeginTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-        couponActivity.setCouponTime(couponTime);
-        couponActivity.setBeginTime(beginTime);
-        couponActivity.setEndTime(endTime);
         couponActivity.setShopId(shopId);
         couponActivity.setShopName(shop.getName());
         // 新建优惠时默认是草稿
@@ -220,7 +213,6 @@ public class CouponActivityService {
         if(!couponActivity.getCreatorId().equals(userId)){
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
-        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转
         return new ReturnObject<>(cloneVo(couponActivity,CouponActivityVoInfo.class));
     }
 

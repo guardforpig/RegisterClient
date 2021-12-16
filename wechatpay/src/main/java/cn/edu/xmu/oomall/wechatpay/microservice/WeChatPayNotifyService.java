@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author ziyi guo
  * @date 2021/12/1
  */
-@FeignClient(name = "WeChatPayNotify")
+@FeignClient(value = "payment-service")
 public interface WeChatPayNotifyService
 {
     @PostMapping("/wechat/payment/notify")

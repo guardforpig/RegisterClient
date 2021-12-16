@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.goods.microservice;
 
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -14,7 +15,7 @@ import java.util.List;
  * @description
  * @createTime 2021/11/29 15:47
  **/
-@FeignClient(name = "Shop")
+@FeignClient(value = "Shop")
 public interface ShopService {
     @GetMapping("/shops/{id}")
     InternalReturnObject<SimpleShopVo> getShopInfo(@PathVariable("id")Long id);
@@ -25,5 +26,12 @@ public interface ShopService {
      */
     @GetMapping("/shops/{shopId}/orphoncategorie")
     InternalReturnObject<List<CategoryVo>> getSecondCategory(@PathVariable Long shopId);
+
+    /**
+     * 需要内部接口，通过cateoryId获取SimpleCategory
+     * @return
+     */
+    @GetMapping("/internal/categories/{id}")
+    InternalReturnObject<SimpleCategoryVo> getCategoryById(@PathVariable("id") Long id);
 
 }
