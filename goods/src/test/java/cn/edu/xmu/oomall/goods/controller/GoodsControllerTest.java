@@ -757,7 +757,7 @@ class GoodsControllerTest {
         simpleCategoryVo.setId(1L);
         simpleCategoryVo.setName("test");
 
-        Mockito.when(categroyService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
+        Mockito.when(categroyService.getCategoryDetailById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         String responseString = this.mockMvc.perform(get("/shops/10/products/1576")
                 .header("authorization", adminToken)

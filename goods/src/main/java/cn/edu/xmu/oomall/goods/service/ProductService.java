@@ -211,12 +211,12 @@ public class ProductService {
         Product product = (Product) ret.getData();
 
         //查找categoryName
-        InternalReturnObject object = categroyService.getCategoryById(product.getCategoryId());
+        InternalReturnObject object = categroyService.getCategoryDetailById(product.getCategoryId());
 
         if (!object.getErrno().equals(0)) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        SimpleCategoryVo categoryVo = (SimpleCategoryVo) object.getData();
+        SimpleCategoryVo categoryVo = cloneVo(object.getData(),SimpleCategoryVo.class);
         product.setCategoryName(categoryVo.getName());
 
         ProductRetVo vo = (ProductRetVo) cloneVo(product, ProductRetVo.class);
@@ -249,11 +249,11 @@ public class ProductService {
         SimpleShopVo simpleShopVo = (SimpleShopVo) cloneVo(object.getData(),SimpleShopVo.class);
         product.setShopName(simpleShopVo.getName());
         //查找categoryName
-        InternalReturnObject object1 = categroyService.getCategoryById(product.getCategoryId());
-        if(!object.getErrno().equals(0)){
+        InternalReturnObject object1 = categroyService.getCategoryDetailById(product.getCategoryId());
+        if(!object1.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        SimpleCategoryVo categoryVo = (SimpleCategoryVo) object.getData();
+        SimpleCategoryVo categoryVo = cloneVo(object1.getData(),SimpleCategoryVo.class);
         product.setCategoryName(categoryVo.getName());
 
         ProductNewReturnVo vo = (ProductNewReturnVo) cloneVo(product, ProductNewReturnVo.class);
@@ -376,11 +376,11 @@ public class ProductService {
 
         Product product = (Product) ret.getData();
 
-        InternalReturnObject object = categroyService.getCategoryById(product.getCategoryId());
+        InternalReturnObject object = categroyService.getCategoryDetailById(product.getCategoryId());
         if(!object.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        SimpleCategoryVo categoryVo = (SimpleCategoryVo) object.getData();
+        SimpleCategoryVo categoryVo = cloneVo(object.getData(),SimpleCategoryVo.class);
         product.setCategoryName(categoryVo.getName());
 
         ProductShopRetVo vo = (ProductShopRetVo) cloneVo(product, ProductShopRetVo.class);
