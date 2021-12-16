@@ -156,14 +156,6 @@ public class CouponActivityService {
         }
         Shop shop = returnObject.getData();
         CouponActivity couponActivity = cloneVo(couponActivityVo,CouponActivity.class);
-        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转,一下几行行代码需删除
-        //将时区时间转为UTC时间并转成localdatetime
-        LocalDateTime couponTime = couponActivityVo.getCouponTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();;
-        LocalDateTime beginTime = couponActivityVo.getBeginTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-        LocalDateTime endTime = couponActivityVo.getBeginTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-        couponActivity.setCouponTime(couponTime);
-        couponActivity.setBeginTime(beginTime);
-        couponActivity.setEndTime(endTime);
         couponActivity.setShopId(shopId);
         couponActivity.setShopName(shop.getName());
         // 新建优惠时默认是草稿
@@ -220,7 +212,6 @@ public class CouponActivityService {
         if(!couponActivity.getCreatorId().equals(userId)){
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
-        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转
         return new ReturnObject<>(cloneVo(couponActivity,CouponActivityVoInfo.class));
     }
 

@@ -108,10 +108,8 @@ public class CouponActivityControllerTest {
                 .contentType("application/json;charset=UTF-8").header("authorization", adminToken).content(json))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedString = "{\n" +
-                "\"errno\": 0,\n" +
-                "\"errmsg\": \"成功\"\n" +
-                "}";
+        System.err.println(responseString);
+        String expectedString = "{\"errno\":0,\"data\":{\"name\":\"双11大惠够\",\"beginTime\":\"2021-11-10T12:00:00.000+08:00\",\"endTime\":\"2021-11-10T17:00:00.000+08:00\",\"couponTime\":\"2021-11-10T11:00:00.000+08:00\",\"quantity\":100,\"imageUrl\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedString,responseString,false);
 
 
