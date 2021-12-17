@@ -17,24 +17,28 @@
 package cn.edu.xmu.oomall;
 
 import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
 import org.junit.jupiter.api.BeforeAll;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(classes = PublicTestApp.class)   //标识本类是一个SpringBootTest
-public abstract class BaseTestOomall {
+public abstract class BaseTestOomall implements InitializingBean {
 
     @Value("${public-test.gateway.gate}")
     protected String gateway;
 
     protected WebTestClient mallClient;
 
-    @BeforeAll
-    public void setUp(){
+    private static final JwtHelper jwtHelper = new JwtHelper();
 
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
         this.mallClient = WebTestClient.bindToServer()
                 .baseUrl("http://"+gateway)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
@@ -56,19 +60,8 @@ public abstract class BaseTestOomall {
         //endregion
     }
 
-    protected String customerLogin(String userName, String password){
-        LoginVo vo = new LoginVo();
-        vo.setUserName(userName);
-        vo.setPassword(password);
-        String requireJson = JacksonUtil.toJson(vo);
-        byte[] ret = mallClient.post().uri("/customer/login").bodyValue(requireJson).exchange()
-                .expectStatus().isCreated()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .returnResult()
-                .getResponseBodyContent();
-        return JacksonUtil.parseString(new String(ret), "data");
-        //endregion
+    protected String customerLogin(Long userId, String userName, int userLevel){
+        return jwtHelper.createToken(userId,"测试用户",-1L,userLevel, 10000000);
     }
 
 }
