@@ -19,7 +19,7 @@ public class WeChatPayRefundNotifyRetVo {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Amount{
+    public static class Amount{
         private Integer total;
         private Integer refund;
         private Integer payerTotal;
@@ -29,7 +29,7 @@ public class WeChatPayRefundNotifyRetVo {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Ciphertext{
+    public static class Ciphertext{
         private String mchid;
         private String outTradeNo;
         private String transactionId;
@@ -45,7 +45,7 @@ public class WeChatPayRefundNotifyRetVo {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Resource{
+    public static class Resource{
         private String algorithm;
         private String originalType;
         private Ciphertext ciphertext;
