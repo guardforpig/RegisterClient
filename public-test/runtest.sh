@@ -2,16 +2,12 @@
 
 ## 将文件结尾从CRLF改为LF，解决了cd 错误问题
 cd /home/mingqiu/oomall
+git pull
 mvn clean install -Dmaven.test.skip=true
 
 cd /home/mingqiu/privilegegateway
-mvn clean install -Dmaven.test.skip=true
-
-cd /home/mingqiu/oomall/public-test
-
 git pull
-mvn clean
-
+mvn clean install -Dmaven.test.skip=true
 
 cd /home/mingqiu/test
 
