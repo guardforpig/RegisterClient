@@ -22,7 +22,7 @@ mkdir "$1"
 mkdir "$1/public"
 #mkdir "$1/private"
 
-cp -rf /home/mybaby/privilege/public-test/* $1/public
+cp -rf /home/mingqiu/oomall/public-test/* $1/public
 #cp -rf /home/mybaby/private-test/* $1/private
 
 sed -i "s/\${ooad.group}/$1/g" $1/public/pom.xml
