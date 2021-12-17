@@ -1,6 +1,8 @@
 package cn.edu.xmu.oomall.coupon.microservice;
 
+import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ProductRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -26,5 +28,7 @@ public interface GoodsService {
                                     @RequestParam("page") Integer pageNumber,
                                     @RequestParam("pageSize") Integer pageSize);
 
+    @GetMapping("/products/{id}")
+    InternalReturnObject<ProductRetVo> getProductById(@PathVariable("id")Long id);
 }
 
