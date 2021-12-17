@@ -40,7 +40,7 @@ public abstract class BaseTestOomall implements InitializingBean {
 
 
     private static final JwtHelper jwtHelper = new JwtHelper();
-
+    private static final String LOGINTEMP = "{\"name\":\"%s\",\"password\":\"%s\"}";
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -57,10 +57,7 @@ public abstract class BaseTestOomall implements InitializingBean {
     }
 
     protected String adminLogin(String userName, String password){
-        LoginVo vo = new LoginVo();
-        vo.setUserName(userName);
-        vo.setPassword(password);
-        String requireJson = JacksonUtil.toJson(vo);
+        String requireJson = String.format(LOGINTEMP,userName,password);
         byte[] ret = gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
