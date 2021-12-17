@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.activity.service;
 
+import cn.edu.xmu.oomall.activity.constant.TimeFormat;
 import cn.edu.xmu.oomall.activity.dao.AdvanceSaleDao;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSale;
@@ -358,11 +359,11 @@ public class AdvanceSaleService {
         advanceSaleBo.setShopName(shopVoReturnObject.getData().getName());
 
         //调用goodsService，根据shopId,productId，beginTime，endTime获取OnSale列表,判断要加入的活动的时间是否和已有product的预售活动时间冲突
-        InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1=goodsService.getOnSales(shopId,id,advanceSaleVo.getBeginTime(),advanceSaleVo.getEndTime(),1,1);
+        InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1=goodsService.getOnSales(shopId,id, TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getBeginTime()),TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getEndTime()),1,1);
         List<SimpleOnSaleInfoVo> list=new ArrayList<>();
         if(onSaleList1.getData().getList()!=null) {
             long total = onSaleList1.getData().getTotal();
-            InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList2 = goodsService.getOnSales(shopId, id, advanceSaleVo.getBeginTime(), advanceSaleVo.getEndTime(), 1, (int) total);
+            InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList2 = goodsService.getOnSales(shopId, id, TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getBeginTime()), TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getEndTime()), 1, (int) total);
             list=onSaleList2.getData().getList();
         }
         //判断是否有销售时间和预售活动时间冲突的OnSale
