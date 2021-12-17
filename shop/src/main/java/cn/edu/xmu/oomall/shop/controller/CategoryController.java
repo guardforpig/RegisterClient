@@ -87,7 +87,7 @@ public class CategoryController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @Audit(departName = "shops")
-    @GetMapping("/shops/{shopId}/orphoncategories")
+    @GetMapping("/shops/{shopId}/orphancategories")
     public Object selectOrphoncategories(@PathVariable("shopId") Long shopId) {
         // 非平台管理员
         if (shopId != 0) {
