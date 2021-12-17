@@ -1,17 +1,17 @@
 package cn.edu.xmu.oomall.shop.service;
 
+import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.dao.CategoryDao;
 import cn.edu.xmu.oomall.shop.model.bo.Category;
 import cn.edu.xmu.oomall.shop.model.po.CategoryPo;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryRetVo;
-import cn.edu.xmu.oomall.shop.model.vo.CategoryVo;
-import cn.edu.xmu.oomall.shop.model.vo.ShopSimpleRetVo;
-import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
@@ -41,7 +41,7 @@ public class CategoryService {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
 
-        return categoryDao.getSubCategories(id);
+        return Common.getListRetVo(categoryDao.getSubCategories(id), CategoryRetVo.class);
     }
 
     /**
@@ -131,9 +131,10 @@ public class CategoryService {
         /** 若有子类别，将子类别设为单独分类（pid=-1）**/
         var sub = categoryDao.getSubCategories(id);
         if (sub.getCode().equals(ReturnNo.OK)) {
-            for (Category category : sub.getData()) {
+            List<Category> categoryList = sub.getData();
+            for (Category category : categoryList) {
                 category.setPid(-1L);
-                CategoryPo categoryPo = (CategoryPo) cloneVo(category, CategoryPo.class);
+                CategoryPo categoryPo = cloneVo(category, CategoryPo.class);
                 categoryDao.updateCategory(categoryPo);
             }
         }

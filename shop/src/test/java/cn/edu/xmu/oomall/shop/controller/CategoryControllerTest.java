@@ -186,6 +186,7 @@ public class CategoryControllerTest {
 
         // 有子分类
         responseString = this.mvc.perform(get("/categories/1/subcategories"))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -215,6 +216,7 @@ public class CategoryControllerTest {
         // 查所有单独分类
         responseString = this.mvc.perform(get("/shops/0/orphoncategories")
                         .header("authorization", adminToken))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
