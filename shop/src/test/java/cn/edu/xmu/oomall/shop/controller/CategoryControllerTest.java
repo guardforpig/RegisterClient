@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -49,7 +50,10 @@ public class CategoryControllerTest {
         Mockito.when(redisUtil.set(Mockito.anyString(), Mockito.any(), Mockito.anyLong())).thenReturn(true);
 
         // 命名重复
-        String requestJson = "{\"name\": \"女装男装\"}";
+        String requestJson = "{\n" +
+                "  \"name\": \"女装男装\",\n" +
+                "  \"commissionRatio\": 2\n" +
+                "}";
         String responseString = this.mvc.perform(post("/shops/0/categories/0/subcategories")
                         .contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken)
@@ -60,7 +64,10 @@ public class CategoryControllerTest {
         JSONAssert.assertEquals("{\"errno\":901,\"errmsg\":\"类目名称已存在\"}", responseString, false);
 
         // 找不到
-        requestJson = "{\"name\": \"女装男装\"}";
+        requestJson = "{\n" +
+                "  \"name\": \"女装男装\",\n" +
+                "  \"commissionRatio\": 2\n" +
+                "}";
         responseString = this.mvc.perform(post("/shops/0/categories/500/subcategories")
                         .contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken)
@@ -71,7 +78,10 @@ public class CategoryControllerTest {
         JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
 
         // 成功插入，二级目录
-        requestJson = "{\"name\": \"童装a\"}";
+        requestJson = "{\n" +
+                "  \"name\": \"童装a\",\n" +
+                "  \"commissionRatio\": 1\n" +
+                "}";
         responseString = this.mvc.perform(post("/shops/0/categories/1/subcategories")
                         .contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken)
@@ -79,10 +89,13 @@ public class CategoryControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"commissionRatio\":null,\"name\":\"童装a\"}}", responseString, false);
+        JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\",\"data\":{\"commissionRatio\":1,\"name\":\"童装a\"}}", responseString, false);
 
         // 成功插入，一级目录
-        requestJson = "{\"name\": \"军械\"}";
+        requestJson = "{\n" +
+                "  \"name\": \"军械\",\n" +
+                "  \"commissionRatio\": 1\n" +
+                "}";
         responseString = this.mvc.perform(post("/shops/0/categories/0/subcategories")
                         .contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken)
@@ -90,10 +103,13 @@ public class CategoryControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\",\"data\":{\"commissionRatio\":null,\"name\":\"军械\"}}", responseString, false);
+        JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\",\"data\":{\"commissionRatio\":1,\"name\":\"军械\"}}", responseString, false);
 
         // 不能插入成为三级目录
-        requestJson = "{\"name\": \"手机游戏\"}";
+        requestJson = "{\n" +
+                "  \"name\": \"手机游戏\",\n" +
+                "  \"commissionRatio\": 1\n" +
+                "}";
         responseString = this.mvc.perform(post("/shops/0/categories/277/subcategories")
                         .contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken)
@@ -104,7 +120,10 @@ public class CategoryControllerTest {
         JSONAssert.assertEquals("{\"errno\":967,\"errmsg\":\"不允许增加新的下级分类\"}", responseString, false);
 
         // 传参错误
-        requestJson = "{\"name\": \"\"}";
+        requestJson = "{\n" +
+                "  \"name\": \"\",\n" +
+                "  \"commissionRatio\": 1\n" +
+                "}";
         responseString = this.mvc.perform(post("/shops/0/categories/277/subcategories")
                         .contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken)
@@ -115,7 +134,10 @@ public class CategoryControllerTest {
         JSONAssert.assertEquals("{\"errno\":503,\"errmsg\":\"分类名不能为空;\"}", responseString, false);
 
         // 服务器错误
-        requestJson = "{\"name\":\"conditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditioncondition\"}";
+        requestJson = "{\n" +
+                "  \"name\": \"conditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditionconditionitionconditioncondition\",\n" +
+                "  \"commissionRatio\": 1\n" +
+                "}";
         responseString = this.mvc.perform(post("/shops/0/categories/0/subcategories")
                         .contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken)
@@ -126,7 +148,10 @@ public class CategoryControllerTest {
         JSONAssert.assertEquals("{\"errno\":500}", responseString, false);
 
         // id小于0
-        requestJson = "{\"name\": \"t1\"}";
+        requestJson = "{\n" +
+                "  \"name\": \"t1\",\n" +
+                "  \"commissionRatio\": 1\n" +
+                "}";
         responseString = this.mvc.perform(post("/shops/0/categories/-1/subcategories")
                         .contentType("application/json;charset=UTF-8")
                         .header("authorization", adminToken)
@@ -137,7 +162,10 @@ public class CategoryControllerTest {
         JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
 
         // 非平台管理员访问
-        requestJson = "{\"name\": \"童装b\"}";
+        requestJson = "{\n" +
+                "  \"name\": \"童装\",\n" +
+                "  \"commissionRatio\": 1\n" +
+                "}";
         responseString = this.mvc.perform(post("/shops/1/categories/1/subcategories")
                         .contentType("application/json;charset=UTF-8")
                         .header("authorization", shopToken)
@@ -158,10 +186,11 @@ public class CategoryControllerTest {
 
         // 有子分类
         responseString = this.mvc.perform(get("/categories/1/subcategories"))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\"}", responseString, false);
+        JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString, false);
 
         // 找不到
         responseString = this.mvc.perform(get("/categories/500/subcategories"))
@@ -175,7 +204,7 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\"}", responseString, false);
+        JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString, false);
 
         // 尝试查所有一级分类
         responseString = this.mvc.perform(get("/categories/0/subcategories"))
@@ -187,10 +216,11 @@ public class CategoryControllerTest {
         // 查所有单独分类
         responseString = this.mvc.perform(get("/shops/0/orphoncategories")
                         .header("authorization", adminToken))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        JSONAssert.assertEquals("{\"code\":\"OK\",\"errmsg\":\"成功\"}", responseString, false);
+        JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString, false);
 
         responseString = this.mvc.perform(get("/shops/1/orphoncategories")
                         .header("authorization", shopToken))
@@ -319,5 +349,37 @@ public class CategoryControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         JSONAssert.assertEquals("{\"errno\":505,\"errmsg\":\"操作的资源id不是自己的对象\"}", responseString, false);
+    }
+
+    @Test
+    @Transactional
+    public void getParentCategory() throws Exception {
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+        Mockito.when(redisUtil.set(Mockito.anyString(), Mockito.any(), Mockito.anyLong())).thenReturn(true);
+        Mockito.doNothing().when(redisUtil).del(Mockito.anyString());
+
+        // 获取成功
+        String responseString = this.mvc.perform(get("/categories/273/parents"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString, false);
+
+        // 无该分类
+        responseString = this.mvc.perform(get("/categories/500/parents"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
+
+        // 无父分类
+        responseString = this.mvc.perform(get("/categories/1/parents"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
     }
 }
