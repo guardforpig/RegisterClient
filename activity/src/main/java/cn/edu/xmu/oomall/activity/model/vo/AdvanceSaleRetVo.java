@@ -27,15 +27,15 @@ public class AdvanceSaleRetVo{
     private ProductVo product;
 
     @ApiModelProperty(value = "支付尾款时间")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
     private ZonedDateTime payTime;
 
     @ApiModelProperty(value = "开始时间")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
     private ZonedDateTime beginTime;
 
     @ApiModelProperty(value = "结束时间")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
     private ZonedDateTime endTime;
 
     @ApiModelProperty(value = "价格")
