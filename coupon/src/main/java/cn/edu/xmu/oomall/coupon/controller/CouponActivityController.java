@@ -6,10 +6,12 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
+import cn.edu.xmu.oomall.coupon.model.vo.DiscountItemVo;
 import cn.edu.xmu.oomall.coupon.service.CouponActivityService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.lang.reflect.InvocationTargetException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -318,6 +321,30 @@ public class CouponActivityController {
                                                 @LoginUser Long userId, @LoginName String userName) {
 
         ReturnObject returnObject = couponActivityService.updateCouponActivity(userId, userName, shopId, couponActivityId, null, CouponActivity.State.OFFLINE);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+    /**
+     * @author Zijun Min
+     * 根据设定的优惠活动计算当前有效的商品优惠价格
+     */
+    @PutMapping("/internal/discountprices")
+    @Audit(departName = "shops")
+    public Object calculateDiscount(@LoginUser Long LoginUser, @LoginName String loginName, @RequestBody List<DiscountItemVo>items)
+            throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+        ReturnObject returnObject=couponActivityService.calculateActivityDiscount(items);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+    /**
+     * @author Zijun Min
+     * 计算当前有效的最优优惠活动方案
+     */
+    @PutMapping("/internal/discountprices/best")
+    @Audit(departName = "shops")
+    public Object calculateDiscountBest(@LoginUser Long LoginUser, @LoginName String loginName, @RequestBody List<DiscountItemVo>items)
+            throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+        ReturnObject returnObject=couponActivityService.calculateDiscountBest(items);
         return Common.decorateReturnObject(returnObject);
     }
 }

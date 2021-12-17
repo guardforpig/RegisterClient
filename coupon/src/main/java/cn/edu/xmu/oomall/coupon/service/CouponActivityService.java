@@ -7,18 +7,20 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ProductRetVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
+import cn.edu.xmu.oomall.coupon.model.bo.OrderItem;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
+import cn.edu.xmu.oomall.coupon.model.bo.strategy.BaseCouponDiscount;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
-import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
-import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
-import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVoInfo;
+import cn.edu.xmu.oomall.coupon.model.vo.*;
 import cn.edu.xmu.oomall.coupon.microservice.ShopFeignService;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -546,5 +549,191 @@ public class CouponActivityService {
         InternalReturnObject<OnsaleVo> tempOnsaleVo = goodsService.getOnsaleById(retCouponOnsale.getData().getOnsaleId());
         redisUtils.del(String.format(COUPONACTIVITYLISTKEY, tempOnsaleVo.getData().getProduct().getId()));
         return new ReturnObject<>(ReturnNo.OK);
+    }
+
+    /**
+     * @author Zijun Min 22920192204257
+     * 计算商品优惠价格
+     */
+    public ReturnObject calculateDiscount(Map<Long,List<OrderItem>>itemsMap, List<DiscountRetVo>discountRetVos) throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+        //计算优惠价格
+        for(Long id:itemsMap.keySet()){
+            ReturnObject objCouponAct=couponActivityDao.getCouponActivityById(id);
+            if(!objCouponAct.getCode().equals(ReturnNo.OK)){
+                return objCouponAct;
+            }
+            CouponActivity couponActivity=(CouponActivity)objCouponAct.getData();
+            BaseCouponDiscount baseCouponDiscount= BaseCouponDiscount.getInstance(couponActivity.getStrategy());
+            baseCouponDiscount.compute(itemsMap.get(id));
+            for(OrderItem orderItem:itemsMap.get(id)){
+                DiscountRetVo discountRetVo=cloneVo(orderItem,DiscountRetVo.class);
+                discountRetVo.setActivityId(orderItem.getCouponActivityId());
+                discountRetVo.setDiscountPrice(orderItem.getDiscount());
+                discountRetVos.add(discountRetVo);
+            }
+        }
+        return new ReturnObject(discountRetVos);
+    }
+
+    /**
+     * @author Zijun Min 22920192204257
+     * 根据设定的优惠活动计算当前有效的商品优惠价格
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject calculateActivityDiscount(List<DiscountItemVo>items) throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+        //activityId和对应的orderItem列表
+        Map<Long,List<OrderItem>>itemsMap=new HashMap<Long,List<OrderItem>>();
+        List<DiscountRetVo>discountRetVos=new ArrayList<>();
+
+        for(DiscountItemVo item:items){
+            OrderItem orderItem=item.getOrderItem();
+            //通过product找到categoryId
+            InternalReturnObject<ProductRetVo> objProduct=goodsService.getProductById(item.getProductId());
+            if(!objProduct.getErrno().equals(0)){
+                return new ReturnObject(objProduct);
+            }
+            ProductRetVo productRetVo=(ProductRetVo) objProduct.getData();
+            //product中对应的onsaleId和传入参数的onSaleId不一致
+            if(productRetVo.getOnSaleId()==null||!productRetVo.getOnSaleId().equals(item.getOnsaleId())){
+                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+            }
+            orderItem.setCategoryId(productRetVo.getCategory().getId());
+
+            //没有优惠活动的商品，直接放入返回值DiscountRetVo的列表中
+            if(item.getActivityId()==null){
+                DiscountRetVo discountRetVo=cloneVo(item,DiscountRetVo.class);
+                discountRetVo.setDiscountPrice(item.getOriginalPrice());
+                discountRetVos.add(discountRetVo);
+            }
+            //有优惠活动的商品，放入map
+            else {
+                //将orderItem按照优惠活动id分类放在map中
+                if (itemsMap.containsKey(item.getActivityId())) {
+                    itemsMap.get(item.getActivityId()).add(orderItem);
+                } else {
+                    List<OrderItem> orderItems = new ArrayList<>();
+                    orderItems.add(orderItem);
+                    itemsMap.put(item.getActivityId(), orderItems);
+                }
+            }
+        }
+        return calculateDiscount(itemsMap,discountRetVos);
+    }
+
+    /**
+     * @author Zijun Min 22920192204257
+     * 有多个优惠活动的onsale，计算最优优惠组合
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject chooseActivitiesBest(Map<Long,List<OrderItem>>actItemsMap) throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+        //activityId和对应的discount
+        Map<Long,Long>actDiscountMap=new HashMap<>();
+
+        //对于每一个活动对应的所有orderItem，分别计算每一种活动的discount，选取优惠最高的活动，将优惠额度记录在itemDiscountMap中
+        for(Long actId:actItemsMap.keySet()){
+            //计算每一种活动的discount
+            ReturnObject objCouponAct=couponActivityDao.getCouponActivityById(actId);
+            if(!objCouponAct.getCode().equals(ReturnNo.OK)){
+                return objCouponAct;
+            }
+            CouponActivity couponActivity=(CouponActivity)objCouponAct.getData();
+            BaseCouponDiscount baseCouponDiscount= BaseCouponDiscount.getInstance(couponActivity.getStrategy());
+            baseCouponDiscount.compute(actItemsMap.get(actId));
+            Long discount=0L;
+            for(OrderItem orderItem:actItemsMap.get(actId)){
+                discount+=orderItem.getPrice()-orderItem.getDiscount();
+            }
+            actDiscountMap.put(actId,discount);
+        }
+
+        //按照优惠金额降序排列，优惠更多的活动id会覆盖优惠低的活动id，以下5行排序代码参考gxc同学
+        List<Map.Entry<Long,Long>> actDiscountList = new ArrayList<Map.Entry<Long,Long>>(actDiscountMap.entrySet());
+        Collections.sort(actDiscountList, new Comparator<Map.Entry<Long,Long>>(){
+            @Override
+            public int compare(Map.Entry<Long,Long> o1, Map.Entry<Long,Long> o2) {
+                return (o2.getValue().intValue()- o1.getValue().intValue());
+            }
+        });
+
+        //activityId和对应的orderItems，orderItem无重复
+        Map<Long,List<OrderItem>>itemsMap=new HashMap<>();
+        //记录已经确定优惠活动的product
+        List<Long>calculatedProducts=new ArrayList<>();
+        //将orderItem的activityId更新，并插入itemsMap中
+        for(int i=0;i<actDiscountList.size();i++){
+            Long activityId=actDiscountList.get(i).getKey();
+            List<OrderItem>orderItems=actItemsMap.get(activityId);
+            for(int j=0;j<orderItems.size();j++){
+                OrderItem orderItem=orderItems.get(j);
+                if(!calculatedProducts.contains(orderItem.getProductId())) {
+                    orderItem.setCouponActivityId(activityId);
+                    calculatedProducts.add(orderItem.getProductId());
+                    if (itemsMap.containsKey(activityId)) {
+                        itemsMap.get(activityId).add(orderItem);
+                    } else {
+                        List<OrderItem> orderItemList = new ArrayList<>();
+                        orderItemList.add(orderItem);
+                        itemsMap.put(activityId, orderItemList);
+                    }
+                }
+            }
+        }
+        return new ReturnObject<>(itemsMap);
+    }
+
+    /**
+     * @author Zijun Min 22920192204257
+     * 计算当前有效的最优优惠活动方案
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject calculateDiscountBest(List<DiscountItemVo>items) throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+        List<DiscountRetVo>discountRetVos=new ArrayList<>();
+        //activityId和对应的orderItem列表，orderItem有重复
+        Map<Long,List<OrderItem>>actItemsMap=new HashMap<Long,List<OrderItem>>();
+
+        for(DiscountItemVo item:items) {
+            OrderItem orderItem = item.getOrderItem();
+            //通过productId找到categoryId
+            InternalReturnObject objProduct = goodsService.getProductById(item.getProductId());
+            if (!objProduct.getErrno().equals(0)) {
+                return new ReturnObject(objProduct);
+            }
+            ProductRetVo productRetVo = (ProductRetVo) objProduct.getData();
+            //product中对应的onsaleId和传入参数的onSaleId不一致
+            if (!productRetVo.getOnSaleId().equals(item.getOnsaleId())) {
+                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+            }
+            orderItem.setCategoryId(productRetVo.getCategory().getId());
+
+            ReturnObject objCouponAct = couponActivityDao.getCouponActivitiesListByOnsaleId(item.getOnsaleId());
+            if (!objCouponAct.getCode().equals(ReturnNo.OK)) {
+                return objCouponAct;
+            }
+            List<CouponActivity> couponActivityList = (List<CouponActivity>) objCouponAct.getData();
+            //没有任何优惠，直接原价
+            if (couponActivityList.isEmpty()) {
+                DiscountRetVo discountRetVo = cloneVo(item, DiscountRetVo.class);
+                discountRetVo.setDiscountPrice(item.getOriginalPrice());
+                discountRetVos.add(discountRetVo);
+            } else {
+                //把优惠和orderItem加到map中
+                for(CouponActivity couponActivity:couponActivityList){
+                    if (actItemsMap.containsKey(couponActivity.getId())) {
+                        actItemsMap.get(couponActivity.getId()).add(orderItem);
+                    } else {
+                        List<OrderItem> orderItems = new ArrayList<>();
+                        orderItems.add(orderItem);
+                        actItemsMap.put(couponActivity.getId(), orderItems);
+                    }
+                }
+            }
+        }
+
+        ReturnObject objBest = chooseActivitiesBest(actItemsMap);
+        if(!objBest.getCode().equals(ReturnNo.OK)){
+            return objBest;
+        }
+        Map<Long,List<OrderItem>>chooseMap=(Map<Long, List<OrderItem>>) objBest.getData();
+        return calculateDiscount(chooseMap,discountRetVos);
     }
 }
