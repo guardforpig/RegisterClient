@@ -58,7 +58,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void getSubgroupTest1() throws Exception {
-        this.mallClient.get().uri(SUBGROUPURL,1, 4)
+        this.gatewayClient.get().uri(SUBGROUPURL,1, 4)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -71,7 +71,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void getSubgroupTest2() throws Exception {
-        this.mallClient.get().uri(SUBGROUPURL,1, 4)
+        this.gatewayClient.get().uri(SUBGROUPURL,1, 4)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -87,7 +87,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void getSubgroupTest3() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
 
-        this.mallClient.get().uri(SUBGROUPURL,1, 4)
+        this.gatewayClient.get().uri(SUBGROUPURL,1, 4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -103,7 +103,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void getSubgroupTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
 
-        this.mallClient.get().uri(SUBGROUPURL,1, 4)
+        this.gatewayClient.get().uri(SUBGROUPURL,1, 4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -120,7 +120,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void getSubgroupTest5() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
 
-        this.mallClient.get().uri(SUBGROUPURL,1, 4)
+        this.gatewayClient.get().uri(SUBGROUPURL,1, 4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -138,7 +138,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void getSubgroupTest6() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient.get().uri(SUBGROUPURL,2, 5)
+        this.gatewayClient.get().uri(SUBGROUPURL,2, 5)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -153,7 +153,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void getParentTest1() throws Exception {
-        this.mallClient.get().uri(PARENTURL,1, 8)
+        this.gatewayClient.get().uri(PARENTURL,1, 8)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -166,7 +166,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void getParentTest2() throws Exception {
-        this.mallClient.get().uri(PARENTURL,1, 8)
+        this.gatewayClient.get().uri(PARENTURL,1, 8)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -182,7 +182,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void getParentTest3() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
 
-        this.mallClient.get().uri(PARENTURL,1, 8)
+        this.gatewayClient.get().uri(PARENTURL,1, 8)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -198,7 +198,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void getParentTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
 
-        this.mallClient.get().uri(PARENTURL,1, 8)
+        this.gatewayClient.get().uri(PARENTURL,1, 8)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -215,7 +215,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void getParentTest5() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
 
-        this.mallClient.get().uri(PARENTURL,1, 8)
+        this.gatewayClient.get().uri(PARENTURL,1, 8)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -234,7 +234,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void getParentTest6() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient.get().uri(PARENTURL,2, 9)
+        this.gatewayClient.get().uri(PARENTURL,2, 9)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -253,7 +253,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void postGroupTest1() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
         String roleJson = "{\"name\": \"subgroup1\"}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GROUPURL, 1)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GROUPURL, 1)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -265,7 +265,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
         RetGroup vo = JacksonUtil.parseObject(ret, "data", RetGroup.class);
         this.depart1GroupId = vo.getId();
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 1)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -283,7 +283,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void postGroupTest2() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
         String roleJson = "{\"name\": \"subgroup2\"}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GROUPURL, 2)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GROUPURL, 2)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -295,7 +295,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
         RoleRetVo vo = JacksonUtil.parseObject(ret, "data", RoleRetVo.class);
         this.depart2GroupId = vo.getId();
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 2)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -310,7 +310,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void postGroupUserTest1() throws Exception {
-        this.mallClient.post().uri(USERGROUPID,1, 4, 17360)
+        this.gatewayClient.post().uri(USERGROUPID,1, 4, 17360)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -323,7 +323,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void postGroupUserTest2() throws Exception {
-        this.mallClient.post().uri(USERGROUPID,1, 4, 17360)
+        this.gatewayClient.post().uri(USERGROUPID,1, 4, 17360)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -338,7 +338,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void postGroupUserTest3() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.post().uri(USERGROUPID,1, 4, 17360)
+        this.gatewayClient.post().uri(USERGROUPID,1, 4, 17360)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -353,7 +353,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void postGroupUserTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.post().uri(USERGROUPID,1, 4, 17360)
+        this.gatewayClient.post().uri(USERGROUPID,1, 4, 17360)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -367,7 +367,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void delGroupUserTest1() throws Exception {
-        this.mallClient.delete().uri(USERGROUPID,1, 4, 17360)
+        this.gatewayClient.delete().uri(USERGROUPID,1, 4, 17360)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -380,7 +380,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void delGroupUserTest2() throws Exception {
-        this.mallClient.delete().uri(USERGROUPID,1, 4, 17360)
+        this.gatewayClient.delete().uri(USERGROUPID,1, 4, 17360)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -395,7 +395,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void delGroupUserTest3() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.delete().uri(USERGROUPID,1, 4, 17360)
+        this.gatewayClient.delete().uri(USERGROUPID,1, 4, 17360)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -410,7 +410,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void delGroupUserTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.delete().uri(USERGROUPID,1, 4, 17360)
+        this.gatewayClient.delete().uri(USERGROUPID,1, 4, 17360)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -429,14 +429,14 @@ public class DepartsSubgroupTest extends BaseTestOomall {
         String token1 = this.adminLogin("group_user2", "123456");
 
         //增加前无权限
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
-        this.mallClient.post().uri(USERGROUPID,1, 4, 17360)
+        this.gatewayClient.post().uri(USERGROUPID,1, 4, 17360)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -444,7 +444,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.id").isEqualTo(17360);
 
-        this.mallClient.get().uri(USERGROUP,1, 17360)
+        this.gatewayClient.get().uri(USERGROUP,1, 17360)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -453,14 +453,14 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.data.list[?(@.id == '4')]").exists();
 
         //增加后有权限
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.delete().uri(USERGROUPID,1, 4, 17360)
+        this.gatewayClient.delete().uri(USERGROUPID,1, 4, 17360)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -468,7 +468,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //删除后无权限
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -476,7 +476,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         assertNotNull(this.depart1GroupId);
-        this.mallClient.post().uri(USERGROUPID,1, this.depart1GroupId, 17360)
+        this.gatewayClient.post().uri(USERGROUPID,1, this.depart1GroupId, 17360)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -484,7 +484,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.id").isEqualTo(17360);
 
-        this.mallClient.get().uri(GROUPUSER,1, this.depart1GroupId)
+        this.gatewayClient.get().uri(GROUPUSER,1, this.depart1GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -503,7 +503,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void postdelGroupUserTest6() throws Exception {
         String token1 = this.adminLogin("group_user2", "123456");
         //增加前无权限
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -511,7 +511,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.post().uri(USERGROUPID,2, 5, 17361)
+        this.gatewayClient.post().uri(USERGROUPID,2, 5, 17361)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -519,7 +519,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.id").isEqualTo(17361);
 
-        this.mallClient.get().uri(USERGROUP,2, 17361)
+        this.gatewayClient.get().uri(USERGROUP,2, 17361)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -528,14 +528,14 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.data.list[?(@.id == '5')]").exists();
 
         //增加后有权限
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.delete().uri(USERGROUPID,2, 5, 17361)
+        this.gatewayClient.delete().uri(USERGROUPID,2, 5, 17361)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -543,7 +543,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //删除后无权限
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -551,7 +551,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         assertNotNull(this.depart2GroupId);
-        this.mallClient.post().uri(USERGROUPID,2, this.depart2GroupId, 17361)
+        this.gatewayClient.post().uri(USERGROUPID,2, this.depart2GroupId, 17361)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -559,7 +559,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.id").isEqualTo(17361);
 
-        this.mallClient.get().uri(GROUPUSER,2, this.depart2GroupId)
+        this.gatewayClient.get().uri(GROUPUSER,2, this.depart2GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -574,7 +574,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void postSubgroupTest1() throws Exception {
-        this.mallClient.post().uri(IDURL,1, 4, 8)
+        this.gatewayClient.post().uri(IDURL,1, 4, 8)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -589,7 +589,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void postSubgroupTest2() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
 
-        this.mallClient.post().uri(IDURL,1, 4, 8)
+        this.gatewayClient.post().uri(IDURL,1, 4, 8)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -605,7 +605,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void postSubgroupTest3() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
 
-        this.mallClient.post().uri(IDURL,1, 4, 8)
+        this.gatewayClient.post().uri(IDURL,1, 4, 8)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -621,7 +621,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void postSubgroupTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
 
-        this.mallClient.post().uri(IDURL,2, 5, 112348)
+        this.gatewayClient.post().uri(IDURL,2, 5, 112348)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -641,7 +641,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
         //增加前用户无权限
         String token1 = this.adminLogin("group_user1", "123456");
 
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -649,7 +649,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.post().uri(IDURL,1, 4, this.depart1GroupId)
+        this.gatewayClient.post().uri(IDURL,1, 4, this.depart1GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -658,7 +658,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.data.id").isEqualTo(this.depart1GroupId);
 
         //增加后用户有权限
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -678,7 +678,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
 
         //增加前用户无权限
         String token1 = this.adminLogin("group_user2", "123456");
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -686,7 +686,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.post().uri(IDURL,2, 5, this.depart2GroupId)
+        this.gatewayClient.post().uri(IDURL,2, 5, this.depart2GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -695,7 +695,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.data.id").isEqualTo(this.depart2GroupId);
 
         //增加后用户有权限
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -709,7 +709,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void getGroupRoleTest1() throws Exception {
-        this.mallClient.get().uri(GROUPROLE,1, 4)
+        this.gatewayClient.get().uri(GROUPROLE,1, 4)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -723,7 +723,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void getGroupRoleTest2() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.get().uri(GROUPROLE,1, 4)
+        this.gatewayClient.get().uri(GROUPROLE,1, 4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -738,7 +738,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void getGroupRoleTest3() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.get().uri(GROUPROLE,1, 4)
+        this.gatewayClient.get().uri(GROUPROLE,1, 4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -753,7 +753,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void getGroupRoleTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.get().uri(GROUPROLE,2, 10224)
+        this.gatewayClient.get().uri(GROUPROLE,2, 10224)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -770,7 +770,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void getGroupRoleTest5() throws Exception {
         assertNotNull(this.depart1GroupId);
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(GROUPROLE,1, this.depart1GroupId)
+        this.gatewayClient.get().uri(GROUPROLE,1, this.depart1GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -789,7 +789,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
 
         assertNotNull(this.depart2GroupId);
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(GROUPROLE,2, this.depart2GroupId)
+        this.gatewayClient.get().uri(GROUPROLE,2, this.depart2GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -804,7 +804,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void getGroupBRoleTest1() throws Exception {
-        this.mallClient.get().uri(GROUPBROLE,1, 4)
+        this.gatewayClient.get().uri(GROUPBROLE,1, 4)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -818,7 +818,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void getGroupBRoleTest2() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.get().uri(GROUPBROLE,1, 4)
+        this.gatewayClient.get().uri(GROUPBROLE,1, 4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -833,7 +833,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void getGroupBRoleTest3() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.get().uri(GROUPBROLE,1, 4)
+        this.gatewayClient.get().uri(GROUPBROLE,1, 4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -848,7 +848,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void getGroupBRoleTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.get().uri(GROUPBROLE,2, 10224)
+        this.gatewayClient.get().uri(GROUPBROLE,2, 10224)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -865,7 +865,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     public void getGroupBRoleTest5() throws Exception {
         assertNotNull(this.depart1GroupId);
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(GROUPBROLE,1, this.depart1GroupId)
+        this.gatewayClient.get().uri(GROUPBROLE,1, this.depart1GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -885,7 +885,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
 
         assertNotNull(this.depart2GroupId);
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(GROUPBROLE,2, this.depart2GroupId)
+        this.gatewayClient.get().uri(GROUPBROLE,2, this.depart2GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -900,7 +900,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void forbidGroupTest1() throws Exception {
-        this.mallClient.put().uri(FORBIDURL,1, 4)
+        this.gatewayClient.put().uri(FORBIDURL,1, 4)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -914,7 +914,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void forbidGroupTest2() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.put().uri(FORBIDURL,1, 4)
+        this.gatewayClient.put().uri(FORBIDURL,1, 4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -929,7 +929,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void forbidGroupTest3() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(FORBIDURL,1, 4)
+        this.gatewayClient.put().uri(FORBIDURL,1, 4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -944,7 +944,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void forbidGroupTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(FORBIDURL,2, 12321433)
+        this.gatewayClient.put().uri(FORBIDURL,2, 12321433)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -962,14 +962,14 @@ public class DepartsSubgroupTest extends BaseTestOomall {
         assertNotNull(this.depart1GroupId);
         String token1 = this.adminLogin("group_user1", "123456");
         //前有权限
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.put().uri(FORBIDURL,1, this.depart1GroupId)
+        this.gatewayClient.put().uri(FORBIDURL,1, this.depart1GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -977,7 +977,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.id").isEqualTo(this.depart1GroupId);
         //用户无权限
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -996,7 +996,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
         assertNotNull(this.depart2GroupId);
         //前有权限
         String token1 = this.adminLogin("group_user2", "123456");
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -1004,7 +1004,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.put().uri(FORBIDURL,2, this.depart2GroupId)
+        this.gatewayClient.put().uri(FORBIDURL,2, this.depart2GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -1013,7 +1013,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.data.id").isEqualTo(this.depart2GroupId);
 
         //后无权限
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -1027,7 +1027,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void releaseGroupTest1() throws Exception {
-        this.mallClient.put().uri(RELEASEURL, 1,4)
+        this.gatewayClient.put().uri(RELEASEURL, 1,4)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -1041,7 +1041,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void releaseGroupTest2() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.put().uri(RELEASEURL, 1,4)
+        this.gatewayClient.put().uri(RELEASEURL, 1,4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -1056,7 +1056,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void releaseGroupTest3() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(RELEASEURL, 1,4)
+        this.gatewayClient.put().uri(RELEASEURL, 1,4)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -1071,7 +1071,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void releaseGroupTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(RELEASEURL, 2,1223423)
+        this.gatewayClient.put().uri(RELEASEURL, 2,1223423)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -1089,7 +1089,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
         assertNotNull(this.depart1GroupId);
         //增加前用户无权限
         String token1 = this.adminLogin("group_user1", "123456");
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -1097,7 +1097,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.put().uri(RELEASEURL, 1, this.depart1GroupId)
+        this.gatewayClient.put().uri(RELEASEURL, 1, this.depart1GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -1106,7 +1106,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.data.id").isEqualTo(this.depart1GroupId);
 
         //增加后用户有权限
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -1126,7 +1126,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
         assertNotNull(this.depart2GroupId);
         //增加前用户无权限
         String token1 = this.adminLogin("group_user2", "123456");
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -1134,7 +1134,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.put().uri(RELEASEURL, 2, this.depart2GroupId)
+        this.gatewayClient.put().uri(RELEASEURL, 2, this.depart2GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -1142,7 +1142,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //增加后用户有权限
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -1156,7 +1156,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
      */
     @Test
     public void delSubgroupTest1() throws Exception {
-        this.mallClient.delete().uri(IDURL,1, 4, 8)
+        this.gatewayClient.delete().uri(IDURL,1, 4, 8)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -1170,7 +1170,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void delSubgroupTest2() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.delete().uri(IDURL,1, 4, 8)
+        this.gatewayClient.delete().uri(IDURL,1, 4, 8)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -1185,7 +1185,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void delSubgroupTest3() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.delete().uri(IDURL,1, 4, 8)
+        this.gatewayClient.delete().uri(IDURL,1, 4, 8)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -1200,7 +1200,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
     @Test
     public void delSubgroupTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.delete().uri(IDURL,2, 5, 999931)
+        this.gatewayClient.delete().uri(IDURL,2, 5, 999931)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -1220,7 +1220,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
 
         String token1 = this.adminLogin("group_user1", "123456");
         //删除前用户有权限
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -1228,7 +1228,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.delete().uri(IDURL,1, 4, this.depart1GroupId)
+        this.gatewayClient.delete().uri(IDURL,1, 4, this.depart1GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -1237,7 +1237,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.data.id").isEqualTo(this.depart1GroupId);
 
         //删除精辟用户无权限
-        this.mallClient.get().uri(TESTURL, 1)
+        this.gatewayClient.get().uri(TESTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -1257,7 +1257,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
 
         //删除前有权限
         String token1 = this.adminLogin("group_user2", "123456");
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -1265,7 +1265,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.delete().uri(IDURL,2, 5, this.depart2GroupId)
+        this.gatewayClient.delete().uri(IDURL,2, 5, this.depart2GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -1274,7 +1274,7 @@ public class DepartsSubgroupTest extends BaseTestOomall {
                 .jsonPath("$.data.id").isEqualTo(this.depart2GroupId);
 
         //删除后无权限
-        this.mallClient.get().uri(TESTURL, 2)
+        this.gatewayClient.get().uri(TESTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()

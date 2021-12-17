@@ -53,7 +53,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
         String token = this.adminLogin("shop1_coupon", "123456");
         String json = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
 
-        this.mallClient.post().uri(GROUPURL,1)
+        this.gatewayClient.post().uri(GROUPURL,1)
                 .header("authorization",token)
                 .bodyValue(json)
                 .exchange()
@@ -71,7 +71,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     public void postGroupTest2() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
         String json = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
-        this.mallClient.post().uri(GROUPURL, 1)
+        this.gatewayClient.post().uri(GROUPURL, 1)
                 .header("authorization", token)
                 .bodyValue(json)
                 .exchange()
@@ -89,7 +89,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     public void postGroupTest3() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
         String json = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GROUPURL, 0)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GROUPURL, 0)
                 .header("authorization", token)
                 .bodyValue(json)
                 .exchange()
@@ -103,7 +103,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
         RetGroup vo = JacksonUtil.parseObject(ret, "data", RetGroup.class);
         this.platformGroupId = vo.getId();
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 0)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 0)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -122,7 +122,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     public void postGroupTest4() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"管理员test1\",\"name\": \"hello1\"}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GROUPURL, 1)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GROUPURL, 1)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -134,7 +134,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
         RetGroup vo = JacksonUtil.parseObject(ret, "data", RetGroup.class);
         this.depart1GroupId = vo.getId();
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 1)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -152,7 +152,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     public void postGroupTest5() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
         String roleJson = "{\"descr\": \"管理员test2\",\"name\": \"hello2\"}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GROUPURL, 2)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GROUPURL, 2)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -164,7 +164,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
         RoleRetVo vo = JacksonUtil.parseObject(ret, "data", RoleRetVo.class);
         this.depart2GroupId = vo.getId();
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 2)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -181,7 +181,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     @Test
     public void postGroupTest6() throws Exception {
         String roleJson = "{\"descr\": \"管理员test\",\"name\": \"\"}";
-        this.mallClient.post().uri(GROUPURL, 2)
+        this.gatewayClient.post().uri(GROUPURL, 2)
                 .bodyValue(roleJson)
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -195,7 +195,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
      */
     @Test
     public void getGroupTest1() throws Exception {
-        this.mallClient.get().uri(GROUPURL, 2)
+        this.gatewayClient.get().uri(GROUPURL, 2)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -209,7 +209,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     @Test
     public void getGroupTest2() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.get().uri(GROUPURL, 1)
+        this.gatewayClient.get().uri(GROUPURL, 1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -224,7 +224,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     @Test
     public void getGroupTest3() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.get().uri(GROUPURL, 1)
+        this.gatewayClient.get().uri(GROUPURL, 1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -242,7 +242,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
         String token = this.adminLogin("shop1_coupon", "123456");
         String json = "{\"descr\": \"修改\"}";
 
-        this.mallClient.put().uri(IDURL,1, 6)
+        this.gatewayClient.put().uri(IDURL,1, 6)
                 .header("authorization",token)
                 .bodyValue(json)
                 .exchange()
@@ -260,7 +260,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     public void putGroupTest2() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
         String json = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
-        this.mallClient.put().uri(IDURL, 1,6)
+        this.gatewayClient.put().uri(IDURL, 1,6)
                 .header("authorization", token)
                 .bodyValue(json)
                 .exchange()
@@ -279,7 +279,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
         String token = this.adminLogin("13088admin", "123456");
         assertNotNull(this.platformGroupId);
         String json = "{\"descr\": \"修改\"}";
-        this.mallClient.put().uri(IDURL, 0, this.platformGroupId)
+        this.gatewayClient.put().uri(IDURL, 0, this.platformGroupId)
                 .header("authorization", token)
                 .bodyValue(json)
                 .exchange()
@@ -290,7 +290,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
                 .jsonPath("$.data.descr").isEqualTo("修改");
 
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 0)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 0)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -310,7 +310,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
         String token = this.adminLogin("13088admin", "123456");
         assertNotNull(this.depart1GroupId);
         String roleJson = "{\"descr\": \"1111\"}";
-        this.mallClient.put().uri(IDURL, 1, this.depart1GroupId)
+        this.gatewayClient.put().uri(IDURL, 1, this.depart1GroupId)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -320,7 +320,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
                 .jsonPath("$.data.name").isEqualTo("hello1")
                 .jsonPath("$.data.descr").isEqualTo("1111");
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 1)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -339,7 +339,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
         String token = this.adminLogin("2721900002", "123456");
         assertNotNull(this.depart2GroupId);
         String roleJson = "{\"descr\": \"2222\"}";
-        this.mallClient.put().uri(IDURL, 2, this.depart2GroupId)
+        this.gatewayClient.put().uri(IDURL, 2, this.depart2GroupId)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -350,7 +350,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
                 .jsonPath("$.data.descr").isEqualTo("2222");
 
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 2)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -365,7 +365,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
      */
     @Test
     public void putGroupTest6() throws Exception {
-        this.mallClient.put().uri(IDURL, 2, 1)
+        this.gatewayClient.put().uri(IDURL, 2, 1)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -381,7 +381,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
 
         String token = this.adminLogin("shop1_coupon", "123456");
 
-        this.mallClient.delete().uri(IDURL,1, 6)
+        this.gatewayClient.delete().uri(IDURL,1, 6)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -397,7 +397,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     @Test
     public void delGroupTest2() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.delete().uri(IDURL, 1,6)
+        this.gatewayClient.delete().uri(IDURL, 1,6)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -414,7 +414,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     public void delGroupTest3() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
         assertNotNull(this.platformGroupId);
-        this.mallClient.delete().uri(IDURL, 0, this.platformGroupId)
+        this.gatewayClient.delete().uri(IDURL, 0, this.platformGroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -422,7 +422,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 0)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 0)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -440,14 +440,14 @@ public class DepartsGroupsTest extends BaseTestOomall {
     public void delGroupTest4() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
         assertNotNull(this.depart1GroupId);
-        this.mallClient.delete().uri(IDURL, 1, this.depart1GroupId)
+        this.gatewayClient.delete().uri(IDURL, 1, this.depart1GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 1)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -465,7 +465,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
     public void delGroupTest5() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
         assertNotNull(this.depart2GroupId);
-        this.mallClient.delete().uri(IDURL, 2, this.depart2GroupId)
+        this.gatewayClient.delete().uri(IDURL, 2, this.depart2GroupId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -473,7 +473,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
 
-        this.mallClient.get().uri(GROUPURL+"?page=1&pageSize=50", 2)
+        this.gatewayClient.get().uri(GROUPURL+"?page=1&pageSize=50", 2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -488,7 +488,7 @@ public class DepartsGroupsTest extends BaseTestOomall {
      */
     @Test
     public void delGroupTest6() throws Exception {
-        this.mallClient.delete().uri(IDURL, 2, 1)
+        this.gatewayClient.delete().uri(IDURL, 2, 1)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()

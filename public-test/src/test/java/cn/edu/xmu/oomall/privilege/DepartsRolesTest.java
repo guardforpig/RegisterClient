@@ -46,7 +46,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      */
     @Test
     public void selectRoleTest1() throws Exception {
-        this.mallClient.get().uri(GETURL+"?page=1&pageSize=2",0)
+        this.gatewayClient.get().uri(GETURL+"?page=1&pageSize=2",0)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -62,7 +62,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      */
     @Test
     public void selectRoleTest2() throws Exception {
-        this.mallClient.get().uri(GETURL+"?page=1&pageSize=2",0)
+        this.gatewayClient.get().uri(GETURL+"?page=1&pageSize=2",0)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -78,7 +78,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Order(1)
     public void selectRoleTest3() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(GETURL,10)
+        this.gatewayClient.get().uri(GETURL,10)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -96,7 +96,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Order(1)
     public void selectRoleTest4() throws Exception {
         String token = this.adminLogin("5961900008", "123456");
-        this.mallClient.get().uri(GETURL,10)
+        this.gatewayClient.get().uri(GETURL,10)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -113,7 +113,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void selectRoleTest5() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(GETURL,10)
+        this.gatewayClient.get().uri(GETURL,10)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -127,7 +127,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void selectRoleTest6() throws Exception {
         String token = this.adminLogin("shop2_adv", "123456");
-        this.mallClient.get().uri(GETURL,10)
+        this.gatewayClient.get().uri(GETURL,10)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -144,7 +144,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void insertRoleTest1() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
         String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
-        this.mallClient.post().uri(GETURL, 1)
+        this.gatewayClient.post().uri(GETURL, 1)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -163,7 +163,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void insertRoleTest2() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"管理员test\",\"name\": \"管理员\"}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GETURL, 0)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GETURL, 0)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -175,7 +175,7 @@ public class DepartsRolesTest extends BaseTestOomall {
         RoleRetVo vo = JacksonUtil.parseObject(ret, "data", RoleRetVo.class);
         this.platformRoleId = vo.getId();
 
-        this.mallClient.get().uri(IDURL, 0, this.platformRoleId)
+        this.gatewayClient.get().uri(IDURL, 0, this.platformRoleId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -195,7 +195,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void insertRoleTest3() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GETURL, 1)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GETURL, 1)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -207,7 +207,7 @@ public class DepartsRolesTest extends BaseTestOomall {
         RoleRetVo vo = JacksonUtil.parseObject(ret, "data", RoleRetVo.class);
         this.depart1RoleId = vo.getId();
 
-        this.mallClient.get().uri(IDURL, 1, this.depart1RoleId)
+        this.gatewayClient.get().uri(IDURL, 1, this.depart1RoleId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -227,7 +227,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void insertRoleTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
         String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello2\"}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GETURL, 2)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GETURL, 2)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -239,7 +239,7 @@ public class DepartsRolesTest extends BaseTestOomall {
         RoleRetVo vo = JacksonUtil.parseObject(ret, "data", RoleRetVo.class);
         this.depart2RoleId = vo.getId();
 
-        this.mallClient.get().uri(IDURL, 2, this.depart2RoleId)
+        this.gatewayClient.get().uri(IDURL, 2, this.depart2RoleId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -257,7 +257,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void insertRoleTest5() throws Exception {
         String roleJson = "{\"descr\": \"管理员test\",\"name\": \"\"}";
-        this.mallClient.post().uri(GETURL, 0)
+        this.gatewayClient.post().uri(GETURL, 0)
                 .bodyValue(roleJson)
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -273,7 +273,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void insertRoleTest6() throws Exception {
         String token = this.adminLogin("shop2_adv", "123456");
         String roleJson = "{\"descr\": \"管理员test\",\"name\": \"hello\"}";
-        this.mallClient.post().uri(GETURL, 2)
+        this.gatewayClient.post().uri(GETURL, 2)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -296,7 +296,7 @@ public class DepartsRolesTest extends BaseTestOomall {
         String token = adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"testU\",\"name\": \"testU\"}";
         assertNotNull(this.depart1RoleId);
-        this.mallClient.put().uri(IDURL, 1, this.depart1RoleId)
+        this.gatewayClient.put().uri(IDURL, 1, this.depart1RoleId)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -304,7 +304,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(IDURL, 1, this.depart2RoleId)
+        this.gatewayClient.get().uri(IDURL, 1, this.depart2RoleId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -325,7 +325,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void updateRoleTest2() throws Exception {
         String token = adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"testU\",\"name\": \"\"}";
-        this.mallClient.put().uri(IDURL, 1, 108)
+        this.gatewayClient.put().uri(IDURL, 1, 108)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -345,7 +345,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void updateRoleTest4() throws Exception {
         String token = adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"t\",\"name\": \"t\"}";
-        this.mallClient.put().uri(IDURL, 11, 108)
+        this.gatewayClient.put().uri(IDURL, 11, 108)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -365,7 +365,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void updateRoleTest5() throws Exception {
         String token = adminLogin("2721900002", "123456");
         String roleJson = "{\"descr\": \"t\",\"name\": \"t\"}";
-        this.mallClient.put().uri(IDURL, 1, 108)
+        this.gatewayClient.put().uri(IDURL, 1, 108)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -384,7 +384,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void updateRoleTest6() throws Exception {
         String roleJson = "{\"descr\": \"t\",\"name\": \"t\"}";
-        this.mallClient.put().uri(IDURL, 1, 108)
+        this.gatewayClient.put().uri(IDURL, 1, 108)
                 .bodyValue(roleJson)
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -402,7 +402,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void updateRoleTest7() throws Exception {
         String roleJson = "{\"descr\": \"t\",\"name\": \"t\"}";
-        this.mallClient.put().uri(IDURL, 1, 108)
+        this.gatewayClient.put().uri(IDURL, 1, 108)
                 .header("authorization", "test")
                 .bodyValue(roleJson)
                 .exchange()
@@ -419,7 +419,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void updateRoleTest8() throws Exception {
         String token = adminLogin("shop1_coupon", "123456");
         String roleJson = "{\"descr\": \"t\",\"name\": \"t\"}";
-        this.mallClient.put().uri(IDURL, 1, 108)
+        this.gatewayClient.put().uri(IDURL, 1, 108)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -438,7 +438,7 @@ public class DepartsRolesTest extends BaseTestOomall {
         String token = adminLogin("13088admin", "123456");
         String roleJson = "{\"descr\": \"testU\",\"name\": \"testU\"}";
         assertNotNull(this.depart2RoleId);
-        this.mallClient.put().uri(IDURL, 2, this.depart2RoleId)
+        this.gatewayClient.put().uri(IDURL, 2, this.depart2RoleId)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -446,7 +446,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(IDURL, 2, this.depart2RoleId)
+        this.gatewayClient.get().uri(IDURL, 2, this.depart2RoleId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -463,7 +463,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void forbidRoleTest1() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(FORBIDURL, 1,2)
+        this.gatewayClient.put().uri(FORBIDURL, 1,2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -482,7 +482,7 @@ public class DepartsRolesTest extends BaseTestOomall {
 
         //禁止前 有部门管理权限
         String token1 = this.adminLogin("delrole_user11", "123456");
-        this.mallClient.get().uri(GETURLDEPARTURL, 1)
+        this.gatewayClient.get().uri(GETURLDEPARTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -490,7 +490,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.put().uri(FORBIDURL, 1,109)
+        this.gatewayClient.put().uri(FORBIDURL, 1,109)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -498,7 +498,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //禁止后
-        this.mallClient.get().uri(GETURLDEPARTURL, 1)
+        this.gatewayClient.get().uri(GETURLDEPARTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -517,7 +517,7 @@ public class DepartsRolesTest extends BaseTestOomall {
 
         //禁止前 有部门管理权限
         String token1 = this.adminLogin("delrole_user22", "123456");
-        this.mallClient.get().uri(GETURLDEPARTURL, 2)
+        this.gatewayClient.get().uri(GETURLDEPARTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -525,7 +525,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(FORBIDURL, 2,110)
+        this.gatewayClient.put().uri(FORBIDURL, 2,110)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -533,7 +533,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //禁止后
-        this.mallClient.get().uri(GETURLDEPARTURL, 2)
+        this.gatewayClient.get().uri(GETURLDEPARTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -548,7 +548,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void forbidRoleTest4() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.put().uri(FORBIDURL, 2,98635)
+        this.gatewayClient.put().uri(FORBIDURL, 2,98635)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -564,7 +564,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Order(10)
     public void forbidRoleTest5() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(FORBIDURL, 2,110)
+        this.gatewayClient.put().uri(FORBIDURL, 2,110)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -580,7 +580,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void forbidRoleTest6() throws Exception {
 
-        this.mallClient.put().uri(FORBIDURL, 2,110)
+        this.gatewayClient.put().uri(FORBIDURL, 2,110)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -594,7 +594,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void forbidRoleTest7() throws Exception {
         String token = this.adminLogin("shop2_adv", "123456");
-        this.mallClient.put().uri(FORBIDURL, 2,3)
+        this.gatewayClient.put().uri(FORBIDURL, 2,3)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -610,7 +610,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void releaseRoleTest1() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(RELEASEURL, 1,2)
+        this.gatewayClient.put().uri(RELEASEURL, 1,2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -628,7 +628,7 @@ public class DepartsRolesTest extends BaseTestOomall {
 
         //解禁前 无部门管理权限
         String token1 = this.adminLogin("delrole_user11", "123456");
-        this.mallClient.get().uri(GETURLDEPARTURL, 1)
+        this.gatewayClient.get().uri(GETURLDEPARTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -636,7 +636,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.put().uri(RELEASEURL, 1,109)
+        this.gatewayClient.put().uri(RELEASEURL, 1,109)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -644,7 +644,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //解禁后
-        this.mallClient.get().uri(GETURLDEPARTURL, 1)
+        this.gatewayClient.get().uri(GETURLDEPARTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -663,7 +663,7 @@ public class DepartsRolesTest extends BaseTestOomall {
 
         //解禁前 无部门管理权限
         String token1 = this.adminLogin("delrole_user22", "123456");
-        this.mallClient.get().uri(GETURLDEPARTURL, 2)
+        this.gatewayClient.get().uri(GETURLDEPARTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -671,7 +671,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(RELEASEURL, 2,110)
+        this.gatewayClient.put().uri(RELEASEURL, 2,110)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -679,7 +679,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //解禁后
-        this.mallClient.get().uri(GETURLDEPARTURL, 2)
+        this.gatewayClient.get().uri(GETURLDEPARTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -695,7 +695,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void releaseRoleTest4() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.put().uri(RELEASEURL, 2,98635)
+        this.gatewayClient.put().uri(RELEASEURL, 2,98635)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -711,7 +711,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Order(13)
     public void releaseRoleTest5() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(RELEASEURL, 2,110)
+        this.gatewayClient.put().uri(RELEASEURL, 2,110)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -726,7 +726,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void releaseRoleTest6() throws Exception {
 
-        this.mallClient.put().uri(RELEASEURL, 2,110)
+        this.gatewayClient.put().uri(RELEASEURL, 2,110)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -740,7 +740,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void releaseRoleTest7() throws Exception {
         String token = this.adminLogin("shop2_adv", "123456");
-        this.mallClient.put().uri(RELEASEURL, 2,3)
+        this.gatewayClient.put().uri(RELEASEURL, 2,3)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -758,7 +758,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void deleteRoleTest2() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.delete().uri(IDURL, 1, 1009)
+        this.gatewayClient.delete().uri(IDURL, 1, 1009)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -776,7 +776,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     @Test
     public void deleteRoleTest3() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.delete().uri(IDURL, 1, 109)
+        this.gatewayClient.delete().uri(IDURL, 1, 109)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -793,7 +793,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      */
     @Test
     public void deleteRoleTest4() throws Exception {
-        this.mallClient.delete().uri(IDURL, 1, 109)
+        this.gatewayClient.delete().uri(IDURL, 1, 109)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -808,7 +808,7 @@ public class DepartsRolesTest extends BaseTestOomall {
      */
     @Test
     public void deleteRoleTest5() throws Exception {
-        this.mallClient.delete().uri(IDURL, 1, 109)
+        this.gatewayClient.delete().uri(IDURL, 1, 109)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -828,7 +828,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void deleteRoleTest6() throws Exception {
         //判断用户有权限
         String token1 = this.adminLogin("delrole_user11", "123456");
-        this.mallClient.get().uri(GETURL,1)
+        this.gatewayClient.get().uri(GETURL,1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -836,14 +836,14 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.delete().uri(IDURL, 1, 109)
+        this.gatewayClient.delete().uri(IDURL, 1, 109)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(GETURL,1)
+        this.gatewayClient.get().uri(GETURL,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -851,7 +851,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.list[?(@.id == '109')]").doesNotExist();
 
-        this.mallClient.get().uri(GETURL,1)
+        this.gatewayClient.get().uri(GETURL,1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -872,7 +872,7 @@ public class DepartsRolesTest extends BaseTestOomall {
     public void deleteRoleTest7() throws Exception {
         //判断用户有权限
         String token1 = this.adminLogin("delrole_user22", "123456");
-        this.mallClient.get().uri(GETURL,2)
+        this.gatewayClient.get().uri(GETURL,2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -880,14 +880,14 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.delete().uri(IDURL, 2, 110)
+        this.gatewayClient.delete().uri(IDURL, 2, 110)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(GETURL,2)
+        this.gatewayClient.get().uri(GETURL,2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -895,7 +895,7 @@ public class DepartsRolesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .jsonPath("$.data.list[?(@.id == '110')]").doesNotExist();
 
-        this.mallClient.get().uri(GETURL,2)
+        this.gatewayClient.get().uri(GETURL,2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()

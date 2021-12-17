@@ -6,26 +6,12 @@ import cn.edu.xmu.oomall.PublicTestApp;
 import cn.edu.xmu.oomall.privilege.vo.UserProxyRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
-import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.MultipartBodyBuilder;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.BodyInserters;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -70,7 +56,7 @@ public class SelfTest extends BaseTestOomall {
     public void getSelfUserRoleTest1() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient.get().uri(ROLEURL)
+        this.gatewayClient.get().uri(ROLEURL)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
@@ -88,7 +74,7 @@ public class SelfTest extends BaseTestOomall {
     @Test
     public void getSelfUserRoleTest2() throws Exception {
         String token = this.adminLogin("8532600003", "123456");
-        this.mallClient.get().uri(ROLEURL)
+        this.gatewayClient.get().uri(ROLEURL)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
@@ -111,7 +97,7 @@ public class SelfTest extends BaseTestOomall {
         String userJson = "{\"name\": \"oomall\"," +
                 "\"idnumber\": \"123456789\"," +
                 "\"passportNumber\": \"12345678\"}";
-        this.mallClient.put().uri(USERURL)
+        this.gatewayClient.put().uri(USERURL)
                 .bodyValue(userJson)
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -130,7 +116,7 @@ public class SelfTest extends BaseTestOomall {
         String userJson = "{\"name\": \"oomall\"," +
                 "\"idnumber\": \"123456789\"," +
                 "\"passportNumber\": \"12345678\"}";
-        this.mallClient.put().uri(USERURL).
+        this.gatewayClient.put().uri(USERURL).
                 header("authorization", token).
                 bodyValue(userJson).
                 exchange().
@@ -138,7 +124,7 @@ public class SelfTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(USERURL).
+        this.gatewayClient.get().uri(USERURL).
                 header("authorization", token).
                 exchange().
                 expectStatus().isOk()
@@ -157,7 +143,7 @@ public class SelfTest extends BaseTestOomall {
     public void getSelfBaseRoleTest1() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient.get().uri(BROLEURL)
+        this.gatewayClient.get().uri(BROLEURL)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
@@ -179,7 +165,7 @@ public class SelfTest extends BaseTestOomall {
     @Test
     public void getSelfUserTest1() throws Exception {
         String token = this.adminLogin("8532600003", "123456");
-        this.mallClient.get().uri(USERURL)
+        this.gatewayClient.get().uri(USERURL)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
@@ -200,7 +186,7 @@ public class SelfTest extends BaseTestOomall {
         vo.setUserName("delrole_user2");
         vo.setPassword("123456");
         String requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
@@ -210,7 +196,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("name","changepass");
         String json = JacksonUtil.toJson(name);
 
-        String ret = new String(Objects.requireNonNull(this.mallClient.put().uri(RESETURL)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.put().uri(RESETURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -224,7 +210,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("captcha", captcha);
         name.put("newPassword", "123456");
         json = JacksonUtil.toJson(name);
-        this.mallClient.put().uri(PASSURL)
+        this.gatewayClient.put().uri(PASSURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -236,7 +222,7 @@ public class SelfTest extends BaseTestOomall {
         vo.setUserName("delrole_user2");
         vo.setPassword("123456");
         requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login")
+        gatewayClient.post().uri("/privilege/login")
                 .bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
@@ -253,7 +239,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("name","changepassnoexist");
         String json = JacksonUtil.toJson(name);
 
-        this.mallClient.put().uri(RESETURL)
+        this.gatewayClient.put().uri(RESETURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -272,7 +258,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("name","delrole_user2");
         String json = JacksonUtil.toJson(name);
 
-        String ret = new String(Objects.requireNonNull(this.mallClient.put().uri(RESETURL)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.put().uri(RESETURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -287,7 +273,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("captcha", captcha);
         name.put("newPassword", "123456");
         json = JacksonUtil.toJson(name);
-        this.mallClient.put().uri(PASSURL)
+        this.gatewayClient.put().uri(PASSURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -299,7 +285,7 @@ public class SelfTest extends BaseTestOomall {
         vo.setUserName("delrole_user2");
         vo.setPassword("123456");
         String requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login")
+        gatewayClient.post().uri("/privilege/login")
                 .bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
@@ -309,7 +295,7 @@ public class SelfTest extends BaseTestOomall {
         vo.setUserName("delrole_user1");
         vo.setPassword("123456");
         requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login")
+        gatewayClient.post().uri("/privilege/login")
                 .bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
@@ -328,7 +314,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("name","delrole_user2");
         String json = JacksonUtil.toJson(name);
 
-        String ret = new String(Objects.requireNonNull(this.mallClient.put().uri(RESETURL)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.put().uri(RESETURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -343,7 +329,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("newPassword", "223344");
         json = JacksonUtil.toJson(name);
         Thread.sleep(31000);
-        this.mallClient.put().uri(PASSURL)
+        this.gatewayClient.put().uri(PASSURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -355,7 +341,7 @@ public class SelfTest extends BaseTestOomall {
         vo.setUserName("delrole_user2");
         vo.setPassword("123456");
         String requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login")
+        gatewayClient.post().uri("/privilege/login")
                 .bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
@@ -375,7 +361,7 @@ public class SelfTest extends BaseTestOomall {
         vo.setUserName("changepass");
         vo.setPassword("123456");
         String requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
@@ -385,7 +371,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("name","changepass");
         String json = JacksonUtil.toJson(name);
 
-        String ret = new String(Objects.requireNonNull(this.mallClient.put().uri(RESETURL)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.put().uri(RESETURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -399,7 +385,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("captcha", captcha);
         name.put("newPassword", "223344");
         json = JacksonUtil.toJson(name);
-        this.mallClient.put().uri(PASSURL)
+        this.gatewayClient.put().uri(PASSURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -411,7 +397,7 @@ public class SelfTest extends BaseTestOomall {
         vo.setUserName("changepass");
         vo.setPassword("223344");
         requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login")
+        gatewayClient.post().uri("/privilege/login")
                 .bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
@@ -430,7 +416,7 @@ public class SelfTest extends BaseTestOomall {
         vo.setUserName("2235d@1245f");
         vo.setPassword("123456");
         String requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
@@ -440,7 +426,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("name","2235d@1245f");
         String json = JacksonUtil.toJson(name);
 
-        String ret = new String(Objects.requireNonNull(this.mallClient.put().uri(RESETURL)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.put().uri(RESETURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -454,7 +440,7 @@ public class SelfTest extends BaseTestOomall {
         name.put("captcha", captcha);
         name.put("newPassword", "223344");
         json = JacksonUtil.toJson(name);
-        this.mallClient.put().uri(PASSURL)
+        this.gatewayClient.put().uri(PASSURL)
                 .bodyValue(json)
                 .exchange()
                 .expectStatus().isOk()
@@ -466,7 +452,7 @@ public class SelfTest extends BaseTestOomall {
         vo.setUserName("changepass");
         vo.setPassword("223344");
         requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login")
+        gatewayClient.post().uri("/privilege/login")
                 .bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
@@ -482,7 +468,7 @@ public class SelfTest extends BaseTestOomall {
     @Test
     public void getSelfProxies1() throws Exception {
 
-        this.mallClient.get().uri(SELFPROXYURL)
+        this.gatewayClient.get().uri(SELFPROXYURL)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -501,7 +487,7 @@ public class SelfTest extends BaseTestOomall {
     public void getSelfProxies2() throws Exception {
 
         String token = this.adminLogin("shop1_proxy", "123456");
-        this.mallClient.get().uri(SELFPROXYURL)
+        this.gatewayClient.get().uri(SELFPROXYURL)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -518,7 +504,7 @@ public class SelfTest extends BaseTestOomall {
      */
     @Test
     public void getSelfProxies3() throws Exception {
-        this.mallClient.get().uri(SELFPROXYURL)
+        this.gatewayClient.get().uri(SELFPROXYURL)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -534,7 +520,7 @@ public class SelfTest extends BaseTestOomall {
     @Test
     public void delSelfProxies1() throws Exception {
 
-        this.mallClient.delete().uri(SELFIDURL, 6)
+        this.gatewayClient.delete().uri(SELFIDURL, 6)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -551,7 +537,7 @@ public class SelfTest extends BaseTestOomall {
     @Test
     public void delSelfProxies2() throws Exception {
         String token = this.adminLogin("proxy_user1", "123456");
-        this.mallClient.delete().uri(SELFIDURL, 6)
+        this.gatewayClient.delete().uri(SELFIDURL, 6)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -570,7 +556,7 @@ public class SelfTest extends BaseTestOomall {
     @Test
     public void delSelfProxies3() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.delete().uri(SELFIDURL, 6)
+        this.gatewayClient.delete().uri(SELFIDURL, 6)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -589,7 +575,7 @@ public class SelfTest extends BaseTestOomall {
      */
     @Test
     public void delSelfProxies4() throws Exception {
-        this.mallClient.delete().uri(SELFIDURL)
+        this.gatewayClient.delete().uri(SELFIDURL)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -609,7 +595,7 @@ public class SelfTest extends BaseTestOomall {
 
         String token = this.adminLogin("shop1_auth", "123456");
         //删除前
-        String result = new String(Objects.requireNonNull(this.mallClient.get().uri(SELFPROXYURL)
+        String result = new String(Objects.requireNonNull(this.gatewayClient.get().uri(SELFPROXYURL)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -631,7 +617,7 @@ public class SelfTest extends BaseTestOomall {
 
         String token1 = this.adminLogin("proxy_user1", "123456");
         //删除前有权限
-        this.mallClient.get().uri(DEPARTURL, 1)
+        this.gatewayClient.get().uri(DEPARTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -639,7 +625,7 @@ public class SelfTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
 
-        this.mallClient.delete().uri(SELFIDURL, id)
+        this.gatewayClient.delete().uri(SELFIDURL, id)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -647,7 +633,7 @@ public class SelfTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //删除后无权限
-        this.mallClient.get().uri(DEPARTURL, 1)
+        this.gatewayClient.get().uri(DEPARTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -666,7 +652,7 @@ public class SelfTest extends BaseTestOomall {
     public void getSelfUserGroupTest1() throws Exception {
         String token = this.adminLogin("shop1_auth", "123456");
 
-        this.mallClient.get().uri(GROUPURL)
+        this.gatewayClient.get().uri(GROUPURL)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
@@ -684,7 +670,7 @@ public class SelfTest extends BaseTestOomall {
     @Test
     public void getSelfUserGroupTest2() throws Exception {
         String token = this.adminLogin("comment", "123456");
-        this.mallClient.get().uri(GROUPURL)
+        this.gatewayClient.get().uri(GROUPURL)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
