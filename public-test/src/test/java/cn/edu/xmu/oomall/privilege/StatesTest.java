@@ -44,7 +44,7 @@ public class StatesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.length").isEqualTo(2);
+                .jsonPath("$.data.length()").isEqualTo(2);
     }
     
     /**
@@ -61,7 +61,7 @@ public class StatesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.length").isEqualTo(4);
+                .jsonPath("$.data.length()").isEqualTo(3);
     }
 
     /**
@@ -78,7 +78,7 @@ public class StatesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.length").isEqualTo(2);
+                .jsonPath("$.data.length()").isEqualTo(2);
     }
 
     /**
@@ -95,6 +95,6 @@ public class StatesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.length").isEqualTo(2);
+                .jsonPath("$.data.length()").isEqualTo(2);
     }
 }
