@@ -67,7 +67,7 @@ public class CategoryTest extends BaseTestOomall {
      **/
     @Test
     public void getCategorySubs3() throws Exception {
-        mallClient.get().uri(SUBCATEGORY,109)
+        mallClient.get().uri(SUBCATEGORY,313)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
@@ -86,7 +86,7 @@ public class CategoryTest extends BaseTestOomall {
     public void postCategoryTest1() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
         String roleJson = "{\"name\": \"测试一级分类\",\"commissionRatio\": 0}";
-        String responseString =new String(Objects.requireNonNull(this.mallClient.post().uri(SHOPCATEGORY, 0, 0)
+        String responseString =new String(Objects.requireNonNull(this.gatewayClient.post().uri(SHOPCATEGORY, 0, 0)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -124,7 +124,7 @@ public class CategoryTest extends BaseTestOomall {
     @Test
     public void postCategoryTest2() throws Exception {
         String roleJson = "{\"name\": \"测试一级分类\"}";
-        this.mallClient.post().uri(SHOPCATEGORY, 0, 0)
+        this.gatewayClient.post().uri(SHOPCATEGORY, 0, 0)
                 .bodyValue(roleJson)
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -140,7 +140,7 @@ public class CategoryTest extends BaseTestOomall {
     public void postCategoryTest3() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
         String roleJson = "{\"name\": \"测试一级分类\"}";
-        this.mallClient.post().uri(SHOPCATEGORY, 0, 0)
+        this.gatewayClient.post().uri(SHOPCATEGORY, 0, 0)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -161,7 +161,7 @@ public class CategoryTest extends BaseTestOomall {
         assertNotNull(this.categoryId1);
         String token = this.adminLogin("13088admin", "123456");
         String roleJson = "{\"name\": \"测试二级分类\",\"commissionRatio\": 2}";
-        String responseString =new String(Objects.requireNonNull(this.mallClient.post().uri(SHOPCATEGORY, 0, this.categoryId1)
+        String responseString =new String(Objects.requireNonNull(this.gatewayClient.post().uri(SHOPCATEGORY, 0, this.categoryId1)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -204,7 +204,7 @@ public class CategoryTest extends BaseTestOomall {
         assertNotNull(this.categoryId1);
         String token = this.adminLogin("13088admin", "123456");
         String roleJson = "{\"commissionRatio\": 1}";
-        this.mallClient.put().uri(CATEGORY,0, this.categoryId1)
+        this.gatewayClient.put().uri(CATEGORY,0, this.categoryId1)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -230,7 +230,7 @@ public class CategoryTest extends BaseTestOomall {
     public void putCategoryTest2() throws Exception {
         assertNotNull(this.categoryId1);
         String roleJson = "{\"commissionRatio\": 1}";
-        this.mallClient.put().uri(CATEGORY, 0,1)
+        this.gatewayClient.put().uri(CATEGORY, 0,1)
                 .bodyValue(roleJson)
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -246,7 +246,7 @@ public class CategoryTest extends BaseTestOomall {
     public void putCategoryTest3() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
         String roleJson = "{\"name\": \"测试一级分类\"}";
-        this.mallClient.put().uri(CATEGORY, 0,1)
+        this.gatewayClient.put().uri(CATEGORY, 0,1)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -266,7 +266,7 @@ public class CategoryTest extends BaseTestOomall {
     public void delCategoryTest1() throws Exception {
         assertNotNull(this.categoryId1);
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.delete().uri(CATEGORY, 0,this.categoryId1)
+        this.gatewayClient.delete().uri(CATEGORY, 0,this.categoryId1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -274,7 +274,7 @@ public class CategoryTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String roleJson = "{\"name\": \"测试一级分类\"}";
-        this.mallClient.put().uri(CATEGORY, 0,this.categoryId1)
+        this.gatewayClient.put().uri(CATEGORY, 0,this.categoryId1)
                 .header("authorization", token)
                 .bodyValue(roleJson)
                 .exchange()
@@ -292,7 +292,7 @@ public class CategoryTest extends BaseTestOomall {
      **/
     @Test
     public void delCategoryTest2() throws Exception {
-        this.mallClient.delete().uri(CATEGORY, 0,1)
+        this.gatewayClient.delete().uri(CATEGORY, 0,1)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -306,7 +306,7 @@ public class CategoryTest extends BaseTestOomall {
     @Test
     public void delCategoryTest3() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.delete().uri(CATEGORY, 0,1)
+        this.gatewayClient.delete().uri(CATEGORY, 0,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -321,7 +321,7 @@ public class CategoryTest extends BaseTestOomall {
     @Test
     public void delCategoryTest4() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.delete().uri(CATEGORY, 0,109012)
+        this.gatewayClient.delete().uri(CATEGORY, 0,109012)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -337,7 +337,7 @@ public class CategoryTest extends BaseTestOomall {
     public void getOrphanTest1() throws Exception {
         assertNotNull(this.categoryId2);
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(ORPHAN, 0)
+        this.gatewayClient.get().uri(ORPHAN, 0)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -353,7 +353,7 @@ public class CategoryTest extends BaseTestOomall {
      **/
     @Test
     public void getOrphanTest2() throws Exception {
-        this.mallClient.get().uri(ORPHAN, 0)
+        this.gatewayClient.get().uri(ORPHAN, 0)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -367,7 +367,7 @@ public class CategoryTest extends BaseTestOomall {
     @Test
     public void getOrphanTest3() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(ORPHAN, 0)
+        this.gatewayClient.get().uri(ORPHAN, 0)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
