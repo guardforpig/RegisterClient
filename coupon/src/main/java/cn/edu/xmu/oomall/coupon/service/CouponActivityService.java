@@ -210,9 +210,6 @@ public class CouponActivityService {
         if(couponActivity.getState()==CouponActivity.State.OFFLINE.getCode().byteValue()){
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        if(!couponActivity.getCreatorId().equals(userId)){
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
-        }
         return new ReturnObject<>(cloneVo(couponActivity,CouponActivityVoInfo.class));
     }
 
