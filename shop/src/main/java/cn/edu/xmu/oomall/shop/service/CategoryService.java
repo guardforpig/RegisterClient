@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.dao.CategoryDao;
 import cn.edu.xmu.oomall.shop.model.bo.Category;
 import cn.edu.xmu.oomall.shop.model.po.CategoryPo;
+import cn.edu.xmu.oomall.shop.model.vo.CategoryRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopSimpleRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -41,6 +42,32 @@ public class CategoryService {
         }
 
         return categoryDao.getSubCategories(id);
+    }
+
+    /**
+     * 通过id查找子分类
+     * 若为二级分类返回空数组
+     *
+     * @param id
+     * @return ReturnObject
+     */
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public ReturnObject getParentCategoryById(Long id) {
+        /* 获取该分类的信息 */
+        ReturnObject ret = categoryDao.getCategoryById(id);
+        if (ret.getData() == null) {
+            return ret;
+        }
+
+        /* 获取父分类的信息 */
+        Long pid = ((Category) (ret.getData())).getPid();
+        ret = categoryDao.getCategoryById(pid);
+        if (ret.getData() == null) {
+            return ret;
+        } else {
+            Category pCategory = (Category) ret.getData();
+            return new ReturnObject(cloneVo(pCategory, CategoryRetVo.class));
+        }
     }
 
     /**
@@ -85,8 +112,8 @@ public class CategoryService {
         if (categoryDao.hasSameName(category.getName())) {
             return new ReturnObject<>(ReturnNo.GOODS_CATEGORY_SAME);
         }
-        CategoryPo po = (CategoryPo) cloneVo(category, CategoryPo.class);
-       setPoModifiedFields(po, modifyId, modiName);
+        CategoryPo po = cloneVo(category, CategoryPo.class);
+        setPoModifiedFields(po, modifyId, modiName);
         po.setId(id.longValue());
 
         ReturnObject ret = categoryDao.updateCategory(po);
