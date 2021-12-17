@@ -23,7 +23,7 @@ public class LoginTest extends BaseTestOomall {
     public void login1() throws Exception {
         String requireJson = "{\"name\":\"wrong_sign\",\"password\":\"123456\"}";
         this.gatewayClient.post().uri(TESTURL).bodyValue(requireJson).exchange()
-                .expectStatus().isForbidden()
+                .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_FALSIFY.getCode());
     }
@@ -40,7 +40,7 @@ public class LoginTest extends BaseTestOomall {
         this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
                 .exchange()
-                .expectStatus().isForbidden()
+                .expectStatus().isUnauthorized()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_ACCOUNT.getCode());
@@ -56,7 +56,7 @@ public class LoginTest extends BaseTestOomall {
         this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
                 .exchange()
-                .expectStatus().isForbidden()
+                .expectStatus().isUnauthorized()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_ACCOUNT.getCode());
@@ -137,7 +137,7 @@ public class LoginTest extends BaseTestOomall {
         String requireJson  = "{\"name\":\"5264500009\",\"password\":\"123456\"}";
         this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
-                .exchange().expectStatus().isForbidden()
+                .exchange().expectStatus().isUnauthorized()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_USER_FORBIDDEN.getCode());
