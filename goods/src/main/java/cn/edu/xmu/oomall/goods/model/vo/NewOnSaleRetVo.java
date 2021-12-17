@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author yujie lin
@@ -20,11 +21,11 @@ public class NewOnSaleRetVo {
     @Min(0)
     private Long price;
 
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
-    private LocalDateTime beginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
+    private ZonedDateTime beginTime;
 
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
-    private LocalDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
+    private ZonedDateTime endTime;
 
     @Min(1)
     private Integer quantity;
@@ -35,6 +36,6 @@ public class NewOnSaleRetVo {
 
     private Byte type;
 
-
+    private Byte state;
 
 }

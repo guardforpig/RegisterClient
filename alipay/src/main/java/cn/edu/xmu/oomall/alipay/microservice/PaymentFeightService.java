@@ -2,13 +2,14 @@ package cn.edu.xmu.oomall.alipay.microservice;
 
 import cn.edu.xmu.oomall.alipay.model.bo.NotifyBody;
 import cn.edu.xmu.oomall.alipay.util.NotifyReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Component
-@FeignClient(value = "payment")
+@FeignClient(value = "payment-service")
 public interface PaymentFeightService {
     /**
      * 回调,退款只有成功的回调，支付有不成功和成功的回调

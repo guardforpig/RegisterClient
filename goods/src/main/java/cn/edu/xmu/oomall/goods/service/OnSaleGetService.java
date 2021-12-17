@@ -58,14 +58,13 @@ public class OnSaleGetService {
             OnSaleRetVo onSaleRetVo=cloneVo(onSale,OnSaleRetVo.class);
             //设置product字段
             ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
-            if(!returnObject.getCode().equals(ReturnNo.OK)){
-               return returnObjectProduct;
+            if(returnObjectProduct.getCode().equals(0)){
+                Product product=(Product) returnObjectProduct.getData();
+                SimpleProductRetVo simpleProduct=cloneVo(product,SimpleProductRetVo.class);
+                onSaleRetVo.setProduct(simpleProduct);
             }
-            Product product=(Product) returnObjectProduct.getData();
-            SimpleProductRetVo simpleProduct=cloneVo(product,SimpleProductRetVo.class);
-            onSaleRetVo.setProduct(simpleProduct);
             //设置shop字段
-            InternalReturnObject internalObj=shopService.getSimpleShopById(onSale.getShopId());
+            InternalReturnObject internalObj=shopService.getShopInfo(onSale.getShopId());
             if(internalObj.getErrno().equals(0)) {
                 SimpleShopVo simpleShopVo = (SimpleShopVo)internalObj.getData();
                 onSaleRetVo.setShop(simpleShopVo);
@@ -105,18 +104,18 @@ public class OnSaleGetService {
         OnSaleGetBo onSale=(OnSaleGetBo) returnObject.getData();
         OnSaleRetVo onSaleRetVo=cloneVo(onSale,OnSaleRetVo.class);
         //设置product字段
-       ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
-        if(!returnObject.getCode().equals(ReturnNo.OK)) {
-           return returnObjectProduct;
+        ReturnObject returnObjectProduct=productDao.getProductInfo(onSale.getProductId());
+        if(returnObjectProduct.getCode().equals(ReturnNo.OK)){
+            Product product=(Product) returnObjectProduct.getData();
+            SimpleProductRetVo simpleProduct=cloneVo(product,SimpleProductRetVo.class);
+            onSaleRetVo.setProduct(simpleProduct);
         }
-        Product product=(Product) returnObjectProduct.getData();
-        SimpleProductRetVo simpleProduct=cloneVo(product,SimpleProductRetVo.class);
-        onSaleRetVo.setProduct(simpleProduct);
         //设置shop字段
-        InternalReturnObject internalObj=shopService.getSimpleShopById(onSale.getShopId());
-
+        InternalReturnObject internalObj=shopService.getShopInfo(onSale.getShopId());
+        if(internalObj.getErrno().equals(0)) {
             SimpleShopVo simpleShopVo = (SimpleShopVo)internalObj.getData();
             onSaleRetVo.setShop(simpleShopVo);
+        }
         return new ReturnObject(onSaleRetVo);
     }
 

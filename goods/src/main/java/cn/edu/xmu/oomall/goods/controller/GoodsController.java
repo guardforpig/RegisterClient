@@ -85,6 +85,8 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @PostMapping(value="shops/{id}/goods",produces = "application/json;charset=UTF-8")
+
+    @PostMapping("shops/{id}/goods")
     @Audit(departName = "shops")
     public Object insertGoods(@PathVariable("id") Long shopId, @Validated @RequestBody GoodsVo goodsVo, BindingResult bindingResult, @LoginUser Long loginUserId, @LoginName String loginUserName)
     {
@@ -273,6 +275,7 @@ public class GoodsController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 504, message = "分类id不存在"),
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @GetMapping(value="categories/{id}/products")
@@ -283,6 +286,14 @@ public class GoodsController {
         ReturnObject ret = productService.getProductsOfCategories(null, id,page,pageSize);
         ret = Common.getPageRetVo(ret, SimpleProductRetVo.class);
         return Common.decorateReturnObject(ret);
+    public Object getProductOfCategory(@PathVariable("id") Long id,
+                                       @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        ReturnObject ret = productService.getProductsOfCategories(null, id,page,pageSize);
+        if (ret.getCode().getCode() !=0){
+            return Common.decorateReturnObject(ret);
+        }
+        return  Common.decorateReturnObject(Common.getPageRetVo(ret, SimpleProductRetVo.class));
     }
 
     /**
@@ -300,6 +311,7 @@ public class GoodsController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 504, message = "分类id不存在"),
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @GetMapping(value="shops/{did}/categories/{id}/products" )
@@ -308,6 +320,14 @@ public class GoodsController {
                                              @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
         return Common.decorateReturnObject(productService.getProductsOfCategories(did,cid,page,pageSize));
+    public Object getProductOfCategoryInShop(@PathVariable("did") Long did,@PathVariable("id") Long cid,
+                                             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
+        ReturnObject ret = productService.getProductsOfCategories(did,cid,page,pageSize);
+        if (ret.getCode().getCode() !=0){
+            return Common.decorateReturnObject(ret);
+        }
+        return  Common.decorateReturnObject(Common.getPageRetVo(ret, SimpleProductRetVo.class));
     }
 
 

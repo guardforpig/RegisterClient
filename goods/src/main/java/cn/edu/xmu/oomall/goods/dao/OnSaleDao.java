@@ -58,7 +58,7 @@ public class OnSaleDao {
         try {
             OnSalePo onsalePo = (OnSalePo) cloneVo(onSale, OnSalePo.class);
             setPoCreatedFields(onsalePo, userId, userName);
-            onSalePoMapper.insert(onsalePo);
+            onSalePoMapper.insertSelective(onsalePo);
             return new ReturnObject((OnSale) cloneVo(onsalePo, OnSale.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -206,8 +206,15 @@ public class OnSaleDao {
             OnSalePo po = (OnSalePo) cloneVo(onsale, OnSalePo.class);
             setPoModifiedFields(po, userId, userName);
             onSalePoMapper.updateByPrimaryKeySelective(po);
+
+            if(po.getShareActId()!=null&& po.getShareActId().equals(-1L)){
+                OnSalePo newPo= onSalePoMapper.selectByPrimaryKey(po.getId());
+                newPo.setShareActId(null);
+                onSalePoMapper.updateByPrimaryKey(newPo);
+            }
             return new ReturnObject(ReturnNo.OK);
         } catch (Exception e) {
+            logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }

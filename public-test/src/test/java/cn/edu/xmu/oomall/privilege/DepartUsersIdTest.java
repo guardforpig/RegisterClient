@@ -26,7 +26,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Objects;
@@ -35,14 +34,14 @@ import java.util.Objects;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartUsersIdTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilege/departs/{did}/users/{id}";
-    private static String IDURL = "/privilege/departs/{did}/users/{id}";
-    private static String GETURL = "/privilege/users";
-    private static String NEWUSERURL = "/privilege/departs/{did}/newusers/{id}";
-    private static String APPROVEUSERURL = "/privilege/departs/{did}/newusers/{id}/approve";
-    private static String USERURL = "/privilege/departs/{did}/users";
-    private static String FORBIDURL = "/privilege/departs/{did}/newusers/{id}/forbid";
-    private static String RELEASEURL = "/privilege/departs/{did}/newusers/{id}/release";
+    private static final  String TESTURL ="/privilege/departs/{did}/users/{id}";
+    private static final String IDURL = "/privilege/departs/{did}/users/{id}";
+    private static final String GETURL = "/privilege/users";
+    private static final String NEWUSERURL = "/privilege/departs/{did}/newusers/{id}";
+    private static final String APPROVEUSERURL = "/privilege/departs/{did}/newusers/{id}/approve";
+    private static final String USERURL = "/privilege/departs/{did}/users";
+    private static final String FORBIDURL = "/privilege/departs/{did}/newusers/{id}/forbid";
+    private static final String RELEASEURL = "/privilege/departs/{did}/newusers/{id}/release";
     /***
      * 查找用户
      * @throws Exception
@@ -53,7 +52,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
 
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient
+        this.gatewayClient
                 .get()
                 .uri(TESTURL,1,46)
                 .header("authorization", token)
@@ -77,7 +76,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
 
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient
+        this.gatewayClient
                 .get()
                 .uri(TESTURL,0,23)
                 .header("authorization", token)
@@ -98,7 +97,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
 
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient
+        this.gatewayClient
                 .get()
                 .uri(TESTURL,1, 17341)
                 .header("authorization", token)
@@ -119,7 +118,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
 
         String token = this.adminLogin("2721900002", "123456");
 
-        this.mallClient
+        this.gatewayClient
                 .get()
                 .uri(TESTURL,1,17342)
                 .header("authorization", token)
@@ -140,7 +139,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void modifyUser1() throws Exception{
         String token =this.adminLogin("shop1_coupon", "123456");
         String regJson = "{\"name\": \"testU1\",\"email\": \"assde@1121123\", \"mobile\": \"88663431122\"}";
-        this.mallClient.put().uri(TESTURL, 1, 17351)
+        this.gatewayClient.put().uri(TESTURL, 1, 17351)
                 .header("authorization",token)
                 .bodyValue(regJson)
                 .exchange()
@@ -160,7 +159,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void modifyUser2() throws Exception{
         String token =this.adminLogin("13088admin", "123456");
         String regJson = "{\"name\": \"testU1\",\"email\": \"assde@1121123\", \"mobile\": \"88663431122\"}";
-        this.mallClient.put().uri(TESTURL, 1, 17351)
+        this.gatewayClient.put().uri(TESTURL, 1, 17351)
                 .header("authorization",token)
                 .bodyValue(regJson)
                 .exchange()
@@ -180,7 +179,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void modifyUser3() throws Exception{
         String token =this.adminLogin("13088admin", "123456");
         String regJson = "{\"name\": \"testU1\",\"email\": \"assde@1123\", \"mobile\": \"886223263431122\"}";
-        this.mallClient.put().uri(TESTURL, 1, 17351)
+        this.gatewayClient.put().uri(TESTURL, 1, 17351)
                 .header("authorization",token)
                 .bodyValue(regJson)
                 .exchange()
@@ -200,7 +199,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void modifyUser6() throws Exception{
         String token =this.adminLogin("13088admin", "123456");
         String regJson = "{\"name\": \"testU\",\"email\": \"test@test.cn\", \"mobile\": \"11111111111\"}";
-        this.mallClient.put().uri(TESTURL, 1, 99999)
+        this.gatewayClient.put().uri(TESTURL, 1, 99999)
                 .header("authorization",token)
                 .bodyValue(regJson)
                 .exchange()
@@ -218,7 +217,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void modifyUser7() throws Exception{
         String token =this.adminLogin("2721900002", "123456");
         String regJson = "{\"name\": \"testU1\",\"idNumber\": \"3701091234343424\"}";
-        this.mallClient.put().uri(TESTURL, 1, 17349)
+        this.gatewayClient.put().uri(TESTURL, 1, 17349)
                 .header("authorization",token)
                 .bodyValue(regJson)
                 .exchange()
@@ -239,7 +238,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
         String token =this.adminLogin("13088admin", "123456");
 
         String regJson = "{\"name\": \"testU123\", \"idNumber\": \"3701091234343424\"}";
-        this.mallClient.put().uri(TESTURL, 1,17349)
+        this.gatewayClient.put().uri(TESTURL, 1,17349)
                 .header("authorization",token)
                 .bodyValue(regJson)
                 .exchange()
@@ -247,7 +246,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.put().uri(IDURL, 1,17349)
+        this.gatewayClient.put().uri(IDURL, 1,17349)
                 .header("authorization",token)
                 .bodyValue(regJson)
                 .exchange()
@@ -272,7 +271,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
         String token =this.adminLogin("2721900002", "123456");
 
         String regJson = "{\"name\": \"testU222\", \"idNumber\": \"37010912343434242\"}";
-        this.mallClient.put().uri(TESTURL, 2,17350)
+        this.gatewayClient.put().uri(TESTURL, 2,17350)
                 .header("authorization",token)
                 .bodyValue(regJson)
                 .exchange()
@@ -280,7 +279,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.put().uri(IDURL, 2,17350)
+        this.gatewayClient.put().uri(IDURL, 2,17350)
                 .header("authorization",token)
                 .bodyValue(regJson)
                 .exchange()
@@ -300,7 +299,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void register1() throws Exception {
         String requireJson="{\n    \"userName\": \"mybabyw2\",\n    \"password\": \"AaBD11231!!\",\n    \"name\": \"LiangJi1\",   \"mobile\": \"21433452556334\",\n    \"email\": \"t223e21st2jcs@test.com\",   \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isOk()
@@ -317,7 +316,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void register2() throws Exception {
         String requireJson="{\n    \"userName\": \"mybaby\",\n    \"password\": \"AaBD11231!!\",\n    \"name\": \"LiangJi1\",   \"mobile\": \"62231241168683243243236\",\n    \"email\": \"t223est2jcs@test.com\",   \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isOk()
@@ -332,7 +331,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void register3() throws Exception {
         String requireJson="{\n    \"userName\": \"13087admin\",\n    \"password\": \"AaBD123!!\",\n    \"name\": \"LiangJi\",\n    \"mobile\": \"262231241168683243243236\",  \"email\": \"mybaby@test1.com\",  \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isOk()
@@ -348,7 +347,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void register4() throws Exception {
         String requireJson="{\n    \"userName\": null,\n    \"password\": \"AaBD123!!\",\n    \"name\": \"LiangJi\",    \"mobile\": \"6411686886\",\n    \"email\": \"test@test.com\",  \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isBadRequest()
@@ -365,7 +364,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void register5() throws Exception {
         String requireJson="{\n    \"userName\": \"13087\",\n    \"password\": \"AaBD123!!\",\n    \"name\": \"LiangJi\",   \"mobile\": \"6411686886\",\n    \"email\": \"test@test.com\",  \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isBadRequest()
@@ -381,7 +380,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void register6() throws Exception {
         String requireJson="{\n    \"userName\": \"13087admin\",\n    \"password\": \"AaBD123123\",\n    \"name\": \"LiangJi\",   \"mobile\": \"6411686886\",\n    \"email\": \"test@test.com\",   \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isBadRequest()
@@ -397,7 +396,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void register7() throws Exception {
         String requireJson="{\n    \"userName\": \"13087admin\",\n    \"password\": \"AaBD1231!!\",\n    \"name\": null,   \"mobile\": \"6411686886\",\n    \"email\": \"test@test.com\",   \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isBadRequest()
@@ -413,7 +412,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void register9() throws Exception {
         String requireJson="{\n    \"userName\": \"13087admin\",\n    \"password\": \"AaBD1231!!\",\n    \"name\": \"LiangJi\",  \"mobile\": \"6411686886\",\n    \"email\": null,  \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isBadRequest()
@@ -430,7 +429,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void duplicateRegister4() throws Exception {
         String requireJson="{\n    \"userName\": \"13088admin\",\n    \"password\": \"AaBD1231!!\",\n    \"name\": \"LiangJi\",   \"mobile\": \"641168683243243236\",\n    \"email\": \"test2jcs@test.com\",   \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isOk()
@@ -445,7 +444,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void duplicateRegister5() throws Exception {
         String requireJson="{\n    \"userName\": \"13089admin\",\n    \"password\": \"AaBD1231!!\",\n    \"name\": \"LiangJi\",    \"mobile\": \"16978955874\",\n    \"email\": \"test0112@test.com\",  \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isOk()
@@ -460,7 +459,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void duplicateRegister6() throws Exception {
         String requireJson="{\n    \"userName\": \"13089admin\",\n    \"password\": \"AaBD1231!!\",\n    \"name\": \"LiangJi\",  \"mobile\": \"16978933874\",\n    \"email\": \"minge@163.com\", \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isOk()
@@ -476,7 +475,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void duplicateRegister1() throws Exception {
         String requireJson="{\n    \"userName\": \"130871234451admin\",\n    \"password\": \"AaBD1231!!\",\n    \"name\": \"LiangJi\",   \"mobile\": \"6411686836\",\n    \"email\": \"test2@test.com\",   \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isOk()
@@ -492,7 +491,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void duplicateRegister2() throws Exception {
         String requireJson="{\n    \"userName\": \"duplicateTest2\",\n    \"password\": \"AaBD1231!!\",\n    \"name\": \"LiangJi\", \"mobile\": \"642234811686886\",\n    \"email\": \"test3@test.com\",\n    \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isOk()
@@ -509,7 +508,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void duplicateRegister3() throws Exception {
         String requireJson="{\n    \"userName\": \"duplicateTest7\",\n    \"password\": \"AaBD1231!!\",\n    \"name\": \"LiangJi\",  \"mobile\": \"6413683356846\",\n    \"email\": \"t112434est@test.com\",   \"departId\": 1\n}";
-        this.mallClient.post().uri(GETURL)
+        this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isOk()
@@ -527,7 +526,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Order(3)
     public void register14() throws Exception {
         String requireJson="{ \"userName\": \"anormalusername3\", \"password\": \"1234aBa!\",  \"name\": \"LiangJi\",    \"mobile\": \"13888888388\",  \"email\": \"test@test.com\",  \"idNumber\": \"55983632754584\",    \"departId\": 1}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GETURL)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isCreated()
@@ -541,7 +540,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
         Long userId = user.getId();
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(NEWUSERURL,1,userId)
+        this.gatewayClient.get().uri(NEWUSERURL,1,userId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -556,14 +555,14 @@ public class DepartUsersIdTest extends BaseTestOomall {
 
         //不能登录
         requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login").
+        gatewayClient.post().uri("/privilege/login").
                 bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_ID_NOTEXIST.getCode());
 
-        this.mallClient.put().uri(APPROVEUSERURL,1, userId)
+        this.gatewayClient.put().uri(APPROVEUSERURL,1, userId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -571,7 +570,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //可以登录
-        mallClient.post().uri("/privilege/login").
+        gatewayClient.post().uri("/privilege/login").
                 bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isCreated()
@@ -588,7 +587,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Order(3)
     public void register10() throws Exception {
         String requireJson="{\n    \"userName\": \"13087112admin\",\n    \"password\": \"AaBD1231!!\",\n    \"name\": \"noshop\",  \"mobile\": \"64116222386886\",\n    \"email\": \"test@tes112344122t.com\",   \"departId\": -1}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GETURL)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isCreated()
@@ -602,7 +601,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
         Long userId = user.getId();
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(NEWUSERURL,-1, userId)
+        this.gatewayClient.get().uri(NEWUSERURL,-1, userId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -616,14 +615,14 @@ public class DepartUsersIdTest extends BaseTestOomall {
 
         //不能登录
         requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login").
+        gatewayClient.post().uri("/privilege/login").
                 bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_ID_NOTEXIST.getCode());
 
-        this.mallClient.put().uri(APPROVEUSERURL,1, userId)
+        this.gatewayClient.put().uri(APPROVEUSERURL,1, userId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -631,7 +630,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //可以登录
-        mallClient.post().uri("/privilege/login").
+        gatewayClient.post().uri("/privilege/login").
                 bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isCreated()
@@ -648,7 +647,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Order(3)
     public void register11() throws Exception {
         String requireJson="{\n    \"userName\": \"130871234451admin\",\n    \"password\": \"AaBD1231!!\",\n    \"name\": \"nullDepart\",  \"mobile\": \"642234811686886\",\n    \"email\": \"t112434est@test.com\",  \"departId\": null}";
-        String ret = new String(Objects.requireNonNull(this.mallClient.post().uri(GETURL)
+        String ret = new String(Objects.requireNonNull(this.gatewayClient.post().uri(GETURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isCreated()
@@ -661,7 +660,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
         Long userId = user.getId();
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(NEWUSERURL,-1, userId)
+        this.gatewayClient.get().uri(NEWUSERURL,-1, userId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -675,14 +674,14 @@ public class DepartUsersIdTest extends BaseTestOomall {
 
         //不能登录
         requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login").
+        gatewayClient.post().uri("/privilege/login").
                 bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_ID_NOTEXIST.getCode());
 
-        this.mallClient.put().uri(APPROVEUSERURL,1, userId)
+        this.gatewayClient.put().uri(APPROVEUSERURL,1, userId)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -690,7 +689,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //可以登录
-        mallClient.post().uri("/privilege/login").
+        gatewayClient.post().uri("/privilege/login").
                 bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isCreated()
@@ -708,7 +707,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void forbidUser1() throws Exception{
         String token =this.adminLogin("2721900002", "123456");
 
-        this.mallClient.put().uri(FORBIDURL, 1,17357)
+        this.gatewayClient.put().uri(FORBIDURL, 1,17357)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -728,7 +727,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void forbidUser2() throws Exception{
         String token =this.adminLogin("13088admin", "123456");
 
-        this.mallClient.put().uri(FORBIDURL, 1,999999)
+        this.gatewayClient.put().uri(FORBIDURL, 1,999999)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -747,7 +746,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void forbidUser3() throws Exception{
         String token =this.adminLogin("13088admin", "123456");
 
-        this.mallClient.put().uri(FORBIDURL, 2,17357)
+        this.gatewayClient.put().uri(FORBIDURL, 2,17357)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -770,19 +769,19 @@ public class DepartUsersIdTest extends BaseTestOomall {
         vo.setPassword("123456");
         //封禁前
         String requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String token =this.adminLogin("13088admin", "123456");
-        this.mallClient.put().uri(FORBIDURL,1,17357).header("authorization",token)
+        this.gatewayClient.put().uri(FORBIDURL,1,17357).header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_USER_FORBIDDEN.getCode());
@@ -798,7 +797,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void forbidUser6() throws Exception{
 
         String token =this.adminLogin("13088admin", "123456");
-        this.mallClient.put().uri(FORBIDURL,1,17357).header("authorization",token)
+        this.gatewayClient.put().uri(FORBIDURL,1,17357).header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -820,19 +819,19 @@ public class DepartUsersIdTest extends BaseTestOomall {
         vo.setPassword("123456");
         //封禁前
         String requireJson = JacksonUtil.toJson(vo);
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String token =this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(FORBIDURL,2,17358).header("authorization",token)
+        this.gatewayClient.put().uri(FORBIDURL,2,17358).header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_USER_FORBIDDEN.getCode());
@@ -853,21 +852,21 @@ public class DepartUsersIdTest extends BaseTestOomall {
         vo.setPassword("123456");
         String requireJson = JacksonUtil.toJson(vo);
 
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_USER_FORBIDDEN.getCode());
 
 
         String token =this.adminLogin("13088admin", "123456");
-        this.mallClient.put().uri(RELEASEURL,1,17357)
+        this.gatewayClient.put().uri(RELEASEURL,1,17357)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
         //通过登录来验证是否成功
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
@@ -888,21 +887,21 @@ public class DepartUsersIdTest extends BaseTestOomall {
         vo.setPassword("123456");
         String requireJson = JacksonUtil.toJson(vo);
 
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_USER_FORBIDDEN.getCode());
 
 
         String token =this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(RELEASEURL,2,17358)
+        this.gatewayClient.put().uri(RELEASEURL,2,17358)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
         //通过登录来验证是否成功
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
@@ -919,7 +918,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void releaseUser3() throws Exception{
         String token =this.adminLogin("13088admin", "123456");
 
-        this.mallClient.put().uri(RELEASEURL,1,100909)
+        this.gatewayClient.put().uri(RELEASEURL,1,100909)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -936,7 +935,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void releaseUser4() throws Exception{
         String token =this.adminLogin("shop1_coupon", "123456");
 
-        this.mallClient.put().uri(RELEASEURL,1,17357)
+        this.gatewayClient.put().uri(RELEASEURL,1,17357)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -953,7 +952,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void releaseUser5() throws Exception{
         String token =this.adminLogin("shop2_auth", "123456");
 
-        this.mallClient.put().uri(RELEASEURL,1,17357)
+        this.gatewayClient.put().uri(RELEASEURL,1,17357)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -972,7 +971,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
 
 
         String token =this.adminLogin("2721900002", "123456");
-        this.mallClient.put().uri(RELEASEURL,2,17358)
+        this.gatewayClient.put().uri(RELEASEURL,2,17358)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
@@ -990,7 +989,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void delUser1() throws Exception{
         String token =this.adminLogin("13088admin", "123456");
 
-        this.mallClient.delete().uri(IDURL,1,10987)
+        this.gatewayClient.delete().uri(IDURL,1,10987)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -1006,7 +1005,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     @Test
     public void delUser2() throws Exception{
 
-        this.mallClient.delete().uri(IDURL,1,10987)
+        this.gatewayClient.delete().uri(IDURL,1,10987)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -1022,7 +1021,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void delUser3() throws Exception{
         String token =this.adminLogin("8131600001", "123456");
 
-        this.mallClient.delete().uri(IDURL,2,47)
+        this.gatewayClient.delete().uri(IDURL,2,47)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -1039,7 +1038,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void delUser4() throws Exception{
         String token =this.adminLogin("shop2_adv", "123456");
 
-        this.mallClient.delete().uri(IDURL,2,47)
+        this.gatewayClient.delete().uri(IDURL,2,47)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -1054,7 +1053,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
      */
     @Test
     public void delUser5() throws Exception{
-        this.mallClient.delete().uri(IDURL,2,47)
+        this.gatewayClient.delete().uri(IDURL,2,47)
                 .header("authorization","hello")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -1078,7 +1077,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
         vo.setPassword("123456");
         String requireJson = JacksonUtil.toJson(vo);
 
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
@@ -1087,14 +1086,14 @@ public class DepartUsersIdTest extends BaseTestOomall {
         String token =this.adminLogin("13088admin", "123456");
 
 
-        this.mallClient.delete().uri(IDURL, 1,17357).header("authorization",token)
+        this.gatewayClient.delete().uri(IDURL, 1,17357).header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
 
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_ID_NOTEXIST.getCode());
@@ -1117,7 +1116,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
         vo.setPassword("123456");
         String requireJson = JacksonUtil.toJson(vo);
 
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
@@ -1126,14 +1125,14 @@ public class DepartUsersIdTest extends BaseTestOomall {
         String token =this.adminLogin("2721900002", "123456");
 
 
-        this.mallClient.delete().uri(IDURL, 2,17358).header("authorization",token)
+        this.gatewayClient.delete().uri(IDURL, 2,17358).header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
 
-        mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_ID_NOTEXIST.getCode());
@@ -1151,7 +1150,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void forbidUser11() throws Exception{
         String token =this.adminLogin("13088admin", "123456");
 
-        this.mallClient.put().uri(FORBIDURL,1, 17357)
+        this.gatewayClient.put().uri(FORBIDURL,1, 17357)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -1171,7 +1170,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
     public void releaseUser11() throws Exception{
         String token =this.adminLogin("13088admin", "123456");
 
-        this.mallClient.put().uri(RELEASEURL,2,17358)
+        this.gatewayClient.put().uri(RELEASEURL,2,17358)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -1190,7 +1189,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
         String token =this.adminLogin("13088admin", "123456");
 
         String regJson = "{\"name\": \"testU123\", \"idNumber\": \"3701091234343424\"}";
-        this.mallClient.put().uri(TESTURL, 1,17357)
+        this.gatewayClient.put().uri(TESTURL, 1,17357)
                 .header("authorization",token)
                 .bodyValue(regJson)
                 .exchange()
@@ -1211,7 +1210,7 @@ public class DepartUsersIdTest extends BaseTestOomall {
 
         String token =this.adminLogin("13088admin", "123456");
 
-        this.mallClient.delete().uri(IDURL, 1,17357).header("authorization",token)
+        this.gatewayClient.delete().uri(IDURL, 1,17357).header("authorization",token)
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody()

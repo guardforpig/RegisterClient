@@ -5,7 +5,9 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.mapper.ShopAccountPoMapper;
 import cn.edu.xmu.oomall.shop.model.po.ShopAccountPo;
 import cn.edu.xmu.oomall.shop.model.po.ShopAccountPoExample;
+import cn.edu.xmu.oomall.shop.model.vo.ShopAccountRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopAccountVo;
+import cn.edu.xmu.oomall.shop.model.vo.SimpleAdminUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
 
 /**
@@ -32,7 +35,7 @@ public class ShopAccountDao {
      * @date  2021-11-11
      * @studentId 34520192201587
      */
-    public ReturnObject<List<ShopAccountVo>> getShopAccounts(Long shopId) {
+    public ReturnObject<List<ShopAccountRetVo>> getShopAccounts(Long shopId) {
         List<ShopAccountPo> accountPoList= new ArrayList<>();
         ShopAccountPoExample shopAccountPoExample=new ShopAccountPoExample();
         ShopAccountPoExample.Criteria criteria=shopAccountPoExample.createCriteria();
@@ -41,7 +44,13 @@ public class ShopAccountDao {
         }
         try {
             accountPoList = shopAccountPoMapper.selectByExample(shopAccountPoExample);
-            List<ShopAccountVo> ret=accountPoList.stream().map(ShopAccountVo::new).collect(Collectors.toList());
+            List<ShopAccountRetVo> ret= new ArrayList<>();
+            for(ShopAccountPo shopAccountPo:accountPoList){
+                ShopAccountRetVo shopAccountRetVo = cloneVo(shopAccountPo,ShopAccountRetVo.class);
+                shopAccountRetVo.setCreator(new SimpleAdminUserVo(shopAccountPo.getCreatorId(),shopAccountPo.getCreatorName()));
+                shopAccountRetVo.setModifier(new SimpleAdminUserVo(shopAccountPo.getModifierId(),shopAccountPo.getModifierName()));
+                ret.add(shopAccountRetVo);
+            }
             return new ReturnObject<>(ret);
         }
         catch (Exception exception){

@@ -24,12 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartsProxiesTest extends BaseTestOomall {
 
-    private static String DEPARTURL ="/privilege/departs/{id}/proxies";
-    private static String DEPARTIDURL = "/departs/{did}/proxies/{id}";
-    private static String PROXYURL ="/privilege/users/{id}/proxies";
-    private static String IDURL ="/privilege/departs/{did}/users/{aid}/proxyusers/{bid}";
-    private static String SELFPROXYURL = "/privilege/self/proxies";
-    private static String SELFIDURL = "/privilege/self/proxies/{id}";
+    private static final String DEPARTURL ="/privilege/departs/{id}/proxies";
+    private static final String DEPARTIDURL = "/departs/{did}/proxies/{id}";
+    private static final String PROXYURL ="/privilege/users/{id}/proxies";
+    private static final String IDURL ="/privilege/departs/{did}/users/{aid}/proxyusers/{bid}";
 
 
     /**
@@ -41,7 +39,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     @Test
     public void getListProxies1() throws Exception {
 
-        this.mallClient.get().uri(DEPARTURL,1)
+        this.gatewayClient.get().uri(DEPARTURL,1)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -61,13 +59,13 @@ public class DepartsProxiesTest extends BaseTestOomall {
     public void getListProxies2() throws Exception {
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(DEPARTURL,1)
+        this.gatewayClient.get().uri(DEPARTURL,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.proxyUser.id == 17332 && @.user.id == 17337)]").exists();
+                .jsonPath("$.data.list[?(@.proxyUser.id == '17332')].user.id").isEqualTo(17337);
     }
 
     /**
@@ -81,13 +79,13 @@ public class DepartsProxiesTest extends BaseTestOomall {
     public void getListProxies3() throws Exception {
 
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(DEPARTURL,1)
+        this.gatewayClient.get().uri(DEPARTURL,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.proxyUser.id == 17332 && @.user.id == 17337)]").exists();
+                .jsonPath("$.data.list[?(@.proxyUser.id == '17332')].user.id").isEqualTo(17337);
     }
 
     /**
@@ -99,7 +97,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     @Test
     public void getListProxies4() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(DEPARTURL,2)
+        this.gatewayClient.get().uri(DEPARTURL,2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -117,7 +115,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     public void getListProxies5() throws Exception {
 
         String token = this.adminLogin("norole_user1", "123456");
-        this.mallClient.get().uri(DEPARTURL,1)
+        this.gatewayClient.get().uri(DEPARTURL,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -133,59 +131,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
      */
     @Test
     public void getListProxies7() throws Exception {
-        this.mallClient.get().uri(DEPARTURL,0)
-                .header("authorization", "test")
-                .exchange()
-                .expectStatus().isUnauthorized()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_JWT.getCode());
-    }
-
-    /**
-     * 1
-     * 不登录查询自己用户代理关系
-     *
-     */
-    @Test
-    public void getSelfProxies1() throws Exception {
-
-        this.mallClient.get().uri(SELFPROXYURL)
-                .exchange()
-                .expectStatus().isUnauthorized()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NEED_LOGIN.getCode())
-                .returnResult()
-                .getResponseBodyContent();
-    }
-
-    /**
-     * 2
-     * 查询自己的代理关系
-     *
-     */
-    @Test
-    @Order(1)
-    public void getSelfProxies2() throws Exception {
-
-        String token = this.adminLogin("shop1_proxy", "123456");
-        this.mallClient.get().uri(SELFPROXYURL)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.proxyUser.id == 17332 && @.user.id == 17337)]").exists();
-    }
-
-    /**
-     * 7
-     * 伪造token查询代理关系
-     *
-     * @author 24320182203227 Li Zihan
-     */
-    @Test
-    public void getSelfProxies3() throws Exception {
-        this.mallClient.get().uri(SELFPROXYURL)
+        this.gatewayClient.get().uri(DEPARTURL,0)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -202,7 +148,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     @Test
     public void createProxies1() throws Exception {
 
-        this.mallClient.post().uri(PROXYURL,17330)
+        this.gatewayClient.post().uri(PROXYURL,17330)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -218,7 +164,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     public void createProxies2() throws Exception {
 
         String token = this.adminLogin("proxy_user1", "123456");
-        this.mallClient.post().uri(PROXYURL,17333)
+        this.gatewayClient.post().uri(PROXYURL,17333)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -235,7 +181,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     public void createProxies3() throws Exception {
 
         String token = this.adminLogin("proxy_user1", "123456");
-        this.mallClient.post().uri(PROXYURL,1)
+        this.gatewayClient.post().uri(PROXYURL,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -254,7 +200,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
 
         String token = this.adminLogin("proxy_user1", "123456");
         //代理前无权限
-        this.mallClient.get().uri(DEPARTURL, 1)
+        this.gatewayClient.get().uri(DEPARTURL, 1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -262,14 +208,14 @@ public class DepartsProxiesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         String token1 = this.adminLogin("shop1_auth", "123456");
-        this.mallClient.post().uri(PROXYURL, 17351)
+        this.gatewayClient.post().uri(PROXYURL, 17351)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
         //代理后权限
-        this.mallClient.get().uri(DEPARTURL, 1)
+        this.gatewayClient.get().uri(DEPARTURL, 1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
@@ -285,7 +231,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     @Test
     public void createDepartsProxies1() throws Exception {
 
-        this.mallClient.post().uri(IDURL,1,17351,17330)
+        this.gatewayClient.post().uri(IDURL,1,17351,17330)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -301,7 +247,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     public void createDepartsProxies2() throws Exception {
 
         String token = this.adminLogin("shop1_auth", "123456");
-        this.mallClient.post().uri(IDURL,2,17353,17333)
+        this.gatewayClient.post().uri(IDURL,2,17353,17333)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -318,7 +264,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     public void createDepartsProxies3() throws Exception {
 
         String token = this.adminLogin("shop1_auth", "123456");
-        this.mallClient.post().uri(IDURL,1,17351,1)
+        this.gatewayClient.post().uri(IDURL,1,17351,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -335,7 +281,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     public void createDepartsProxies4() throws Exception {
 
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.post().uri(IDURL,1,17351,1)
+        this.gatewayClient.post().uri(IDURL,1,17351,1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -354,7 +300,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
 
         String token1 = this.adminLogin("proxy_user2", "123456");
         //代理前无权限
-        this.mallClient.get().uri(DEPARTURL, 2)
+        this.gatewayClient.get().uri(DEPARTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -362,14 +308,14 @@ public class DepartsProxiesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
         String token = this.adminLogin("shop2_auth", "123456");
-        this.mallClient.post().uri(IDURL,2,17353,17333)
+        this.gatewayClient.post().uri(IDURL,2,17353,17333)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
         //代理后权限
-        this.mallClient.get().uri(DEPARTURL, 2)
+        this.gatewayClient.get().uri(DEPARTURL, 2)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -377,135 +323,6 @@ public class DepartsProxiesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
     }
 
-    /**
-     * 1
-     * 不登录删除自己用户代理关系
-     *
-     */
-    @Test
-    public void delSelfProxies1() throws Exception {
-
-        this.mallClient.delete().uri(SELFIDURL, 6)
-                .exchange()
-                .expectStatus().isUnauthorized()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NEED_LOGIN.getCode())
-                .returnResult()
-                .getResponseBodyContent();
-    }
-
-    /**
-     * 2
-     * 删除不是自己的用户代理关系
-     *
-     */
-    @Test
-    public void delSelfProxies2() throws Exception {
-        String token = this.adminLogin("proxy_user1", "123456");
-        this.mallClient.delete().uri(SELFIDURL, 6)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isUnauthorized()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode())
-                .returnResult()
-                .getResponseBodyContent();
-
-    }
-
-    /**
-     * 2
-     * 删除不是自己的用户代理关系, 及时时平台管理员也不行
-     *
-     */
-    @Test
-    public void delSelfProxies3() throws Exception {
-        String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.delete().uri(SELFIDURL, 6)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isUnauthorized()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode())
-                .returnResult()
-                .getResponseBodyContent();
-
-    }
-
-    /**
-     * 7
-     * 伪造token删除代理关系
-     *
-     * @author 24320182203227 Li Zihan
-     */
-    @Test
-    public void delSelfProxies4() throws Exception {
-        this.mallClient.delete().uri(SELFIDURL)
-                .header("authorization", "test")
-                .exchange()
-                .expectStatus().isUnauthorized()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_INVALID_JWT.getCode());
-    }
-
-
-    /**
-     * 2
-     * 删除自己的用户代理关系
-     * 在createProxies4之后运行
-     */
-    @Test
-    @Order(4)
-    public void delSelfProxies5() throws Exception {
-
-        String token = this.adminLogin("shop1_auth", "123456");
-        //删除前
-        String result = new String(Objects.requireNonNull(this.mallClient.get().uri(SELFPROXYURL)
-                .header("authorization", token)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.proxyUser.id == 17351 && @.user.id == 17330)]").exists()
-                .returnResult()
-                .getResponseBodyContent()), "UTF-8");
-
-        List<UserProxyRetVo> list = JacksonUtil.parseObjectList(result,"data",UserProxyRetVo.class);
-        Long id = null;
-        for (UserProxyRetVo vo : list){
-            if (vo.getCreator().getId().equals(17330)){
-                id = vo.getId();
-                break;
-            }
-        }
-        assertNotNull(id);
-
-        String token1 = this.adminLogin("proxy_user1", "123456");
-        //删除前有权限
-        this.mallClient.get().uri(DEPARTURL, 1)
-                .header("authorization", token1)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
-
-
-        this.mallClient.delete().uri(SELFIDURL, id)
-                .header("authorization", token1)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
-
-        //删除后无权限
-        this.mallClient.get().uri(DEPARTURL, 1)
-                .header("authorization", token1)
-                .exchange()
-                .expectStatus().isForbidden()
-                .expectBody()
-                .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
-
-    }
 
     /**
      * 1
@@ -515,7 +332,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     @Test
     public void delProxies1() throws Exception {
 
-        this.mallClient.delete().uri(DEPARTIDURL, 2,7)
+        this.gatewayClient.delete().uri(DEPARTIDURL, 2,7)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -532,7 +349,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
     @Test
     public void delProxies2() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.delete().uri(DEPARTIDURL, 2,7)
+        this.gatewayClient.delete().uri(DEPARTIDURL, 2,7)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -552,7 +369,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
      */
     @Test
     public void delProxies4() throws Exception {
-        this.mallClient.delete().uri(DEPARTIDURL, 2,7)
+        this.gatewayClient.delete().uri(DEPARTIDURL, 2,7)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -572,13 +389,13 @@ public class DepartsProxiesTest extends BaseTestOomall {
 
         String token = this.adminLogin("shop2_auth", "123456");
         //删除前
-        String result = new String(Objects.requireNonNull(this.mallClient.get().uri(SELFPROXYURL)
+        String result = new String(Objects.requireNonNull(this.gatewayClient.get().uri(DEPARTURL +"page=1&pageSize=50" , 1)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.proxyUser.id == 17352 && @.user.id == 17333)]").exists()
+                .jsonPath("$.data.list[?(@.proxyUser.id == '17352')].user.id").isEqualTo(17333)
                 .returnResult()
                 .getResponseBodyContent()), "UTF-8");
 
@@ -594,7 +411,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
 
         String token1 = this.adminLogin("proxy_user2", "123456");
         //删除前有权限
-        this.mallClient.get().uri(DEPARTURL, 1)
+        this.gatewayClient.get().uri(DEPARTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
@@ -603,7 +420,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
 
 
         String token3 = this.adminLogin("2721900002", "123456");
-        this.mallClient.delete().uri(DEPARTIDURL, 2, id)
+        this.gatewayClient.delete().uri(DEPARTIDURL, 2, id)
                 .header("authorization", token3)
                 .exchange()
                 .expectStatus().isOk()
@@ -611,7 +428,7 @@ public class DepartsProxiesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //删除后无权限
-        this.mallClient.get().uri(DEPARTURL, 1)
+        this.gatewayClient.get().uri(DEPARTURL, 1)
                 .header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -619,6 +436,5 @@ public class DepartsProxiesTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
     }
-
 
 }

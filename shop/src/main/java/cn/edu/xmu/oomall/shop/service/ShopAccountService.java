@@ -4,12 +4,15 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.dao.ShopAccountDao;
 import cn.edu.xmu.oomall.shop.model.po.ShopAccountPo;
+import cn.edu.xmu.oomall.shop.model.vo.ShopAccountRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopAccountVo;
 import cn.edu.xmu.oomall.shop.model.vo.SimpleAdminUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 
 /**
@@ -29,16 +32,15 @@ public class ShopAccountService {
      * @date  2021-11-11
      * @studentId 34520192201587
      */
-    public ReturnObject<ShopAccountVo> addShopAccount(ShopAccountVo shopAccountVo, Long shopId,Long loginUserId,String loginUserName) {
-        ShopAccountPo shopAccountPo = shopAccountVo.createPo();
+    public ReturnObject<ShopAccountRetVo> addShopAccount(ShopAccountVo shopAccountVo, Long shopId,Long loginUserId,String loginUserName) {
+        ShopAccountPo shopAccountPo = cloneVo(shopAccountVo,ShopAccountPo.class);
         if(shopAccountDao.addShopAccount(shopAccountPo,shopId,loginUserId,loginUserName)){
-            ShopAccountVo shopAccountVo1=new ShopAccountVo(shopAccountPo);
-            shopAccountVo1.modifier=new SimpleAdminUserVo();
-            shopAccountVo1.creator=new SimpleAdminUserVo(shopAccountPo.getCreatorId(),shopAccountPo.getCreatorName());
+            ShopAccountRetVo shopAccountVo1=cloneVo(shopAccountPo,ShopAccountRetVo.class);
             return new ReturnObject<>(shopAccountVo1);
         }
-        else
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,"添加失败！");
+        else {
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, "添加失败！");
+        }
     }
 
     /**
@@ -46,8 +48,8 @@ public class ShopAccountService {
      * @date  2021-11-11
      * @studentId 34520192201587
      */
-    public ReturnObject<List<ShopAccountVo>> getShopAccounts(Long shopId) {
-        ReturnObject<List<ShopAccountVo>> returnObject=shopAccountDao.getShopAccounts(shopId);
+    public ReturnObject<List<ShopAccountRetVo>> getShopAccounts(Long shopId) {
+        ReturnObject<List<ShopAccountRetVo>> returnObject=shopAccountDao.getShopAccounts(shopId);
         return returnObject;
     }
 
@@ -63,7 +65,8 @@ public class ShopAccountService {
         if(shopAccountDao.deleteAccount(accountId)){
             return new ReturnObject<>();
         }
-        else
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,"删除失败！");
+        else {
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, "删除失败！");
+        }
     }
 }
