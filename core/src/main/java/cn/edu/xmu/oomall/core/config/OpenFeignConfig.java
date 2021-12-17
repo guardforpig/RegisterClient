@@ -63,6 +63,7 @@ class OpenFeignHeaderInterceptor implements RequestInterceptor {
             String name = headerNames.nextElement();
             // 跳过 content-length,防止报错Feign报错feign.RetryableException: too many bytes written executing
             if (name.equals("content-length")) {
+                log.info("skip content-length");
                 continue;
             }
             requestTemplate.header(name, request.getHeader(name));
