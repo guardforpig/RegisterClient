@@ -53,7 +53,7 @@ public class CategoryController {
     })
     @GetMapping("/categories/{id}/subcategories")
     public Object selectCategories(@PathVariable Long id) {
-        if (id <= 0) {
+        if (id < 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST));
         }
 
