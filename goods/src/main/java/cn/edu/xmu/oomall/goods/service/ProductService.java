@@ -164,7 +164,7 @@ public class ProductService {
             if (Objects.isNull(categoryVo)) {
                 new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "分类id不存在");
             }
-                Long voId = categoryVo.getPid();
+            Long voId = categoryVo.getPid();
             return Objects.isNull(voId)?new ReturnObject<>(ReturnNo.OK):
                     new ReturnObject<>(ReturnNo.OK,productDao.getProductsOfCategories(did, cid,page,pageSize));
         }
@@ -415,7 +415,7 @@ public class ProductService {
      */
     @Transactional(readOnly = true)
     public Object loadSecondKillProduct(LocalDateTime beginTime, LocalDateTime endTime) {
-            return productDao.loadSecondKillProduct(beginTime,endTime);
+        return productDao.loadSecondKillProduct(beginTime,endTime);
     }
 
     @Transactional(readOnly = true)
