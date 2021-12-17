@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.shop.controller;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.shop.model.vo.ShopAccountRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopAccountVo;
 import cn.edu.xmu.oomall.shop.service.ShopAccountService;
 import io.swagger.annotations.Api;
@@ -64,7 +65,7 @@ public class ShopAccountController {
      */
     @ApiOperation(value = "管理员获得店铺的账户" ,tags = "shop")
     @GetMapping(value = "/{id}/accounts")
-    public ReturnObject<List<ShopAccountVo>> getShopAccounts(@ApiParam(value = "店铺id",required=true) @PathVariable("id") Long shopId){
+    public ReturnObject<List<ShopAccountRetVo>> getShopAccounts(@ApiParam(value = "店铺id",required=true) @PathVariable("id") Long shopId){
         return shopAccountService.getShopAccounts(shopId);
     }
 

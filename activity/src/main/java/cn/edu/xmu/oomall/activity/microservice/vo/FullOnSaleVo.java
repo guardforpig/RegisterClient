@@ -6,8 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author Jiawei Zheng
@@ -31,12 +32,12 @@ public class FullOnSaleVo {
     private Long price;
 
     @ApiModelProperty(value = "开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
-    private LocalDateTime beginTime;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")    private ZonedDateTime beginTime;
 
     @ApiModelProperty(value = "结束时间")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
-    private LocalDateTime endTime;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")    private ZonedDateTime endTime;
 
     @ApiModelProperty(value = "数量")
     private Long quantity;
@@ -54,10 +55,14 @@ public class FullOnSaleVo {
     private SimpleUserRetVo creator;
 
     @ApiModelProperty(value = "创建时间")
-    private LocalDateTime gmtCreate;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    private ZonedDateTime gmtCreate;
 
     @ApiModelProperty(value = "修改时间")
-    private LocalDateTime gmtModified;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    private ZonedDateTime gmtModified;
 
     @ApiModelProperty(value = "修改者")
     private SimpleUserRetVo modifier;
