@@ -18,7 +18,8 @@ package cn.edu.xmu.oomall.core.config;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -26,9 +27,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 将包头原样复制的OpenFeign的请求包头中
@@ -44,9 +42,9 @@ public class OpenFeignConfig{
     }
 }
 
-@Slf4j
 class OpenFeignHeaderInterceptor implements RequestInterceptor {
 
+    Logger log = LoggerFactory.getLogger(OpenFeignHeaderInterceptor.class);
     @Override
     public void apply(RequestTemplate requestTemplate) {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
@@ -63,6 +61,11 @@ class OpenFeignHeaderInterceptor implements RequestInterceptor {
         // 包括token
         while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
+            // 跳过 content-length,防止报错Feign报错feign.RetryableException: too many bytes written executing
+            if (name.equals("Content-Length")) {
+                log.info("skip Content-Length");
+                continue;
+            }
             requestTemplate.header(name, request.getHeader(name));
         }
     }
