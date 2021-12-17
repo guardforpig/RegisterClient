@@ -1,7 +1,7 @@
 ## modified by luxun@2020
 
 ## 将文件结尾从CRLF改为LF，解决了cd 错误问题
-cd /home/mingqiu/oomall/core
+cd /home/mingqiu/oomall
 mvn clean install -Dmaven.test.skip=true
 
 cd /home/mingqiu/privilegegateway
@@ -11,6 +11,7 @@ cd /home/mingqiu/oomall/public-test
 
 git pull
 mvn clean
+
 
 cd /home/mingqiu/test
 
