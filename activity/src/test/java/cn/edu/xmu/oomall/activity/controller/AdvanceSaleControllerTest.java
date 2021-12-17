@@ -57,7 +57,7 @@ public class AdvanceSaleControllerTest {
     @MockBean(name = "cn.edu.xmu.oomall.activity.microservice.GoodsService")
     private GoodsService goodsService;
 
-    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ";
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final Locale LOCALE=Locale.CHINA;
 
     private DateTimeFormatter df;
@@ -75,8 +75,8 @@ public class AdvanceSaleControllerTest {
 
         SimpleOnSaleInfoVo vo1=new SimpleOnSaleInfoVo();
         vo1.setActivityId(2L);
-        vo1.setBeginTime(ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00",df));
-        vo1.setEndTime(ZonedDateTime.parse("2021-12-29T17:38:20.000+08:00",df));
+        vo1.setBeginTime(ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"));
+        vo1.setEndTime(ZonedDateTime.parse("2021-12-29T17:38:20.000+08:00"));
         list1.add(vo1);
 
         SimpleOnSaleInfoVo vo2=new SimpleOnSaleInfoVo();
@@ -85,18 +85,18 @@ public class AdvanceSaleControllerTest {
         list2.add(vo2);
 
         FullOnSaleVo vo3=new FullOnSaleVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
-                20L,ZonedDateTime.parse("2021-06-21T17:38:20.001+08:00",df),
-                ZonedDateTime.parse("2021-12-29T17:38:20.001+08:00",df),
+                20L,ZonedDateTime.parse("2021-06-21T17:38:20.001+08:00"),
+                ZonedDateTime.parse("2021-12-29T17:38:20.001+08:00"),
                 10L,"3",1L,1L,new SimpleUserRetVo(1L,"zheng5d"),
-                ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00",df),ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00",df),
+                ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"),ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"),
                 new SimpleUserRetVo(1L,"zheng5d"),(byte)1);
         list3.add(vo3);
 
         FullOnSaleVo vo4=new FullOnSaleVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
-                20L,ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00",df),
-                ZonedDateTime.parse("2021-12-29T17:38:20.000+08:00",df),
+                20L,ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"),
+                ZonedDateTime.parse("2021-12-29T17:38:20.000+08:00"),
                 10L,"3",11L,1L,new SimpleUserRetVo(1L,"zheng5d"),
-                ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00",df),ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00",df),
+                ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"),ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"),
                 new SimpleUserRetVo(1L,"zheng5d"),(byte)1);
         list4.add(vo4);
     }
@@ -251,7 +251,7 @@ public class AdvanceSaleControllerTest {
     @Test
     public void getOnlineAdvanceSaleInfoTest4() throws Exception {
         //模拟访问redis拿到一个未上线的预售活动bo
-        AdvanceSale advanceSale=new AdvanceSale(11L,4L,"努力向前","预售活动11",ZonedDateTime.parse("2021-06-22T17:38:20.000+08:00",df),100L,1L,"zheng5d",1L,"zheng5d",ZonedDateTime.parse("2021-06-22T17:38:20.000+08:00",df),ZonedDateTime.parse("2021-06-22T17:38:20.000+08:00",df),Byte.valueOf("2"));
+        AdvanceSale advanceSale=new AdvanceSale(11L,4L,"努力向前","预售活动11",ZonedDateTime.parse("2021-06-22T17:38:20.000+08:00"),100L,1L,"zheng5d",1L,"zheng5d",ZonedDateTime.parse("2021-06-22T17:38:20.000+08:00"),ZonedDateTime.parse("2021-06-22T17:38:20.000+08:00"),Byte.valueOf("2"));
         Mockito.when(redisUtil.get("advanceSale_11")).thenReturn(advanceSale);
         InternalReturnObject<PageInfo<FullOnSaleVo>>pageInfoReturnObject=new InternalReturnObject(new PageInfo<>(list3));
         Mockito.when(goodsService.getShopOnSaleInfo(4L,11L,null,null,null,1,10)).thenReturn(pageInfoReturnObject);
