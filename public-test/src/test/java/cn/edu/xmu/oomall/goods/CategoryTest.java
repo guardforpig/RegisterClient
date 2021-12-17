@@ -43,8 +43,8 @@ public class CategoryTest extends BaseTestOomall {
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == '1')].name").isEqualTo("女装男装")
-                .jsonPath("$.data.list[?(@.id == '2')].name").isEqualTo("鞋类箱包");
+                .jsonPath("$.data[?(@.id == '1')].name").isEqualTo("女装男装")
+                .jsonPath("$.data[?(@.id == '2')].name").isEqualTo("鞋类箱包");
     }
     /** 2
      * 不需要登录-查询商品分类关系2-不存在该分类
@@ -72,7 +72,7 @@ public class CategoryTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
-                .jsonPath("$.data.list.length").isEqualTo(0);
+                .jsonPath("$.data.length()").isEqualTo(0);
     }
 
     /** 17
@@ -113,8 +113,8 @@ public class CategoryTest extends BaseTestOomall {
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.name == '测试一级分类')].id").isEqualTo(this.categoryId1)
-                .jsonPath("$.data.list[?(@.name == '测试一级分类')].commissionRatio").isEqualTo(0);
+                .jsonPath("$.data[?(@.name == '测试一级分类')].id").isEqualTo(this.categoryId1)
+                .jsonPath("$.data[?(@.name == '测试一级分类')].commissionRatio").isEqualTo(0);
     }
 
     /**
@@ -188,8 +188,8 @@ public class CategoryTest extends BaseTestOomall {
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.name == '测试二级分类')].id").isEqualTo(this.categoryId2)
-                .jsonPath("$.data.list[?(@.name == '测试二级分类')].commissionRatio").isEqualTo(2);
+                .jsonPath("$.data[?(@.name == '测试二级分类')].id").isEqualTo(this.categoryId2)
+                .jsonPath("$.data[?(@.name == '测试二级分类')].commissionRatio").isEqualTo(2);
     }
 
     /** 18
@@ -218,8 +218,8 @@ public class CategoryTest extends BaseTestOomall {
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.name == '测试一级分类')].id").isEqualTo(this.categoryId1)
-                .jsonPath("$.data.list[?(@.name == '测试一级分类')].commissionRatio").isEqualTo(1);
+                .jsonPath("$.data[?(@.name == '测试一级分类')].id").isEqualTo(this.categoryId1)
+                .jsonPath("$.data[?(@.name == '测试一级分类')].commissionRatio").isEqualTo(1);
     }
 
     /**
@@ -343,7 +343,7 @@ public class CategoryTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.name == '测试二级分类')].id").isEqualTo(this.categoryId2);
+                .jsonPath("$.data[?(@.name == '测试二级分类')].id").isEqualTo(this.categoryId2);
     }
     /** 20
      * 需登录

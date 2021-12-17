@@ -19,7 +19,6 @@ package cn.edu.xmu.oomall;
 import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
-import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,17 +31,29 @@ public abstract class BaseTestOomall implements InitializingBean {
     @Value("${public-test.gateway.gate}")
     protected String gateway;
 
+    @Value("${public-test.mall.gate}")
+    protected String mall;
+
+    protected WebTestClient gatewayClient;
+
     protected WebTestClient mallClient;
+
 
     private static final JwtHelper jwtHelper = new JwtHelper();
 
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.mallClient = WebTestClient.bindToServer()
+        this.gatewayClient = WebTestClient.bindToServer()
                 .baseUrl("http://"+gateway)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
                 .build();
+
+        this.mallClient = WebTestClient.bindToServer()
+                .baseUrl("http://"+mall)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
+                .build();
+
     }
 
     protected String adminLogin(String userName, String password){
@@ -50,7 +61,7 @@ public abstract class BaseTestOomall implements InitializingBean {
         vo.setUserName(userName);
         vo.setPassword(password);
         String requireJson = JacksonUtil.toJson(vo);
-        byte[] ret = mallClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
+        byte[] ret = gatewayClient.post().uri("/privilege/login").bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
