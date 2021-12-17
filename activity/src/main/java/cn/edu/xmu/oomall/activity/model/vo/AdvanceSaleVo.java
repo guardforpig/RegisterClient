@@ -6,6 +6,8 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -29,14 +31,16 @@ public class AdvanceSaleVo{
     private Long price;
 
     @ApiModelProperty(value = "开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
     @NotNull(message = "开始时间不能为空")
-    private LocalDateTime beginTime;
+    private ZonedDateTime beginTime;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
     @ApiModelProperty(value = "结束时间")
     @NotNull(message = "结束时间不能为空")
-    private LocalDateTime endTime;
+    private ZonedDateTime endTime;
 
     @ApiModelProperty(value = "数量")
     @Min(0)
@@ -47,10 +51,10 @@ public class AdvanceSaleVo{
     @NotBlank(message = "预售活动名称不能为空")
     private String name;
 
-    @ApiModelProperty(value = "支付尾款时间")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
     @NotNull(message = "尾款支付时间不能为空")
-    private LocalDateTime payTime;
+    private ZonedDateTime payTime;
 
     @ApiModelProperty(value = "订金")
     @DecimalMin("0")
