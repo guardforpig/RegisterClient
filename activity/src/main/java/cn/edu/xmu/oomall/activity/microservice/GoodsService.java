@@ -58,7 +58,7 @@ public interface GoodsService {
                                                      @PathVariable("id") Long id,
                                                      @RequestBody OnSaleCreatedVo onSaleCreatedVo);
 
-    @PostMapping("/shops/{shopId}/onsales/{id}")
-    InternalReturnObject updateAddOnSaleShareActId(@PathVariable("shopId") Long shopId, @PathVariable("id") Long onsaleId);
+    @PutMapping("/shops/{shopId}/onsales/{id}")
+    InternalReturnObject modifyOnSaleShareActId(@PathVariable Long shopId, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale);
 
 }

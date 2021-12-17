@@ -227,7 +227,7 @@ public class ShareActivityController {
     @Audit(departName = "shops")
     @PostMapping("/shops/{shopId}/onSale/{id}/shareActivities/{sid}")
     public Object addShareActivityOnOnSale(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @PathVariable("sid") Long sid,@LoginUser Long loginUser,@LoginName String loginUsername){
-        ReturnObject ret = shareActivityService.addShareActivityOnOnSale(id,sid,loginUser,loginUsername);
+        ReturnObject ret = shareActivityService.addShareActivityOnOnSale(shopId,id,sid,loginUser,loginUsername);
         return Common.decorateReturnObject(ret);
     }
 
@@ -246,7 +246,7 @@ public class ShareActivityController {
     @Audit(departName = "shops")
     @DeleteMapping("/shops/{shopId}/onSale/{id}/shareActivities/{sid}")
     public Object deleteShareActivityOnOnSale(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @PathVariable("sid") Long sid,@LoginUser Long loginUser,@LoginName String loginUsername){
-        ReturnObject ret =shareActivityService.deleteShareActivityOnOnSale(id,sid,loginUser,loginUsername);
+        ReturnObject ret =shareActivityService.deleteShareActivityOnOnSale(shopId,id,sid,loginUser,loginUsername);
         return Common.decorateReturnObject(ret);
     }
 

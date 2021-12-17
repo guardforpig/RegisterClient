@@ -1,8 +1,10 @@
 package cn.edu.xmu.oomall.goods.microservice.vo;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 /**
  * @author 何赟
@@ -15,8 +17,10 @@ public class CategoryVo implements Serializable {
     private Integer commissionRatio;
     private String name;
     private CreatorBean creator;
-    private String gmtCreate;
-    private String gmtModified;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ")
+    private ZonedDateTime gmtCreate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ")
+    private ZonedDateTime gmtModified;
     private ModifierBean modifier;
 
     @Data
