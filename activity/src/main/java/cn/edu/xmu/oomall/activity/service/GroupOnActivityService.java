@@ -5,7 +5,7 @@ import cn.edu.xmu.oomall.activity.constant.GroupOnState;
 import cn.edu.xmu.oomall.activity.dao.GroupActivityDao;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleCreatedVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleInfoVo;
 import cn.edu.xmu.oomall.activity.model.bo.GroupOnActivity;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.ReturnNo;

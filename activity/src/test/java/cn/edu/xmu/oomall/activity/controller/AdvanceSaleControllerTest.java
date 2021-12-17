@@ -84,18 +84,18 @@ public class AdvanceSaleControllerTest {
         vo2.setActivityId(11L);
         list2.add(vo2);
 
-        FullOnSaleVo vo3=new FullOnSaleVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
+        FullOnSaleVo vo3=new FullOnSaleVo(3L,new SimpleShopVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
                 20L,ZonedDateTime.parse("2021-06-21T17:38:20.001+08:00"),
                 ZonedDateTime.parse("2021-12-29T17:38:20.001+08:00"),
-                10L,"3",1L,1L,new SimpleUserRetVo(1L,"zheng5d"),
+                10L,(byte)3,1L,1L,new SimpleUserRetVo(1L,"zheng5d"),
                 ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"),ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"),
                 new SimpleUserRetVo(1L,"zheng5d"),(byte)1);
         list3.add(vo3);
 
-        FullOnSaleVo vo4=new FullOnSaleVo(3L,new ShopInfoVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
+        FullOnSaleVo vo4=new FullOnSaleVo(3L,new SimpleShopVo(4L,"努力向前"),new ProductVo(1L,"算法书","helloworld"),
                 20L,ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"),
                 ZonedDateTime.parse("2021-12-29T17:38:20.000+08:00"),
-                10L,"3",11L,1L,new SimpleUserRetVo(1L,"zheng5d"),
+                10L,(byte)3,11L,1L,new SimpleUserRetVo(1L,"zheng5d"),
                 ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"),ZonedDateTime.parse("2021-06-21T17:38:20.000+08:00"),
                 new SimpleUserRetVo(1L,"zheng5d"),(byte)1);
         list4.add(vo4);

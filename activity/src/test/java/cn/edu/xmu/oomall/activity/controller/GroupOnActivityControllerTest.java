@@ -3,7 +3,7 @@ package cn.edu.xmu.oomall.activity.controller;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleInfoVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageInfoVo;
@@ -25,6 +25,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
@@ -42,7 +43,7 @@ public class GroupOnActivityControllerTest {
     private static final InternalReturnObject getShopInfoRet1 = new InternalReturnObject(new SimpleShopVo(1L, "OOMALL自营商铺"));
     private static final InternalReturnObject getShopInfoRet2 = new InternalReturnObject(ReturnNo.INTERNAL_SERVER_ERR.getCode(), "外部API错误");
 
-    private static final InternalReturnObject getOnsSlesOfProductRet1 = new InternalReturnObject(new PageInfoVo(Collections.singletonList(new SimpleOnSaleVo(29L, 17931L, "2021-11-11 14:38:20", "2022-02-19 14:38:20", 39L, 3L, null, 2)), 1L, 1, 10, 1));
+    private static final InternalReturnObject getOnsSlesOfProductRet1 = new InternalReturnObject(new PageInfoVo(Collections.singletonList(new SimpleOnSaleInfoVo(29L, 17931L, ZonedDateTime.parse("2021-11-11T14:38:20.000+08:00"),  ZonedDateTime.parse("2022-02-19T14:38:20.000+08:00"), 39L, 3L, null, (byte)2,null)), 1L, 1, 10, 1));
     private static final InternalReturnObject getOnsSlesOfProductRet2 = new InternalReturnObject(ReturnNo.INTERNAL_SERVER_ERR.getCode(), "外部API错误");
 
     @Autowired

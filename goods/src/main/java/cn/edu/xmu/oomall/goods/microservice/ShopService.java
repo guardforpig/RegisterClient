@@ -15,7 +15,7 @@ import java.util.List;
  * @description
  * @createTime 2021/11/29 15:47
  **/
-@FeignClient(value = "Shop")
+@FeignClient(value = "shop-service")
 public interface ShopService {
     @GetMapping("/shops/{id}")
     InternalReturnObject<SimpleShopVo> getShopInfo(@PathVariable("id")Long id);

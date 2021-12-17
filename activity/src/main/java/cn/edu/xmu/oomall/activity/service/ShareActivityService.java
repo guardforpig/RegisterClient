@@ -93,8 +93,8 @@ public class ShareActivityService {
                 if (onSalesByProductId.getErrno()!=0) {
                     return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
                 }
-                List<SimpleSaleInfoVo> list = (List<SimpleSaleInfoVo>) onSalesByProductId.getData().get("list");
-                for (SimpleSaleInfoVo simpleSaleInfoVO : list) {
+                List<SimpleOnSaleInfoVo> list = (List<SimpleOnSaleInfoVo>) onSalesByProductId.getData().get("list");
+                for (SimpleOnSaleInfoVo simpleSaleInfoVO : list) {
                     if (simpleSaleInfoVO.getShareActId() != null) {
                         shareActivityIds.add(simpleSaleInfoVO.getShareActId());
                     }

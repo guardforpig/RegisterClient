@@ -1,6 +1,6 @@
 package cn.edu.xmu.oomall.activity.model.vo;
 import cn.edu.xmu.oomall.activity.microservice.vo.ProductVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.ShopInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleShopVo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class FullAdvanceSaleRetVo {
     private String name;
 
     @ApiModelProperty(value = "店铺")
-    private ShopInfoVo shop;
+    private SimpleShopVo shop;
 
     @ApiModelProperty(value = "货品")
     private ProductVo product;
