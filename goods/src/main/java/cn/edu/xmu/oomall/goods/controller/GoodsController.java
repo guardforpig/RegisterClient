@@ -6,6 +6,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductChangeVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductDetailVo;
+import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
 import cn.edu.xmu.oomall.goods.service.GoodsService;
 import cn.edu.xmu.oomall.goods.service.ProductService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
@@ -83,6 +84,7 @@ public class GoodsController {
             @ApiResponse(code=503,message = "字段不合法"),
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
+
     @PostMapping("shops/{id}/goods")
     @Audit(departName = "shops")
     public Object insertGoods(@PathVariable("id") Long shopId, @Validated @RequestBody GoodsVo goodsVo, BindingResult bindingResult, @LoginUser Long loginUserId, @LoginName String loginUserName)
@@ -171,7 +173,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误"),
             @ApiResponse(code=505,message = "操作的资源id不是自己的对象")
     })
-    @PutMapping(value="shops/{shopId}/products/{id}/publish")
+    @PutMapping(value="shops/{shopId}/draftproducts/{id}/publish")
     @Audit(departName = "shops")
     public Object publishProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
@@ -271,15 +273,19 @@ public class GoodsController {
     })
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
-            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 504, message = "分类id不存在"),
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @GetMapping(value="categories/{id}/products")
     @Audit(departName = "shops")
-    public Object getProductOfCategory(@PathVariable("id") Integer id,
-                                 @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        return Common.decorateReturnObject(productService.getProductsOfCategories(null, id,page,pageSize));
+    public Object getProductOfCategory(@PathVariable("id") Long id,
+                                       @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        ReturnObject ret = productService.getProductsOfCategories(null, id,page,pageSize);
+        if (ret.getCode().getCode() !=0){
+            return Common.decorateReturnObject(ret);
+        }
+        return  Common.decorateReturnObject(Common.getPageRetVo(ret, SimpleProductRetVo.class));
     }
 
     /**
@@ -296,15 +302,19 @@ public class GoodsController {
     })
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
-            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 504, message = "分类id不存在"),
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @GetMapping(value="shops/{did}/categories/{id}/products" )
     @Audit(departName = "shops")
-    public Object getProductOfCategoryInShop(@PathVariable("did") Integer did,@PathVariable("id") Integer cid,
-                                  @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
-        return Common.decorateReturnObject(productService.getProductsOfCategories(did,cid,page,pageSize));
+    public Object getProductOfCategoryInShop(@PathVariable("did") Long did,@PathVariable("id") Long cid,
+                                             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
+        ReturnObject ret = productService.getProductsOfCategories(did,cid,page,pageSize);
+        if (ret.getCode().getCode() !=0){
+            return Common.decorateReturnObject(ret);
+        }
+        return  Common.decorateReturnObject(Common.getPageRetVo(ret, SimpleProductRetVo.class));
     }
 
 
@@ -580,8 +590,8 @@ public class GoodsController {
     })
     @GetMapping("/internal/secondkillproducts/load")
     public Object loadSecondKillProduct(
-            @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss:SSSZ") @RequestParam(required = false) LocalDateTime beginTime,
-            @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss:SSSZ") @RequestParam(required = false) LocalDateTime endTime) {
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime beginTime,
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime endTime) {
         Object ret;
         if(beginTime == null || endTime == null){
             ret = new InternalReturnObject(510, ReturnNo.PARAMETER_MISSED.getMessage());

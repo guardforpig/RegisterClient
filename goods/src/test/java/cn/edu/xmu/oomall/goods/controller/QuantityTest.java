@@ -35,7 +35,7 @@ public class QuantityTest {
 
     @Autowired
     protected WebApplicationContext wac;
-    DateTimeFormatter df;
+
     String adminToken;
     @Autowired
     private MockMvc mvc;
@@ -44,7 +44,6 @@ public class QuantityTest {
 
     @BeforeEach
     public void init() {
-        df = DateTimeFormatter.ofPattern(Constants.DATE_TIME_FORMAT, Constants.LOCALE);
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
 
         JwtHelper jwtHelper = new JwtHelper();
