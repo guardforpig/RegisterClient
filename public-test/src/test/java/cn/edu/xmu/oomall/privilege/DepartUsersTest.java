@@ -27,7 +27,7 @@ public class DepartUsersTest extends BaseTestOomall {
 
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient
+        this.gatewayClient
                 .get()
                 .uri(TESTURL+"?userName=13088admin", 1)
                 .header("authorization", token)
@@ -50,7 +50,7 @@ public class DepartUsersTest extends BaseTestOomall {
 
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient
+        this.gatewayClient
                 .get()
                 .uri(TESTURL+"?userName=8131600001",1)
                 .header("authorization", token)
@@ -74,7 +74,7 @@ public class DepartUsersTest extends BaseTestOomall {
 
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient.get()
+        this.gatewayClient.get()
                 .uri(TESTURL+"?userName=wrong_sign",1)
                 .header("authorization", token)
                 .exchange()
@@ -95,7 +95,7 @@ public class DepartUsersTest extends BaseTestOomall {
 
         String token = this.adminLogin("2721900002", "123456");
 
-        this.mallClient.get()
+        this.gatewayClient.get()
                 .uri(TESTURL+"?userName=change_user",1)
                 .header("authorization", token)
                 .exchange()
@@ -115,7 +115,7 @@ public class DepartUsersTest extends BaseTestOomall {
 
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient
+        this.gatewayClient
                 .get()
                 .uri(NEWURL+"?userName=departuser1", 1)
                 .header("authorization", token)
@@ -139,7 +139,7 @@ public class DepartUsersTest extends BaseTestOomall {
 
         String token = this.adminLogin("2721900002", "123456");
 
-        this.mallClient
+        this.gatewayClient
                 .get()
                 .uri(NEWURL+"?userName=departuser2", 2)
                 .header("authorization", token)
@@ -162,7 +162,7 @@ public class DepartUsersTest extends BaseTestOomall {
 
         String token = this.adminLogin("2721900002", "123456");
 
-        this.mallClient
+        this.gatewayClient
                 .get()
                 .uri(NEWURL+"?userName=departuser1", 1)
                 .header("authorization", token)

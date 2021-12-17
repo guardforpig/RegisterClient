@@ -19,9 +19,7 @@ package cn.edu.xmu.oomall.privilege;
 import cn.edu.xmu.oomall.BaseTestOomall;
 import cn.edu.xmu.oomall.PublicTestApp;
 import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = PublicTestApp.class)
@@ -39,7 +37,7 @@ public class StatesTest extends BaseTestOomall {
      */
     @Test
     public void findPrivilegeState() throws Exception {
-        this.mallClient.get().uri(PRIVURL)
+        this.gatewayClient.get().uri(PRIVURL)
                 .exchange()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
@@ -56,7 +54,7 @@ public class StatesTest extends BaseTestOomall {
      */
     @Test
     public void findAdminUserState() throws Exception {
-        this.mallClient.get().uri(USERURL)
+        this.gatewayClient.get().uri(USERURL)
                 .exchange()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
@@ -73,7 +71,7 @@ public class StatesTest extends BaseTestOomall {
      */
     @Test
     public void findRoleState() throws Exception {
-        this.mallClient.get().uri(ROLEURL)
+        this.gatewayClient.get().uri(ROLEURL)
                 .exchange()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
@@ -90,7 +88,7 @@ public class StatesTest extends BaseTestOomall {
      */
     @Test
     public void findGroupState() throws Exception {
-        this.mallClient.get().uri(GROUPURL)
+        this.gatewayClient.get().uri(GROUPURL)
                 .exchange()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")

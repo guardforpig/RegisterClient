@@ -25,7 +25,7 @@ public class LoginTest extends BaseTestOomall {
         String requireJson = null;
 
         requireJson = "{\"name\":\"wrong_sign\",\"password\":\"123456\"}";
-        this.mallClient.post().uri(TESTURL).bodyValue(requireJson).exchange()
+        this.gatewayClient.post().uri(TESTURL).bodyValue(requireJson).exchange()
                 .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_FALSIFY.getCode());
@@ -43,7 +43,7 @@ public class LoginTest extends BaseTestOomall {
 
         //region 密码错误的用户登录
         requireJson = "{\"name\":\"13088admin\",\"password\":\"000000\"}";
-        this.mallClient.post().uri(TESTURL)
+        this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectHeader().contentType("application/json;charset=UTF-8")
@@ -61,7 +61,7 @@ public class LoginTest extends BaseTestOomall {
 
         //region 用户名错误的用户登录
         requireJson = "{\"name\":\"NotExist\",\"password\":\"123456\"}";
-        this.mallClient.post().uri(TESTURL)
+        this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isOk()
@@ -81,7 +81,7 @@ public class LoginTest extends BaseTestOomall {
 
         //region 没有输入用户名的用户登录
         requireJson = "{\"password\":\"123456\"}";
-        this.mallClient.post().uri(TESTURL)
+        this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
                 .exchange().expectStatus().isBadRequest()
                 .expectHeader().contentType("application/json;charset=UTF-8")
@@ -100,7 +100,7 @@ public class LoginTest extends BaseTestOomall {
 
         //region 没有输入密码（密码空）的用户登录
         requireJson = "{\"name\":\"537300010\",\"password\":\"\"}";
-        this.mallClient.post().uri(TESTURL)
+        this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
                 .exchange().expectStatus().isBadRequest()
                 .expectHeader().contentType("application/json;charset=UTF-8")
@@ -118,7 +118,7 @@ public class LoginTest extends BaseTestOomall {
 
         //region 用户重复登录
         requireJson = "{\"name\":\"13088admin\",\"password\":\"123456\"}";
-        byte[] response = this.mallClient.post().uri(TESTURL)
+        byte[] response = this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
                 .exchange()
                 .expectStatus().isCreated()
@@ -127,7 +127,7 @@ public class LoginTest extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
                 .returnResult().getResponseBodyContent();
 
-        byte[] response1 = this.mallClient.post().uri(TESTURL).bodyValue(requireJson).exchange().expectStatus().isCreated()
+        byte[] response1 = this.gatewayClient.post().uri(TESTURL).bodyValue(requireJson).exchange().expectStatus().isCreated()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
@@ -150,7 +150,7 @@ public class LoginTest extends BaseTestOomall {
         WebTestClient.RequestHeadersSpec res = null;
         //region 当前状态不可登录的用户登录
         requireJson = "{\"name\":\"5264500009\",\"password\":\"123456\"}";
-        this.mallClient.post().uri(TESTURL)
+        this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
                 .exchange().expectStatus().isForbidden()
                 .expectHeader().contentType("application/json;charset=UTF-8")
@@ -165,7 +165,7 @@ public class LoginTest extends BaseTestOomall {
     public void login8() throws Exception {
 
         String requireJson =  "{\"name\":\"asdewetsa@tttt\",\"password\":\"123456\"}";
-        this.mallClient.post().uri(TESTURL)
+        this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
                 .exchange().expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
@@ -180,7 +180,7 @@ public class LoginTest extends BaseTestOomall {
     public void login9() throws Exception {
 
         String requireJson =  "{\"name\":\"223477788\",\"password\":\"123456\"}";
-        this.mallClient.post().uri(TESTURL)
+        this.gatewayClient.post().uri(TESTURL)
                 .bodyValue(requireJson)
                 .exchange().expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
