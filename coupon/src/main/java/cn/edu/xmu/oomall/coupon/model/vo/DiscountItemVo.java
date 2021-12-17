@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class DiscountItemVo {
     private Long productId;
     private Long onsaleId;
-    private Integer quantity;
+    private Long quantity;
     private Long originalPrice;
     private Long activityId;
 

@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.coupon.microservice.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,8 +11,8 @@ import lombok.NoArgsConstructor;
  **/
 @Data
 @NoArgsConstructor
-public class SimpleAdminUserBo {
+@AllArgsConstructor
+public class CategoryVo {
     private Long id;
     private String name;
-    private Boolean sign;
 }

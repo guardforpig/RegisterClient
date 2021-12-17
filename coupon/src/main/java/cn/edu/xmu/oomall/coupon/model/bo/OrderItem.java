@@ -19,7 +19,7 @@ public class OrderItem {
 	private Long productId;
 	private Long onsaleId;
 	private Long categoryId;
-	private Integer quantity;
+	private Long quantity;
 	private Long price;
 	private Long discount;
 	private Long couponActivityId;

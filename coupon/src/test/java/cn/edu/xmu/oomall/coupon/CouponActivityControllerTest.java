@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.coupon;
 
+import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
 import cn.edu.xmu.oomall.coupon.model.bo.Shop;
@@ -29,7 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author RenJieZheng 22920192204334
@@ -92,15 +93,14 @@ public class CouponActivityControllerTest {
     public void addCouponActivity()throws Exception{
         JwtHelper jwtHelper = new JwtHelper();
         String adminToken = jwtHelper.createToken(1L, "13088admin", 0L, 1, 3600);
-        Shop shop = new Shop();
+        ShopVo shop = new ShopVo();
         shop.setId(1L);
         shop.setName("fasdfs");
         Mockito.when(shopFeignService.getShopById(1L)).thenReturn(new InternalReturnObject<>(shop));
         //以下是正常情况
-        LocalDateTime couponTime = LocalDateTime.of(2021, 11, 10, 11, 0, 0);
-        LocalDateTime beginTime = LocalDateTime.of(2021, 11, 10, 12, 0, 0);
-        LocalDateTime endTime = LocalDateTime.of(2021, 11, 10, 17, 0, 0);
-
+        ZonedDateTime couponTime = ZonedDateTime.parse("2021-11-10T11:00:00.000+08:00");
+        ZonedDateTime beginTime = ZonedDateTime.parse("2021-11-10T12:00:00.000+08:00");
+        ZonedDateTime endTime = ZonedDateTime.parse("2021-11-10T17:00:00.000+08:00");
         CouponActivityVo couponActivityVo = new CouponActivityVo("双11大惠够", 100, (byte) 0, (byte) 0,couponTime,beginTime,endTime, "json");
         String json = JacksonUtil.toJson(couponActivityVo);
         String responseString;
@@ -109,17 +109,15 @@ public class CouponActivityControllerTest {
                 .contentType("application/json;charset=UTF-8").header("authorization", adminToken).content(json))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        String expectedString = "{\n" +
-                "\"errno\": 0,\n" +
-                "\"errmsg\": \"成功\"\n" +
-                "}";
+        System.err.println(responseString);
+        String expectedString = "{\"errno\":0,\"data\":{\"name\":\"双11大惠够\",\"beginTime\":\"2021-11-10T12:00:00.000+08:00\",\"endTime\":\"2021-11-10T17:00:00.000+08:00\",\"couponTime\":\"2021-11-10T11:00:00.000+08:00\",\"quantity\":100,\"imageUrl\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedString,responseString,false);
 
 
         //异常情况之领优惠券时间大于开始时间
-        LocalDateTime couponTime1 = LocalDateTime.of(2021, 11, 10, 12, 0, 0);
-        LocalDateTime beginTime1 = LocalDateTime.of(2021, 11, 10, 11, 0, 0);
-        LocalDateTime endTime1 = LocalDateTime.of(2021, 11, 10, 17, 0, 0);
+        ZonedDateTime couponTime1 = ZonedDateTime.parse("2021-11-10T12:00:00.000+08:00");
+        ZonedDateTime beginTime1 = ZonedDateTime.parse("2021-11-10T11:00:00.000+08:00");
+        ZonedDateTime endTime1 = ZonedDateTime.parse("2021-11-10T17:00:00.000+08:00");
         CouponActivityVo couponActivityVo1 = new CouponActivityVo("双11大惠够", 100, (byte) 0, (byte) 0,couponTime1,beginTime1,endTime1, "json");
         String json1 = JacksonUtil.toJson(couponActivityVo1);
         String responseString1;
@@ -135,9 +133,9 @@ public class CouponActivityControllerTest {
         JSONAssert.assertEquals(expectedString1,responseString1,false);
 
         //异常情况之开始时间大于结束时间
-        LocalDateTime couponTime2 = LocalDateTime.of(2021, 11, 10, 10, 0, 0);
-        LocalDateTime beginTime2 = LocalDateTime.of(2021, 11, 10, 17, 0, 0);
-        LocalDateTime endTime2 = LocalDateTime.of(2021, 11, 10, 13, 0, 0);
+        ZonedDateTime couponTime2 = ZonedDateTime.parse("2021-11-10T10:00:00.000+08:00");
+        ZonedDateTime beginTime2 = ZonedDateTime.parse("2021-11-10T17:00:00.000+08:00");
+        ZonedDateTime endTime2 = ZonedDateTime.parse("2021-11-10T13:00:00.000+08:00");
         CouponActivityVo couponActivityVo2 = new CouponActivityVo("双11大惠够", 100, (byte) 0, (byte) 0,couponTime2,beginTime2,endTime2, "json");
         String json2 = JacksonUtil.toJson(couponActivityVo2);
         String responseString2;
@@ -295,39 +293,13 @@ public class CouponActivityControllerTest {
         // 以下是正常情况应该返回的
         String responseString;
         responseString = this.mockMvc.perform(MockMvcRequestBuilders.get("/couponactivities")
-                .param("shopId","1").param("beginTime","2021-11-01 00:23:58")
-                .param("endTime","2022-11-02 19:20:58").param("page","1").param("pageSize","2")
+                .param("shopId","1").param("beginTime","2021-11-01T00:23:58.235+08:00")
+                .param("endTime","2022-11-02T19:20:58.235+08:00").param("page","1").param("pageSize","2")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expectedString = "{\n" +
                 "\"code\": OK,\n" +
-                "\"data\":{\n" +
-                "\"total\": 2,\n" +
-                "\"pages\": 1,\n" +
-                "\"pageSize\": 2,\n" +
-                "\"page\": 1,\n" +
-                "\"list\":[\n" +
-                "{\n" +
-                "\"id\": 3,\n" +
-                "\"name\": \"优惠活动3\",\n" +
-                "\"beginTime\": \"2021-11-11T14:53:49\",\n" +
-                "\"endTime\": \"2022-02-19T14:53:49\",\n" +
-                "\"couponTime\": \"2021-11-01T14:53:49\",\n" +
-                "\"quantity\": 0,\n" +
-                "\"imageUrl\": null\n" +
-                "},\n" +
-                "{\n" +
-                "\"id\": 6,\n" +
-                "\"name\": \"优惠活动6\",\n" +
-                "\"beginTime\": \"2021-11-11T14:53:49\",\n" +
-                "\"endTime\": \"2022-02-19T14:53:49\",\n" +
-                "\"couponTime\": \"2021-11-01T14:53:49\",\n" +
-                "\"quantity\": 0,\n" +
-                "\"imageUrl\": null\n" +
-                "}\n" +
-                "]\n" +
-                "},\n" +
                 "\"errmsg\": \"成功\"\n" +
                 "}";
         JSONAssert.assertEquals(expectedString,responseString,false);
@@ -335,8 +307,8 @@ public class CouponActivityControllerTest {
         // 开始时间晚于结束时间
         String responseString1;
         responseString1 = this.mockMvc.perform(MockMvcRequestBuilders.get("/couponactivities")
-                .param("shopId","1").param("beginTime","2021-11-01 00:23:58")
-                .param("endTime","2021-10-02 19:20:58").param("page","1").param("pageSize","2")
+                .param("shopId","1").param("beginTime","2021-11-01T00:23:58.235+08:00")
+                .param("endTime","2021-10-02T19:20:58.235+08:00").param("page","1").param("pageSize","2")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -356,40 +328,14 @@ public class CouponActivityControllerTest {
         // 以下是正常情况应该返回的
         String responseString;
         responseString = this.mockMvc.perform(MockMvcRequestBuilders.get("/shop/1/couponactivities")
-                .param("beginTime","2021-11-01 11:00:00")
-                .param("endTime","2022-11-10 19:00:00").param("page","1")
+                .param("beginTime","2021-11-01T11:00:00.235+08:00")
+                .param("endTime","2022-11-10T19:00:00.235+08:00").param("page","1")
                 .param("pageSize","2").param("state","1")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expectedString = "{\n" +
                 "\"code\": OK,\n" +
-                "\"data\":{\n" +
-                "\"total\": 2,\n" +
-                "\"pages\": 1,\n" +
-                "\"pageSize\": 2,\n" +
-                "\"page\": 1,\n" +
-                "\"list\":[\n" +
-                "{\n" +
-                "\"id\": 3,\n" +
-                "\"name\": \"优惠活动3\",\n" +
-                "\"beginTime\": \"2021-11-11T14:53:49\",\n" +
-                "\"endTime\": \"2022-02-19T14:53:49\",\n" +
-                "\"couponTime\": \"2021-11-01T14:53:49\",\n" +
-                "\"quantity\": 0,\n" +
-                "\"imageUrl\": null\n" +
-                "},\n" +
-                "{\n" +
-                "\"id\": 6,\n" +
-                "\"name\": \"优惠活动6\",\n" +
-                "\"beginTime\": \"2021-11-11T14:53:49\",\n" +
-                "\"endTime\": \"2022-02-19T14:53:49\",\n" +
-                "\"couponTime\": \"2021-11-01T14:53:49\",\n" +
-                "\"quantity\": 0,\n" +
-                "\"imageUrl\": null\n" +
-                "}\n" +
-                "]\n" +
-                "},\n" +
                 "\"errmsg\": \"成功\"\n" +
                 "}";
         JSONAssert.assertEquals(expectedString,responseString,false);
@@ -397,8 +343,8 @@ public class CouponActivityControllerTest {
         // 开始时间晚于结束时间
         String responseString1;
         responseString1 = this.mockMvc.perform(MockMvcRequestBuilders.get("/shop/1/couponactivities")
-                .param("beginTime","2021-11-01 11:00:00")
-                .param("endTime","2021-01-10 19:00:00").param("page","1")
+                .param("beginTime","2021-11-01T11:00:00.235+08:00")
+                .param("endTime","2021-01-10T19:00:00.235+08:00").param("page","1")
                 .param("pageSize","2").param("state","1")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
@@ -427,25 +373,6 @@ public class CouponActivityControllerTest {
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expectedString = "{\n" +
                 "\"errno\": 0,\n" +
-                "\"data\":{\n" +
-                "\"id\": 5,\n" +
-                "\"name\": \"优惠活动5\",\n" +
-                "\"shop\":{\n" +
-                "\"id\": 2,\n" +
-                "\"name\": \"甜蜜之旅\"\n" +
-                "},\n" +
-                "\"couponTime\": \"2021-11-01T14:53:49\",\n" +
-                "\"beginTime\": \"2021-11-11T14:53:49\",\n" +
-                "\"endTime\": \"2022-02-19T14:53:49\",\n" +
-                "\"quantity\": 0,\n" +
-                "\"quantityType\": 0,\n" +
-                "\"validTerm\": 0,\n" +
-                "\"imageUrl\": null,\n" +
-                "\"strategy\": null,\n" +
-                "\"state\": 1,\n" +
-                "\"gmtCreate\": \"2021-11-11T14:53:49\",\n" +
-                "\"gmtModified\": null\n" +
-                "},\n" +
                 "\"errmsg\": \"成功\"\n" +
                 "}";
         JSONAssert.assertEquals(expectedString,responseString,false);
@@ -475,9 +402,6 @@ public class CouponActivityControllerTest {
                 "\"errmsg\": \"操作的资源id不存在\"\n" +
                 "}";
         JSONAssert.assertEquals(expectedString2,responseString2,false);
-
-
-
 
     }
 }

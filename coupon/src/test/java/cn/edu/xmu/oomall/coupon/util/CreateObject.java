@@ -142,4 +142,30 @@ public class CreateObject {
         onsaleVo.setState(OnsaleVo.State.ONLINE.getCode());
         return new InternalReturnObject<>(onsaleVo);
     }
+
+    public static InternalReturnObject<OnsaleVo> createOnsaleVo5() {
+        OnsaleVo onsaleVo = new OnsaleVo();
+        ShopVo shopVo = new ShopVo();
+        ProductVo productVo = new ProductVo();
+        productVo.setId(10L);
+        shopVo.setId(3L);
+        onsaleVo.setId(9L);
+        onsaleVo.setProduct(productVo);
+        onsaleVo.setShop(shopVo);
+        onsaleVo.setState(OnsaleVo.State.ONLINE.getCode());
+        return new InternalReturnObject<>(onsaleVo);
+    }
+
+    public static InternalReturnObject<OnsaleVo> createOnsaleVo6() {
+        OnsaleVo onsaleVo = new OnsaleVo();
+        ShopVo shopVo = new ShopVo();
+        ProductVo productVo = new ProductVo();
+        productVo.setId(10L);
+        shopVo.setId(1L);
+        onsaleVo.setId(12L);
+        onsaleVo.setProduct(productVo);
+        onsaleVo.setShop(shopVo);
+        onsaleVo.setState(OnsaleVo.State.ONLINE.getCode());
+        return new InternalReturnObject<>(onsaleVo);
+    }
 }

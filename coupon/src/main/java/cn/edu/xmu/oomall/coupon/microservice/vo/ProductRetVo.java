@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * @author 王言光 22920192204292
+ * @modified Zijun Min 22920192204257
  * @date 2021/12/7
  */
 @Data
@@ -16,7 +17,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class ProductRetVo {
     private Long id;
-    private Map<String,Object> shop;
+    private ShopVo shop;
     private Long goodsId;
     private Long onSaleId;
     private String name;
@@ -24,13 +25,13 @@ public class ProductRetVo {
     private String imageUrl;
     private Long originalPrice;
     private Long weight;
+    private Long price;
+    private Long quantity;
     private Byte state;
     private String unit;
     private String barCode;
     private String originPlace;
-    private Map<String,Object> category;
-    private Map<String,Object> createBy;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
-    private Map<String,Object> modifiedBy;
+    private CategoryVo category;
+    private Boolean shareable;
+    private Long freightId;
 }

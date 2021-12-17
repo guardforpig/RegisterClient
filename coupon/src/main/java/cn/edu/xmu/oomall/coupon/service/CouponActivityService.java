@@ -9,6 +9,7 @@ import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductRetVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.bo.OrderItem;
@@ -31,6 +32,8 @@ import javax.annotation.Resource;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -92,7 +95,7 @@ public class CouponActivityService {
      * @return 优惠活动列表
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<PageInfo<VoObject>> showOwnCouponActivities(Long shopId, LocalDateTime beginTime,LocalDateTime endTime, Integer page, Integer pageSize){
+    public ReturnObject<PageInfo<VoObject>> showOwnCouponActivities(Long shopId, ZonedDateTime beginTime, ZonedDateTime endTime, Integer page, Integer pageSize){
         //添加查询条件
         CouponActivityPoExample example = new CouponActivityPoExample();
         CouponActivityPoExample.Criteria criteria = example.createCriteria();
@@ -100,10 +103,10 @@ public class CouponActivityService {
             criteria.andShopIdEqualTo(shopId);
         }
         if(beginTime!=null){
-            criteria.andBeginTimeGreaterThan(beginTime);
+            criteria.andBeginTimeGreaterThan(beginTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
         }
         if(endTime!=null){
-            criteria.andBeginTimeLessThan(endTime);
+            criteria.andBeginTimeLessThan(endTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
         }
         //上线状态
         criteria.andStateEqualTo(CouponActivity.State.ONLINE.getCode().byteValue());
@@ -121,7 +124,7 @@ public class CouponActivityService {
      * @return 优惠活动列表 List<CouponActivityRetVo>
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<PageInfo<VoObject>> showOwnCouponActivities1(Long shopId,LocalDateTime beginTime,LocalDateTime endTime,Byte state,Integer page,Integer pageSize){
+    public ReturnObject<PageInfo<VoObject>> showOwnCouponActivities1(Long shopId,ZonedDateTime beginTime,ZonedDateTime endTime,Byte state,Integer page,Integer pageSize){
         //查询条件
         CouponActivityPoExample example = new CouponActivityPoExample();
         CouponActivityPoExample.Criteria criteria = example.createCriteria();
@@ -129,10 +132,10 @@ public class CouponActivityService {
             criteria.andShopIdEqualTo(shopId);
         }
         if(beginTime!=null){
-            criteria.andBeginTimeGreaterThan(beginTime);
+            criteria.andBeginTimeGreaterThan(beginTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
         }
         if(endTime!=null){
-            criteria.andBeginTimeLessThan(endTime);
+            criteria.andBeginTimeLessThan(endTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
         }
         if(state!=null){
             criteria.andStateEqualTo(state);
@@ -149,14 +152,14 @@ public class CouponActivityService {
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addCouponActivity(Long userId, String userName, Long shopId, CouponActivityVo couponActivityVo){
-        InternalReturnObject<Shop> returnObject;
+        InternalReturnObject<ShopVo> returnObject;
         try{
             returnObject = shopFeignService.getShopById(shopId);
         }catch(Exception e){
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        Shop shop = returnObject.getData();
-        CouponActivity couponActivity = (CouponActivity) cloneVo(couponActivityVo,CouponActivity.class);
+        ShopVo shop = returnObject.getData();
+        CouponActivity couponActivity = cloneVo(couponActivityVo,CouponActivity.class);
         couponActivity.setShopId(shopId);
         couponActivity.setShopName(shop.getName());
         // 新建优惠时默认是草稿
@@ -210,10 +213,7 @@ public class CouponActivityService {
         if(couponActivity.getState()==CouponActivity.State.OFFLINE.getCode().byteValue()){
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        if(!couponActivity.getCreatorId().equals(userId)){
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
-        }
-        return new ReturnObject<>(new CouponActivityVoInfo(couponActivity));
+        return new ReturnObject<>(cloneVo(couponActivity,CouponActivityVoInfo.class));
     }
 
     /**
@@ -464,6 +464,7 @@ public class CouponActivityService {
         if (couponActivity.getState().equals(CouponActivity.State.OFFLINE.getCode())) {
             return new ReturnObject<>(ReturnNo.STATENOTALLOW);
         }
+
         // 通过CouponActivityId和OnsaleId，创建一个CouponOnsale
         CouponOnsale newCouponOnsale = new CouponOnsale();
         newCouponOnsale.setActivityId(couponActivityId);
@@ -587,16 +588,16 @@ public class CouponActivityService {
         for(DiscountItemVo item:items){
             OrderItem orderItem=item.getOrderItem();
             //通过product找到categoryId
-            ReturnObject objProduct=goodsService.getProductById(item.getProductId());
-            if(!objProduct.getCode().equals(ReturnNo.OK)){
-                return objProduct;
+            InternalReturnObject<ProductRetVo> objProduct=goodsService.getProductById(item.getProductId());
+            if(!objProduct.getErrno().equals(0)){
+                return new ReturnObject(objProduct);
             }
             ProductRetVo productRetVo=(ProductRetVo) objProduct.getData();
             //product中对应的onsaleId和传入参数的onSaleId不一致
             if(productRetVo.getOnSaleId()==null||!productRetVo.getOnSaleId().equals(item.getOnsaleId())){
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
-            orderItem.setCategoryId((Long)productRetVo.getCategory().get("id"));
+            orderItem.setCategoryId(productRetVo.getCategory().getId());
 
             //没有优惠活动的商品，直接放入返回值DiscountRetVo的列表中
             if(item.getActivityId()==null){
@@ -693,16 +694,16 @@ public class CouponActivityService {
         for(DiscountItemVo item:items) {
             OrderItem orderItem = item.getOrderItem();
             //通过productId找到categoryId
-            ReturnObject objProduct = goodsService.getProductById(item.getProductId());
-            if (!objProduct.getCode().equals(ReturnNo.OK)) {
-                return objProduct;
+            InternalReturnObject objProduct = goodsService.getProductById(item.getProductId());
+            if (!objProduct.getErrno().equals(0)) {
+                return new ReturnObject(objProduct);
             }
             ProductRetVo productRetVo = (ProductRetVo) objProduct.getData();
             //product中对应的onsaleId和传入参数的onSaleId不一致
             if (!productRetVo.getOnSaleId().equals(item.getOnsaleId())) {
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
-            orderItem.setCategoryId((Long)productRetVo.getCategory().get("id"));
+            orderItem.setCategoryId(productRetVo.getCategory().getId());
 
             ReturnObject objCouponAct = couponActivityDao.getCouponActivitiesListByOnsaleId(item.getOnsaleId());
             if (!objCouponAct.getCode().equals(ReturnNo.OK)) {

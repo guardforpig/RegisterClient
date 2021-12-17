@@ -33,8 +33,9 @@ import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 /**
  * @author RenJieZheng 22920192204334
+ */
+/**
  * @author qingguo Hu 22920192204208
- * @author Zijun Min 22920192204257
  */
 @Repository
 public class CouponActivityDao {
@@ -64,6 +65,7 @@ public class CouponActivityDao {
     public final static String COUPONACTIVITYKEY = "couponactivity_%d";
 
     public final static String COUPONONSALEKEY = "coupononsale_%d";
+
     // 主键是onsaleId，存CouponActivity
     public final static String COUPONACTIVITY_ONSALEID_KEY = "coupon_activity_onsale_id_%d";
 
@@ -96,7 +98,7 @@ public class CouponActivityDao {
             List<CouponActivityPo>list = couponActivityPoMapper.selectByExample(example);
             List<VoObject>list1 = new ArrayList<>();
             for(CouponActivityPo couponActivityPo:list){
-                CouponActivityRetVo couponActivityRetVo = (CouponActivityRetVo) cloneVo(couponActivityPo,CouponActivityRetVo.class);
+                CouponActivityRetVo couponActivityRetVo = cloneVo(couponActivityPo,CouponActivityRetVo.class);
                 list1.add(couponActivityRetVo);
             }
             PageInfo<VoObject> pageInfo = new PageInfo<>(list1);

@@ -3,7 +3,9 @@ package cn.edu.xmu.oomall.coupon.controller;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.CouponApplication;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
+import cn.edu.xmu.oomall.coupon.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductRetVo;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.junit.jupiter.api.Test;
@@ -42,71 +44,93 @@ public class DiscountControllerTest {
     @MockBean
     private RedisUtil redisUtil;
 
+    CategoryVo category1=new CategoryVo(266L,null);
+    ProductRetVo productRetVo1=new ProductRetVo(1561L,null,null,12L,null,null,null,null,null,null,null,null,null,null,null,category1,null,null);
+
+    CategoryVo category2=new CategoryVo(212L,null);
+    ProductRetVo productRetVo2=new ProductRetVo(1580L,null,null,31L,null,null,null,null,null,null,null,null,null,null,null,category2,null,null);
+
+    CategoryVo category3=new CategoryVo(260L,null);
+    ProductRetVo productRetVo3=new ProductRetVo(1709L,null,null,160L,null,null,null,null,null,null,null,null,null,null,null,category3,null,null);
+
+    CategoryVo category4=new CategoryVo(21L,null);
+    ProductRetVo productRetVo4=new ProductRetVo(1570L,null,null,21L,null,null,null,11241L,null,null,null,null,null,null,null,category4,null,null);
+
     @Test
     @Transactional
-    public void calculateDiscount() throws Exception {
-        ProductRetVo productRetVo1=new ProductRetVo();
-        Map<String,Object>category1=new HashMap<>();
-        category1.put("id",266L);
-        productRetVo1.setCategory(category1);
-        productRetVo1.setOnSaleId(12L);
-
-        ProductRetVo productRetVo2=new ProductRetVo();
-        Map<String,Object>category2=new HashMap<>();
-        category2.put("id",212L);
-        productRetVo2.setCategory(category2);
-        productRetVo2.setOnSaleId(31L);
+    public void calculateDiscount_NoRedis() throws Exception {
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(goodsService.getProductById(1561L)).thenReturn(new ReturnObject<>(productRetVo1));
-        Mockito.when(goodsService.getProductById(1580L)).thenReturn(new ReturnObject<>(productRetVo2));
-        String requestJson="[{\"productId\": 1561,\"onsaleId\": 12,\"quantity\": 5,\"originalPrice\": 20,\"activityId\": 7}," +
-                "{\"productId\": 1580,\"onsaleId\": 31,\"quantity\": 5,\"originalPrice\": 10,\"activityId\": 7}]";
+        Mockito.when(goodsService.getProductById(1561L)).thenReturn(new InternalReturnObject<>(productRetVo1));
+        Mockito.when(goodsService.getProductById(1580L)).thenReturn(new InternalReturnObject<>(productRetVo2));
+
+        String requestJson="[{\"productId\": 1561,\"onsaleId\": 12,\"quantity\": 1,\"originalPrice\": 3569,\"activityId\": 3}," +
+                "{\"productId\": 1580,\"onsaleId\": 31,\"quantity\": 5,\"originalPrice\": 94,\"activityId\": 3}]";
         String responseJson=this.mvc.perform(put("/internal/discountprices")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":[{\"productId\":1561,\"onsaleId\":12,\"discountPrice\":16,\"activityId\":7},{\"productId\":1580,\"onsaleId\":31,\"discountPrice\":8,\"activityId\":7}],\"errmsg\":\"成功\"}";
+        String expectedJson="{\"errno\":0,\"data\":[{\"productId\":1561,\"onsaleId\":12,\"discountPrice\":3216,\"activityId\":3},{\"productId\":1580,\"onsaleId\":31,\"discountPrice\":85,\"activityId\":3}],\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 
+    @Test
+    @Transactional
+    public void calculateDiscount_WrongOnsaleId() throws Exception {
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+        Mockito.when(goodsService.getProductById(1561L)).thenReturn(new InternalReturnObject<>(productRetVo1));
+        Mockito.when(goodsService.getProductById(1580L)).thenReturn(new InternalReturnObject<>(productRetVo2));
+
+        String requestJson="[{\"productId\": 1561,\"onsaleId\": 10,\"quantity\": 5,\"originalPrice\": 20,\"activityId\": 7}," +
+                "{\"productId\": 1580,\"onsaleId\": 31,\"quantity\": 5,\"originalPrice\": 94,\"activityId\": 7}]";
+        String responseJson=this.mvc.perform(put("/internal/discountprices")
+                .header("authorization", adminToken)
+                .contentType("application/json;charset=UTF-8").content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectedJson="{\"errno\":503,\"errmsg\":\"字段不合法\"}";
+        JSONAssert.assertEquals(expectedJson, responseJson, false);
+    }
+
+    @Test
+    @Transactional
+    public void calculateDiscount_NoResource() throws Exception {
+        Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
+        Mockito.when(goodsService.getProductById(1561L)).thenReturn(new InternalReturnObject<>(productRetVo1));
+        Mockito.when(goodsService.getProductById(1580L)).thenReturn(new InternalReturnObject<>(productRetVo2));
+
+        String requestJson="[{\"productId\": 1561,\"onsaleId\": 12,\"quantity\": 5,\"originalPrice\": 20,\"activityId\": 700}," +
+                "{\"productId\": 1580,\"onsaleId\": 31,\"quantity\": 5,\"originalPrice\": 94,\"activityId\": 7}]";
+        String responseJson=this.mvc.perform(put("/internal/discountprices")
+                .header("authorization", adminToken)
+                .contentType("application/json;charset=UTF-8").content(requestJson))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectedJson="{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
+        JSONAssert.assertEquals(expectedJson, responseJson, false);
+    }
 
     @Test
     @Transactional
     public void calculateDiscountBest() throws Exception {
-        ProductRetVo productRetVo1=new ProductRetVo();
-        Map<String,Object>category1=new HashMap<>();
-        category1.put("id",266L);
-        productRetVo1.setCategory(category1);
-        productRetVo1.setOnSaleId(12L);
-
-        ProductRetVo productRetVo2=new ProductRetVo();
-        Map<String,Object>category2=new HashMap<>();
-        category2.put("id",212L);
-        productRetVo2.setCategory(category2);
-        productRetVo2.setOnSaleId(31L);
-
-        ProductRetVo productRetVo3=new ProductRetVo();
-        Map<String,Object>category3=new HashMap<>();
-        category3.put("id",260L);
-        productRetVo3.setCategory(category3);
-        productRetVo3.setOnSaleId(160L);
-
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(goodsService.getProductById(1561L)).thenReturn(new ReturnObject<>(productRetVo1));
-        Mockito.when(goodsService.getProductById(1580L)).thenReturn(new ReturnObject<>(productRetVo2));
-        Mockito.when(goodsService.getProductById(1709L)).thenReturn(new ReturnObject<>(productRetVo3));
-        String requestJson="[{\"productId\": 1561,\"onsaleId\": 12,\"quantity\": 5,\"originalPrice\": 20,\"activityId\": null}," +
-                "{\"productId\": 1580,\"onsaleId\": 31,\"quantity\": 5,\"originalPrice\": 10,\"activityId\": null},"+
-                "{\"productId\": 1709,\"onsaleId\": 160,\"quantity\": 5,\"originalPrice\": 41686,\"activityId\": null}]";
+        Mockito.when(goodsService.getProductById(1561L)).thenReturn(new InternalReturnObject<>(productRetVo1));
+        Mockito.when(goodsService.getProductById(1580L)).thenReturn(new InternalReturnObject<>(productRetVo2));
+        Mockito.when(goodsService.getProductById(1709L)).thenReturn(new InternalReturnObject<>(productRetVo3));
+
+        String requestJson="[{\"productId\": 1561,\"onsaleId\": 12,\"quantity\": 1,\"originalPrice\": 3569}," +
+                "{\"productId\": 1580,\"onsaleId\": 31,\"quantity\": 5,\"originalPrice\": 94},"+
+                "{\"productId\": 1709,\"onsaleId\": 160,\"quantity\": 1,\"originalPrice\": 41686}]";
         String responseJson=this.mvc.perform(put("/internal/discountprices/best")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedJson="{\"errno\":0,\"data\":[{\"productId\":1561,\"onsaleId\":12,\"discountPrice\":20,\"activityId\":7},{\"productId\":1580,\"onsaleId\":31,\"discountPrice\":10,\"activityId\":7},{\"productId\":1709,\"onsaleId\":160,\"discountPrice\":41681,\"activityId\":7}],\"errmsg\":\"成功\"}\n";
+        String expectedJson="{\"errno\":0,\"data\":[{\"productId\":1561,\"onsaleId\":12,\"discountPrice\":3486,\"activityId\":6},{\"productId\":1580,\"onsaleId\":31,\"discountPrice\":92,\"activityId\":6},{\"productId\":1709,\"onsaleId\":160,\"discountPrice\":40711,\"activityId\":6}],\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
 }

@@ -31,7 +31,7 @@ class ComplexCouponLimitationTest {
             OrderItem orderItem = new OrderItem();
             orderItem.setId((long) i);
             orderItem.setPrice(20L);
-            orderItem.setQuantity(1);
+            orderItem.setQuantity(1L);
             orderItem.setCategoryId((long) i);
 
             orderItemList.add(orderItem);
@@ -44,7 +44,7 @@ class ComplexCouponLimitationTest {
             OrderItem orderItem = new OrderItem();
             orderItem.setId((long) i);
             orderItem.setPrice(19L);
-            orderItem.setQuantity(1);
+            orderItem.setQuantity(1L);
             orderItem.setCategoryId((long) i);
 
             orderItemList.add(orderItem);
@@ -57,7 +57,7 @@ class ComplexCouponLimitationTest {
             OrderItem orderItem = new OrderItem();
             orderItem.setId((long) i);
             orderItem.setPrice(19L);
-            orderItem.setQuantity(1);
+            orderItem.setQuantity(1L);
             orderItem.setCategoryId(1L);
 
             orderItemList.add(orderItem);
@@ -71,7 +71,7 @@ class ComplexCouponLimitationTest {
             OrderItem orderItem = new OrderItem();
             orderItem.setId((long) i);
             orderItem.setPrice(20L);
-            orderItem.setQuantity(1);
+            orderItem.setQuantity(1L);
             orderItem.setCategoryId((long) i);
 
             orderItemList.add(orderItem);
@@ -84,7 +84,7 @@ class ComplexCouponLimitationTest {
             OrderItem orderItem = new OrderItem();
             orderItem.setId((long) i);
             orderItem.setPrice(20L);
-            orderItem.setQuantity(1);
+            orderItem.setQuantity(1L);
             orderItem.setCategoryId(1L);
 
             orderItemList.add(orderItem);
@@ -97,7 +97,7 @@ class ComplexCouponLimitationTest {
             OrderItem orderItem = new OrderItem();
             orderItem.setId((long) i);
             orderItem.setPrice(20L);
-            orderItem.setQuantity(1);
+            orderItem.setQuantity(1L);
             orderItem.setCategoryId((long) i);
 
             orderItemList.add(orderItem);
