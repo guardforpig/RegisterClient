@@ -27,10 +27,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = PublicTestApp.class)
 public class StatesTest extends BaseTestOomall {
 
-    private static final String GROUPURL ="/privilege/groups/sates";
-    private static final String ROLEURL ="/privilege/roles/sates";
-    private static final String USERURL ="/privilege/users/sates";
-    private static final String PRIVURL ="/privilege/privileges/sates";
+    private static final String GROUPURL ="/privilege/groups/states";
+    private static final String ROLEURL ="/privilege/roles/states";
+    private static final String USERURL ="/privilege/users/states";
+    private static final String PRIVURL ="/privilege/privileges/states";
 
     /**
      * 28 获得管理员用户的所有状态
@@ -46,7 +46,7 @@ public class StatesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list.length()").isEqualTo(2);
+                .jsonPath("$.data.length").isEqualTo(2);
     }
     
     /**
@@ -63,7 +63,7 @@ public class StatesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list.length()").isEqualTo(4);
+                .jsonPath("$.data.length").isEqualTo(4);
     }
 
     /**
@@ -80,7 +80,7 @@ public class StatesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list.length()").isEqualTo(2);
+                .jsonPath("$.data.length").isEqualTo(2);
     }
 
     /**
@@ -97,6 +97,6 @@ public class StatesTest extends BaseTestOomall {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list.length()").isEqualTo(2);
+                .jsonPath("$.data.length").isEqualTo(2);
     }
 }
