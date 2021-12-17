@@ -23,7 +23,7 @@ public class FullOnSaleVo {
     private Long id;
 
     @ApiModelProperty(value = "店铺")
-    private ShopInfoVo shop;
+    private SimpleShopVo shop;
 
     @ApiModelProperty(value = "货品")
     private ProductVo product;
@@ -43,7 +43,7 @@ public class FullOnSaleVo {
     private Long quantity;
 
     @ApiModelProperty(value = "类型")
-    private String type;
+    private Byte type;
 
     @ApiModelProperty(value = "活动id")
     private Long activityId;
