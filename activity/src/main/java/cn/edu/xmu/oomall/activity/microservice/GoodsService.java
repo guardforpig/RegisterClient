@@ -54,11 +54,11 @@ public interface GoodsService {
     InternalReturnObject<FullOnSaleVo> getOnSaleById(@PathVariable("id")Long id);
 
     @PostMapping("/shops/{shopId}/products/{id}/onsales")
-    InternalReturnObject<SimpleSaleInfoVo> addOnSale(@PathVariable("shopId") Long shopId,
+    InternalReturnObject<SimpleOnSaleInfoVo> addOnSale(@PathVariable("shopId") Long shopId,
                                                      @PathVariable("id") Long id,
                                                      @RequestBody OnSaleCreatedVo onSaleCreatedVo);
 
     @PutMapping("/shops/{shopId}/onsales/{id}")
-    InternalReturnObject modifyOnSaleShareActId(@PathVariable Long shopId, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale);
+    InternalReturnObject<SimpleOnSaleInfoVo> modifyOnSaleShareActId(@PathVariable Long shopId, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale);
 
 }

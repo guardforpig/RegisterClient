@@ -37,8 +37,10 @@ public class SimpleOnSaleInfoVo {
     @ApiModelProperty(value = "活动id")
     private Long activityId;
 
+    private Long shareActId;
+
     @ApiModelProperty(value = "类型")
-    private String type;
+    private Byte type;
 
     private Byte state;
 }

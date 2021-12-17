@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.alipay.microservice;
 
 import cn.edu.xmu.oomall.alipay.model.bo.NotifyBody;
 import cn.edu.xmu.oomall.alipay.util.NotifyReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;

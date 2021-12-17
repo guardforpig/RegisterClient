@@ -4,7 +4,7 @@ import cn.edu.xmu.oomall.activity.ActivityApplication;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.microservice.vo.OnSaleCreatedVo;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleSaleInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleInfoVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.activity.model.vo.*;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
