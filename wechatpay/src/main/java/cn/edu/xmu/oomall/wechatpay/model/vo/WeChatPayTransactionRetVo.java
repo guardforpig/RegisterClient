@@ -19,7 +19,7 @@ public class WeChatPayTransactionRetVo {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class TransactionAmountRetVo{
+    public static class TransactionAmountRetVo{
         private Integer total;
         private Integer payerTotal;
         private String currency;
@@ -29,7 +29,7 @@ public class WeChatPayTransactionRetVo {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class PayerRetVo{
+    public static class PayerRetVo{
         private String openid;
     }
 

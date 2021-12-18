@@ -19,7 +19,7 @@ public class WeChatPayRefundNotifyRetVo {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Amount{
+    public static class Amount{
         private Integer total;
         private Integer refund;
         private Integer payerTotal;
@@ -29,7 +29,7 @@ public class WeChatPayRefundNotifyRetVo {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Ciphertext{
+    public static class Ciphertext{
         private String mchid;
         private String outTradeNo;
         private String transactionId;
@@ -45,7 +45,7 @@ public class WeChatPayRefundNotifyRetVo {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Resource{
+    public static class Resource{
         private String algorithm;
         private String originalType;
         private Ciphertext ciphertext;
@@ -68,7 +68,7 @@ public class WeChatPayRefundNotifyRetVo {
         this.resourceType = null;
         this.resource = new Resource("AEAD_AES_256_GCM","transaction",
                 new Ciphertext("1230000109", weChatPayRefund.getOutTradeNo(), "1217752501201407033233368018", weChatPayRefund.getOutRefundNo(), String.valueOf(weChatPayRefund.getId()), weChatPayRefund.getStatus(), "招商银行信用卡0403",
-                        new Amount(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getPayerRefund()),weChatPayRefund.getSuccessTime()),
+                        new Amount(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getRefund()),weChatPayRefund.getSuccessTime()),
                 "fdasfjihihihlkja484w");
     }
 
