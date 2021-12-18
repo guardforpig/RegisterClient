@@ -19,18 +19,22 @@ package cn.edu.xmu.oomall.privilege;
 import cn.edu.xmu.oomall.BaseTestOomall;
 import cn.edu.xmu.oomall.PublicTestApp;
 import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
+<<<<<<< HEAD
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+=======
+import org.junit.jupiter.api.Test;
+>>>>>>> 6129605659486e687df59c1b454a3e74df5d6f1c
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = PublicTestApp.class)
 public class StatesTest extends BaseTestOomall {
 
-    private static String GROUPURL ="/privilege/groups/sates";
-    private static String ROLEURL ="/privilege/roles/sates";
-    private static String USERURL ="/privilege/users/sates";
-    private static String PRIVURL ="/privilege/privileges/sates";
+    private static final String GROUPURL ="/privilege/groups/states";
+    private static final String ROLEURL ="/privilege/roles/states";
+    private static final String USERURL ="/privilege/users/states";
+    private static final String PRIVURL ="/privilege/privileges/states";
 
     /**
      * 28 获得管理员用户的所有状态
@@ -39,16 +43,16 @@ public class StatesTest extends BaseTestOomall {
      */
     @Test
     public void findPrivilegeState() throws Exception {
-        this.mallClient.get().uri(PRIVURL)
+        this.gatewayClient.get().uri(PRIVURL)
                 .exchange()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list.length()").isEqualTo(2);
+                .jsonPath("$.data.length").isEqualTo(2);
     }
-    
+
     /**
      * 28 获得管理员用户的所有状态
      * Li ZiHan
@@ -56,14 +60,14 @@ public class StatesTest extends BaseTestOomall {
      */
     @Test
     public void findAdminUserState() throws Exception {
-        this.mallClient.get().uri(USERURL)
+        this.gatewayClient.get().uri(USERURL)
                 .exchange()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list.length()").isEqualTo(4);
+                .jsonPath("$.data.length").isEqualTo(4);
     }
 
     /**
@@ -73,14 +77,14 @@ public class StatesTest extends BaseTestOomall {
      */
     @Test
     public void findRoleState() throws Exception {
-        this.mallClient.get().uri(ROLEURL)
+        this.gatewayClient.get().uri(ROLEURL)
                 .exchange()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list.length()").isEqualTo(2);
+                .jsonPath("$.data.length").isEqualTo(2);
     }
 
     /**
@@ -90,13 +94,13 @@ public class StatesTest extends BaseTestOomall {
      */
     @Test
     public void findGroupState() throws Exception {
-        this.mallClient.get().uri(GROUPURL)
+        this.gatewayClient.get().uri(GROUPURL)
                 .exchange()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list.length()").isEqualTo(2);
+                .jsonPath("$.data.length").isEqualTo(2);
     }
 }

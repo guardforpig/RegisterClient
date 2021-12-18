@@ -6,6 +6,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
 import cn.edu.xmu.oomall.coupon.microservice.vo.ShopRetVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.ShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageInfo;
 

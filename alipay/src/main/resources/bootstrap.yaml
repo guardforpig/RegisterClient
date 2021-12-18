@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 101.132.164.244:8888
+  application:
+    name: alipay-service
+  profiles:
+    active: dev
+

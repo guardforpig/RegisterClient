@@ -28,7 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GetDepartsUsersBaseRolesTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilgege/departs/{did}/users/{id}/baseroles";
+    private static final String TESTURL ="/privilgege/departs/{did}/users/{id}/baseroles";
 
     /**
      * 29 管理员查看用户拥有的权限
@@ -38,7 +38,7 @@ public class GetDepartsUsersBaseRolesTest extends BaseTestOomall {
     @Test
     public void findUserPrivs1() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(TESTURL+"?page=1&pageSize=4",0,1).header("authorization", token)
+        this.gatewayClient.get().uri(TESTURL+"?page=1&pageSize=4",0,1).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
@@ -56,7 +56,7 @@ public class GetDepartsUsersBaseRolesTest extends BaseTestOomall {
     @Test
     public void findUserPrivs2() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(TESTURL+"?page=1&pageSize=4",1,46).header("authorization", token)
+        this.gatewayClient.get().uri(TESTURL+"?page=1&pageSize=4",1,46).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
@@ -74,7 +74,7 @@ public class GetDepartsUsersBaseRolesTest extends BaseTestOomall {
     @Test
     public void findUserPrivs3() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(TESTURL,2,47).header("authorization", token)
+        this.gatewayClient.get().uri(TESTURL,2,47).header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectHeader()
@@ -89,7 +89,7 @@ public class GetDepartsUsersBaseRolesTest extends BaseTestOomall {
      */
     @Test
     public void findUserPrivs4() throws Exception {
-        this.mallClient.get().uri(TESTURL,2,47)
+        this.gatewayClient.get().uri(TESTURL,2,47)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectHeader()

@@ -26,9 +26,9 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @SpringBootTest(classes = PublicTestApp.class)
 public class LogoutTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilege/logout";
+    private static final String TESTURL ="/privilege/logout";
 
-    private static String NEWURL ="/privilege/departs/{did}/users/new";
+    private static final String NEWURL ="/privilege/departs/{did}/users/new";
 
 
     /**
@@ -43,14 +43,14 @@ public class LogoutTest extends BaseTestOomall {
         String token = this.adminLogin("13088admin","123456");
 
         //region 用户正常登出
-        this.mallClient.get().uri(TESTURL)
+        this.gatewayClient.get().uri(TESTURL)
                 .header("authorization",token)
                 .exchange().expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient
+        this.gatewayClient
                 .get()
                 .uri(NEWURL+"?userName=departuser2", 2)
                 .header("authorization", token)
@@ -67,7 +67,7 @@ public class LogoutTest extends BaseTestOomall {
     public void logout2() throws  Exception{
         String token = "this is test";
 
-        this.mallClient.get().uri(TESTURL)
+        this.gatewayClient.get().uri(TESTURL)
                 .header("authorization",token)
                 .exchange()
                 .expectStatus().isUnauthorized()

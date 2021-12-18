@@ -36,7 +36,7 @@ import java.time.ZonedDateTime;
 /**
  * @author RenJieZheng 22920192204334
  */
-//@Transactional      //防止脏数据
+@Transactional      //防止脏数据
 @SpringBootTest(classes = CouponApplication.class)
 @AutoConfigureMockMvc      //自动初始化MockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

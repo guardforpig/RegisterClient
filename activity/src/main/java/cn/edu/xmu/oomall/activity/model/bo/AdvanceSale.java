@@ -7,7 +7,7 @@ import cn.edu.xmu.oomall.activity.model.vo.ShopVo;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,14 +26,14 @@ public class AdvanceSale implements Serializable {
     private Long shopId;
     private String shopName;
     private String name;
-    private LocalDateTime payTime;
+    private ZonedDateTime payTime;
     private Long advancePayPrice;
     private Long creatorId;
     private String creatorName;
     private Long modifierId;
     private String modifierName;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
+    private ZonedDateTime gmtCreate;
+    private ZonedDateTime gmtModified;
     private Byte state;
 
     public enum state {

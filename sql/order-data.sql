@@ -20,8 +20,8 @@
 --
 
 LOCK TABLES `oomall_error_account` WRITE;
-/*!40000 ALTER TABLE `oomall_error_account` DISABLE KEYS */;
-/*!40000 ALTER TABLE `oomall_error_account` ENABLE KEYS */;
+/*!40000 ALTER TABLE `oomall_error_payment` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oomall_error_payment` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
