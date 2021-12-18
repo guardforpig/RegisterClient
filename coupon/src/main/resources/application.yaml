@@ -5,31 +5,25 @@ management:
         include: "*"
 
 server:
-  port: 8081
+  port: 8084
   tomcat:
     threads:
       max: 500
 
+
 spring:
-  main:
-    allow-bean-definition-overriding: true
   application:
-    name: goods-service
-  servlet:
-    multipart:
-      enabled: true
-      max-request-size: 10MB
+    name: coupon-service
   cloud:
     nacos:
       discovery:
         server-addr: 172.16.4.136
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://172.16.1.254:3306/oomall?serverTimezone=GMT%2B8
     username: dbuser
     password: 12345678
+    type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 3
       min-idle: 3
@@ -47,9 +41,11 @@ spring:
           slow-sql-millis: 100
       validation-query: select 1
     sql-script-encoding: UTF-8
-
   redis:
     database: 0
+    host: 172.16.2.172
+    port: 6379
+    password: 123456
     lettuce:
       pool:
         max-active: 100
@@ -57,11 +53,10 @@ spring:
         min-idle: 0
         max-wait: -1
     timeout: 5000
-    host: 172.16.2.172
 
 mybatis:
-  type-aliases-package: cn.edu.xmu.oomall.goods.model.po
-  mapper-locations: classpath*:cn.edu.xmu.oomall.goods.mapper/*.xml
+  type-aliases-package: cn.edu.xmu.oomall.coupon.model.po
+  mapper-locations: classpath*:cn.edu.xmu.oomall.coupon.mapper/*.xml
   configuration:
     #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
@@ -70,14 +65,22 @@ pagehelper:
   helper-dialect: mysql
 
 oomall:
-  goods:
-    onsale:
-      expiretime: 10000
-    product:
-      expiretime: 10000
+  coupon:
+    webdav:
+      user: ooad_javaee
+      password: 12345678
+      baseurl: http://172.16.4.1/webdav/test/
 
-productservice:
-  webdav:
-    username: ooad_javaee
-    password: 12345678
-    baseUrl: http://172.16.4.1/webdav/test/
+    bo:
+    # Bo在Redis中失效秒数
+      expiretime: 600
+    list:
+      # list对象在Redis中失效秒数
+      expiretime: 60
+      # list对象默认的长度
+      defaultsize: 100
+
+
+
+
+
