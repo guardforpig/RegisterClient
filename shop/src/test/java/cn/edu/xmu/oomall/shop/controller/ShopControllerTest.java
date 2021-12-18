@@ -73,6 +73,18 @@ public class ShopControllerTest {
         JSONAssert.assertEquals(expected, responseString, false);
 
     }
+    @Test
+    @Transactional
+    public void getSimpleShopById2() throws Exception {
+        String responseString = this.mvc.perform(get("/shops/1221333"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expected = " {\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
+        JSONAssert.assertEquals(expected, responseString, false);
+
+
+    }
     /**
      * 获取所有店铺信息
      * @throws Exception
