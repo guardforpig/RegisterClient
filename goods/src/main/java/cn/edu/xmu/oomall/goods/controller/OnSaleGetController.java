@@ -139,6 +139,12 @@ public class OnSaleGetController {
         return Common.decorateReturnObject(returnObject);
     }
 
+    @GetMapping("/internal/products/{id}/onsale")
+    public Object getValidNowOnsaleByProductId(@PathVariable Long id){
+        ReturnObject returnObject= onSaleService.getValidNowOnsaleByProductId(id);
+        return Common.decorateReturnObject(returnObject);
+    }
+
 
 
 }

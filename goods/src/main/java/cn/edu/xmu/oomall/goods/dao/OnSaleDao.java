@@ -6,6 +6,7 @@ import cn.edu.xmu.oomall.goods.mapper.OnSalePoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -305,6 +306,26 @@ public class OnSaleDao {
                     Stream.of(setKey,String.format(ONSALE_STOCK_GROUP_KEY, id, i)).collect(Collectors.toList()), incr[i]);
         }
     }
+    public ReturnObject updateOnsaleQuantity(Long id,Integer quantity, Long userId, String userName){
+        try{
+            OnSalePo onSalePo=onSalePoMapper.selectByPrimaryKey(id);
+            if (onSalePo == null) {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            Integer stock=onSalePo.getQuantity()+quantity;
+            if(stock<0){
+                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+            }
+            onSalePo.setQuantity(stock);
+            onSalePoMapper.updateByPrimaryKeySelective(onSalePo);
+            return new ReturnObject(ReturnNo.OK);
+        }
+        catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
 
 
 }

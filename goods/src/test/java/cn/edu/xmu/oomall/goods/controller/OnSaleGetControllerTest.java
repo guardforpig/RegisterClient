@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -213,4 +214,20 @@ public class OnSaleGetControllerTest {
         String expectedJson = "{\"errno\":947,\"errmsg\":\"开始时间不能晚于结束时间\"}";
         JSONAssert.assertEquals(expectedJson, responseJson, false);
     }
+
+    @Test
+    @Transactional
+    public void getValidNowOnsaleByProductId() throws Exception {
+        //正常情况
+        String responseJson=this.mvc.perform(get("/internal/products/1550/onsale")
+                        .header("authorization", adminToken)
+                        .contentType("application/json;charset=UTF-8"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expectedJson="{\"errno\":0,\"errmsg\":\"成功\"}\n";
+        JSONAssert.assertEquals(expectedJson, responseJson, false);
+    }
+
 }

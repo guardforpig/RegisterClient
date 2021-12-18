@@ -7,6 +7,7 @@ import cn.edu.xmu.oomall.goods.dao.OnSaleDao;
 import cn.edu.xmu.oomall.goods.model.vo.ModifyOnSaleVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleAllVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
+import cn.edu.xmu.oomall.goods.model.vo.QuantityVo;
 import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
@@ -30,6 +31,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -626,6 +628,25 @@ public class OnSaleControllerTest {
         JSONAssert.assertEquals(expect, res, true);
 
 
+    }
+
+    /**
+     * 加减库存
+     * @throws Exception
+     */
+    @Test
+    public void updateOnsaleQuantity() throws Exception
+    {
+        QuantityVo quantityVo=new QuantityVo();
+        quantityVo.setQuantity(-10);
+        String s = JacksonUtil.toJson(quantityVo);
+        String res;String expect;
+        res = this.mvc.perform(put("/internal/onsales/1/stock")
+                .header("authorization", adminToken)
+                .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        expect = "{\"errno\":0,\"errmsg\":\"成功\"}";
+        JSONAssert.assertEquals(expect, res, true);
     }
 
 

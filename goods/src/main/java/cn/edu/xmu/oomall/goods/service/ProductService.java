@@ -213,7 +213,7 @@ public class ProductService {
         if (!object.getErrno().equals(0)) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        SimpleCategoryVo categoryVo = (SimpleCategoryVo) object.getData();
+        SimpleCategoryVo categoryVo = cloneVo(object.getData(),SimpleCategoryVo.class);
         product.setCategoryName(categoryVo.getName());
 
         ProductRetVo vo = (ProductRetVo) cloneVo(product, ProductRetVo.class);

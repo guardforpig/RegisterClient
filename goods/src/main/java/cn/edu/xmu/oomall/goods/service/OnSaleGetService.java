@@ -14,6 +14,7 @@ import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 
@@ -126,5 +127,13 @@ public class OnSaleGetService {
     public ReturnObject selectAnyOnsale(Long shopId,Long productId,LocalDateTime beginTime,
                                         LocalDateTime endTime,Integer page,Integer pageSize){
         return onSaleDao.selectAnyOnsale(shopId,productId,beginTime,endTime,page,pageSize);
+    }
+
+    /**
+     * 管理员查询当前有效的onsale
+     */
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public ReturnObject getValidNowOnsaleByProductId(Long id){
+        return onSaleDao.getValidNowOnsaleByProductId(id);
     }
 }
