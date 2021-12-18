@@ -65,7 +65,7 @@ public class OnSaleGetService {
                 onSaleRetVo.setProduct(simpleProduct);
             }
             //设置shop字段
-            InternalReturnObject internalObj=shopService.getShopInfo(onSale.getShopId());
+            InternalReturnObject internalObj=shopService.getSimpleShopById(onSale.getShopId());
             if(internalObj.getErrno().equals(0)) {
                 SimpleShopVo simpleShopVo = (SimpleShopVo)internalObj.getData();
                 onSaleRetVo.setShop(simpleShopVo);
@@ -112,7 +112,7 @@ public class OnSaleGetService {
             onSaleRetVo.setProduct(simpleProduct);
         }
         //设置shop字段
-        InternalReturnObject internalObj=shopService.getShopInfo(onSale.getShopId());
+        InternalReturnObject internalObj=shopService.getSimpleShopById(onSale.getShopId());
         if(internalObj.getErrno().equals(0)) {
             SimpleShopVo simpleShopVo = (SimpleShopVo)internalObj.getData();
             onSaleRetVo.setShop(simpleShopVo);

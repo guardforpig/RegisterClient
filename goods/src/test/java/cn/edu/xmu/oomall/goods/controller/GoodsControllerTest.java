@@ -474,8 +474,8 @@ class GoodsControllerTest {
 
 
         Mockito.when(shopService.getSecondCategory(0L)).thenReturn(new InternalReturnObject(0, "", List.of(categoryVo2)));
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(new InternalReturnObject(1, "", List.of(simpleShopVo)));
-        Mockito.when(shopService.getShopInfo(2L)).thenReturn(new InternalReturnObject(1, "", List.of()));
+        Mockito.when(shopService.getSimpleShopById(1L)).thenReturn(new InternalReturnObject(1, "", List.of(simpleShopVo)));
+        Mockito.when(shopService.getSimpleShopById(2L)).thenReturn(new InternalReturnObject(1, "", List.of()));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 1, 3600);
     }
     @Test

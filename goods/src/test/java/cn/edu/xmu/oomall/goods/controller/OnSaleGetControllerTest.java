@@ -62,7 +62,7 @@ public class OnSaleGetControllerTest {
         simpleShopVo.setName("商铺8");
         //正常情况
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(shopService.getShopInfo(8L)).thenReturn(new InternalReturnObject(simpleShopVo));
+        Mockito.when(shopService.getSimpleShopById(8L)).thenReturn(new InternalReturnObject(simpleShopVo));
         String responseJson = this.mvc.perform(get("/shops/8/onsales/5")
                         .header("authorization", adminToken)
                         .contentType("application/json;charset=UTF-8"))
@@ -175,7 +175,7 @@ public class OnSaleGetControllerTest {
         simpleShopVo.setName("商铺10");
         InternalReturnObject obj = new InternalReturnObject(simpleShopVo);
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
-        Mockito.when(shopService.getShopInfo(10L)).thenReturn(obj);
+        Mockito.when(shopService.getSimpleShopById(10L)).thenReturn(obj);
         String responseJson = this.mvc.perform(get("/internal/onsales/1")
                         .header("authorization", adminToken)
                         .contentType("application/json;charset=UTF-8"))
