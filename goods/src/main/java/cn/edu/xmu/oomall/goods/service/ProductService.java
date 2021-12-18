@@ -206,7 +206,6 @@ public class ProductService {
             return ret;
         }
         Product product = (Product) ret.getData();
-
         //查找categoryName
         InternalReturnObject object = shopService.getCategoryDetailById(product.getCategoryId());
         if (!object.getErrno().equals(0)) {
@@ -214,7 +213,6 @@ public class ProductService {
         }
         SimpleCategoryVo categoryVo = cloneVo(object.getData(),SimpleCategoryVo.class);
         product.setCategoryName(categoryVo.getName());
-
         ProductRetVo vo = (ProductRetVo) cloneVo(product, ProductRetVo.class);
         return new ReturnObject(vo);
     }

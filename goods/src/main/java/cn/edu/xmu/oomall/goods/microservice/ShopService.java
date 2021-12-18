@@ -2,8 +2,8 @@ package cn.edu.xmu.oomall.goods.microservice;
 
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
-import cn.edu.xmu.oomall.goods.microservice.vo.CategoryDetailRetVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.CategoryDetailRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

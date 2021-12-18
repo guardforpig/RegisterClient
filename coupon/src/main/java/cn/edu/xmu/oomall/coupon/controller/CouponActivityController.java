@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
+import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityRetVo;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityVo;
 import cn.edu.xmu.oomall.coupon.model.vo.DiscountItemVo;
 import cn.edu.xmu.oomall.coupon.service.CouponActivityService;
@@ -223,7 +224,7 @@ public class CouponActivityController {
     public Object listCouponActivitiesByProductId(@ApiParam(value = "货品ID", required = true) @PathVariable("id") Long productId,
                                                   @ApiParam(value = "页码") @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
                                                   @ApiParam(value = "每页数目") @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        ReturnObject<PageInfo<Object>> retPageInfo =
+        ReturnObject<PageInfo<CouponActivityRetVo>> retPageInfo =
                 couponActivityService.listCouponActivitiesByProductId(productId, pageNumber, pageSize);
         return Common.decorateReturnObject(retPageInfo);
     }
