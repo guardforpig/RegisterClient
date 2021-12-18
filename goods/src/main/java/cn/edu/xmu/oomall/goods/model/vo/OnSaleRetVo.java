@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -20,24 +21,23 @@ public class OnSaleRetVo{
     private Long id;
     private Long price;
     private Integer quantity;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
     private ZonedDateTime beginTime;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
     private ZonedDateTime endTime;
     private Byte type;
     private Long activityId;
     private Long shareActId;
     private Integer numKey;
     private Integer maxQuantity;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
     private ZonedDateTime gmtCreate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
     private ZonedDateTime gmtModified;
+    private Byte state;
 
     private SimpleProductRetVo product;
     private SimpleShopVo shop;
     private SimpleAdminUserBo creator;
     private SimpleAdminUserBo modifier;
-
-    private Byte state;
 }

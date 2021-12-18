@@ -208,8 +208,7 @@ public class ProductService {
         Product product = (Product) ret.getData();
 
         //查找categoryName
-        InternalReturnObject object = shopService.getCategoryById(product.getCategoryId());
-
+        InternalReturnObject object = shopService.getCategoryDetailById(product.getCategoryId());
         if (!object.getErrno().equals(0)) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
