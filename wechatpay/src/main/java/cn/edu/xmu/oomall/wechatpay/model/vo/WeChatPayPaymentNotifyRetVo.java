@@ -19,7 +19,7 @@ public class WeChatPayPaymentNotifyRetVo {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Resource{
+    public static class Resource{
         private String algorithm;
         private String originalType;
         private WeChatPayTransactionRetVo ciphertext;

@@ -46,7 +46,7 @@ public class WeChatPayService {
     public WeChatPayReturnObject createTransaction(WeChatPayTransaction weChatPayTransaction){
 
         WeChatPayTransaction transaction = (WeChatPayTransaction) weChatPayDao.getTransactionByOutTradeNo(weChatPayTransaction.getOutTradeNo()).getData();
-        if(transaction!=null && !transaction.getTradeState().equals(TRADE_STATE_FAIL)){
+        if(transaction!=null){
             if(transaction.getTradeState().equals(TRADE_STATE_SUCCESS)){
                 return new WeChatPayReturnObject(WeChatPayReturnNo.ORDER_PAID);
             }
@@ -205,7 +205,6 @@ public class WeChatPayService {
         weChatPayDao.updateTransactionByOutTradeNo(weChatPayTransactionPo);
 
         weChatPayRefund.setStatus(REFUND_STATUS_SUCCESS);
-        weChatPayRefund.setPayerRefund(weChatPayRefund.getRefund());
         weChatPayRefund.setSuccessTime(LocalDateTime.now());
         return weChatPayDao.createRefund( cloneVo(weChatPayRefund,WeChatPayRefundPo.class) );
     }

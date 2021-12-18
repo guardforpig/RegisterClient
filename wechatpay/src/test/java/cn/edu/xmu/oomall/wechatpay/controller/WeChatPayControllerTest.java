@@ -14,8 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,9 +43,8 @@ public class WeChatPayControllerTest {
         vo.setAppid("wxd678efh567hg6787");
         vo.setMchid("1230000109");
         vo.setDescription("pay");
-        vo.setTimeExpire(LocalDateTime.now());
-        vo.setAmount(new TransactionAmountVo(100,"CNY"));
-        vo.setPayer(new PayerVo("oUpF8uMuAJO_M2pxb1Q9zNjWeS6o"));
+        vo.setAmount(new WeChatPayTransactionVo.TransactionAmountVo(100,"CNY"));
+        vo.setPayer(new WeChatPayTransactionVo.PayerVo("oUpF8uMuAJO_M2pxb1Q9zNjWeS6o"));
         vo.setNotifyUrl("/wechat/payment/notify");
 
         String responseString;
@@ -74,8 +71,8 @@ public class WeChatPayControllerTest {
         vo.setMchid("1230000109");
         vo.setDescription("pay");
         vo.setOutTradeNo("1");
-        vo.setAmount(new TransactionAmountVo(100,"CNY"));
-        vo.setPayer(new PayerVo("oUpF8uMuAJO_M2pxb1Q9zNjWeS6o"));
+        vo.setAmount(new WeChatPayTransactionVo.TransactionAmountVo(100,"CNY"));
+        vo.setPayer(new WeChatPayTransactionVo.PayerVo("oUpF8uMuAJO_M2pxb1Q9zNjWeS6o"));
         vo.setNotifyUrl("/wechat/payment/notify");
 
         String responseString = this.mvc.perform(post("/internal/wechat/pay/transactions/jsapi").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
@@ -95,8 +92,8 @@ public class WeChatPayControllerTest {
         vo.setMchid("1230000109");
         vo.setDescription("pay");
         vo.setOutTradeNo("");
-        vo.setAmount(new TransactionAmountVo(100,"CNY"));
-        vo.setPayer(new PayerVo("oUpF8uMuAJO_M2pxb1Q9zNjWeS6o"));
+        vo.setAmount(new WeChatPayTransactionVo.TransactionAmountVo(100,"CNY"));
+        vo.setPayer(new WeChatPayTransactionVo.PayerVo("oUpF8uMuAJO_M2pxb1Q9zNjWeS6o"));
         vo.setNotifyUrl("/wechat/payment/notify");
 
         String responseString = this.mvc.perform(post("/internal/wechat/pay/transactions/jsapi").contentType("application/json;charset=UTF-8").content(JacksonUtil.toJson(vo)))
@@ -163,7 +160,7 @@ public class WeChatPayControllerTest {
 
         WeChatPayRefundVo vo = new WeChatPayRefundVo();
         vo.setNotifyUrl("/wechat/refund/notify");
-        vo.setAmount(new RefundAmountVo(100,100,"CNY"));
+        vo.setAmount(new WeChatPayRefundVo.RefundAmountVo(100,100,"CNY"));
 
         String responseString;
         String expectedResponse;
@@ -189,7 +186,7 @@ public class WeChatPayControllerTest {
 
         WeChatPayRefundVo vo = new WeChatPayRefundVo();
         vo.setNotifyUrl("/wechat/refund/notify");
-        vo.setAmount(new RefundAmountVo(120,100,"CNY"));
+        vo.setAmount(new WeChatPayRefundVo.RefundAmountVo(120,100,"CNY"));
         vo.setOutTradeNo("1");
         vo.setOutRefundNo("1");
 
@@ -210,7 +207,7 @@ public class WeChatPayControllerTest {
 
         WeChatPayRefundVo vo = new WeChatPayRefundVo();
         vo.setNotifyUrl("/wechat/refund/notify");
-        vo.setAmount(new RefundAmountVo(100,100,"CNY"));
+        vo.setAmount(new WeChatPayRefundVo.RefundAmountVo(100,100,"CNY"));
         vo.setOutTradeNo("9");
         vo.setOutRefundNo("1");
 
@@ -231,7 +228,7 @@ public class WeChatPayControllerTest {
 
         WeChatPayRefundVo vo = new WeChatPayRefundVo();
         vo.setNotifyUrl("/wechat/refund/notify");
-        vo.setAmount(new RefundAmountVo(100,100,"CNY"));
+        vo.setAmount(new WeChatPayRefundVo.RefundAmountVo(100,100,"CNY"));
         vo.setOutTradeNo("");
         vo.setOutRefundNo("1");
 
@@ -252,7 +249,7 @@ public class WeChatPayControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectedResponse = "{\"data\":{\"refundId\":\"1\",\"outRefundNo\":\"10\",\"transactionId\":\"1217752501201407033233368018\",\"outTradeNo\":\"10\",\"channel\":\"ORIGINAL\",\"userReceivedAccount\":\"招商银行信用卡0403\",\"successTime\":\"2021-12-02T15:08:42.000\",\"status\":\"SUCCESS\",\"amount\":{\"total\":null,\"refund\":100,\"payerTotal\":100,\"payerRefund\":null,\"settlementRefund\":null,\"settlementTotal\":null,\"discountRefund\":null,\"currency\":null}},\"errmsg\":\"成功\"}";
+        String expectedResponse = "{\"data\":{\"refundId\":\"1\",\"outRefundNo\":\"10\",\"transactionId\":\"1217752501201407033233368018\",\"outTradeNo\":\"10\",\"channel\":\"ORIGINAL\",\"userReceivedAccount\":\"招商银行信用卡0403\",\"successTime\":\"2021-12-02T15:08:42.000\",\"status\":\"SUCCESS\",\"amount\":{\"total\":null,\"refund\":100,\"payerTotal\":100,\"payerRefund\":100,\"settlementRefund\":null,\"settlementTotal\":null,\"discountRefund\":null,\"currency\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
 

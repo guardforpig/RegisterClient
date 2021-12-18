@@ -19,7 +19,7 @@ public class WeChatPayRefundRetVo {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class RefundAmountRetVo{
+    public static class RefundAmountRetVo{
         private Integer total;
         private Integer refund;
         private Integer payerTotal;
@@ -58,6 +58,6 @@ public class WeChatPayRefundRetVo {
         this.userReceivedAccount = "招商银行信用卡0403";
         this.successTime = weChatPayRefund.getSuccessTime();
         this.status = weChatPayRefund.getStatus();
-        this.amount = new RefundAmountRetVo(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getPayerRefund(), null, null, null, null);
+        this.amount = new RefundAmountRetVo(weChatPayRefund.getTotal(), weChatPayRefund.getRefund(), weChatPayRefund.getPayerTotal(), weChatPayRefund.getRefund(), null, null, null, null);
     }
 }
