@@ -3,7 +3,6 @@ package cn.edu.xmu.oomall.goods.microservice;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryDetailRetVo;
-import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -35,8 +34,8 @@ public interface ShopService {
     @GetMapping("/internal/categories/{id}")
     InternalReturnObject<SimpleCategoryVo> getCategoryById(@PathVariable("id") Long id);
 
-    @GetMapping("/category/{id}")
-    InternalReturnObject<CategoryVo> getCategoryById(@PathVariable("id")Integer id);
+//    @GetMapping("/category/{id}")
+//    InternalReturnObject<CategoryVo> getCategoryById(@PathVariable("id")Integer id);
     /**
      * 获取分类的详细信息
      * @author 李智樑
