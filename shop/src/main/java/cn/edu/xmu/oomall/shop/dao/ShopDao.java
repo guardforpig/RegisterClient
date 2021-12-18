@@ -25,7 +25,7 @@ public class ShopDao {
     ShopPoMapper shopPoMapper;
 
 
-    public ReturnObject<Shop> getShopById(Long id) {
+    public ReturnObject getShopById(Long id) {
         ShopPo shopPo;
         try {
             shopPo = shopPoMapper.selectByPrimaryKey(id);
