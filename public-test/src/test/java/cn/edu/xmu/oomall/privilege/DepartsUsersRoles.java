@@ -29,9 +29,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartsUsersRoles extends BaseTestOomall {
 
-    private static String IDURL ="/privilege/departs/{did}/users/{uid}/roles/{rid}";
-    private static String GETURL= "/privilege/departs/{did}/users/{id}/roles";
-    private static String GETDEPARTROLEURL = "/privilege/departs/{did}/roles";
+    private static final String IDURL ="/privilege/departs/{did}/users/{uid}/roles/{rid}";
+    private static final String GETURL= "/privilege/departs/{did}/users/{id}/roles";
+    private static final String GETDEPARTROLEURL = "/privilege/departs/{did}/roles";
 
 
     /**
@@ -43,7 +43,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
     @Test
     public void getRoleTest1() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(GETURL,2,17347).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,2,17347).header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectHeader()
@@ -61,7 +61,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
     @Test
     public void getRoleTest2() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.get().uri(GETURL,2,17347).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,2,17347).header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectHeader()
@@ -79,7 +79,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
     @Test
     public void getRoleTest3() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(GETURL,2,1999999).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,2,1999999).header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectHeader()
@@ -98,14 +98,14 @@ public class DepartsUsersRoles extends BaseTestOomall {
     @Order(1)
     public void getRoleTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.get().uri(GETURL,2,17347).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,2,17347).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112)]").exists();
+                .jsonPath("$.data.list[?(@.id == '112')]").exists();
     }
 
     /**
@@ -118,14 +118,14 @@ public class DepartsUsersRoles extends BaseTestOomall {
     @Order(1)
     public void getRoleTest5() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(GETURL,2,17347).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,2,17347).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112)]").exists();
+                .jsonPath("$.data.list[?(@.id == '112')]").exists();
     }
 
     /**
@@ -137,7 +137,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
     @Test
     public void revokeRoleTest1() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.delete().uri(IDURL,1,17343, 1000).header("authorization", token)
+        this.gatewayClient.delete().uri(IDURL,1,17343, 1000).header("authorization", token)
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectHeader().contentType("application/json;charset=UTF-8")
@@ -154,21 +154,21 @@ public class DepartsUsersRoles extends BaseTestOomall {
     @Test
     public void revokeRoleTest2() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
-        this.mallClient.delete().uri(IDURL,1, 17346,111).header("authorization", token)
+        this.gatewayClient.delete().uri(IDURL,1, 17346,111).header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
-        this.mallClient.get().uri(GETURL,1,17346).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,1,17346).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 111)]").exists();
+                .jsonPath("$.data.list[?(@.id == '111')]").exists();
     }
 
     /**
@@ -180,7 +180,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
     @Test
     public void revokeRoleTest3() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.delete().uri(IDURL,2, 17347,112).header("authorization", token)
+        this.gatewayClient.delete().uri(IDURL,2, 17347,112).header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectHeader().contentType("application/json;charset=UTF-8")
@@ -188,14 +188,14 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode());
 
         token = this.adminLogin("2721900002", "123456");
-        this.mallClient.get().uri(GETURL,2,17347).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,2,17347).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112)]").exists();
+                .jsonPath("$.data.list[?(@.id == '112')]").exists();
     }
 
 
@@ -210,7 +210,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
     public void revokeRoleTest7() throws Exception {
         //判断用户是否有权限
         String token1 = this.adminLogin("delrole_user1", "123456");
-        this.mallClient.get().uri(GETDEPARTROLEURL,1).header("authorization", token1)
+        this.gatewayClient.get().uri(GETDEPARTROLEURL,1).header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
@@ -219,7 +219,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.delete().uri(IDURL,1, 17346,111).header("authorization", token)
+        this.gatewayClient.delete().uri(IDURL,1, 17346,111).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
@@ -227,17 +227,17 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
         //角色不存在
-        this.mallClient.get().uri(GETURL,1,17346).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,1,17346).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 111)]").doesNotExist();
+                .jsonPath("$.data.list[?(@.id == '111')]").doesNotExist();
 
         //权限不够
-        this.mallClient.get().uri(GETDEPARTROLEURL,1).header("authorization", token1)
+        this.gatewayClient.get().uri(GETDEPARTROLEURL,1).header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectHeader()
@@ -259,7 +259,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
     public void revokeRoleTest8() throws Exception {
         //判断用户是否有权限
         String token1 = this.adminLogin("delrole_user2", "123456");
-        this.mallClient.get().uri(GETDEPARTROLEURL,2).header("authorization", token1)
+        this.gatewayClient.get().uri(GETDEPARTROLEURL,2).header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
@@ -269,24 +269,24 @@ public class DepartsUsersRoles extends BaseTestOomall {
 
 
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.delete().uri(IDURL,2, 17347,112).header("authorization", token)
+        this.gatewayClient.delete().uri(IDURL,2, 17347,112).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(GETURL,2,17347).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,2,17347).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112)]").doesNotExist();
+                .jsonPath("$.data.list[?(@.id == '112')]").doesNotExist();
 
         //权限不够
-        this.mallClient.get().uri(GETDEPARTROLEURL,2).header("authorization", token1)
+        this.gatewayClient.get().uri(GETDEPARTROLEURL,2).header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectHeader()
@@ -310,7 +310,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
         String token = this.adminLogin("13088admin", "123456");
 
         //权限不够
-        this.mallClient.get().uri(GETDEPARTROLEURL,2).header("authorization", token1)
+        this.gatewayClient.get().uri(GETDEPARTROLEURL,2).header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectHeader()
@@ -319,23 +319,23 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
 
-        this.mallClient.post().uri(IDURL,2, 17347, 112).header("authorization",token)
+        this.gatewayClient.post().uri(IDURL,2, 17347, 112).header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(GETURL,2,17347).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,2,17347).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 112)]").exists();
+                .jsonPath("$.data.list[?(@.id == '112')]").exists();
 
-        this.mallClient.get().uri(GETDEPARTROLEURL,2).header("authorization", token1)
+        this.gatewayClient.get().uri(GETDEPARTROLEURL,2).header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
@@ -357,7 +357,7 @@ public class DepartsUsersRoles extends BaseTestOomall {
         String token = this.adminLogin("8131600001", "123456");
 
         //权限不够
-        this.mallClient.get().uri(GETDEPARTROLEURL,1).header("authorization", token1)
+        this.gatewayClient.get().uri(GETDEPARTROLEURL,1).header("authorization", token1)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectHeader()
@@ -366,23 +366,23 @@ public class DepartsUsersRoles extends BaseTestOomall {
                 .jsonPath("$.errno").isEqualTo(ReturnNo.AUTH_NO_RIGHT.getCode());
 
 
-        this.mallClient.post().uri(IDURL,1, 17346, 111).header("authorization",token)
+        this.gatewayClient.post().uri(IDURL,1, 17346, 111).header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode());
 
-        this.mallClient.get().uri(GETURL,1,17346).header("authorization", token)
+        this.gatewayClient.get().uri(GETURL,1,17346).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
                 .contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 111)]").exists();
+                .jsonPath("$.data.list[?(@.id == '111')]").exists();
 
-        this.mallClient.get().uri(GETDEPARTROLEURL,1).header("authorization", token1)
+        this.gatewayClient.get().uri(GETDEPARTROLEURL,1).header("authorization", token1)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader()
@@ -402,19 +402,19 @@ public class DepartsUsersRoles extends BaseTestOomall {
     @Test
     public void assignRoleTest3() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.post().uri(IDURL,2,17345, 107).header("authorization",token)
+        this.gatewayClient.post().uri(IDURL,2,17345, 107).header("authorization",token)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.RESOURCE_ID_OUTSCOPE.getCode());
 
-        this.mallClient.post().uri(GETURL, 17345).header("authorization",token)
+        this.gatewayClient.post().uri(GETURL, 17345).header("authorization",token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType("application/json;charset=UTF-8")
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 107)]").doesNotExist();
+                .jsonPath("$.data.list[?(@.id == '107')]").doesNotExist();
     }
 }

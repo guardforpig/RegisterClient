@@ -10,8 +10,10 @@ import cn.edu.xmu.oomall.alipay.model.po.AlipayRefundPo;
 import cn.edu.xmu.oomall.alipay.util.AlipayReturnNo;
 import cn.edu.xmu.oomall.alipay.util.GetJsonInstance;
 import cn.edu.xmu.oomall.alipay.model.vo.*;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,9 @@ public class AlipayService {
 
     @Autowired
     private RefundDao refundDao;
+
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
 
 
     private void paySuccess(Payment payment)
@@ -91,7 +96,7 @@ public class AlipayService {
                 notifyBody1.setBuyer_pay_amount(payment.getBuyerPayAmount());
                 notifyBody1.setTotal_amount(payment.getTotalAmount());
                 notifyBody1.setGmt_payment(LocalDateTime.now());
-                paymentFeightService.notify(notifyBody1);
+                rocketMQTemplate.sendOneWay("alipay-notify-topic", MessageBuilder.withPayload(notifyBody1).build());
                 break;
             //支付成功不回调
             case 1:
@@ -103,7 +108,8 @@ public class AlipayService {
             case 2:
                 payFailed(payment);
                 NotifyBody notifyBody2=new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"WAIT_BUYER_PAY",null);
-                paymentFeightService.notify(notifyBody2);
+//                paymentFeightService.notify(notifyBody2);
+                rocketMQTemplate.sendOneWay("alipay-notify-topic", MessageBuilder.withPayload(notifyBody2).build());
                 break;
             //支付失败不回调
             case 3:
@@ -231,7 +237,7 @@ public class AlipayService {
                     notifyBody1.setGmt_payment(payment.getSendPayDate());
                     notifyBody1.setGmt_refund(LocalDateTime.now());
                     notifyBody1.setRefund_fee(totalRefund);
-                    paymentFeightService.notify(notifyBody1);
+                    rocketMQTemplate.sendOneWay("alipay-notify-topic", MessageBuilder.withPayload(notifyBody1).build());
                     break;
                 //失败回调
                 case 2:
@@ -240,6 +246,7 @@ public class AlipayService {
                     notifyBody2.setTotal_amount(payment.getTotalAmount());
                     notifyBody2.setGmt_payment(payment.getSendPayDate());
                     refundFailed(refund);
+                    rocketMQTemplate.sendOneWay("alipay-notify-topic", MessageBuilder.withPayload(notifyBody2).build());
                     break;
                 //失败不回调
                 case 3:

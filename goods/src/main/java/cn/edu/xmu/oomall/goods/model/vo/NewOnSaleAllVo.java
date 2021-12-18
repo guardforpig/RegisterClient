@@ -1,12 +1,14 @@
 package cn.edu.xmu.oomall.goods.model.vo;
 
 import cn.edu.xmu.oomall.goods.constant.Constants;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author YuJie 22920192204242
@@ -18,11 +20,13 @@ public class NewOnSaleAllVo {
     @Min(0)
     private Long price;
 
-    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-    private LocalDateTime beginTime;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    private ZonedDateTime beginTime;
 
-    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-    private LocalDateTime endTime;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    private ZonedDateTime endTime;
 
     @Min(1)
     private Integer quantity;

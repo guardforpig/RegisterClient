@@ -22,14 +22,13 @@ import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = PublicTestApp.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GetDepartsRolesBaseRolesTest extends BaseTestOomall {
 
-    private static String TESTURL ="/privilgege/departs/{did}/roles/{id}/baseroles";
+    private static final String TESTURL ="/privilgege/departs/{did}/roles/{id}/baseroles";
 
     /**
      * 32 管理员查看角色拥有的权限
@@ -39,13 +38,13 @@ public class GetDepartsRolesBaseRolesTest extends BaseTestOomall {
     @Test
     public void findRolePrivs1() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
-        this.mallClient.get().uri(TESTURL, 1, 104 ).header("authorization", token)
+        this.gatewayClient.get().uri(TESTURL, 1, 104 ).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 92)]").exists()
-                .jsonPath("$.data.list[?(@.id == 93)]").exists()
+                .jsonPath("$.data.list[?(@.id == '92')]").exists()
+                .jsonPath("$.data.list[?(@.id == '93')]").exists()
                 .jsonPath("$.data.list.length()").isEqualTo(2);
     }
 
@@ -57,13 +56,13 @@ public class GetDepartsRolesBaseRolesTest extends BaseTestOomall {
     @Test
     public void findRolePrivs2() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
-        this.mallClient.get().uri(TESTURL, 1, 104 ).header("authorization", token)
+        this.gatewayClient.get().uri(TESTURL, 1, 104 ).header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 92)]").exists()
-                .jsonPath("$.data.list[?(@.id == 93)]").exists()
+                .jsonPath("$.data.list[?(@.id == '92')]").exists()
+                .jsonPath("$.data.list[?(@.id == '93')]").exists()
                 .jsonPath("$.data.list.length()").isEqualTo(2);
     }
 
@@ -75,7 +74,7 @@ public class GetDepartsRolesBaseRolesTest extends BaseTestOomall {
     @Test
     public void findRolePrivs3() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
-        this.mallClient.get().uri(TESTURL, 1, 104 ).header("authorization", token)
+        this.gatewayClient.get().uri(TESTURL, 1, 104 ).header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectBody()
@@ -89,7 +88,7 @@ public class GetDepartsRolesBaseRolesTest extends BaseTestOomall {
      */
     @Test
     public void findUserRolePrivs1() throws Exception {
-        this.mallClient.get().uri(TESTURL, 1, 104 )
+        this.gatewayClient.get().uri(TESTURL, 1, 104 )
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()

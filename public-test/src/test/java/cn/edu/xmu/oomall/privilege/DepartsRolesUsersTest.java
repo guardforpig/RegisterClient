@@ -29,7 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DepartsRolesUsersTest extends BaseTestOomall {
 
-    private static String ROLEUSER = "/departs/{did}/roles/{id}/users";
+    private static final String ROLEUSER = "/departs/{did}/roles/{id}/users";
 
     /**
      * 未登录
@@ -37,7 +37,7 @@ public class DepartsRolesUsersTest extends BaseTestOomall {
      */
     @Test
     public void selectRoleUsersTest1() throws Exception {
-        this.mallClient.get().uri(ROLEUSER,1, 2)
+        this.gatewayClient.get().uri(ROLEUSER,1, 2)
                 .exchange()
                 .expectStatus().isUnauthorized()
                 .expectBody()
@@ -50,7 +50,7 @@ public class DepartsRolesUsersTest extends BaseTestOomall {
      */
     @Test
     public void selectRoleUsersTest2() throws Exception {
-        this.mallClient.get().uri(ROLEUSER,1, 2)
+        this.gatewayClient.get().uri(ROLEUSER,1, 2)
                 .header("authorization", "test")
                 .exchange()
                 .expectStatus().isUnauthorized()
@@ -66,7 +66,7 @@ public class DepartsRolesUsersTest extends BaseTestOomall {
     public void selectRoleUsersTest3() throws Exception {
         String token = this.adminLogin("shop1_coupon", "123456");
 
-        this.mallClient.get().uri(ROLEUSER,1, 2)
+        this.gatewayClient.get().uri(ROLEUSER,1, 2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -82,7 +82,7 @@ public class DepartsRolesUsersTest extends BaseTestOomall {
     public void selectRoleUsersTest4() throws Exception {
         String token = this.adminLogin("2721900002", "123456");
 
-        this.mallClient.get().uri(ROLEUSER,1, 2)
+        this.gatewayClient.get().uri(ROLEUSER,1, 2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -99,13 +99,13 @@ public class DepartsRolesUsersTest extends BaseTestOomall {
     public void selectRoleUsersTest5() throws Exception {
         String token = this.adminLogin("8131600001", "123456");
 
-        this.mallClient.get().uri(ROLEUSER,1, 2)
+        this.gatewayClient.get().uri(ROLEUSER,1, 2)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 46)]").exists();
+                .jsonPath("$.data.list[?(@.id == '46')]").exists();
     }
 
     /**
@@ -117,13 +117,13 @@ public class DepartsRolesUsersTest extends BaseTestOomall {
     public void selectRoleUsersTest6() throws Exception {
         String token = this.adminLogin("13088admin", "123456");
 
-        this.mallClient.get().uri(ROLEUSER,2, 3)
+        this.gatewayClient.get().uri(ROLEUSER,2, 3)
                 .header("authorization", token)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ReturnNo.OK.getCode())
-                .jsonPath("$.data.list[?(@.id == 47)]").exists();
+                .jsonPath("$.data.list[?(@.id == '47')]").exists();
     }
 
 }

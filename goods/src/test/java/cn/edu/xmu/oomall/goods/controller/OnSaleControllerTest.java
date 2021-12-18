@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -50,7 +51,6 @@ public class OnSaleControllerTest {
 
     @Autowired
     protected WebApplicationContext wac;
-    DateTimeFormatter df;
     String adminToken;
     @Autowired
     private MockMvc mvc;
@@ -59,7 +59,6 @@ public class OnSaleControllerTest {
 
     @BeforeEach
     public void init() {
-        df = DateTimeFormatter.ofPattern(Constants.DATE_TIME_FORMAT, Constants.LOCALE);
         Mockito.when(redisUtil.get(Mockito.anyString())).thenReturn(null);
 
         JwtHelper jwtHelper = new JwtHelper();
@@ -74,27 +73,28 @@ public class OnSaleControllerTest {
         // 正常=》
         NewOnSaleVo vo = new NewOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2022-10-11T15:20:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2022-10-11T15:20:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2022-10-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setType((byte)0);
         vo.setMaxQuantity(50);
         vo.setNumKey(1);
         String s = JacksonUtil.toJson(vo);
 
+
         String res = this.mvc.perform(post("/shops/3/products/2532/onsales")
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T15:20:30.000\",\"endTime\":\"2022-10-12T16:20:30.000\",\"quantity\":10,\"activityId\":null,\"shareActId\":null,\"type\":0},\"errmsg\":\"成功\"}\n";
+        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T15:20:30.000+08:00\",\"endTime\":\"2022-10-12T16:20:30.000+08:00\",\"quantity\":10,\"activityId\":null,\"shareActId\":null,\"type\":0,\"state\": 0},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expect, res, false);
 
 
         // 商品销售时间冲突=》
         vo = new NewOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2021-11-12T09:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2022-10-12T09:40:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2021-11-12T09:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2022-10-12T09:40:30.000+08:00"));
         vo.setQuantity(10);
         vo.setType((byte)0);
         vo.setMaxQuantity(50);
@@ -114,8 +114,8 @@ public class OnSaleControllerTest {
 //        开始时间晚于结束时间
         vo = new NewOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2028-02-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2028-02-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setType((byte)0);
         vo.setMaxQuantity(50);
@@ -133,8 +133,8 @@ public class OnSaleControllerTest {
 //        非普通或秒杀
         vo = new NewOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2029-02-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2029-02-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setType((byte)3);
         vo.setMaxQuantity(50);
@@ -152,8 +152,8 @@ public class OnSaleControllerTest {
         //        货品不存在
         vo = new NewOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2029-03-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2029-03-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setType((byte)0);
         vo.setMaxQuantity(50);
@@ -171,8 +171,8 @@ public class OnSaleControllerTest {
         //货品非该商家
         vo = new NewOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2028-03-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2028-03-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setType((byte)0);
         vo.setMaxQuantity(50);
@@ -319,8 +319,8 @@ public class OnSaleControllerTest {
         // 正常=》
         NewOnSaleAllVo vo = new NewOnSaleAllVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2022-10-11T15:20:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2022-10-11T15:20:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2022-10-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setType((byte)3);
         vo.setActivityId(5L);
@@ -332,15 +332,15 @@ public class OnSaleControllerTest {
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isCreated()).andReturn()
                 .getResponse().getContentAsString();
-        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T15:20:30.000\",\"endTime\":\"2022-10-12T16:20:30.000\",\"quantity\":10,\"activityId\":5,\"shareActId\":null,\"type\":3},\"errmsg\":\"成功\"}\n";
+        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T15:20:30.000+08:00\",\"endTime\":\"2022-10-12T16:20:30.000+08:00\",\"quantity\":10,\"activityId\":5,\"shareActId\":null,\"type\":3,\"state\":0},\"errmsg\":\"成功\"}\n";
         JSONAssert.assertEquals(expect, res, false);
 
 
         // 商品销售时间冲突=》
         vo = new NewOnSaleAllVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2021-11-12T09:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2022-10-12T09:40:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2021-11-12T09:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2022-10-12T09:40:30.000+08:00"));
         vo.setQuantity(10);
         vo.setType((byte)3);
         vo.setActivityId(5L);
@@ -359,8 +359,8 @@ public class OnSaleControllerTest {
 //        开始时间晚于结束时间
         vo = new NewOnSaleAllVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2028-02-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2028-02-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setType((byte)3);
         vo.setActivityId(5L);
@@ -381,8 +381,8 @@ public class OnSaleControllerTest {
         //        货品不存在
         vo = new NewOnSaleAllVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2029-02-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2029-02-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setType((byte)3);
         vo.setActivityId(5L);
@@ -469,8 +469,8 @@ public class OnSaleControllerTest {
         // 正常=》
         ModifyOnSaleVo vo = new ModifyOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2022-10-11T15:20:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2022-10-11T15:20:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2022-10-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setMaxQuantity(50);
         vo.setNumKey(1);
@@ -485,8 +485,8 @@ public class OnSaleControllerTest {
 //        开始时间晚于结束时间
         vo = new ModifyOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2028-02-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2028-02-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setMaxQuantity(50);
         vo.setNumKey(1);
@@ -503,8 +503,8 @@ public class OnSaleControllerTest {
         //        不存在价格浮动
         vo = new ModifyOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2028-04-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2028-04-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setMaxQuantity(50);
         vo.setNumKey(1);
@@ -520,8 +520,8 @@ public class OnSaleControllerTest {
         //草稿态/下线态 才能修改
         vo = new ModifyOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2022-10-11T15:20:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2022-10-11T15:20:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2022-10-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setMaxQuantity(50);
         vo.setNumKey(1);
@@ -543,8 +543,8 @@ public class OnSaleControllerTest {
         // 正常
         ModifyOnSaleVo vo = new ModifyOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2022-10-11T15:20:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2022-10-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2022-10-11T15:20:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2022-10-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setMaxQuantity(50);
         vo.setNumKey(1);
@@ -561,8 +561,8 @@ public class OnSaleControllerTest {
 //        开始时间晚于结束时间
         vo = new ModifyOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2028-02-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2028-02-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setMaxQuantity(50);
         vo.setNumKey(1);
@@ -580,8 +580,8 @@ public class OnSaleControllerTest {
 //        限定普通秒杀
         vo = new ModifyOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2028-04-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2028-04-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setMaxQuantity(50);
         vo.setNumKey(1);
@@ -597,8 +597,8 @@ public class OnSaleControllerTest {
         //        不存在价格浮动
         vo = new ModifyOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2028-04-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2028-04-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setMaxQuantity(50);
         vo.setNumKey(1);
@@ -614,8 +614,8 @@ public class OnSaleControllerTest {
         //草稿态/下线态 才能修改
         vo = new ModifyOnSaleVo();
         vo.setPrice(1000L);
-        vo.setBeginTime(LocalDateTime.parse("2028-03-11T15:30:30.000", df));
-        vo.setEndTime(LocalDateTime.parse("2028-04-12T16:20:30.000", df));
+        vo.setBeginTime(ZonedDateTime.parse("2028-03-11T15:30:30.000+08:00"));
+        vo.setEndTime(ZonedDateTime.parse("2028-04-12T16:20:30.000+08:00"));
         vo.setQuantity(10);
         vo.setMaxQuantity(50);
         vo.setNumKey(1);

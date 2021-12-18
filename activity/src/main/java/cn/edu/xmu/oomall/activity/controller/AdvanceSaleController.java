@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.activity.controller;
 
+import cn.edu.xmu.oomall.activity.constant.TimeFormat;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSaleState;
 import cn.edu.xmu.oomall.activity.model.vo.AdvanceSaleModifyVo;
@@ -19,7 +20,7 @@ import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSale;
 import cn.edu.xmu.oomall.activity.model.vo.AdvanceSaleVo;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
@@ -144,8 +145,8 @@ public class AdvanceSaleController {
     public Object queryAllOnlineAdvanceSales(
             @RequestParam(name = "shopId", required = false) Long shopId,
             @RequestParam(name = "productId", required = false) Long productId,
-            @RequestParam(name = "beginTime", required = false)@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime beginTime,
-            @RequestParam(name = "endTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")LocalDateTime endTime,
+            @RequestParam(required = false) @DateTimeFormat(pattern = TimeFormat.INPUT_DATE_TIME_FORMAT) ZonedDateTime beginTime,
+            @RequestParam(required = false) @DateTimeFormat(pattern = TimeFormat.INPUT_DATE_TIME_FORMAT) ZonedDateTime endTime,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
         //输入参数合法性检查
@@ -154,7 +155,7 @@ public class AdvanceSaleController {
                 return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
             }
         }
-        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId, AdvanceSale.state.ONLINE.getCode(), beginTime,endTime,page,pageSize);
+        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId, AdvanceSale.state.ONLINE.getCode(), TimeFormat.ZonedDateTime2LocalDateTime(beginTime),TimeFormat.ZonedDateTime2LocalDateTime(endTime),page,pageSize);
         return Common.decorateReturnObject(ret);
     }
 
@@ -208,8 +209,8 @@ public class AdvanceSaleController {
             @PathVariable("shopId") Long shopId,
             @RequestParam(name = "productId", required = false) Long productId,
             @RequestParam(name = "state", required = false) Byte state,
-            @RequestParam(name = "beginTime", required = false)@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime beginTime,
-            @RequestParam(name = "endTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")LocalDateTime endTime,
+            @RequestParam(required = false) @DateTimeFormat(pattern = TimeFormat.INPUT_DATE_TIME_FORMAT) ZonedDateTime beginTime,
+            @RequestParam(required = false) @DateTimeFormat(pattern = TimeFormat.INPUT_DATE_TIME_FORMAT) ZonedDateTime endTime,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
         //输入参数合法性检查
@@ -218,7 +219,7 @@ public class AdvanceSaleController {
                 return  Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
             }
         }
-        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId,state,beginTime,endTime,page,pageSize);
+        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId,state,TimeFormat.ZonedDateTime2LocalDateTime(beginTime),TimeFormat.ZonedDateTime2LocalDateTime(endTime),page,pageSize);
         return Common.decorateReturnObject(ret);
     }
 
