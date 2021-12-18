@@ -4,7 +4,7 @@ import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(name = "Reconciliation")
+@FeignClient(value = "liquidation-service")
 public interface ReconciliationService
 {
     @GetMapping("/internal/shops/{shopId}/reconsiliation/clear")

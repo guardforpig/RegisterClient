@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author Zijun Min
@@ -18,14 +19,15 @@ import java.time.LocalDateTime;
 public class SimpleOnSaleRetVo implements VoObject {
     private Long id;
     private Long price;
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
-    private LocalDateTime beginTime;
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
-    private LocalDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
+    private ZonedDateTime beginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZZZ")
+    private ZonedDateTime endTime;
     private Integer quantity;
     private Long activityId;
     private Long shareActId;
     private Byte type;
+    private Byte state;
 
     @Override
     public Object createVo() {

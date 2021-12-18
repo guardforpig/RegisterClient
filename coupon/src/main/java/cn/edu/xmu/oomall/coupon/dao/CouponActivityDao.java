@@ -66,7 +66,8 @@ public class CouponActivityDao {
 
     public final static String COUPONONSALEKEY = "coupononsale_%d";
 
-
+    // 主键是onsaleId，存CouponActivity
+    public final static String COUPONACTIVITY_ONSALEID_KEY = "coupon_activity_onsale_id_%d";
 
 
     /**
@@ -97,7 +98,6 @@ public class CouponActivityDao {
             List<CouponActivityPo>list = couponActivityPoMapper.selectByExample(example);
             List<VoObject>list1 = new ArrayList<>();
             for(CouponActivityPo couponActivityPo:list){
-                // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转
                 CouponActivityRetVo couponActivityRetVo = cloneVo(couponActivityPo,CouponActivityRetVo.class);
                 list1.add(couponActivityRetVo);
             }
@@ -357,6 +357,47 @@ public class CouponActivityDao {
                 return new ReturnObject<>(ReturnNo.OK);
             }
         } catch (Exception e) {
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
+    /**
+     * 通过onsaleId找到对应的CouponActivities，使用redis，主键onsaleId，存储CouponActivities
+     * @author Zijun Min
+     */
+    public ReturnObject getCouponActivitiesListByOnsaleId(Long onsaleId) {
+        try {
+            String key = String.format(COUPONACTIVITY_ONSALEID_KEY,onsaleId);
+            List<CouponActivity>couponActivityList=new ArrayList<>();
+            if(redisUtils.hasKey(key)){
+                List<Serializable> serializableList = redisUtils.rangeList(key,0,redisUtils.sizeList(key));
+                if(serializableList.isEmpty()){
+                    //没有对应活动
+                    redisUtils.del(key);
+                    return new ReturnObject<>(ReturnNo.OK);
+                }
+                for (Serializable serializable : serializableList) {
+                    couponActivityList.add((CouponActivity) serializable);
+                }
+            }else{
+                CouponOnsalePoExample example = new CouponOnsalePoExample();
+                example.createCriteria().andOnsaleIdEqualTo(onsaleId);
+                List<CouponOnsalePo> couponOnsalePoList = couponOnsalePoMapper.selectByExample(example);
+                if (couponOnsalePoList.size() == 0) {
+                    return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+                }
+                for (CouponOnsalePo couponOnsalePo : couponOnsalePoList) {
+                    ReturnObject retCouponActivity = getCouponActivityById(couponOnsalePo.getActivityId());
+                    if (retCouponActivity.getCode().equals(ReturnNo.OK)) {
+                        CouponActivity couponActivity=(CouponActivity) retCouponActivity.getData();
+                        couponActivityList.add(couponActivity);
+                    }
+                }
+                redisUtils.rightPushAllList(key,(Serializable) couponActivityList,boTimeout);
+            }
+            return new ReturnObject(couponActivityList);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }

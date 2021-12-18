@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -22,11 +23,13 @@ public class ModifyOnSaleVo {
     @Min(0)
     private Long price;
 
-    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-    private LocalDateTime beginTime;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    private ZonedDateTime beginTime;
 
-    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-    private LocalDateTime endTime;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    private ZonedDateTime endTime;
 
     @Min(1)
     private Integer quantity;
@@ -36,6 +39,8 @@ public class ModifyOnSaleVo {
 
     @Min(1)
     private Integer numKey;
+
+    private Long shareActId;
 
 
 }

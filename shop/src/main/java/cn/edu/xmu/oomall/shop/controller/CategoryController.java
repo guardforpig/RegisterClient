@@ -53,11 +53,26 @@ public class CategoryController {
     })
     @GetMapping("/categories/{id}/subcategories")
     public Object selectCategories(@PathVariable Long id) {
-        if (id <= 0) {
+        if (id < 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST));
         }
 
         return selectSubCategories(id);
+    }
+
+    @ApiOperation(value = "查询商品上级分类关系")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "种类id", required = true, dataType = "Integer", paramType = "path")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 504, message = "资源不存在"),
+            @ApiResponse(code = 500, message = "服务器内部错误"),
+    })
+    @GetMapping("/categories/{id}/parents")
+    public Object selectParentCategory(@PathVariable("id") Long id) {
+        ReturnObject ret = categoryService.getParentCategoryById(id);
+        return Common.decorateReturnObject(ret);
     }
 
 
@@ -72,7 +87,7 @@ public class CategoryController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @Audit(departName = "shops")
-    @GetMapping("/shops/{shopId}/orphoncategories")
+    @GetMapping("/shops/{shopId}/orphancategories")
     public Object selectOrphoncategories(@PathVariable("shopId") Long shopId) {
         // 非平台管理员
         if (shopId != 0) {
@@ -117,15 +132,13 @@ public class CategoryController {
         if (res != null) {
             return res;
         }
-        Category cate = (Category) cloneVo(vo, Category.class);
+        Category cate = cloneVo(vo, Category.class);
         ReturnObject ret = categoryService.newCategory(id, cate, createId, createName);
 
         if (ret.getCode() == ReturnNo.OK) {
             httpServletResponse.setStatus(HttpStatus.CREATED.value());
         }
-        if (ret.getData() != null) {
-            return Common.getRetObject(ret);
-        }
+
         return Common.decorateReturnObject(ret);
     }
 
@@ -161,7 +174,7 @@ public class CategoryController {
             return res;
         }
 
-        Category cate = (Category) cloneVo(vo, Category.class);
+        Category cate = cloneVo(vo, Category.class);
         ReturnObject ret = categoryService.changeCategory(id, cate, modifyId, modiName);
         return Common.decorateReturnObject(ret);
     }
@@ -196,9 +209,7 @@ public class CategoryController {
 
     private Object selectSubCategories(Long id) {
         ReturnObject ret = categoryService.getSubCategories(id);
-        if (ret.getData() != null) {
-            return Common.getListRetVo(ret, CategoryRetVo.class);
-        }
+
         return Common.decorateReturnObject(ret);
     }
 

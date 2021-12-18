@@ -107,25 +107,25 @@ public class ProductDao {
      * @param id
      * @return 返回的是Product类型
      */
-    public InternalReturnObject getProductInfo(Long id){
+    public ReturnObject getProductInfo(Long id){
         try{
             String key = String.format(PRODUCT_ID,id);
             Product product=(Product) redisUtil.get(key);
             if(null!=product){
-                return new InternalReturnObject(product);
+                return new ReturnObject(product);
             }else {
                 ProductPo productPo = productMapper.selectByPrimaryKey(id);
                 if (productPo == null) {
-                    return new InternalReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
                 } else {
                     Product pro=cloneVo(productPo,Product.class);
                     redisUtil.set(key,pro,productTimeout);
-                    return new InternalReturnObject(pro);
+                    return new ReturnObject(pro);
                 }
             }
         }catch (Exception e){
             logger.error(e.getMessage());
-            return new InternalReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
     }
     /**
@@ -244,21 +244,21 @@ public class ProductDao {
         return productDraftPoMapper.selectByPrimaryKey(id);
     }
 
-    public Object getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
+    public Object getProductsOfCategories(Long did, Long cid, Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize);
         ProductPoExample example = new ProductPoExample();
         ProductPoExample.Criteria criteria=example.createCriteria()
-                .andCategoryIdEqualTo(Long.parseLong(String.valueOf(cid)));
+                .andCategoryIdEqualTo(cid);
         if (Objects.nonNull(did)){
-            criteria.andShopIdEqualTo(Long.parseLong(String.valueOf(did)));
+            criteria.andShopIdEqualTo(did);
         }else{
             criteria.andStateEqualTo((byte)(Product.ProductState.ONSHELF.getCode()));
         }
-        List<ProductPo> productPos = null;
+        List<ProductPo> productPos;
         try {
             productPos = productMapper.selectByExample(example);
         } catch (Exception e) {
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
         return new PageInfo<>(productPos);
     }

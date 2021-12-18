@@ -1,11 +1,9 @@
 package cn.edu.xmu.oomall.goods.service;
 
-import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ImgHelper;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
-import cn.edu.xmu.oomall.goods.microservice.CategroyService;
 import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
@@ -23,7 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.*;
 
@@ -44,9 +43,6 @@ public class ProductService {
 
     @Autowired
     private ShopService shopService;
-
-    @Autowired
-    private CategroyService categroyService;
 
     @Autowired
     private FreightService freightService;
@@ -156,19 +152,19 @@ public class ProductService {
         }
     }
     @Transactional(readOnly = true)
-    public ReturnObject getProductsOfCategories(Integer did, Integer cid, Integer page, Integer pageSize) {
-        InternalReturnObject<CategoryVo> categoryById = shopService.getCategoryById(cid);
-        Integer errno = categoryById.getErrno();
-        if(0 == errno){
-            CategoryVo categoryVo = categoryById.getData();
-            if (Objects.isNull(categoryVo)) {
-                new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "分类id不存在");
-            }
-                Long voId = categoryVo.getPid();
-            return Objects.isNull(voId)?new ReturnObject<>(ReturnNo.OK):
-                    new ReturnObject<>(ReturnNo.OK,productDao.getProductsOfCategories(did, cid,page,pageSize));
+    public ReturnObject<Object> getProductsOfCategories(Long did, Long cid, Integer page, Integer pageSize) {
+        InternalReturnObject<List<CategoryVo>> categoryReturnObj = shopService.getSecondCategory(0L);
+        Integer errno = categoryReturnObj.getErrno();
+        if (errno != 0){
+            return new ReturnObject<Object>(categoryReturnObj);
         }
-        return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"分类id不存在");
+        List<CategoryVo> categoryVos = categoryReturnObj.getData()
+                .stream().filter(row-> row.getId().equals(cid))
+                .collect(Collectors.toList());
+        if (categoryVos.isEmpty()) {
+           return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "分类id不存在");
+        }
+       return new ReturnObject<>(productDao.getProductsOfCategories(did, cid,page,pageSize));
     }
 
     /**
@@ -248,7 +244,7 @@ public class ProductService {
         SimpleShopVo simpleShopVo = (SimpleShopVo) cloneVo(object.getData(),SimpleShopVo.class);
         product.setShopName(simpleShopVo.getName());
         //查找categoryName
-        InternalReturnObject object1 = categroyService.getCategoryById(product.getCategoryId());
+        InternalReturnObject object1 = shopService.getCategoryById(product.getCategoryId());
         if(!object.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
@@ -375,7 +371,7 @@ public class ProductService {
 
         Product product = (Product) ret.getData();
 
-        InternalReturnObject object = categroyService.getCategoryById(product.getCategoryId());
+        InternalReturnObject object = shopService.getCategoryById(product.getCategoryId());
         if(!object.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
@@ -425,9 +421,9 @@ public class ProductService {
         }
         Product p = productDao.getProduct(id);
         if (p.getFreightId() != null) {
-            return freightService.getFreightModel(shopId,p.getFreightId());
+            return new ReturnObject(freightService.getFreightModel(shopId,p.getFreightId()).getData());
         } else {
-            return freightService.getDefaultFreightModel(shopId);
+            return new ReturnObject(freightService.getDefaultFreightModel(shopId).getData());
         }
     }
 
