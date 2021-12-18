@@ -21,9 +21,6 @@ import java.util.List;
 public interface ShopService {
     @GetMapping("/shops/{id}")
     InternalReturnObject<SimpleShopVo> getShopInfo(@PathVariable("id")Long id);
-
-@FeignClient(name = "shop-service")
-public interface ShopService {
     @GetMapping("/shops/{id}")
     InternalReturnObject<SimpleShopVo> getSimpleShopById(@PathVariable("id")Long id);
     /**
