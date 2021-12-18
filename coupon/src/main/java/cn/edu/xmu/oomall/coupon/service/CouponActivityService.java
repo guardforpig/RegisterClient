@@ -311,50 +311,50 @@ public class CouponActivityService {
     @Transactional(readOnly = true)
     public ReturnObject listCouponActivitiesByProductId(Long productId, Integer pageNumber, Integer pageSize) {
         String key = String.format(COUPONACTIVITYLISTKEY, productId);
-        List<CouponActivity> onlineCouponActivityList = new ArrayList<>();
-        if (redisUtils.hasKey(key) &&  (long) (pageNumber - 1) * pageSize <= redisUtils.sizeList(key)) {
-            long beginIndex = (long) (pageNumber - 1) * pageSize;
-            long endIndex = Math.min((long) pageNumber * pageSize, redisUtils.sizeList(key));
-            List<Serializable> serializableList = redisUtils.rangeList(key, beginIndex, endIndex);
-            for (Serializable serializable : serializableList) {
-                onlineCouponActivityList.add((CouponActivity) serializable);
-            }
-        } else {
-            redisUtils.del(key);
-            InternalReturnObject<PageVo<OnsaleVo>> retOnsaleVoPageInfo =
-                    goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
-            if (!retOnsaleVoPageInfo.getErrno().equals(ReturnNo.OK.getCode())) {
-                return new ReturnObject(retOnsaleVoPageInfo);
-            }
-            List<OnsaleVo> onsaleVoList = retOnsaleVoPageInfo.getData().getList();
-            for (OnsaleVo onsaleVo : onsaleVoList) {
-                if (onsaleVo.getState().equals(OnsaleVo.State.ONLINE.getCode())) {
-                    ReturnObject<PageInfo<CouponActivity>> retCouponActivityListPage =
-                            couponActivityDao.listCouponActivitiesByOnsaleId(onsaleVo.getId(), 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
-                    if (retCouponActivityListPage.getCode().equals(ReturnNo.OK)) {
-                        Map<String, Object> retCouponActivityMap = (Map<String, Object>) retCouponActivityListPage.getData();
-                        List<CouponActivity> couponActivityList = (List<CouponActivity>) retCouponActivityMap.get("list");
-                        for (CouponActivity couponActivity : couponActivityList) {
-                            if (couponActivity.getState().equals(CouponActivity.State.ONLINE.getCode())) {
-                                onlineCouponActivityList.add(couponActivity);
-                                redisUtils.rightPushList(key, couponActivity);
+            List<CouponActivity> onlineCouponActivityList = new ArrayList<>();
+            if (redisUtils.hasKey(key) && (long) (pageNumber - 1) * pageSize <= redisUtils.sizeList(key)) {
+                long beginIndex = (long) (pageNumber - 1) * pageSize;
+                long endIndex = Math.min((long) pageNumber * pageSize, redisUtils.sizeList(key));
+                List<Serializable> serializableList = redisUtils.rangeList(key, beginIndex, endIndex);
+                for (Serializable serializable : serializableList) {
+                    onlineCouponActivityList.add((CouponActivity) serializable);
+                }
+            } else {
+                redisUtils.del(key);
+                InternalReturnObject<PageVo<OnsaleVo>> retOnsaleVoPageInfo =
+                        goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
+                if (!retOnsaleVoPageInfo.getErrno().equals(ReturnNo.OK.getCode())) {
+                    return new ReturnObject(retOnsaleVoPageInfo);
+                }
+                List<OnsaleVo> onsaleVoList = retOnsaleVoPageInfo.getData().getList();
+                for (OnsaleVo onsaleVo : onsaleVoList) {
+                    if (onsaleVo.getState().equals(OnsaleVo.State.ONLINE.getCode())) {
+                        ReturnObject<PageInfo<CouponActivity>> retCouponActivityListPage =
+                                couponActivityDao.listCouponActivitiesByOnsaleId(onsaleVo.getId(), 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
+                        if (retCouponActivityListPage.getCode().equals(ReturnNo.OK)) {
+                            Map<String, Object> retCouponActivityMap = (Map<String, Object>) retCouponActivityListPage.getData();
+                            List<CouponActivity> couponActivityList = (List<CouponActivity>) retCouponActivityMap.get("list");
+                            for (CouponActivity couponActivity : couponActivityList) {
+                                if (couponActivity.getState().equals(CouponActivity.State.ONLINE.getCode())) {
+                                    onlineCouponActivityList.add(couponActivity);
+                                    redisUtils.rightPushList(key, couponActivity);
+                                }
                             }
                         }
                     }
                 }
+                redisUtils.expire(key, listTimeout, TimeUnit.SECONDS);
+                int beginIndex = Math.min((pageNumber - 1) * pageSize, onlineCouponActivityList.size());
+                int endIndex = Math.min(pageNumber * pageSize, onlineCouponActivityList.size());
+                onlineCouponActivityList = onlineCouponActivityList.subList(beginIndex, endIndex);
             }
-            redisUtils.expire(key, listTimeout, TimeUnit.SECONDS);
-            int beginIndex = Math.min((pageNumber - 1) * pageSize, onlineCouponActivityList.size());
-            int endIndex = Math.min(pageNumber * pageSize, onlineCouponActivityList.size());
-            onlineCouponActivityList = onlineCouponActivityList.subList(beginIndex, endIndex);
-        }
-        PageInfo<CouponActivity> retPageInfo = new PageInfo<>(onlineCouponActivityList);
-        retPageInfo.setTotal(redisUtils.sizeList(key));
-        retPageInfo.setPages((int) ((redisUtils.sizeList(key) - 1) / pageSize + 1));
-        retPageInfo.setPageSize(pageSize);
-        retPageInfo.setPageNum(pageNumber);
-        ReturnObject ret = new ReturnObject<>(retPageInfo);
-        return Common.getPageRetVo(ret, CouponActivityRetVo.class);
+            PageInfo<CouponActivity> retPageInfo = new PageInfo<>(onlineCouponActivityList);
+            retPageInfo.setTotal(redisUtils.sizeList(key));
+            retPageInfo.setPages((int) ((redisUtils.sizeList(key) - 1) / pageSize + 1));
+            retPageInfo.setPageSize(pageSize);
+            retPageInfo.setPageNum(pageNumber);
+            ReturnObject ret = new ReturnObject<>(retPageInfo);
+            return Common.getPageRetVo(ret, CouponActivityRetVo.class);
     }
 
     @Transactional(readOnly = true)

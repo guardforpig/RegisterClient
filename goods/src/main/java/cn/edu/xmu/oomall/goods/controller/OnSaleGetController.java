@@ -109,7 +109,6 @@ public class OnSaleGetController {
      * 内部API- 查询特定价格浮动的详情，该方法加入redis
      * @return 所有类型都会返回
      */
-    @Audit(departName = "shops")
     @GetMapping( "internal/onsales/{id}")
     public Object selectFullOnsale(@PathVariable("id")Long id) {
         return Common.decorateReturnObject(onSaleService.selectFullOnsale(id));
@@ -118,7 +117,7 @@ public class OnSaleGetController {
     /**
      * 管理员查询所有商品的价格浮动
      */
-    @Audit(departName = "shops")
+    //@Audit(departName = "shops")
     @GetMapping("internal/onsales")
     public Object selectAnyOnsale(@RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
                                   @RequestParam(value = "beginTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime beginTime,

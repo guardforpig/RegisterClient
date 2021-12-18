@@ -165,6 +165,8 @@ public class OnSaleGetDao {
             criteria.andEndTimeLessThanOrEqualTo(endTime);
         }
         ReturnObject returnObject = selectOnsaleByExampleWithPageInfo(onSalePoExample, SimpleOnSaleRetVo.class, page, pageSize);
+        System.out.println(returnObject.getData());
+
         return returnObject;
     }
 
