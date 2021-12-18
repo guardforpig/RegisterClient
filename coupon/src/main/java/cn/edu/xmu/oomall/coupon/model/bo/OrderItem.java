@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author xincong yao
+ * @modified Zijun Min
  * @date 2020-11-16
  */
 @Data
@@ -14,15 +15,14 @@ import lombok.NoArgsConstructor;
 public class OrderItem {
 
 	private Long id;
-	private Long skuId;
-	private Long orderId;
 	private String name;
+	private Long productId;
+	private Long onsaleId;
 	private Long categoryId;
-	private Integer quantity;
+	private Long quantity;
 	private Long price;
 	private Long discount;
 	private Long couponActivityId;
-	private Long beShareId;
 
 
 }

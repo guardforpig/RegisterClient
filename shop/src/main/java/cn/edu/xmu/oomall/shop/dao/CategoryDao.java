@@ -74,9 +74,9 @@ public class CategoryDao {
      * 方便更新/删除操作对父类的删除
      *
      * @param id
-     * @return ReturnObject<List < Category>>
+     * @return ReturnObject<List>
      */
-    public ReturnObject<List<Category>> getSubCategories(Long id) {
+    public ReturnObject<List> getSubCategories(Long id) {
         CategoryPoExample example = new CategoryPoExample();
         CategoryPoExample.Criteria criteria = example.createCriteria();
         criteria.andPidEqualTo(id);
@@ -108,7 +108,7 @@ public class CategoryDao {
             categoryList.setCategoryList(categories);
             redisUtil.set(key, categoryList, categoryTimeout);
 
-            ReturnObject<List<Category>> ret = new ReturnObject<>(categories);
+            ReturnObject<List> ret = new ReturnObject<>(categories);
             return ret;
         } catch (Exception e) {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
