@@ -111,8 +111,8 @@ public class OnSaleGetController {
      */
     @Audit(departName = "shops")
     @GetMapping( "internal/onsales/{id}")
-    public Object selectFullOnsale(@LoginUser Long loginUser, @LoginName String loginUsername, @PathVariable("id")Long id) {
-        return onSaleService.selectFullOnsale(id);
+    public Object selectFullOnsale(@PathVariable("id")Long id) {
+        return Common.decorateReturnObject(onSaleService.selectFullOnsale(id));
     }
 
     /**
@@ -120,8 +120,7 @@ public class OnSaleGetController {
      */
     @Audit(departName = "shops")
     @GetMapping("internal/onsales")
-    public Object selectAnyOnsale(@LoginUser Long loginUser, @LoginName String loginUsername,
-                                  @RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
+    public Object selectAnyOnsale(@RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
                                   @RequestParam(value = "beginTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime beginTime,
                                   @RequestParam(value = "endTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime endTime,
                                   @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
