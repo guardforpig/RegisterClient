@@ -208,13 +208,13 @@ public class CategoryControllerTest {
 
         // 尝试查所有一级分类
         responseString = this.mvc.perform(get("/categories/0/subcategories"))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        JSONAssert.assertEquals("{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}", responseString, false);
+        JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString, false);
 
-        // 查所有单独分类
-        responseString = this.mvc.perform(get("/shops/0/orphoncategories")
+        // 查所有孤儿分类
+        responseString = this.mvc.perform(get("/shops/0/orphancategories")
                         .header("authorization", adminToken))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
@@ -222,7 +222,7 @@ public class CategoryControllerTest {
                 .andReturn().getResponse().getContentAsString();
         JSONAssert.assertEquals("{\"errno\":0,\"errmsg\":\"成功\"}", responseString, false);
 
-        responseString = this.mvc.perform(get("/shops/1/orphoncategories")
+        responseString = this.mvc.perform(get("/shops/1/orphancategories")
                         .header("authorization", shopToken))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
