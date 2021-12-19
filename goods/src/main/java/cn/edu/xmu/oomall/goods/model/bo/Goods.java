@@ -15,8 +15,6 @@ import java.util.List;
  * @author 王文飞
  */
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 public class Goods implements Serializable {
     private Long id;

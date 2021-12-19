@@ -605,7 +605,33 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"price\":4938,\"quantity\":36,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"test\"},\"shareable\":null},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"price\":4938,\"quantity\":36,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"test\"},\"shareable\":null,\"freightId\":1},\"errmsg\":\"成功\"}";
+        JSONAssert.assertEquals(expected, responseString, true);
+    }
+
+    /**
+     * 店家查看货品详细信息
+     *
+     * @throws Exception
+     * @author wyg
+     * @Date 2021/11/13
+     */
+    @Test
+    @Transactional
+    public void getShopProductDetail() throws Exception {
+        SimpleCategoryVo simpleCategoryVo = new SimpleCategoryVo();
+        simpleCategoryVo.setId(1L);
+        simpleCategoryVo.setName("test");
+
+        Mockito.when(shopService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
+        adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
+        String responseString = this.mockMvc.perform(get("/shops/10/products/1576")
+                .header("authorization", adminToken)
+                .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andReturn().getResponse().getContentAsString();
+        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"test\"},\"createBy\":null,\"gmtCreate\":\"2021-11-11T13:12:48.000\",\"gmtModified\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -722,32 +748,6 @@ class GoodsControllerTest {
                 "    \"errno\": 0," +
                 "    \"errmsg\": \"成功\"" +
                 "}";
-        JSONAssert.assertEquals(expected, responseString, true);
-    }
-
-    /**
-     * 店家查看货品详细信息
-     *
-     * @throws Exception
-     * @author wyg
-     * @Date 2021/11/13
-     */
-    @Test
-    @Transactional
-    public void getShopProductDetail() throws Exception {
-        SimpleCategoryVo simpleCategoryVo = new SimpleCategoryVo();
-        simpleCategoryVo.setId(1L);
-        simpleCategoryVo.setName("test");
-
-        Mockito.when(shopService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
-        adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
-        String responseString = this.mockMvc.perform(get("/shops/10/products/1576")
-                .header("authorization", adminToken)
-                .contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"test\"},\"createBy\":null,\"gmtCreate\":\"2021-11-11T13:12:48.000\",\"gmtModified\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 

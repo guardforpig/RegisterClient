@@ -109,7 +109,7 @@ public class ProductDao {
      */
     public ReturnObject getProductInfo(Long id){
         try{
-            String  key = String.format(PRODUCT_ID,id);
+            String key = String.format(PRODUCT_ID,id);
             Product product=(Product) redisUtil.get(key);
             if(null!=product){
                 return new ReturnObject(product);
@@ -305,8 +305,8 @@ public class ProductDao {
                 productPoList = productMapper.selectByExample(example);
             }
             for (ProductPo po : productPoList) {
-                Product product = (Product) cloneVo(po, Product.class);
-                productSimpleRetVos.add((SimpleProductRetVo) cloneVo(product, SimpleProductRetVo.class));
+                Product product = cloneVo(po, Product.class);
+                productSimpleRetVos.add( cloneVo(product, SimpleProductRetVo.class));
             }
 
             PageInfo<SimpleProductRetVo> pageInfo = PageInfo.of(productSimpleRetVos);
@@ -314,42 +314,6 @@ public class ProductDao {
         } catch (Exception e) {
             logger.error("selectAllProducts: DataAccessException:" + e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
-        }
-    }
-
-    /**
-     * 根据id获取product详细信息,shopId为0则为管理员调用,shopId为空则为顾客调用
-     *
-     * @param id,shopId
-     * @return ReturnObject
-     * @author wyg
-     * @Date 2021/11/12
-     */
-    public ReturnObject<Product> getProductDetailsById(Long id, Long shopId){
-        ProductPo productPo;
-        Product product;
-        try {
-            if(shopId!=null) {
-                ReturnObject ret = matchProductShop(id, shopId);
-                if (ret.getCode() != ReturnNo.OK) {
-                    return new ReturnObject<>(ret.getCode());
-                }
-            }
-
-            product = (Product) getProductInfo(id).getData();
-            OnSalePo onSalePo = getValidOnSale(id);
-            product.setOnSaleId(onSalePo.getId());
-
-            if(shopId==null) {
-                //店家获取详细信息时没有这两个字段
-                product.setPrice(onSalePo.getPrice());
-                product.setQuantity(onSalePo.getQuantity());
-            }
-
-            return new ReturnObject<>(product);
-        }catch (Exception e){
-            logger.error("selectProduct: DataAccessException:" + e.getMessage());
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
     }
 
