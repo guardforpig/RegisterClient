@@ -82,7 +82,6 @@ public class GroupOnActivityService {
         groupOnActivity.setShopId(shopId);
        setPoModifiedFields(groupOnActivity,loginUser,loginUsername);
 
-
         ReturnObject<GroupOnActivity> findObj = groupActivityDao.getGroupOnActivity(id);
         if(!findObj.getCode().equals(ReturnNo.OK))
         {

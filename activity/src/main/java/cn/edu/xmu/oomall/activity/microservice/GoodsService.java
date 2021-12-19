@@ -42,7 +42,7 @@ public interface GoodsService {
      * @author Jiawei Zheng
      */
     @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
-    InternalReturnObject getShopOnSaleInfo(@PathVariable("shopId")Long did,
+    InternalReturnObject getShopOnSaleInfo(@PathVariable("did")Long did,
                                            @PathVariable("id")Long id,
                                            @RequestParam("state")Byte state,
                                            @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
@@ -61,4 +61,24 @@ public interface GoodsService {
     @PutMapping("/shops/{shopId}/onsales/{id}")
     InternalReturnObject<SimpleOnSaleInfoVo> modifyOnSaleShareActId(@PathVariable Long shopId, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale);
 
+
+    /**
+     * lxc
+     * @param did
+     * @param id
+     * @param state
+     * @param beginTime
+     * @param endTime
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
+    InternalReturnObject<PageVo<SimpleOnSaleInfoVo>> getOnSale(@PathVariable("did")Long did,
+                                                                       @PathVariable("id")Long id,
+                                                                       @RequestParam("state")Byte state,
+                                                                       @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
+                                                                       @RequestParam("endTime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
+                                                                       @RequestParam("page") Integer page,
+                                                                       @RequestParam("pageSize") Integer pageSize);
 }
