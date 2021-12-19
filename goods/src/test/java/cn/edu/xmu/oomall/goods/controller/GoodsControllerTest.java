@@ -51,10 +51,10 @@ class GoodsControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private RedisUtil redisUtil;
-    @MockBean
-    private ShopService shopService;
-    @MockBean
-    private FreightService freightService;
+//    @MockBean
+//    private ShopService shopService;
+//    @MockBean
+//    private FreightService freightService;
 
     @Test
     public void ListByfreightIdTest1() throws Exception
@@ -473,9 +473,9 @@ class GoodsControllerTest {
         simpleShopVo.setName("");
 
 
-        Mockito.when(shopService.getSecondCategory(0L)).thenReturn(new InternalReturnObject(0, "", List.of(categoryVo2)));
-        Mockito.when(shopService.getSimpleShopById(1L)).thenReturn(new InternalReturnObject(1, "", List.of(simpleShopVo)));
-        Mockito.when(shopService.getSimpleShopById(2L)).thenReturn(new InternalReturnObject(1, "", List.of()));
+//        Mockito.when(shopService.getSecondCategory(0L)).thenReturn(new InternalReturnObject(0, "", List.of(categoryVo2)));
+//        Mockito.when(shopService.getSimpleShopById(1L)).thenReturn(new InternalReturnObject(1, "", List.of(simpleShopVo)));
+//        Mockito.when(shopService.getSimpleShopById(2L)).thenReturn(new InternalReturnObject(1, "", List.of()));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 1, 3600);
     }
     @Test
@@ -484,6 +484,7 @@ class GoodsControllerTest {
         String contentAsString = this.mockMvc.perform(get("/categories/266/products")
                         .header("authorization", adminToken))
                 .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected="{\"errno\":0,\"data\":{\"total\":46,\"pages\":5,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1561,\"name\":\"奥利奥（桶装）\",\"imageUrl\":null},{\"id\":1567,\"name\":\"六神花露水\",\"imageUrl\":null},{\"id\":1765,\"name\":\"康师傅包（爆椒）\",\"imageUrl\":null},{\"id\":1935,\"name\":\"50立白儿童牙膏\",\"imageUrl\":null},{\"id\":1970,\"name\":\"凯达空气清新剂\",\"imageUrl\":null},{\"id\":1971,\"name\":\"凯达桂花空气清新剂\",\"imageUrl\":null},{\"id\":2056,\"name\":\"彩虹果汁糖\",\"imageUrl\":null},{\"id\":2088,\"name\":\"不锈钢口杯\",\"imageUrl\":null},{\"id\":2118,\"name\":\"达能王子草莓饼干\",\"imageUrl\":null},{\"id\":2255,\"name\":\"双汇清真鸡肉肠400\",\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,contentAsString,true);
@@ -493,8 +494,9 @@ class GoodsControllerTest {
     public void secondProducts2() throws Exception {
         String contentAsString = this.mockMvc.perform(get("/categories/3/products")
                         .header("authorization", adminToken))
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":504,\"errmsg\":\"分类id不存在\"}";
+        String expected="{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expected,contentAsString,true);
     }
     @Test
@@ -503,6 +505,7 @@ class GoodsControllerTest {
         String contentAsString = this.mockMvc.perform(get("/shops/1/categories/266/products")
                         .header("authorization", adminToken))
                 .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expected="{\"errno\":0,\"data\":{\"total\":6,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1561,\"name\":\"奥利奥（桶装）\",\"imageUrl\":null},{\"id\":1971,\"name\":\"凯达桂花空气清新剂\",\"imageUrl\":null},{\"id\":2739,\"name\":\"迎华牌中老年无糖麦\",\"imageUrl\":null},{\"id\":3407,\"name\":\"金龙鱼AE营养菜籽油5000\",\"imageUrl\":null},{\"id\":4560,\"name\":\"400鹰威饼干\",\"imageUrl\":null},{\"id\":5124,\"name\":\"金顺昌壮乡桂圆糕150\",\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected,contentAsString,true);
@@ -512,8 +515,9 @@ class GoodsControllerTest {
     public void secondShopProducts2() throws Exception {
         String contentAsString = this.mockMvc.perform(get("/shops/1/categories/3/products")
                         .header("authorization", adminToken))
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected="{\"errno\":504,\"errmsg\":\"分类id不存在\"}";
+        String expected="{\"errno\":504,\"errmsg\":\"操作的资源id不存在\"}";
         JSONAssert.assertEquals(expected,contentAsString,true);
     }
 
@@ -596,7 +600,7 @@ class GoodsControllerTest {
         SimpleCategoryVo simpleCategoryVo = new SimpleCategoryVo();
         simpleCategoryVo.setId(1L);
         simpleCategoryVo.setName("test");
-        Mockito.when(shopService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
+//        Mockito.when(shopService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         //正常
         String responseString = this.mockMvc.perform(get("/products/1576")
@@ -605,7 +609,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"price\":4938,\"quantity\":36,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"test\"},\"shareable\":null,\"freightId\":1},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"price\":4938,\"quantity\":36,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"订餐服务\"},\"shareable\":null,\"freightId\":1},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -619,11 +623,11 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void getShopProductDetail() throws Exception {
-        SimpleCategoryVo simpleCategoryVo = new SimpleCategoryVo();
-        simpleCategoryVo.setId(1L);
-        simpleCategoryVo.setName("test");
+//        SimpleCategoryVo simpleCategoryVo = new SimpleCategoryVo();
+//        simpleCategoryVo.setId(1L);
+//        simpleCategoryVo.setName("test");
 
-        Mockito.when(shopService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
+//        Mockito.when(shopService.getCategoryById(270L)).thenReturn(new InternalReturnObject(0, "", simpleCategoryVo));
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         String responseString = this.mockMvc.perform(get("/shops/10/products/1576")
                 .header("authorization", adminToken)
@@ -631,7 +635,7 @@ class GoodsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"test\"},\"createBy\":null,\"gmtCreate\":\"2021-11-11T13:12:48.000\",\"gmtModified\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":1576,\"shop\":{\"id\":10,\"name\":\"商铺10\"},\"goodsId\":243,\"onSaleId\":27,\"name\":\"龙亮逍遥胡辣汤\",\"skuSn\":null,\"imageUrl\":null,\"originalPrice\":18039,\"weight\":85,\"state\":2,\"unit\":\"包\",\"barCode\":null,\"originPlace\":\"河南\",\"category\":{\"id\":270,\"name\":\"订餐服务\"},\"createBy\":null,\"gmtCreate\":\"2021-11-11T13:12:48.000\",\"gmtModified\":null,\"modifiedBy\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
@@ -901,14 +905,14 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void getFreightModels() throws Exception {
-        Mockito.when(freightService.getFreightModel(10L,1L)).thenReturn(new InternalReturnObject(ReturnNo.OK));
+//        Mockito.when(freightService.getFreightModel(10L,1L)).thenReturn(new InternalReturnObject(ReturnNo.OK));
 
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         String responseString = this.mockMvc.perform(get("/shops/10/products/1576/freightmodels").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expected = "{\"errno\": 0,\"errmsg\": \"成功\"}";
+        String expected = "{\"errno\":0,\"data\":{\"id\":1,\"name\":\"freight model/100g\",\"type\":0,\"unit\":100,\"defaultModel\":0,\"creator\":{\"id\":1,\"name\":\"admin\"},\"gmtCreate\":\"2020-12-02T20:33:08.000\",\"gmtModified\":\"2020-12-02T20:33:08.000\",\"modifier\":{\"id\":null,\"name\":null}},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expected, responseString, true);
     }
 
