@@ -304,7 +304,7 @@ public class GoodsController {
             @ApiResponse(code = 504, message = "分类id不存在"),
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
-
+    @GetMapping("/shops/{did}/categories/{id}/products")
     public Object getProductOfCategoryInShop(@PathVariable("did") Long did,@PathVariable("id") Long cid,
                                              @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
