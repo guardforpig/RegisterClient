@@ -11,6 +11,7 @@ import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
+import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.ProductDraftPo;
 import cn.edu.xmu.oomall.goods.model.vo.*;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -206,6 +207,10 @@ public class ProductService {
             return ret;
         }
         Product product = (Product) ret.getData();
+        OnSalePo onSalePo = productDao.getValidOnSale(productId);
+        product.setOnSaleId(onSalePo.getId());
+        product.setPrice(onSalePo.getPrice());
+        product.setQuantity(onSalePo.getQuantity());
         //查找categoryName
         InternalReturnObject object = shopService.getCategoryDetailById(product.getCategoryId());
         if (!object.getErrno().equals(0)) {
@@ -369,7 +374,8 @@ public class ProductService {
         }
 
         Product product = (Product) ret.getData();
-
+        OnSalePo onSalePo = productDao.getValidOnSale(productId);
+        product.setOnSaleId(onSalePo.getId());
         InternalReturnObject object = shopService.getCategoryById(product.getCategoryId());
         if(!object.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
