@@ -584,7 +584,6 @@ public class CouponActivityService {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
 
-        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转
         return new ReturnObject(cloneVo(couponActivity, CouponActivityDetailRetVo.class));
     }
 
