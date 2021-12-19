@@ -5,7 +5,7 @@ management:
         include: "*"
 
 server:
-  port: 8081
+  port: 8091
   tomcat:
     threads:
       max: 500
@@ -18,9 +18,9 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 101.132.164.244:8888
-        username: nacos
-        password: ooad_javaee201
+        server-addr: 121.36.53.115
+#        username: nacos
+#        password: ooad_javaee201
 
   servlet:
     multipart:
