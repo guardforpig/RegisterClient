@@ -318,42 +318,6 @@ public class ProductDao {
     }
 
     /**
-     * 根据id获取product详细信息,shopId为0则为管理员调用,shopId为空则为顾客调用
-     *
-     * @param id,shopId
-     * @return ReturnObject
-     * @author wyg
-     * @Date 2021/11/12
-     */
-    public ReturnObject<Product> getProductDetailsById(Long id, Long shopId){
-        ProductPo productPo;
-        Product product;
-        try {
-            if(shopId!=null) {
-                ReturnObject ret = matchProductShop(id, shopId);
-                if (ret.getCode() != ReturnNo.OK) {
-                    return new ReturnObject<>(ret.getCode());
-                }
-            }
-
-            product = (Product) getProductInfo(id).getData();
-            OnSalePo onSalePo = getValidOnSale(id);
-            product.setOnSaleId(onSalePo.getId());
-
-            if(shopId==null) {
-                //店家获取详细信息时没有这两个字段
-                product.setPrice(onSalePo.getPrice());
-                product.setQuantity(onSalePo.getQuantity());
-            }
-
-            return new ReturnObject<>(product);
-        }catch (Exception e){
-            logger.error("selectProduct: DataAccessException:" + e.getMessage());
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
-    }
-
-    /**
      * 用productId获取当前有效的OnSale
      *
      * @param id

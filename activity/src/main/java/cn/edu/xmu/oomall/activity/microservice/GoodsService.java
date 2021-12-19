@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * @author Gao Yanfeng
  * @date 2021/11/13
  */
-@FeignClient(value = "goods-service")
+@FeignClient(name = "goods-service")
 public interface GoodsService {
     @GetMapping("/internal/onsales")
     InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,
