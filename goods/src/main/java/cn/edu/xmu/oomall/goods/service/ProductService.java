@@ -201,7 +201,7 @@ public class ProductService {
      */
     @Transactional(readOnly=true)
     public ReturnObject<ProductRetVo> getProductDetails(Long productId) {
-        ReturnObject ret = productDao.getProductDetailsById(productId, null);
+        ReturnObject ret = productDao.getProductInfo(productId);
         if (ret.getCode() != ReturnNo.OK) {
             return ret;
         }
@@ -363,7 +363,7 @@ public class ProductService {
      */
     @Transactional(readOnly=true)
     public ReturnObject getShopProductDetails(Long shopId, Long productId, Long loginUser , String loginUsername) {
-        ReturnObject ret = productDao.getProductDetailsById(productId,shopId);
+        ReturnObject ret = productDao.getProductInfo(productId);
         if (ret.getCode() != ReturnNo.OK) {
             return ret;
         }
