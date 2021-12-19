@@ -229,7 +229,7 @@ public class CategoryController {
      */
     @GetMapping("/internal/categories/{categoryId}")
     public Object getCategoryDetailById(@PathVariable Long categoryId) {
-        System.out.println(categoryId);
+
         ReturnObject ret=categoryService.getCategoryById_1(categoryId);
         return Common.decorateReturnObject(ret);
     }
