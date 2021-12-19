@@ -155,18 +155,17 @@ public class ProductService {
     }
     @Transactional(readOnly = true)
     public ReturnObject<Object> getProductsOfCategories(Long did, Long cid, Integer page, Integer pageSize) {
-        InternalReturnObject<List<CategoryVo>> categoryReturnObj = shopService.getSecondCategory(0L);
+        InternalReturnObject<CategoryDetailRetVo> categoryReturnObj = shopService.getCategoryById(cid);
         Integer errno = categoryReturnObj.getErrno();
         if (errno != 0){
             return new ReturnObject<Object>(categoryReturnObj);
         }
-        List<CategoryVo> categoryVos = categoryReturnObj.getData()
-                .stream().filter(row-> row.getId().equals(cid))
-                .collect(Collectors.toList());
-        if (categoryVos.isEmpty()) {
-           return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "分类id不存在");
+        CategoryDetailRetVo categoryDetailRetVo=categoryReturnObj.getData();
+        if(categoryDetailRetVo.getPid()==0)
+        {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-       return new ReturnObject<>(productDao.getProductsOfCategories(did, cid,page,pageSize));
+       return new ReturnObject<>(productDao.getProductsOfCategories(did,cid,page,pageSize));
     }
 
     /**
@@ -372,15 +371,18 @@ public class ProductService {
         if (ret.getCode() != ReturnNo.OK) {
             return ret;
         }
-
         Product product = (Product) ret.getData();
+        if(!product.getShopId().equals(shopId))
+        {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
+        }
         OnSalePo onSalePo = productDao.getValidOnSale(productId);
         product.setOnSaleId(onSalePo.getId());
         InternalReturnObject object = shopService.getCategoryById(product.getCategoryId());
         if(!object.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        SimpleCategoryVo categoryVo = (SimpleCategoryVo) object.getData();
+        CategoryDetailRetVo categoryVo = (CategoryDetailRetVo) object.getData();
         product.setCategoryName(categoryVo.getName());
 
         ProductShopRetVo vo = (ProductShopRetVo) cloneVo(product, ProductShopRetVo.class);

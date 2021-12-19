@@ -24,15 +24,15 @@ public interface ShopService {
      * @author 何赟
      * @date 2021-12-5
      */
-    @GetMapping("/shops/{shopId}/orphoncategorie")
-    InternalReturnObject<List<CategoryVo>> getSecondCategory(@PathVariable Long shopId);
+    @GetMapping("/category/{id}")
+    InternalReturnObject<CategoryDetailRetVo> getCategoryById(@PathVariable("id")Long id);
 
     /**
      * 需要内部接口，通过cateoryId获取SimpleCategory
      * @return
      */
-    @GetMapping("/internal/categories/{id}")
-    InternalReturnObject<SimpleCategoryVo> getCategoryById(@PathVariable("id") Long id);
+//    @GetMapping("/internal/categories/{id}")
+//    InternalReturnObject<SimpleCategoryVo> getCategoryById(@PathVariable("id") Long id);
 
 //    @GetMapping("/category/{id}")
 //    InternalReturnObject<CategoryVo> getCategoryById(@PathVariable("id")Integer id);

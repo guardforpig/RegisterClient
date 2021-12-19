@@ -86,7 +86,7 @@ public class OnSaleControllerTest {
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T15:20:30.000+08:00\",\"endTime\":\"2022-10-12T16:20:30.000+08:00\",\"quantity\":10,\"activityId\":null,\"shareActId\":null,\"type\":0,\"state\": 0},\"errmsg\":\"成功\"}\n";
+        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T07:20:30.000Z\",\"endTime\":\"2022-10-12T08:20:30.000Z\",\"quantity\":10,\"activityId\":null,\"shareActId\":null,\"type\":0,\"state\":0},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expect, res, false);
 
 
@@ -332,7 +332,7 @@ public class OnSaleControllerTest {
                 .header("authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON).content(s)).andExpect(status().isCreated()).andReturn()
                 .getResponse().getContentAsString();
-        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T15:20:30.000+08:00\",\"endTime\":\"2022-10-12T16:20:30.000+08:00\",\"quantity\":10,\"activityId\":5,\"shareActId\":null,\"type\":3,\"state\":0},\"errmsg\":\"成功\"}\n";
+        String expect = "{\"errno\":0,\"data\":{\"price\":1000,\"beginTime\":\"2022-10-11T07:20:30.000Z\",\"endTime\":\"2022-10-12T08:20:30.000Z\",\"quantity\":10,\"activityId\":5,\"shareActId\":null,\"type\":3,\"state\":0},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expect, res, false);
 
 
