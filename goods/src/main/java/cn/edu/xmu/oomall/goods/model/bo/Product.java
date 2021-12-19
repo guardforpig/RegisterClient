@@ -21,8 +21,6 @@ import java.time.LocalDateTime;
  * @author 王文飞
  */
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 public class Product implements Serializable {
     private Long id;

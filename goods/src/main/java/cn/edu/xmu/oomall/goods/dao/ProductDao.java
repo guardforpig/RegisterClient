@@ -109,7 +109,7 @@ public class ProductDao {
      */
     public ReturnObject getProductInfo(Long id){
         try{
-            String  key = String.format(PRODUCT_ID,id);
+            String key = String.format(PRODUCT_ID,id);
             Product product=(Product) redisUtil.get(key);
             if(null!=product){
                 return new ReturnObject(product);
@@ -305,8 +305,8 @@ public class ProductDao {
                 productPoList = productMapper.selectByExample(example);
             }
             for (ProductPo po : productPoList) {
-                Product product = (Product) cloneVo(po, Product.class);
-                productSimpleRetVos.add((SimpleProductRetVo) cloneVo(product, SimpleProductRetVo.class));
+                Product product = cloneVo(po, Product.class);
+                productSimpleRetVos.add( cloneVo(product, SimpleProductRetVo.class));
             }
 
             PageInfo<SimpleProductRetVo> pageInfo = PageInfo.of(productSimpleRetVos);
