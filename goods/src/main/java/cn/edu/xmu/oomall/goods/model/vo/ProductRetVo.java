@@ -31,4 +31,5 @@ public class ProductRetVo {
     private String originPlace;
     private SimpleObject category;
     private Boolean shareable;
+    private Long freightId;
 }
