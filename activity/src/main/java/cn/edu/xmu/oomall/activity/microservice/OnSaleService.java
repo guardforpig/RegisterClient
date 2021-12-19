@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @studentId 22920192204245
  * @date 2021/11/14/12:03
  */
-@FeignClient(value = "onsale")
+@FeignClient(name = "goods-service")
 public interface OnSaleService {
     @GetMapping(path = "/internal/onsales/{id}")
     ReturnObject getOnSaleById(@PathVariable("id") Long id);

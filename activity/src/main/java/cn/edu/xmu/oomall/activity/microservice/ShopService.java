@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @author Gao Yanfeng
  * @date 2021/11/12
  */
-@FeignClient(value = "shop-service")
+@FeignClient(name = "shop-service")
 public interface ShopService {
     @GetMapping("/shops/{id}")
     InternalReturnObject<SimpleShopVo> getShopInfo(@PathVariable("id") Long id);
