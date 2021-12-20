@@ -49,10 +49,11 @@ public class ShopController {
             @ApiImplicitParam(name = "id", value = "商店id", required = true, dataType = "Long", paramType = "path")
     })
     @GetMapping(value = "/shops/{id}")
-    public Object getSimpleShopById(@PathVariable Long id){
-            ReturnObject ret=shopService.getSimpleShopByShopId(id);
-            return Common.decorateReturnObject(ret);
+    public Object getSimpleShopById(@PathVariable Long id) {
+        ReturnObject ret = shopService.getSimpleShopByShopId(id);
+        return Common.decorateReturnObject(ret);
     }
+
     /**
      * @Author: 蒋欣雨
      * @Sn: 22920192204219
@@ -60,11 +61,11 @@ public class ShopController {
     @ApiOperation(value = "管理员获得店铺信息")
     @GetMapping(value = "/shops/{id}/shops")
     @Audit(departName = "shops")
-    public Object getAllShop(@PathVariable Long id,@Depart Long departId,@RequestParam(required = false)Integer page,@RequestParam(required = false)Integer pageSize){
-        if(id != 0||departId!=0){
+    public Object getAllShop(@PathVariable Long id, @Depart Long departId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
+        if (id != 0 || departId != 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
         }
-        ReturnObject<PageInfo<Object>> ret=shopService.getAllShop(page,pageSize);
+        ReturnObject<PageInfo<Object>> ret = shopService.getAllShop(page, pageSize);
         return Common.decorateReturnObject(Common.getPageRetVo(ret, ShopRetVo.class));
     }
 
@@ -75,11 +76,10 @@ public class ShopController {
      */
     @ApiOperation(value = "获得店铺的所有状态")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "成功") })
+            @ApiResponse(code = 200, message = "成功")})
     @GetMapping(value = "/shops/states")
-    public Object getshopState()
-    {
-        ReturnObject<List> returnObject=shopService.getShopStates();
+    public Object getshopState() {
+        ReturnObject<List> returnObject = shopService.getShopStates();
         return Common.decorateReturnObject(returnObject);
     }
 
@@ -91,32 +91,33 @@ public class ShopController {
     @ApiImplicitParam(name = "authorization", value = "shopToken", required = true, dataType = "String", paramType = "header")
     @ApiResponses(value = {
             @ApiResponse(code = 969, message = "用户已经有店铺"),
-            @ApiResponse(code = 200, message = "成功") })
+            @ApiResponse(code = 200, message = "成功")})
     @Audit(departName = "shops")
     @PostMapping(value = "/shops")
-    public Object addShop(@Validated @RequestBody ShopVo shopvo, BindingResult bindingResult, @Depart Long shopid, @LoginUser Long loginUser, @LoginName String loginUsername){
-        Object obj = Common.processFieldErrors(bindingResult,httpServletResponse);
+    public Object addShop(@Validated @RequestBody ShopVo shopvo, BindingResult bindingResult, @Depart Long shopid, @LoginUser Long loginUser, @LoginName String loginUsername) {
+        Object obj = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (null != obj) {
             return obj;
         }
+        ReturnObject ret;
+        if (shopid.equals(-1L)) {
+            ret = shopService.newShop(shopvo, loginUser, loginUsername);
 
-        if(shopid.equals(-1L))
-        {
-            var ret = shopService.newShop(shopvo,loginUser,loginUsername);
-            if(ret.getCode().equals(ReturnNo.OK))httpServletResponse.setStatus(HttpStatus.CREATED.value());
-            return Common.decorateReturnObject(ret);
 
+        } else {
+            ret = new ReturnObject(ReturnNo.SHOP_USER_HASSHOP, "您已经拥有店铺，无法重新申请");
+            httpServletResponse.setStatus(HttpStatus.CREATED.value());
         }
-        else
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.SHOP_USER_HASSHOP, "您已经拥有店铺，无法重新申请"));
-
+        if (ret.getCode().equals(ReturnNo.OK))
+            httpServletResponse.setStatus(HttpStatus.CREATED.value());
+        return Common.decorateReturnObject(ret);
     }
 
     /**
      * @Author: 蒋欣雨
      * @Sn: 22920192204219
      */
-    @ApiOperation(value = "店家修改店铺信息", nickname = "modifyShop", notes = "", tags={ "shop", })
+    @ApiOperation(value = "店家修改店铺信息", nickname = "modifyShop", notes = "", tags = {"shop",})
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "shopToken", required = true, dataType = "String", paramType = "header"),
             @ApiImplicitParam(name = "id", value = "商店id", required = true, dataType = "Long", paramType = "path")
@@ -126,19 +127,16 @@ public class ShopController {
             @ApiResponse(code = 507, message = "该店铺无法修改")})
     @Audit(departName = "shops")
     @PutMapping(value = "/shops/{id}")
-    public Object modifyShop(@Depart Long departId,@Validated @RequestBody ShopVo shopVo,BindingResult bindingResult,@PathVariable Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
+    public Object modifyShop(@Depart Long departId, @Validated @RequestBody ShopVo shopVo, BindingResult bindingResult, @PathVariable Long id, @LoginUser Long loginUser, @LoginName String loginUsername) {
 
-        if(departId!=id&&departId!=0L)
-        {
+        if (departId != id && departId != 0L) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
         }
-        Object obj = Common.processFieldErrors(bindingResult,httpServletResponse);
+        Object obj = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (null != obj) {
             return obj;
-        }
-        else
-        {
-            ReturnObject ret=shopService.updateShop(id,shopVo, loginUser,loginUsername);
+        } else {
+            ReturnObject ret = shopService.updateShop(id, shopVo, loginUser, loginUsername);
             return Common.decorateReturnObject(ret);
         }
     }
@@ -147,9 +145,9 @@ public class ShopController {
      * @Author: 蒋欣雨
      * @Sn: 22920192204219
      */
-    @ApiOperation(value = "管理员或店家关闭店铺", nickname = "deleteShop", notes = "如果店铺从未上线则物理删除",  tags={ "shop", })
+    @ApiOperation(value = "管理员或店家关闭店铺", nickname = "deleteShop", notes = "如果店铺从未上线则物理删除", tags = {"shop",})
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "成功") ,
+            @ApiResponse(code = 200, message = "成功"),
             @ApiResponse(code = 180, message = "该店铺无法被执行关闭操作")
     })
     @ApiImplicitParams({
@@ -158,27 +156,21 @@ public class ShopController {
     })
     @DeleteMapping(value = "/shops/{id}")
     @Audit(departName = "shops")
-    public Object deleteShop(@ApiParam(value = "shop ID",required=true) @PathVariable("id") Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
-
-        var shop = shopService.getShopByShopId(id).getData();
-        if(shop.getState() == Shop.State.OFFLINE.getCode().byteValue())
-        {
-            ReturnObject ret=shopService.deleteShopById(id, loginUser,loginUsername);
-            return Common.decorateReturnObject(ret);
+    public Object deleteShop(@ApiParam(value = "shop ID", required = true) @PathVariable("id") Long id, @Depart Long departId, @LoginUser Long loginUser, @LoginName String loginUsername) {
+        if (departId != 0L) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE));
         }
-        else
-        {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.STATENOTALLOW));
-        }
+        ReturnObject ret = shopService.deleteShopById(id, loginUser, loginUsername);
+        return Common.decorateReturnObject(ret);
     }
 
     /**
      * @Author: 蒋欣雨
      * @Sn: 22920192204219
      */
-    @ApiOperation(value = "平台管理员审核店铺信息", nickname = "shopsShopIdNewshopsIdAuditPut", notes = "",  tags={ "shop", })
+    @ApiOperation(value = "平台管理员审核店铺信息", nickname = "shopsShopIdNewshopsIdAuditPut", notes = "", tags = {"shop",})
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "成功") ,
+            @ApiResponse(code = 200, message = "成功"),
             @ApiResponse(code = 150, message = "该店铺不是待审核状态")
     })
     @ApiImplicitParams({
@@ -186,27 +178,22 @@ public class ShopController {
     })
     @Audit(departName = "shops")
     @PutMapping(value = "/shops/{shopId}/newshops/{id}/audit")
-    public Object auditShop(@LoginUser Long loginUser,@LoginName String loginUsername,@Depart Long departId,@PathVariable("shopId") Long shopId,@PathVariable("id") Long id,@RequestBody ShopConclusionVo conclusion){
+    public Object auditShop(@LoginUser Long loginUser, @LoginName String loginUsername, @Depart Long departId, @PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @RequestBody ShopConclusionVo conclusion) {
 
-        var shop = shopService.getShopByShopId(id).getData();
-        if(id!=departId&&departId!=0L)
+
+        if (id != departId && departId != 0L)
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
-        if(shop.getState() == Shop.State.EXAME.getCode().byteValue())
-        {
-            ReturnObject ret=shopService.passShop(id,conclusion,loginUser,loginUsername);
-            return Common.decorateReturnObject(ret);
-        }
-        else
-        {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo. STATENOTALLOW));
-        }
+
+        ReturnObject ret = shopService.passShop(id, conclusion, loginUser, loginUsername);
+        return Common.decorateReturnObject(ret);
+
     }
 
     /**
      * @Author: 蒋欣雨
      * @Sn: 22920192204219
      */
-    @ApiOperation(value = "管理员上线店铺", nickname = "shopsIdOnshelvesPut", notes = "", tags={ "shop", })
+    @ApiOperation(value = "管理员上线店铺", nickname = "shopsIdOnshelvesPut", notes = "", tags = {"shop",})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "成功"),
             @ApiResponse(code = 160, message = "该店铺无法上线")
@@ -215,14 +202,13 @@ public class ShopController {
             @ApiImplicitParam(name = "authorization", value = "adminToken", required = true, dataType = "String", paramType = "header")
     })
     @Audit(departName = "shops")
-    @PutMapping(value = "/shops/{shopId}/shops/{id}/online")
-    public Object shopsIdOnshelvesPut(@PathVariable Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
+    @PutMapping(value = "/shops/{id}/online")
+    public Object shopsIdOnshelvesPut(@Depart Long departId, @PathVariable("id") Long id, @LoginUser Long loginUser, @LoginName String loginUsername) {
 
-        if(shopId!=0)
-        {
+        if (departId != 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
         }
-        ReturnObject ret= shopService.onShelfShop(id, loginUser,loginUsername);
+        ReturnObject ret = shopService.onShelfShop(id, loginUser, loginUsername);
         return Common.decorateReturnObject(ret);
     }
 
@@ -230,22 +216,21 @@ public class ShopController {
      * @Author: 蒋欣雨
      * @Sn: 22920192204219
      */
-    @ApiOperation(value = "管理员下线店铺", nickname = "shopsIdOffshelvesPut", notes = "", tags={ "shop", })
+    @ApiOperation(value = "管理员下线店铺", nickname = "shopsIdOffshelvesPut", notes = "", tags = {"shop",})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "成功"),
             @ApiResponse(code = 170, message = "该店铺无法下线")})
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "adminToken", required = true, dataType = "String", paramType = "header")
     })
-    @PutMapping(value = "/shops/{shopId}/shops/{id}/offline")
+    @PutMapping(value = "/shops/{id}/offline")
     @Audit(departName = "shops")
-    public Object shopsIdOffshelvesPut(@PathVariable Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
+    public Object shopsIdOffshelvesPut(@Depart Long departId, @PathVariable("id") Long id, @LoginUser Long loginUser, @LoginName String loginUsername) {
 
-        if(shopId!=0)
-        {
+        if (departId != 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
         }
-        ReturnObject ret= shopService.offShelfShop(id,loginUser,loginUsername);
+        ReturnObject ret = shopService.offShelfShop(id, loginUser, loginUsername);
         return Common.decorateReturnObject(ret);
     }
 

@@ -104,12 +104,18 @@ public class ShopAccountDao {
      * @date  2021-11-11
      * @studentId 34520192201587
      */
-    public boolean deleteAccount(Long accountId) {
+    public ReturnObject deleteAccount(Long accountId) {
         try {
-            return shopAccountPoMapper.deleteByPrimaryKey(accountId)==1;
+        ShopAccountPo shopAccountPo = shopAccountPoMapper.selectByPrimaryKey(accountId);
+        if(shopAccountPo==null)
+        {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
+        shopAccountPoMapper.deleteByPrimaryKey(accountId);
+        return new ReturnObject<>();
         }
         catch (Exception exception){
-            return false;
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,exception.getMessage());
         }
     }
 
