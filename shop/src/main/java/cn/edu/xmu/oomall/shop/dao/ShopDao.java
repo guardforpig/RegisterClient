@@ -93,7 +93,8 @@ public class ShopDao {
             shopPo.setName(shop.getName());
             if (shopPo.getState() == Shop.State.FORBID.getCode().byteValue()) {
                 return new ReturnObject(ReturnNo.STATENOTALLOW, "商铺处于关闭态");
-            } else {
+            }
+            else {
 
                 shopPo.setGmtModified(LocalDateTime.now());
                 ret = shopPoMapper.updateByPrimaryKeySelective(shopPo);

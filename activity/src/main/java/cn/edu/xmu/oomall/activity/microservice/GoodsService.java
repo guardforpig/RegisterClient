@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  * @author Gao Yanfeng
  * @date 2021/11/13
  */
-@FeignClient(name = "goods-service1",configuration= OpenFeignConfig.class)
+@FeignClient(name = "goods-service")
 public interface GoodsService {
     @GetMapping("/internal/onsales")
     InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,
@@ -47,7 +47,7 @@ public interface GoodsService {
      * @author Jiawei Zheng
      */
     @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
-    InternalReturnObject getShopOnSaleInfo(@PathVariable("shopId")Long did,
+    InternalReturnObject getShopOnSaleInfo(@PathVariable("did")Long did,
                                            @PathVariable("id")Long id,
                                            @RequestParam("state")Byte state,
                                            @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
@@ -74,4 +74,24 @@ public interface GoodsService {
 
     @DeleteMapping("/internal/onSales/{id}/shareActivities/{sid}")
     ReturnObject updateDeleteOnSaleShareActId(@PathVariable("id") Long id,@PathVariable("sid") Long sid);
+
+    /**
+     * lxc
+     * @param did
+     * @param id
+     * @param state
+     * @param beginTime
+     * @param endTime
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
+    InternalReturnObject<PageVo<SimpleOnSaleInfoVo>> getOnSale(@PathVariable("did")Long did,
+                                                                       @PathVariable("id")Long id,
+                                                                       @RequestParam("state")Byte state,
+                                                                       @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
+                                                                       @RequestParam("endTime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
+                                                                       @RequestParam("page") Integer page,
+                                                                       @RequestParam("pageSize") Integer pageSize);
 }

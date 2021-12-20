@@ -405,9 +405,14 @@ public class AdvanceSaleService {
     public InternalReturnObject getOnSaleInfo(Long shopId,Long id) {
         SimpleOnSaleInfoVo simpleOnSaleInfoVo = new SimpleOnSaleInfoVo();
         //根据shopId和预售活动id查找OnSale表，由于预售活动和OnSale是一对一关系，最多只会查到一条OnSale记录
-        InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> pageInfoReturnObject=goodsService.getShopOnSaleInfo(shopId,id,null,null,null,1,10);
-        if (pageInfoReturnObject.getData().getList() != null) {
-            simpleOnSaleInfoVo = pageInfoReturnObject.getData().getList().get(0);
+        InternalReturnObject<PageVo<SimpleOnSaleInfoVo>> pageVoInternalReturnObject=goodsService.getOnSale(shopId,id,null,null,null,1,10);
+        if (pageVoInternalReturnObject.getErrno()!=0){
+            return pageVoInternalReturnObject;
+        }
+        PageVo<SimpleOnSaleInfoVo> data = pageVoInternalReturnObject.getData();
+
+        if (data.getList() != null) {
+            simpleOnSaleInfoVo = pageVoInternalReturnObject.getData().getList().get(0);
         }
         //OnSale表中查不到
         else{
