@@ -4,10 +4,15 @@ import cn.edu.xmu.oomall.activity.microservice.vo.*;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageVo;
+import cn.edu.xmu.oomall.core.config.OpenFeignConfig;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -16,7 +21,7 @@ import java.time.LocalDateTime;
  * @author Gao Yanfeng
  * @date 2021/11/13
  */
-@FeignClient(name = "goods-service")
+@FeignClient(name = "goods-service1",configuration= OpenFeignConfig.class)
 public interface GoodsService {
     @GetMapping("/internal/onsales")
     InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,
@@ -51,7 +56,7 @@ public interface GoodsService {
                                            @RequestParam("pageSize") Integer pageSize);
 
     @GetMapping("/internal/onsales/{id}")
-    InternalReturnObject<FullOnSaleVo> getOnSaleById(@PathVariable("id")Long id);
+    InternalReturnObject<FullOnSaleVo> selectFullOnsale(@PathVariable("id")Long id);
 
     @PostMapping("/shops/{shopId}/products/{id}/onsales")
     InternalReturnObject<SimpleOnSaleInfoVo> addOnSale(@PathVariable("shopId") Long shopId,
@@ -59,6 +64,14 @@ public interface GoodsService {
                                                      @RequestBody OnSaleCreatedVo onSaleCreatedVo);
 
     @PutMapping("/shops/{shopId}/onsales/{id}")
-    InternalReturnObject<SimpleOnSaleInfoVo> modifyOnSaleShareActId(@PathVariable Long shopId, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale);
+    InternalReturnObject modifyOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody ModifyOnSaleVo onSale);
 
+//    @GetMapping("/internal/onsales/{id}")
+//    InternalReturnObject selectFullOnsale(@PathVariable("id")Long id);
+
+    @PostMapping("/internal/onSales/{id}/shareActivities/{sid}")
+    ReturnObject updateAddOnSaleShareActId(@PathVariable("id") Long id,@PathVariable("sid") Long sid);
+
+    @DeleteMapping("/internal/onSales/{id}/shareActivities/{sid}")
+    ReturnObject updateDeleteOnSaleShareActId(@PathVariable("id") Long id,@PathVariable("sid") Long sid);
 }
