@@ -572,7 +572,7 @@ public class CouponActivityService {
     * @create 2021/12/14 8:31 PM
     */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<CouponActivityVoInfo> getCouponActivityById(Long id){
+    public ReturnObject getCouponActivityById(Long id){
         ReturnObject returnObject = couponActivityDao.showCouponActivityPoStraight(id);
         if(returnObject.getCode()!= ReturnNo.OK){
             return returnObject;

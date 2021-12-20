@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.shop.service;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.dao.ShopDao;
+import cn.edu.xmu.oomall.shop.microservice.PrivilegeService;
 import cn.edu.xmu.oomall.shop.microservice.ReconciliationService;
 import cn.edu.xmu.oomall.shop.microservice.vo.RefundDepositVo;
 import cn.edu.xmu.oomall.shop.model.bo.Shop;
@@ -11,6 +12,7 @@ import cn.edu.xmu.oomall.shop.model.po.ShopPo;
 import cn.edu.xmu.oomall.shop.model.vo.*;
 import cn.edu.xmu.oomall.shop.microservice.PaymentService;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,11 @@ public class ShopService {
 
     @Autowired
     private ReconciliationService reconciliationService;
+
+    @Autowired
+    private PrivilegeService privilegeService;
+
+    private static JwtHelper jwtHelper = new JwtHelper();
 
     /**
      * @Author: 蒋欣雨
@@ -88,8 +95,11 @@ public class ShopService {
         po.setName(shopVo.getName());
         setPoCreatedFields(po, loginUser, loginUsername);
         ReturnObject ret = shopDao.newShop(po);
-        if (ret.getCode().equals(0)) {
-            ShopSimpleRetVo vo = (ShopSimpleRetVo) cloneVo(ret.getData(), ShopSimpleRetVo.class);
+        if (ret.getCode().equals(ReturnNo.OK)) {
+            ShopSimpleRetVo vo = cloneVo(ret.getData(), ShopSimpleRetVo.class);
+            //todo:还有问题
+            String adminToken=jwtHelper.createToken(1L,"13008admin",0L,0,3600);
+            privilegeService.addToDepart(loginUser,vo.getId(),adminToken);
             ret = new ReturnObject(vo);
         }
         return ret;

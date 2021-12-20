@@ -60,12 +60,12 @@ public class ShopController {
     @ApiOperation(value = "管理员获得店铺信息")
     @GetMapping(value = "/shops/{id}/shops")
     @Audit(departName = "shops")
-    public Object getAllShop(@PathVariable Long id,@RequestParam(required = false)Integer page,@RequestParam(required = false)Integer pageSize){
-        if(id != 0){
+    public Object getAllShop(@PathVariable Long id,@Depart Long departId,@RequestParam(required = false)Integer page,@RequestParam(required = false)Integer pageSize){
+        if(id != 0||departId!=0){
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
         }
         ReturnObject<PageInfo<Object>> ret=shopService.getAllShop(page,pageSize);
-        return Common.getPageRetVo(ret, ShopRetVo.class);
+        return Common.decorateReturnObject(Common.getPageRetVo(ret, ShopRetVo.class));
     }
 
 
@@ -103,7 +103,7 @@ public class ShopController {
         if(shopid.equals(-1L))
         {
             var ret = shopService.newShop(shopvo,loginUser,loginUsername);
-            if(ret.getCode().equals(ReturnNo.OK))httpServletResponse.setStatus(HttpStatus.OK.value());
+            if(ret.getCode().equals(ReturnNo.OK))httpServletResponse.setStatus(HttpStatus.CREATED.value());
             return Common.decorateReturnObject(ret);
 
         }
@@ -126,8 +126,12 @@ public class ShopController {
             @ApiResponse(code = 507, message = "该店铺无法修改")})
     @Audit(departName = "shops")
     @PutMapping(value = "/shops/{id}")
-    public Object modifyShop(@Validated @RequestBody ShopVo shopVo,BindingResult bindingResult,@PathVariable Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
+    public Object modifyShop(@Depart Long departId,@Validated @RequestBody ShopVo shopVo,BindingResult bindingResult,@PathVariable Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
 
+        if(departId!=id&&departId!=0L)
+        {
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
         Object obj = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != obj) {
             return obj;
@@ -182,9 +186,11 @@ public class ShopController {
     })
     @Audit(departName = "shops")
     @PutMapping(value = "/shops/{shopId}/newshops/{id}/audit")
-    public Object auditShop(@LoginUser Long loginUser,@LoginName String loginUsername,@PathVariable("shopId") Long shopId,@PathVariable("id") Long id,@RequestBody ShopConclusionVo conclusion){
+    public Object auditShop(@LoginUser Long loginUser,@LoginName String loginUsername,@Depart Long departId,@PathVariable("shopId") Long shopId,@PathVariable("id") Long id,@RequestBody ShopConclusionVo conclusion){
 
         var shop = shopService.getShopByShopId(id).getData();
+        if(id!=departId&&departId!=0L)
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
         if(shop.getState() == Shop.State.EXAME.getCode().byteValue())
         {
             ReturnObject ret=shopService.passShop(id,conclusion,loginUser,loginUsername);
@@ -209,9 +215,13 @@ public class ShopController {
             @ApiImplicitParam(name = "authorization", value = "adminToken", required = true, dataType = "String", paramType = "header")
     })
     @Audit(departName = "shops")
-    @PutMapping(value = "/shops/{id}/online")
-    public Object shopsIdOnshelvesPut(@PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername){
+    @PutMapping(value = "/shops/{shopId}/shops/{id}/online")
+    public Object shopsIdOnshelvesPut(@PathVariable Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
 
+        if(shopId!=0)
+        {
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
         ReturnObject ret= shopService.onShelfShop(id, loginUser,loginUsername);
         return Common.decorateReturnObject(ret);
     }
@@ -227,10 +237,14 @@ public class ShopController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "adminToken", required = true, dataType = "String", paramType = "header")
     })
-    @PutMapping(value = "/shops/{id}/offline")
+    @PutMapping(value = "/shops/{shopId}/shops/{id}/offline")
     @Audit(departName = "shops")
-    public Object shopsIdOffshelvesPut(@PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername){
+    public Object shopsIdOffshelvesPut(@PathVariable Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUser,@LoginName String loginUsername){
 
+        if(shopId!=0)
+        {
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
         ReturnObject ret= shopService.offShelfShop(id,loginUser,loginUsername);
         return Common.decorateReturnObject(ret);
     }
