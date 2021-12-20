@@ -64,8 +64,6 @@ public class GroupActivityController {
     @Audit(departName = "shops")
     @DeleteMapping("/shops/{shopId}/groupons/{id}")
     public Object delGroupon(@PathVariable("id") long id,@PathVariable("shopId") long shopId) {
-        if(shopId!=0){
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
         ReturnObject<Object> returnObject = groupOnActivityService.delGroupon(shopId,id);
         return Common.decorateReturnObject(returnObject);
     }
@@ -80,8 +78,6 @@ public class GroupActivityController {
     @Audit(departName = "shops")
     @PutMapping("/shops/{shopId}/groupons/{id}")
     public Object modiGood(@Validated @RequestBody GroupOnActivityVo groupOnActivityVo, BindingResult bindingResult,@PathVariable("id") Integer id, @PathVariable("shopId") Integer shopId,@LoginUser Long loginUser,@LoginName String loginUsername){
-        if(shopId!=0){
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
         Object obj = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != obj) {
             return obj;

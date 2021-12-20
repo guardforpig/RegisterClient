@@ -142,7 +142,7 @@ public class ShareActivityControllerTest {
         JSONAssert.assertEquals(expectString5, responseString5, true);
 
         //有添加所有query都有时且合规
-        String responseString6 = mvc.perform(get("/shops/2/shareactivities?productId=1&beginTime=2021-11-11 10:10:10.000&endTime=2023-11-11 16:10:10.000&state=1&page=1&pageSize=3").header("authorization", token).contentType("application/json;charset=UTF-8"))
+        String responseString6 = mvc.perform(get("/shops/2/shareactivities?productId=1&state=1&page=1&pageSize=3").header("authorization", token).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -248,7 +248,7 @@ public class ShareActivityControllerTest {
     @Test
     public void addShareActTest() throws Exception
     {
-        String requestJson9 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
+        String requestJson9 = "{\"name\":\"我是一个活动\",\"strategy\":[{\"quantity\":5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
         String responseString9 = mvc.perform(post("/shops/11/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson9))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -288,7 +288,7 @@ public class ShareActivityControllerTest {
         JSONAssert.assertEquals(expectString2, responseString2, true);
 
         //都合规
-        String responseString6 = mvc.perform(get("/shareactivities?shopId=1&productId=1&beginTime=2021-11-11 15:01:02.000&endTime=2021-11-11 15:01:02.000&page=1&pageSize=4").header("authorization", token).contentType("application/json;charset=UTF-8"))
+        String responseString6 = mvc.perform(get("/shareactivities?shopId=1&productId=1&page=1&pageSize=4").header("authorization", token).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -296,7 +296,7 @@ public class ShareActivityControllerTest {
         JSONAssert.assertEquals(expectString6, responseString6, true);
 
         //shopId<0
-        String responseString7 = mvc.perform(get("/shareactivities?shopId=-1&productId=1&beginTime=2021-11-11 15:01:02.000&endTime=2021-11-11 15:01:02.000&page=1&pageSize=4").header("authorization", token).contentType("application/json;charset=UTF-8"))
+        String responseString7 = mvc.perform(get("/shareactivities?shopId=-1&productId=1&page=1&pageSize=4").header("authorization", token).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();

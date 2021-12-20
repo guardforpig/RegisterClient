@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
@@ -53,7 +55,11 @@ public class GroupOnActivityService {
         if(!groupOnActivity.getData().getState().equals(GroupOnState.DRAFT)) {
             return new ReturnObject<>(ReturnNo.STATENOTALLOW);
         }
-
+        GroupOnActivity groupOnActivity1=groupOnActivity.getData();
+        if(!groupOnActivity1.getShopId().equals(shopId))
+        {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
+        }
         ReturnObject obj = groupActivityDao.deleteGroupon(id);
         if(!obj.getCode().equals(ReturnNo.OK)) {
             return obj;
@@ -77,11 +83,9 @@ public class GroupOnActivityService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject modifyGroupon(long id, GroupOnActivityVo groupOnActivityVo, long shopId,long loginUser,String loginUsername) {
-        GroupOnActivity groupOnActivity = (GroupOnActivity) cloneVo(groupOnActivityVo,GroupOnActivity.class);
+        GroupOnActivity groupOnActivity = cloneVo(groupOnActivityVo,GroupOnActivity.class);
         groupOnActivity.setId(id);
-        groupOnActivity.setShopId(shopId);
-       setPoModifiedFields(groupOnActivity,loginUser,loginUsername);
-
+        setPoModifiedFields(groupOnActivity,loginUser,loginUsername);
         ReturnObject<GroupOnActivity> findObj = groupActivityDao.getGroupOnActivity(id);
         if(!findObj.getCode().equals(ReturnNo.OK))
         {
@@ -95,7 +99,11 @@ public class GroupOnActivityService {
         {
             return new ReturnObject(ReturnNo.STATENOTALLOW);
         }
-
+        GroupOnActivity groupOnActivity1=findObj.getData();
+        if(!groupOnActivity1.getShopId().equals(shopId))
+        {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
+        }
         ReturnObject obj = groupActivityDao.modifyGroupOnActivity(groupOnActivity);
         if(!obj.getCode().equals(ReturnNo.OK))
         {
@@ -106,11 +114,11 @@ public class GroupOnActivityService {
         OnsaleModifyVo onsaleModifyVo = new OnsaleModifyVo();
         if(groupOnActivity.getBeginTime()!=null) {
             beginTime = groupOnActivity.getBeginTime();
-            onsaleModifyVo.setBegintime(beginTime);
+            onsaleModifyVo.setBeginTime(beginTime.atZone(ZoneId.systemDefault()));
         }
         if(groupOnActivity.getEndTime()!=null) {
             endTime = groupOnActivity.getEndTime();
-            onsaleModifyVo.setEndtime(endTime);
+            onsaleModifyVo.setEndTime(endTime.atZone(ZoneId.systemDefault()));
         }
         InternalReturnObject<PageVo<SimpleOnSaleInfoVo>> retObj = goodsService.getOnSale(shopId,groupOnActivity.getId(),(byte)1,null,null,1,10);
         if(retObj.getErrno()==0&&retObj.getData().getTotal()>0){
@@ -118,6 +126,7 @@ public class GroupOnActivityService {
             for(var onSaleObj:retObj.getData().getList())
             {
                 onSaleId = onSaleObj.getId();
+
                 InternalReturnObject result=goodsService.modifyOnsale(shopId,onSaleId,onsaleModifyVo);
                 if(result.getErrno()!=0){
                     obj=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
@@ -238,8 +247,6 @@ public class GroupOnActivityService {
         if(!obj.getData().getState().equals(GroupOnState.DRAFT)) {
             return new ReturnObject<>(ReturnNo.STATENOTALLOW);
         }
-
-
         OnSaleCreatedVo simpleOnSaleInfoVo = new OnSaleCreatedVo();
         LocalDateTime nowTime = LocalDateTime.now();
         LocalDateTime beginTime = obj.getData().getBeginTime();
@@ -247,10 +254,15 @@ public class GroupOnActivityService {
         if(beginTime.isAfter(nowTime)) {
             beginTime = nowTime;
         }
-        simpleOnSaleInfoVo.setEndTime(endTime);
-        simpleOnSaleInfoVo.setBeginTime(beginTime);
+        simpleOnSaleInfoVo.setPrice(5L);
+        simpleOnSaleInfoVo.setMaxQuantity(100);
+        simpleOnSaleInfoVo.setQuantity(5);
+        simpleOnSaleInfoVo.setNumKey(2);
+        simpleOnSaleInfoVo.setEndTime(endTime.atZone(ZoneId.systemDefault()));
+        simpleOnSaleInfoVo.setBeginTime(beginTime.atZone(ZoneId.systemDefault()));
         simpleOnSaleInfoVo.setActivityId(id);
-        InternalReturnObject result = goodsService.addOnSale(shopId,pid,simpleOnSaleInfoVo);
+        simpleOnSaleInfoVo.setType((byte)2);
+        InternalReturnObject result = goodsService.createNewOnSale(pid,simpleOnSaleInfoVo,shopId);
         if(result.getErrno()!=0){
             obj=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
         }else{

@@ -58,10 +58,9 @@ public interface GoodsService {
     @GetMapping("/internal/onsales/{id}")
     InternalReturnObject<FullOnSaleVo> selectFullOnsale(@PathVariable("id")Long id);
 
-    @PostMapping("/shops/{shopId}/products/{id}/onsales")
-    InternalReturnObject<SimpleOnSaleInfoVo> addOnSale(@PathVariable("shopId") Long shopId,
-                                                     @PathVariable("id") Long id,
-                                                     @RequestBody OnSaleCreatedVo onSaleCreatedVo);
+    @PostMapping("internal/shops/{did}/products/{id}/onsales")
+    InternalReturnObject<SimpleOnSaleInfoVo> createNewOnSale(@PathVariable Long id, @Validated @RequestBody OnSaleCreatedVo newOnSaleAllVo,
+                                                             @PathVariable Long did)  ;
 
     @PutMapping("/shops/{shopId}/onsales/{id}")
     InternalReturnObject modifyOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody ModifyOnSaleVo onSale);

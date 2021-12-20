@@ -379,7 +379,7 @@ public class AdvanceSaleService {
         //设置新增的OnSale的type为3,表示预售类型
         onSaleCreatedVo.setType(Byte.valueOf("3"));
         //新增记录到OnSale表
-        InternalReturnObject internalReturnObject=goodsService.addOnSale(shopId,id, onSaleCreatedVo);
+        InternalReturnObject internalReturnObject=goodsService.createNewOnSale(id, onSaleCreatedVo,shopId);
         //新增OnSale表失败
         if(internalReturnObject.getData()==null){
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,internalReturnObject.getErrmsg());
