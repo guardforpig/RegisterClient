@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.activity.dao.GroupOnActivityDao;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.activity.model.bo.GroupOnActivity;
 import cn.edu.xmu.oomall.activity.model.po.GroupOnActivityPoExample;
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityPostVo;
@@ -62,12 +63,13 @@ public class GroupOnService {
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject addActivity(Long shopId, GroupOnActivityPostVo vo, Long createdBy, String createName) {
             var bo = (GroupOnActivity) cloneVo(vo, GroupOnActivity.class);
-            var shopInfoRet = shopService.getShopInfo(shopId);
+            var shopInfoRet = shopService.getSimpleShopById(shopId);
             if (!shopInfoRet.getErrno().equals(ReturnNo.OK.getCode())) {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, shopInfoRet.getErrmsg());
             }
             bo.setShopId(shopId);
-            bo.setShopName(shopInfoRet.getData().getName());
+            SimpleShopVo simpleShopVo=(SimpleShopVo)shopInfoRet.getData();
+            bo.setShopName(simpleShopVo.getName());
             bo.setState(GroupOnState.DRAFT);
             return dao.insertActivity(bo, createdBy, createName);
     }
