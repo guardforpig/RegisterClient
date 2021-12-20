@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.comment.dao.CommentDao;
 import cn.edu.xmu.oomall.comment.model.bo.Comment;
 import cn.edu.xmu.oomall.comment.model.po.CommentPo;
 import cn.edu.xmu.oomall.comment.model.vo.*;
+import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageInfo;
@@ -48,7 +49,7 @@ public class CommentService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public InternalReturnObject newComment(Long productId, CommentVo commentVo, Long loginUser, String loginUsername) {
+    public ReturnObject newComment(Long productId, CommentVo commentVo, Long loginUser, String loginUsername) {
 
         Long shopId = commentVo.getShopId();
         CommentPo commentPo = new CommentPo();
@@ -62,10 +63,10 @@ public class CommentService {
         commentPo.setPostName(loginUsername);
         commentPo.setPostTime(LocalDateTime.now());
         setPoCreatedFields(commentPo, loginUser, loginUsername);
-        InternalReturnObject ret_insert = commentDao.insertComment(commentPo);
-        if (ret_insert.getErrno().equals(0)) {
+        ReturnObject ret_insert = commentDao.insertComment(commentPo);
+        if (ret_insert.getCode().equals(ReturnNo.OK)) {
             CommentRetVo commentRetVo = (CommentRetVo) cloneVo(commentPo, CommentRetVo.class);
-            return new InternalReturnObject(commentRetVo);
+            return new ReturnObject(commentRetVo);
         }
         return ret_insert;
     }
