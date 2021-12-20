@@ -16,9 +16,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 @NoArgsConstructor
 public class CategoryVo {
-    @NotBlank(message = "分类名不能为空")
     @ApiModelProperty(value = "用户名")
     private String name;
-
+    @ApiModelProperty(value = "佣金率")
     private Integer commissionRatio;
 }

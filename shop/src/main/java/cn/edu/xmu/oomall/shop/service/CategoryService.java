@@ -99,7 +99,7 @@ public class CategoryService {
         setPoCreatedFields(categoryPo, createId, createName);
         categoryPo.setPid(id.longValue());
         ReturnObject ret = categoryDao.insertCategory(categoryPo);
-        return ret;
+        return new ReturnObject(cloneVo(ret.getData(),CategoryRetVo.class));
     }
 
     /**
@@ -113,7 +113,7 @@ public class CategoryService {
         if (categoryDao.getCategoryById(id).getData() == null) {
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        if (categoryDao.hasSameName(category.getName())) {
+        if (category.getName()!=null && categoryDao.hasSameName(category.getName())) {
             return new ReturnObject<>(ReturnNo.GOODS_CATEGORY_SAME);
         }
         CategoryPo po = cloneVo(category, CategoryPo.class);
