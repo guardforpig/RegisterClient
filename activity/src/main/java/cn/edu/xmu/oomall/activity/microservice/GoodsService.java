@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  * @author Gao Yanfeng
  * @date 2021/11/13
  */
-@FeignClient(name = "goods-service")
+@FeignClient(name = "goods-service1",configuration= OpenFeignConfig.class)
 public interface GoodsService {
     @GetMapping("/internal/onsales")
     InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,
@@ -46,14 +46,14 @@ public interface GoodsService {
     /**
      * @author Jiawei Zheng
      */
-    @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
-    InternalReturnObject getShopOnSaleInfo(@PathVariable("did")Long did,
-                                           @PathVariable("id")Long id,
-                                           @RequestParam("state")Byte state,
-                                           @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
-                                           @RequestParam("endTime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
-                                           @RequestParam("page") Integer page,
-                                           @RequestParam("pageSize") Integer pageSize);
+//    @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
+//    InternalReturnObject getShopOnSaleInfo(@PathVariable("did")Long did,
+//                                           @PathVariable("id")Long id,
+//                                           @RequestParam("state")Byte state,
+//                                           @RequestParam("beginTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")  LocalDateTime beginTime,
+//                                           @RequestParam("endTime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
+//                                           @RequestParam("page") Integer page,
+//                                           @RequestParam("pageSize") Integer pageSize);
 
     @GetMapping("/internal/onsales/{id}")
     InternalReturnObject<FullOnSaleVo> selectFullOnsale(@PathVariable("id")Long id);

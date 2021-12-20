@@ -134,7 +134,7 @@ public class AdvanceSaleService {
                     advanceSaleDao.updateAdvanceSale(po);
 
                     //调用内部API，查onsale信息
-                    InternalReturnObject<PageVo<OnsaleVo>> retObj = goodsService.getShopOnSaleInfo(shopId,advancesaleId,(byte)1,null,null,1,10);
+                    InternalReturnObject<PageVo<SimpleOnSaleInfoVo>> retObj = goodsService.getOnSale(shopId,advancesaleId,(byte)1,null,null,1,10);
                     Long onsaleId=null;
                     //确定有需要修改的onsale目标
                     if(retObj.getErrno()==0&&retObj.getData().getTotal()>0){

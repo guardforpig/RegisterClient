@@ -112,7 +112,7 @@ public class GroupOnActivityService {
             endTime = groupOnActivity.getEndTime();
             onsaleModifyVo.setEndtime(endTime);
         }
-        InternalReturnObject<PageVo<OnsaleVo>> retObj = goodsService.getShopOnSaleInfo(shopId,groupOnActivity.getId(),(byte)1,null,null,1,10);
+        InternalReturnObject<PageVo<SimpleOnSaleInfoVo>> retObj = goodsService.getOnSale(shopId,groupOnActivity.getId(),(byte)1,null,null,1,10);
         if(retObj.getErrno()==0&&retObj.getData().getTotal()>0){
             long onSaleId;
             for(var onSaleObj:retObj.getData().getList())

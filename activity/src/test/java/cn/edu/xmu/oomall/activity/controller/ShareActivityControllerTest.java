@@ -493,7 +493,7 @@ public class ShareActivityControllerTest {
 //        Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
 //        Mockito.when(goodsService.modifyOnSaleShareActId(1L,-1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject());
         String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/-1").header("authorization", adminToken))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         String expectedString= "{\n" +

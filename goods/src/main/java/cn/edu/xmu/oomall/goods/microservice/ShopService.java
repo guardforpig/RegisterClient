@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.goods.microservice;
 
+import cn.edu.xmu.oomall.core.config.OpenFeignConfig;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
@@ -16,7 +17,7 @@ import java.util.List;
  * @description
  * @createTime 2021/11/29 15:47
  **/
-@FeignClient(name = "shop-service")
+@FeignClient(name = "shop-service1",configuration= OpenFeignConfig.class)
 public interface ShopService {
     @GetMapping("/shops/{id}")
     InternalReturnObject<SimpleShopVo> getSimpleShopById(@PathVariable("id")Long id);
