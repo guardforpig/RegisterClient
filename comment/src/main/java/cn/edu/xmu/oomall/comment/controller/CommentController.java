@@ -80,9 +80,9 @@ public class CommentController {
         }
 
         var ret = commentService.newComment(id,commentVo, loginUser,loginUserName);
-        if(ret.getErrno().equals(ReturnNo.OK))httpServletResponse.setStatus(HttpStatus.CREATED.value());
+        if(ret.getCode().equals(ReturnNo.OK))httpServletResponse.setStatus(HttpStatus.CREATED.value());
 
-        return ret;
+        return Common.decorateReturnObject(ret);
     }
 
     /**
@@ -102,7 +102,7 @@ public class CommentController {
     public Object selectProductComments(@PathVariable("id") Long id, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize){
 
         ReturnObject ret=commentService.selectAllPassCommentByProductId(id,page,pageSize);
-        return Common.getPageRetVo(ret,CommentRetVo.class);
+        return Common.decorateReturnObject(Common.getPageRetVo(ret,CommentRetVo.class));
     }
 
     /**
@@ -151,7 +151,7 @@ public class CommentController {
             @RequestParam(required = false) Integer pageSize){
 
         ReturnObject<PageInfo<Object>> ret=commentService.selectAllCommentsOfUser(loginUser,page,pageSize);
-        return Common.getPageRetVo(ret, CommentRetVo.class);
+        return Common.decorateReturnObject(Common.getPageRetVo(ret, CommentRetVo.class));
     }
 
     /**
@@ -174,10 +174,10 @@ public class CommentController {
             @RequestParam(required = false) Integer pageSize){
         Integer state=0;
         if (id != 0) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
         }
         ReturnObject ret=commentService.selectCommentsOfState(id,state,page,pageSize);
-        return Common.getPageRetVo(ret,CommentRetVo.class);
+        return Common.decorateReturnObject(Common.getPageRetVo(ret,CommentRetVo.class));
     }
 
     /**
@@ -189,7 +189,7 @@ public class CommentController {
     public Object showShopCommentsByShopId( @PathVariable("id") Long id,@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize){
 
         ReturnObject ret=commentService.selectAllPassCommentByShopId(id,page,pageSize);
-        return Common.getPageRetVo(ret,CommentRetVo.class);
+        return Common.decorateReturnObject(Common.getPageRetVo(ret,CommentRetVo.class));
     }
     }
 
