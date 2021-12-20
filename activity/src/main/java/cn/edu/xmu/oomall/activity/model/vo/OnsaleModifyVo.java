@@ -4,19 +4,21 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
 @Data
 public class OnsaleModifyVo {
     private Long price;
-    @JsonFormat(pattern = "YY-MM-dd hh:mm:ss")
-    private LocalDateTime begintime;
-    @JsonFormat(pattern = "YY-MM-dd hh:mm:ss")
-    private LocalDateTime endtime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime beginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime endTime;
     private Integer quantity;
 
-    public OnsaleModifyVo(Long price, LocalDateTime begintime, LocalDateTime endtime, Integer quantity) {
+    public OnsaleModifyVo(Long price, ZonedDateTime begintime, ZonedDateTime endtime, Integer quantity) {
         this.price=price;
-        this.begintime = begintime;
-        this.endtime = endtime;
+        this.beginTime = begintime;
+        this.endTime = endtime;
         this.quantity = quantity;
     }
 
