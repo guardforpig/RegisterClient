@@ -228,7 +228,7 @@ public class AdvanceSaleControllerTest {
         list.add(onsaleVo);
         PageVo<OnsaleVo> pageVo=new PageVo<OnsaleVo>(1,10,1,4,list);
         InternalReturnObject<PageVo<OnsaleVo>> pageRetObj=new InternalReturnObject<PageVo<OnsaleVo>>(pageVo);
-        Mockito.when(goodsService.getShopOnSaleInfo(5L,3L,(byte)1,null,null,1,10)).thenReturn(pageRetObj);
+//        Mockito.when(goodsService.getShopOnSaleInfo(5L,3L,(byte)1,null,null,1,10)).thenReturn(pageRetObj);
         OnsaleModifyVo onsaleModifyVo=new OnsaleModifyVo();
         Mockito.when(goodsService.modifyOnsale(5L,1L,onsaleModifyVo)).thenReturn(new InternalReturnObject());
         AdvanceSaleModifyVo vo=new AdvanceSaleModifyVo();
@@ -250,7 +250,7 @@ public class AdvanceSaleControllerTest {
         list.add(onsaleVo);
         PageVo<OnsaleVo> pageVo=new PageVo<OnsaleVo>(1,10,1,4,list);
         InternalReturnObject<PageVo<OnsaleVo>> pageRetObj=new InternalReturnObject<PageVo<OnsaleVo>>(pageVo);
-        Mockito.when(goodsService.getShopOnSaleInfo(5L,3L,(byte)1,null,null,1,10)).thenReturn(pageRetObj);
+//        Mockito.when(goodsService.getShopOnSaleInfo(5L,3L,(byte)1,null,null,1,10)).thenReturn(pageRetObj);
         OnsaleModifyVo onsaleModifyVo=new OnsaleModifyVo();
         Mockito.when(goodsService.modifyOnsale(5L,1L,onsaleModifyVo)).thenReturn(new InternalReturnObject(500,"出错"));
         AdvanceSaleModifyVo vo=new AdvanceSaleModifyVo();

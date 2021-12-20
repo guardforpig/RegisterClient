@@ -171,7 +171,7 @@ public class GroupOnActivityControllerTest {
     @Test
     @Transactional
     public void addGroupOnActivityTest1() throws Exception {
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+//        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
         this.mvc.perform(post("/shops/1/groupons")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8")
@@ -229,7 +229,7 @@ public class GroupOnActivityControllerTest {
                 .queryParam("beginTime", "2021-11-11 00:00:00"))
                 .andExpect(status().isBadRequest());
 
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+//        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
         this.mvc.perform(post("/shops/1/groupons")
                 .header("authorization", adminToken)
                 .content("{\"name\":\"测试\",\"beginTime\":\"2021-11-11 00:00:00\",\"endTime\":\"2021-11-13 00:00:00.000\",\"strategy\":[{\"quantity\":10,\"percentage\":500}]}"))
@@ -258,7 +258,7 @@ public class GroupOnActivityControllerTest {
     @Test
     @Transactional
     public void getOnlineGroupOnActivityTest3() throws Exception {
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+//        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
         var responseString = this.mvc.perform(post("/shops/1/groupons")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8")
@@ -309,7 +309,7 @@ public class GroupOnActivityControllerTest {
     @Test
     @Transactional
     public void addGroupOnActivityTest2() throws Exception {
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+//        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
         this.mvc.perform(post("/shops/1/groupons")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8")
@@ -338,7 +338,7 @@ public class GroupOnActivityControllerTest {
     @Test
     @Transactional
     public void addGroupOnActivityTest3() throws Exception {
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+//        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
         this.mvc.perform(post("/shops/1/groupons")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8")
@@ -355,7 +355,7 @@ public class GroupOnActivityControllerTest {
     @Test
     @Transactional
     public void addGroupOnActivityTest4() throws Exception {
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet2);
+//        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet2);
         this.mvc.perform(post("/shops/1/groupons")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8")
