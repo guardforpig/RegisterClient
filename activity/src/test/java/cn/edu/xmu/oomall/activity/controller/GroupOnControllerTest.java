@@ -187,8 +187,8 @@ public class GroupOnControllerTest {
     @Test   //删除成功
     public void deleteGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
-        Mockito.when(goodsService.deleteOnsale(Mockito.anyLong(),Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+//        Mockito.when(goodsService.deleteOnsale(Mockito.anyLong(),Mockito.anyLong())).thenReturn(new InternalReturnObject(true));
+//        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
         var response = this.mvc.perform(post("/shops/1/groupons")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8")
@@ -280,9 +280,9 @@ public class GroupOnControllerTest {
         list.add(o2);
         list.add(o3);
         PageVo<OnsaleVo> po = new PageVo<>(1,5,5,5,list);
-        Mockito.when(goodsService.getShopOnSaleInfo(Mockito.anyLong(),Mockito.anyLong(),Mockito.anyByte(),Mockito.any(),Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject(po));
-        Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new InternalReturnObject(true));
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+//        Mockito.when(goodsService.getShopOnSaleInfo(Mockito.anyLong(),Mockito.anyLong(),Mockito.anyByte(),Mockito.any(),Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject(po));
+//        Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new InternalReturnObject(true));
+//        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
         var response = this.mvc.perform(post("/shops/1/groupons")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8")
@@ -370,9 +370,9 @@ public class GroupOnControllerTest {
     @Test//修改成功
     public void addOnSaleToGroupOnActivityTest() throws Exception {
         adminToken =jwtHelper.createToken(1L,"admin",0L, 1,40000);
-        Mockito.when(goodsService.addOnSale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnSaleCreatedVo.class))).thenReturn(new InternalReturnObject(true));
-
-        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
+//        Mockito.when(goodsService.addOnSale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnSaleCreatedVo.class))).thenReturn(new InternalReturnObject(true));
+//
+//        Mockito.when(shopService.getShopInfo(1L)).thenReturn(getShopInfoRet1);
         var response = this.mvc.perform(post("/shops/1/groupons")
                 .header("authorization", adminToken)
                 .contentType("application/json;charset=UTF-8")

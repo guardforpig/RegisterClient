@@ -271,13 +271,14 @@ public class OnSaleController {
     public Object modifyOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName,
                                      BindingResult bindingResult) {
 
+        System.out.println("here");
         Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
         if (null != returnObject) {
             return returnObject;
         }
 
         // 判断开始时间是否比结束时间晚
-        if (onSale.getBeginTime().isAfter(onSale.getEndTime())) {
+        if (onSale.getBeginTime() != null && onSale.getEndTime() != null && onSale.getBeginTime().isAfter(onSale.getEndTime())) {
             return decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME, "开始时间晚于结束时间。"));
         }
 

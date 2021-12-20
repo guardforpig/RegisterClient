@@ -19,53 +19,26 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 public class FullOnSaleVo {
 
-    @ApiModelProperty(value = "OnsaleId")
     private Long id;
-
-    @ApiModelProperty(value = "店铺")
-    private SimpleShopVo shop;
-
-    @ApiModelProperty(value = "货品")
-    private ProductVo product;
-
-    @ApiModelProperty(value = "价格")
     private Long price;
-
-    @ApiModelProperty(value = "开始时间")
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")    private ZonedDateTime beginTime;
-
-    @ApiModelProperty(value = "结束时间")
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")    private ZonedDateTime endTime;
-
-    @ApiModelProperty(value = "数量")
-    private Long quantity;
-
-    @ApiModelProperty(value = "类型")
+    private Integer quantity;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime beginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime endTime;
     private Byte type;
-
-    @ApiModelProperty(value = "活动id")
     private Long activityId;
-
-    @ApiModelProperty(value = "分享活动id")
     private Long shareActId;
-
-    @ApiModelProperty(value = "创建者")
-    private SimpleUserRetVo creator;
-
-    @ApiModelProperty(value = "创建时间")
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    private Integer numKey;
+    private Integer maxQuantity;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
     private ZonedDateTime gmtCreate;
-
-    @ApiModelProperty(value = "修改时间")
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
     private ZonedDateTime gmtModified;
-
-    @ApiModelProperty(value = "修改者")
-    private SimpleUserRetVo modifier;
-
     private Byte state;
+
+    private SimpleProductRetVo product;
+    private SimpleShopVo shop;
+    private SimpleAdminUserBo creator;
+    private SimpleAdminUserBo modifier;
 }
