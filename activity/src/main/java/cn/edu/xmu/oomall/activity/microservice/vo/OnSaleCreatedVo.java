@@ -5,8 +5,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author Jiawei Zheng
@@ -16,23 +20,26 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OnSaleCreatedVo {
-    @ApiModelProperty(value = "价格")
+    @Min(0)
     private Long price;
 
-    @ApiModelProperty(value = "开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
-    private LocalDateTime beginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime beginTime;
 
-    @ApiModelProperty(value = "结束时间")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "GMT+8")
-    private LocalDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime endTime;
 
-    @ApiModelProperty(value = "数量")
-    private Long quantity;
+    @Min(1)
+    private Integer quantity;
 
-    @ApiModelProperty(value = "类型")
+    @NotNull
     private Byte type;
 
-    @ApiModelProperty(value = "活动id")
     private Long activityId;
+
+    @Min(1)
+    private Integer maxQuantity;
+
+    @Min(1)
+    private Integer numKey;
 }

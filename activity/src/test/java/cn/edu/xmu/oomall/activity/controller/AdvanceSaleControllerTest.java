@@ -421,8 +421,8 @@ public class AdvanceSaleControllerTest {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
 //        Mockito.when(shopService.getShopInfo(4L)).thenReturn(new InternalReturnObject<>(new SimpleShopVo(1L,"努力向前")));
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new InternalReturnObject<>(new PageInfo<>(list1));
-        Mockito.when(goodsService.addOnSale(4L,1552L,new OnSaleCreatedVo(156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,Byte.valueOf("3"),null))).thenReturn(new InternalReturnObject());
-        Mockito.when(goodsService.getOnSales(4L,1552L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
+//        Mockito.when(goodsService.addOnSale(4L,1552L,new OnSaleCreatedVo(156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,Byte.valueOf("3"),null))).thenReturn(new InternalReturnObject());
+//        Mockito.when(goodsService.getOnSales(4L,1552L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
         String requestJson="{\"price\": 156,\"beginTime\": \"2022-06-21T17:38:20.000+08:00\",\"endTime\": \"2022-12-29T17:38:20.000+08:00\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2022-06-22T17:38:20.000+08:00\",\"advancePayPrice\": 140}";
         String responseString = mvc.perform(post("/shops/4/products/1552/advanceSale")
                 .header("authorization", adminToken)
@@ -441,9 +441,9 @@ public class AdvanceSaleControllerTest {
         adminToken =jwtHelper.createToken(1L,"admin",4L, 1,3600);
 //        Mockito.when(shopService.getShopInfo(4L)).thenReturn(new InternalReturnObject<>(new SimpleShopVo(1L,"努力向前")));
         InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> listReturnObject = new InternalReturnObject<>(new PageInfo<>(list1));
-        Mockito.when(goodsService.addOnSale(4L,1552L,new OnSaleCreatedVo(156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,Byte.valueOf("3"),null)))
-                .thenReturn(new InternalReturnObject(new OnSaleCreatedVo(156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,Byte.valueOf("3"),11L)));
-        Mockito.when(goodsService.getOnSales(4L,1552L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
+//        Mockito.when(goodsService.addOnSale(4L,1552L,new OnSaleCreatedVo(156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,Byte.valueOf("3"),null)))
+//                .thenReturn(new InternalReturnObject(new OnSaleCreatedVo(156L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),2L,Byte.valueOf("3"),11L)));
+//        Mockito.when(goodsService.getOnSales(4L,1552L,LocalDateTime.parse("2022-06-21T17:38:20.000Z",df),LocalDateTime.parse("2022-12-29T17:38:20.000Z",df),1,1)).thenReturn(listReturnObject);
         String requestJson="{\"price\": 156,\"beginTime\": \"2022-06-21T17:38:20.000+08:00\",\"endTime\": \"2022-12-29T17:38:20.000+08:00\",\"quantity\": 2,\"name\": \"预售活动11\",\"payTime\": \"2022-06-22T17:38:20.000+08:00\",\"advancePayPrice\": 140}";
         String responseString = mvc.perform(post("/shops/4/products/1552/advanceSale")
                 .header("authorization", adminToken)
