@@ -14,12 +14,15 @@ import cn.edu.xmu.privilegegateway.annotation.util.Common;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +46,7 @@ public class ShareActivityService {
 
     @Resource
     private ShopService shopService;
+
 
     /**
      * 获得分享活动的所有状态
@@ -126,11 +130,12 @@ public class ShareActivityService {
         shareActivityBo.setState(ShareActivityStatesBo.DRAFT.getCode());
         shareActivityBo.setShopId(shopId);
         //TODO:通过商铺id弄到商铺名称
-        InternalReturnObject<SimpleShopVo> shop = shopService.getShopInfo(shopId);
+        InternalReturnObject shop = shopService.getSimpleShopById(shopId);
         if (shop.getErrno()!=0) {
             return new ReturnObject(ReturnNo.getByCode(shop.getErrno()));
         }
-        String shopName = shop.getData().getName();
+        SimpleShopVo simpleShopVo=(SimpleShopVo) shop.getData();
+        String shopName =simpleShopVo.getName();
         shareActivityBo.setShopName(shopName);
 
         ReturnObject returnObject = shareActivityDao.addShareAct(shareActivityBo);
@@ -208,7 +213,7 @@ public class ShareActivityService {
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addShareActivityOnOnSale(Long shopId, Long id, Long sid, Long loginUser, String loginUsername){
-        InternalReturnObject onSale= goodsService.getOnSaleById(id);
+        InternalReturnObject onSale= goodsService.selectFullOnsale(id);
         ReturnObject shareActivity= getShareActivityByShareActivityId(sid);
         if(onSale.getData()==null||shareActivity.getData()==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -223,7 +228,7 @@ public class ShareActivityService {
         }
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(sid);
-        InternalReturnObject updateRet= goodsService.modifyOnSaleShareActId(shopId,id,modifyOnSaleVo);
+        InternalReturnObject updateRet= goodsService.modifyOnSaleNorSec(shopId,id,modifyOnSaleVo);
         if (updateRet.getErrno()!=0){
             return new ReturnObject(updateRet);
         }
@@ -242,14 +247,15 @@ public class ShareActivityService {
     public ReturnObject deleteShareActivityOnOnSale(Long shopId, Long id, Long sid, Long loginUser, String loginUsername){
         InternalReturnObject onSale;
         ReturnObject shareActivity;
-        onSale= goodsService.getOnSaleById(id);
+        System.out.println("here");
+        onSale= goodsService.selectFullOnsale(id);
         shareActivity= getShareActivityByShareActivityId(sid);
         if(onSale.getData()==null||shareActivity.getData()==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(-1L);
-        InternalReturnObject updateRet= goodsService.modifyOnSaleShareActId(shopId,id,modifyOnSaleVo);
+        InternalReturnObject updateRet= goodsService.modifyOnSaleNorSec(shopId,id,modifyOnSaleVo);
         if (updateRet.getErrno()!=0){
             return new ReturnObject(updateRet);
         }

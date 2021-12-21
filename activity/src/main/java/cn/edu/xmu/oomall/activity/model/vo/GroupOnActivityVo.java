@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -28,9 +29,9 @@ public class GroupOnActivityVo {
 
     private List<GroupOnStrategyVo> strategy;
 
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
-    private LocalDateTime beginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime beginTime;
 
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
-    private LocalDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime endTime;
 }

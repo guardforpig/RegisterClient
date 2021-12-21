@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
+
 /**
  * 商品分类Dao层
  *
@@ -64,7 +65,7 @@ public class CategoryDao {
 
             return new ReturnObject(category);
         } catch (Exception e) {
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
@@ -111,7 +112,7 @@ public class CategoryDao {
             ReturnObject<List> ret = new ReturnObject<>(categories);
             return ret;
         } catch (Exception e) {
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
@@ -142,10 +143,12 @@ public class CategoryDao {
             if (ret == 0) {
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
-            Category category = (Category) cloneVo(categoryPo, Category.class);
+            // 删除redis中pid相关的subList
+            redisUtil.del(redisKeyForSubList + categoryPo.getPid());
+            Category category = cloneVo(categoryPo, Category.class);
             return new ReturnObject(category);
         } catch (Exception e) {
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
@@ -164,7 +167,7 @@ public class CategoryDao {
             return new ReturnObject(ReturnNo.OK);
 
         } catch (Exception e) {
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 
@@ -187,7 +190,7 @@ public class CategoryDao {
                 return new ReturnObject(ReturnNo.OK);
             }
         } catch (Exception e) {
-            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 

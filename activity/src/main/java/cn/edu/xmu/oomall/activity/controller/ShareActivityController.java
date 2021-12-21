@@ -7,6 +7,7 @@ import cn.edu.xmu.oomall.core.util.*;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author xiuchen lang 22920192204222
@@ -78,8 +80,8 @@ public class ShareActivityController {
     @GetMapping("/shops/{shopId}/shareactivities")
     public Object getShareByShopId(@PathVariable(name = "shopId", required = true) Long shopId,
                                    @RequestParam(name = "productId", required = false) Long productId,
-                                   @RequestParam(name = "beginTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime beginTime,
-                                   @RequestParam(name = "endTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
+                                   @RequestParam(name = "beginTime", required = false) @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8") ZonedDateTime beginTime,
+                                   @RequestParam(name = "endTime", required = false) @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8") ZonedDateTime endTime,
                                    @RequestParam(name = "state", required = false) Byte state,
                                    @RequestParam(name = "page", required = false) Integer page,
                                    @RequestParam(name = "pageSize", required = false) Integer pageSize) {
@@ -89,8 +91,10 @@ public class ShareActivityController {
         if (productId != null && productId <= 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "productId错误"));
         }
+        LocalDateTime localBeginTime=(beginTime==null)?null:beginTime.toLocalDateTime();
+        LocalDateTime localEndTime=(endTime==null)?null:endTime.toLocalDateTime();
         ReturnObject shareByShopId = shareActivityService.getShareByShopId(shopId, productId,
-                beginTime, endTime, state, page, pageSize);
+                localBeginTime, localEndTime, state, page, pageSize);
         return Common.decorateReturnObject(shareByShopId);
     }
 
@@ -156,8 +160,8 @@ public class ShareActivityController {
     @GetMapping("/shareactivities")
     public Object getShareActivity(@RequestParam(name = "shopId", required = false) Long shopId,
                                    @RequestParam(name = "productId", required = false) Long productId,
-                                   @RequestParam(name = "beginTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime beginTime,
-                                   @RequestParam(name = "endTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
+                                   @RequestParam(name = "beginTime", required = false) @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8") ZonedDateTime beginTime,
+                                   @RequestParam(name = "endTime", required = false) @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8") ZonedDateTime endTime,
                                    @RequestParam(name = "page", required = false) Integer page,
                                    @RequestParam(name = "pageSize", required = false) Integer pageSize) {
         if (shopId != null && shopId <= 0) {
@@ -166,8 +170,10 @@ public class ShareActivityController {
         if (productId != null && productId <= 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "productId错误"));
         }
+        LocalDateTime localBeginTime=(beginTime==null)?null:beginTime.toLocalDateTime();
+        LocalDateTime localEndTime=(endTime==null)?null:endTime.toLocalDateTime();
         ReturnObject shareByShopId = shareActivityService.getShareByShopId(shopId, productId,
-                beginTime, endTime, ShareActivityStatesBo.ONLINE.getCode(), page, pageSize);
+                localBeginTime, localEndTime, ShareActivityStatesBo.ONLINE.getCode(), page, pageSize);
         return Common.decorateReturnObject(shareByShopId);
     }
 

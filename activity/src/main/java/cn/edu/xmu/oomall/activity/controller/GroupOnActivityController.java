@@ -12,6 +12,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
@@ -69,10 +71,12 @@ public class GroupOnActivityController {
     })
     @GetMapping(value = "/groupons")
     public Object getOnlineGroupOnActivities(@RequestParam(required = false) Long productId, @RequestParam(required = false) Long shopId,
-                                             @RequestParam(required = false) @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT) LocalDateTime beginTime,
-                                             @RequestParam(required = false) @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT) LocalDateTime endTime,
+                                             @RequestParam(required = false) @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8") ZonedDateTime beginTime,
+                                             @RequestParam(required = false) @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8") ZonedDateTime endTime,
                                              @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return Common.decorateReturnObject(groupOnService.getGroupOnActivities(productId, shopId, beginTime, endTime, GroupOnState.ONLINE, page, pageSize));
+        LocalDateTime localBeginTime=(beginTime==null)?null:beginTime.toLocalDateTime();
+        LocalDateTime localEndTime=(endTime==null)?null:endTime.toLocalDateTime();
+        return Common.decorateReturnObject(groupOnService.getGroupOnActivities(productId, shopId, localBeginTime, localEndTime, GroupOnState.ONLINE, page, pageSize));
     }
 
 
@@ -114,10 +118,12 @@ public class GroupOnActivityController {
     })
     @GetMapping(value = "/shops/{shopId}/groupons")
     public Object getGroupOnActivitiesInShop(@PathVariable Long shopId, @RequestParam(required = false) Long productId,
-                                             @RequestParam(required = false) LocalDateTime beginTime, @RequestParam(required = false) LocalDateTime endTime,
+                                             @RequestParam(required = false) @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8") ZonedDateTime beginTime, @RequestParam(required = false) @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8") ZonedDateTime endTime,
                                              @RequestParam(required = false) GroupOnState state, @RequestParam(defaultValue = "1") Integer page,
                                              @RequestParam(defaultValue = "10") Integer pageSize) {
-        return Common.decorateReturnObject(groupOnService.getGroupOnActivities(productId, shopId, beginTime, endTime, state, page, pageSize));
+        LocalDateTime localBeginTime=(beginTime==null)?null:beginTime.toLocalDateTime();
+        LocalDateTime localEndTime=(endTime==null)?null:endTime.toLocalDateTime();
+        return Common.decorateReturnObject(groupOnService.getGroupOnActivities(productId, shopId, localBeginTime, localEndTime, state, page, pageSize));
     }
 
 
