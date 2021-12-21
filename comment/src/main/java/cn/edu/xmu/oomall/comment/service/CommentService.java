@@ -82,6 +82,10 @@ public class CommentService {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject<PageInfo<Object>> selectAllPassCommentByProductId(Long productId, Integer pageNum, Integer pageSize) {
         List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllPassCommentByProductId(productId, pageNum, pageSize).getData();
+        if(commentPos.size()==0)
+        {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
         List<Object> commentRetVos = new ArrayList<>();
         for (CommentPo po : commentPos) {
             commentRetVos.add(po);
@@ -103,9 +107,9 @@ public class CommentService {
      * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<PageInfo<Object>> selectAllPassCommentByShopId(Long shopId, Integer pageNum, Integer pageSize) {
+    public ReturnObject<PageInfo<Object>> selectAllPassCommentByShopId(Long shopId,Long loginUser, Integer pageNum, Integer pageSize) {
 
-        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectCommentByShopId(shopId, pageNum, pageSize).getData();
+        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectCommentByShopId(shopId,loginUser, pageNum, pageSize).getData();
         List<Object> commentRetVos = new ArrayList<>();
         for (CommentPo po : commentPos) {
             commentRetVos.add(po);
