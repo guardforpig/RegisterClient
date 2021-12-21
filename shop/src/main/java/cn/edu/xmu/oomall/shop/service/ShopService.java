@@ -80,7 +80,7 @@ public class ShopService {
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject getSimpleShopByShopId(Long ShopId) {
-        ReturnObject ret = shopDao.getShopById(ShopId);
+        ReturnObject ret = shopDao.getShopPoById(ShopId);
         if(ret.getCode()!=ReturnNo.OK)return ret;
         ShopSimpleRetVo vo = (ShopSimpleRetVo) cloneVo(ret.getData(), ShopSimpleRetVo.class);
         return new ReturnObject(vo);
