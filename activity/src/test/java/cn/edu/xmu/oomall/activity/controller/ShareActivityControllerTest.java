@@ -6,12 +6,10 @@ import cn.edu.xmu.oomall.activity.microservice.ShopService;
 import cn.edu.xmu.oomall.activity.microservice.vo.FullOnSaleVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.ModifyOnSaleVo;
 import cn.edu.xmu.oomall.activity.microservice.vo.SimpleShopVo;
-import cn.edu.xmu.oomall.activity.model.bo.OnSale;
 import cn.edu.xmu.oomall.activity.model.vo.ShareActivityVo;
 import cn.edu.xmu.oomall.activity.model.vo.StrategyVo;
 import cn.edu.xmu.oomall.activity.util.CreateObject;
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
-import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
@@ -32,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +102,7 @@ public class ShareActivityControllerTest {
      */
     @Test
     public void testGetShareState() throws Exception {
-        String responseString = mvc.perform(get("/shareactivities/states"))
+        String responseString = mvc.perform(get("/shareactivities/states").contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -126,23 +124,8 @@ public class ShareActivityControllerTest {
         String expectString = "{\"errno\":0,\"data\":{\"total\":3,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"name\":\"分享活动1\"},{\"id\":7,\"name\":\"分享活动7\"},{\"id\":10,\"name\":\"分享活动10\"}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
-
-        String responseString4 = mvc.perform(get("/shops/-1/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expectString4 = "{\"errno\":503,\"errmsg\":\"shopId错误\"}";
-        JSONAssert.assertEquals(expectString4, responseString4, true);
-
-        String responseString5 = mvc.perform(get("/shops/2/shareactivities?productId=-1").header("authorization", token).contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expectString5 = "{\"errno\":503,\"errmsg\":\"productId错误\"}";
-        JSONAssert.assertEquals(expectString5, responseString5, true);
-
         //有添加所有query都有时且合规
-        String responseString6 = mvc.perform(get("/shops/2/shareactivities?productId=1&beginTime=2021-11-11 10:10:10.000&endTime=2023-11-11 16:10:10.000&state=1&page=1&pageSize=3").header("authorization", token).contentType("application/json;charset=UTF-8"))
+        String responseString6 = mvc.perform(get("/shops/2/shareactivities?productId=1&beginTime=2021-11-11T10:10:10.000+08:00&endTime=2023-11-11T16:10:10.000+08:00&state=1&page=1&pageSize=3").header("authorization", token).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -167,18 +150,18 @@ public class ShareActivityControllerTest {
     public void testAddShareAct() throws Exception {
         CustomComparator CUSTOM_COMPARATOR = new CustomComparator(JSONCompareMode.LENIENT,
                 new Customization("data.id", (o1, o2) -> true));
-        String requestJson = "{\"name\":\"String\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
+        String requestJson = "{\"name\":\"String\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":\"2021-11-11T15:01:10.000+08:00\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
 //        //有添加所有query都有时且合规
         String responseString = mvc.perform(post("/shops/2/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString = "{\"errno\":0,\"data\":{\"id\":138,\"shop\":{\"id\":2,\"name\":\"良耳的商铺\"},\"name\":\"String\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]},\"errmsg\":\"成功\"}";
+        String expectString = "{\"errno\":0,\"data\":{\"id\":138,\"shop\":{\"id\":2,\"name\":\"良耳的商铺\"},\"name\":\"String\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":\"2021-11-11T15:01:10.000+08:00\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, CUSTOM_COMPARATOR);
 
 
         //姓名为空或null
-        String requestJson1 = "{\"name\":\"\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
+        String requestJson1 = "{\"name\":\"\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":\"2021-11-11T15:01:10.000+08:00\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
         String responseString1 = mvc.perform(post("/shops/2/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson1))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -188,7 +171,7 @@ public class ShareActivityControllerTest {
 
 
         //时间为空
-        String requestJson2 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":null,\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
+        String requestJson2 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":null,\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
         String responseString2 = mvc.perform(post("/shops/2/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson2))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -198,7 +181,7 @@ public class ShareActivityControllerTest {
 
 
         //活动条件不合规
-        String requestJson4 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":null,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
+        String requestJson4 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":\"2021-11-11T15:01:10.000+08:00\",\"strategy\":[{\"quantity\":null,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
         String responseString4 = mvc.perform(post("/shops/2/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson4))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
@@ -206,7 +189,7 @@ public class ShareActivityControllerTest {
         JSONAssert.assertEquals(expectString4, responseString4, true);
 
 
-        String requestJson5 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":-5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
+        String requestJson5 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":\"2021-11-11T15:01:10.000+08:00\",\"strategy\":[{\"quantity\":-5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
         String responseString5 = mvc.perform(post("/shops/2/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson5))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
@@ -214,7 +197,7 @@ public class ShareActivityControllerTest {
         JSONAssert.assertEquals(expectString5, responseString5, true);
 
 
-        String requestJson6 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":5,\"percentage\":110},{\"quantity\":10,\"percentage\":10}]}";
+        String requestJson6 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":\"2021-11-11T15:01:10.000+08:00\",\"strategy\":[{\"quantity\":5,\"percentage\":110},{\"quantity\":10,\"percentage\":10}]}";
         String responseString6 = mvc.perform(post("/shops/2/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson6))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
@@ -223,17 +206,17 @@ public class ShareActivityControllerTest {
 
 
 //        //所有都合规
-        String requestJson7 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
+        String requestJson7 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":\"2021-11-11T15:01:10.000+08:00\",\"strategy\":[{\"quantity\":5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
         String responseString7 = mvc.perform(post("/shops/2/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson7))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString7 = "{\"errno\":0,\"data\":{\"id\":139,\"shop\":{\"id\":2,\"name\":\"良耳的商铺\"},\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]},\"errmsg\":\"成功\"}";
+        String expectString7 = " {\"errno\":0,\"data\":{\"id\":12,\"shop\":{\"id\":2,\"name\":\"良耳的商铺\"},\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":\"2021-11-11T15:01:10.000+08:00\",\"strategy\":[{\"quantity\":5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString7, responseString7, CUSTOM_COMPARATOR);
 
 
         //时间不合规
-        String requestJson8 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:00.000\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
+        String requestJson8 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":\"2021-11-11T15:01:00.000+08:00\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
         String responseString8 = mvc.perform(post("/shops/2/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson8))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -242,7 +225,7 @@ public class ShareActivityControllerTest {
         JSONAssert.assertEquals(expectString8, responseString8, true);
 
         //shopId没有
-        String requestJson9 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11 15:01:02.000\",\"endTime\":\"2021-11-11 15:01:10.000\",\"strategy\":[{\"quantity\":5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
+        String requestJson9 = "{\"name\":\"我是一个活动\",\"beginTime\":\"2021-11-11T15:01:02.000+08:00\",\"endTime\":\"2021-11-11T15:01:10.000+08:00\",\"strategy\":[{\"quantity\":5,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]}";
         String responseString9 = mvc.perform(post("/shops/11/shareactivities").header("authorization", token).contentType("application/json;charset=UTF-8").content(requestJson9))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -283,29 +266,12 @@ public class ShareActivityControllerTest {
         JSONAssert.assertEquals(expectString2, responseString2, true);
 
         //都合规
-        String responseString6 = mvc.perform(get("/shareactivities?shopId=1&productId=1&beginTime=2021-11-11 15:01:02.000&endTime=2021-11-11 15:01:02.000&page=1&pageSize=4").header("authorization", token).contentType("application/json;charset=UTF-8"))
+        String responseString6 = mvc.perform(get("/shareactivities?shopId=1&productId=1&beginTime=2021-11-11T15:01:02.000+08:00&endTime=2021-11-11T15:01:02.000+08:00&page=1&pageSize=4").header("authorization", token).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
         String expectString6 = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":0,\"pageSize\":4,\"page\":1,\"list\":[]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString6, responseString6, true);
-
-        //shopId<0
-        String responseString7 = mvc.perform(get("/shareactivities?shopId=-1&productId=1&beginTime=2021-11-11 15:01:02.000&endTime=2021-11-11 15:01:02.000&page=1&pageSize=4").header("authorization", token).contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expectString7 = "{\"errno\":503,\"errmsg\":\"shopId错误\"}";
-        JSONAssert.assertEquals(expectString7, responseString7, true);
-
-
-        //productId<0
-        String responseString8 = mvc.perform(get("/shareactivities?productId=-1").header("authorization", token).contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-        String expectString8 = "{\"errno\":503,\"errmsg\":\"productId错误\"}";
-        JSONAssert.assertEquals(expectString8, responseString8, true);
     }
 
     /**
@@ -326,14 +292,14 @@ public class ShareActivityControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString1 = "{\"errno\":0,\"data\":{\"id\":10,\"shop\":{\"id\":2,\"name\":\"甜蜜之旅\"},\"name\":\"分享活动10\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"strategy\":null},\"errmsg\":\"成功\"}";
+        String expectString1 = "{\"errno\":0,\"data\":{\"id\":10,\"shop\":{\"id\":2,\"name\":\"甜蜜之旅\"},\"name\":\"分享活动10\",\"beginTime\":\"2021-11-11T23:01:23.000+08:00\",\"endTime\":\"2022-02-19T23:01:23.000+08:00\",\"strategy\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString1, responseString1, true);
 
         String responseString2 = mvc.perform(get("/shareactivities/2").header("authorization", token).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString2 = "{\"errno\":0,\"data\":{\"id\":2,\"shop\":{\"id\":3,\"name\":\"向往时刻\"},\"name\":\"分享活动2\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]},\"errmsg\":\"成功\"}";
+        String expectString2 = "{\"errno\":0,\"data\":{\"id\":2,\"shop\":{\"id\":3,\"name\":\"向往时刻\"},\"name\":\"分享活动2\",\"beginTime\":\"2021-11-11T23:01:23.000+08:00\",\"endTime\":\"2022-02-19T23:01:23.000+08:00\",\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString2,responseString2, true);
 
 
@@ -363,14 +329,14 @@ public class ShareActivityControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString1 = "{\"errno\":0,\"data\":{\"id\":10,\"shop\":{\"id\":2,\"name\":\"甜蜜之旅\"},\"name\":\"分享活动10\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"state\":1,\"createdBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11 15:01:23.000\",\"gmtModified\":null,\"modifiedBy\":null,\"strategy\":null},\"errmsg\":\"成功\"}";
+        String expectString1 = "{\"errno\":0,\"data\":{\"id\":10,\"shop\":{\"id\":2,\"name\":\"甜蜜之旅\"},\"name\":\"分享活动10\",\"beginTime\":\"2021-11-11T23:01:23.000+08:00\",\"endTime\":\"2022-02-19T23:01:23.000+08:00\",\"state\":1,\"createdBy\":null,\"gmtCreate\":\"2021-11-11T23:01:23.000+08:00\",\"gmtModified\":null,\"modifiedBy\":null,\"strategy\":null},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString1, responseString1, true);
 
         String responseString2 = mvc.perform(get("/shops/3/shareactivities/2").header("authorization", token).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString2 = " {\"errno\":0,\"data\":{\"id\":2,\"shop\":{\"id\":3,\"name\":\"向往时刻\"},\"name\":\"分享活动2\",\"beginTime\":\"2021-11-11 15:01:23.000\",\"endTime\":\"2022-02-19 15:01:23.000\",\"state\":2,\"createdBy\":{\"id\":null,\"name\":null},\"gmtCreate\":\"2021-11-11 15:01:23.000\",\"gmtModified\":null,\"modifiedBy\":null,\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]},\"errmsg\":\"成功\"}";
+        String expectString2 = "{\"errno\":0,\"data\":{\"id\":2,\"shop\":{\"id\":3,\"name\":\"向往时刻\"},\"name\":\"分享活动2\",\"beginTime\":\"2021-11-11T23:01:23.000+08:00\",\"endTime\":\"2022-02-19T23:01:23.000+08:00\",\"state\":2,\"createdBy\":null,\"gmtCreate\":\"2021-11-11T23:01:23.000+08:00\",\"gmtModified\":null,\"modifiedBy\":null,\"strategy\":[{\"quantity\":10,\"percentage\":10},{\"quantity\":10,\"percentage\":10}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString2,responseString2, true);
 
         String responseString3 = mvc.perform(get("/shops/2/shareactivities/11111").header("authorization", token).contentType("application/json;charset=UTF-8"))
@@ -396,7 +362,7 @@ public class ShareActivityControllerTest {
         modifyOnSaleVo.setShareActId(1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject(ReturnNo.STATENOTALLOW.getCode(),ReturnNo.STATENOTALLOW.getMessage()));
-        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/1").header("authorization", adminToken))
+        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -416,7 +382,7 @@ public class ShareActivityControllerTest {
         modifyOnSaleVo.setShareActId(1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,2L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
-        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/2").header("authorization", adminToken))
+        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/2").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -436,7 +402,7 @@ public class ShareActivityControllerTest {
         modifyOnSaleVo.setShareActId(1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,-1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
-        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/-1").header("authorization", adminToken))
+        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/-1").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -456,7 +422,7 @@ public class ShareActivityControllerTest {
         modifyOnSaleVo.setShareActId(1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
-        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/1").header("authorization", adminToken))
+        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -476,7 +442,8 @@ public class ShareActivityControllerTest {
         modifyOnSaleVo.setShareActId(4L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject());
-        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/4").header("authorization", adminToken))
+        String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/4")
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -496,7 +463,8 @@ public class ShareActivityControllerTest {
         modifyOnSaleVo.setShareActId(1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,-1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject());
-        String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/-1").header("authorization", adminToken))
+        String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/11111111")
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -516,7 +484,7 @@ public class ShareActivityControllerTest {
         modifyOnSaleVo.setShareActId(-1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
-        String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/4").header("authorization", adminToken))
+        String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/4").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -534,8 +502,8 @@ public class ShareActivityControllerTest {
         list.add(shareActivityStrategyVo);
         ShareActivityVo shareActivityVo = new ShareActivityVo();
         shareActivityVo.setName("分享活动5");
-        shareActivityVo.setBeginTime(LocalDateTime.parse("2021-11-11T18:30:30"));
-        shareActivityVo.setEndTime(LocalDateTime.parse("2021-11-11T19:30:40"));
+        shareActivityVo.setBeginTime(ZonedDateTime.parse("2021-11-11T18:30:30.000+08:00"));
+        shareActivityVo.setEndTime(ZonedDateTime.parse("2021-11-11T19:30:40.000+08:00"));
         shareActivityVo.setStrategy(list);
         String json= JacksonUtil.toJson(shareActivityVo);
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/1")
@@ -558,8 +526,8 @@ public class ShareActivityControllerTest {
         list.add(shareActivityStrategyVo);
         ShareActivityVo shareActivityVo = new ShareActivityVo();
         shareActivityVo.setName("测试活动");
-        shareActivityVo.setBeginTime(LocalDateTime.parse("2022-11-11T18:30:30"));
-        shareActivityVo.setEndTime(LocalDateTime.parse("2021-11-11T19:30:40"));
+        shareActivityVo.setBeginTime(ZonedDateTime.parse("2022-11-11T18:30:30.000+08:00"));
+        shareActivityVo.setEndTime(ZonedDateTime.parse("2021-11-11T19:30:40.000+08:00"));
         shareActivityVo.setStrategy(list);
         String json= JacksonUtil.toJson(shareActivityVo);
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/4")
@@ -581,8 +549,8 @@ public class ShareActivityControllerTest {
         list.add(shareActivityStrategyVo);
         ShareActivityVo shareActivityVo = new ShareActivityVo();
         shareActivityVo.setName("测试活动");
-        shareActivityVo.setBeginTime(LocalDateTime.parse("2021-11-11T18:30:30"));
-        shareActivityVo.setEndTime(LocalDateTime.parse("2021-11-11T19:30:40"));
+        shareActivityVo.setBeginTime(ZonedDateTime.parse("2021-11-11T18:30:30.000+08:00"));
+        shareActivityVo.setEndTime(ZonedDateTime.parse("2021-11-11T19:30:40.000+08:00"));
         shareActivityVo.setStrategy(list);
         String json= JacksonUtil.toJson(shareActivityVo);
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/-1")
@@ -605,8 +573,8 @@ public class ShareActivityControllerTest {
         list.add(shareActivityStrategyVo);
         ShareActivityVo shareActivityVo = new ShareActivityVo();
         shareActivityVo.setName("测试活动");
-        shareActivityVo.setBeginTime(LocalDateTime.parse("2021-11-11T18:30:30"));
-        shareActivityVo.setEndTime(LocalDateTime.parse("2021-11-11T19:30:40"));
+        shareActivityVo.setBeginTime(ZonedDateTime.parse("2021-11-11T18:30:30.000+08:00"));
+        shareActivityVo.setEndTime(ZonedDateTime.parse("2021-11-11T19:30:40.000+08:00"));
         shareActivityVo.setStrategy(list);
         String json= JacksonUtil.toJson(shareActivityVo);
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/4")
@@ -625,7 +593,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void deleteShareActivity_ShareActivityIdNotFound() throws Exception{
         String responseString=this.mvc.perform(delete("/shops/1/shareactivities/-1")
-                        .header("authorization", adminToken))
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -639,7 +607,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void deleteShareActivity_NotDraftState() throws Exception{
         String responseString=this.mvc.perform(delete("/shops/1/shareactivities/1")
-                        .header("authorization", adminToken))
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -653,7 +621,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void deleteShareActivity_Success() throws Exception{
         String responseString=this.mvc.perform(delete("/shops/1/shareactivities/4")
-                        .header("authorization", adminToken))
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -667,7 +635,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOnline_NotOfflineState() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/1/online")
-                        .header("authorization", adminToken))
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -681,7 +649,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOnline_ShareActivityIdNotFound() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/-1/online")
-                        .header("authorization", adminToken))
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -695,7 +663,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOnline_Success() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/2/online")
-                        .header("authorization", adminToken))
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -709,7 +677,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOffline_NotOnlineState() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/3/offline")
-                        .header("authorization", adminToken))
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -723,7 +691,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOffline_ShareActivityIdNotFound() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/-1/offline")
-                        .header("authorization", adminToken))
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -737,7 +705,7 @@ public class ShareActivityControllerTest {
     @Transactional
     public void shareActivityOffline_Success() throws Exception{
         String responseString=this.mvc.perform(put("/shops/1/shareactivities/1/offline")
-                        .header("authorization", adminToken))
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);

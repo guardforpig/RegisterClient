@@ -139,7 +139,6 @@ public class ShareActivityService {
         }
         ShareActivityBo shareActivityBo1 = (ShareActivityBo) returnObject.getData();
         RetShareActivityInfoVo retShareActivityInfoVo = cloneVo(shareActivityBo1, RetShareActivityInfoVo.class);
-        retShareActivityInfoVo.setShop(new ShopVo(shareActivityBo1.getShopId(), shareActivityBo1.getShopName()));
         return new ReturnObject(retShareActivityInfoVo);
     }
 
@@ -157,7 +156,6 @@ public class ShareActivityService {
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
         RetShareActivityInfoVo retShareActivityInfoVo = cloneVo(shareActivityBo, RetShareActivityInfoVo.class);
-        retShareActivityInfoVo.setShop(new ShopVo(shareActivityBo.getShopId(), shareActivityBo.getShopName()));
         return new ReturnObject(retShareActivityInfoVo);
     }
 
@@ -176,9 +174,6 @@ public class ShareActivityService {
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
         RetShareActivitySpecificInfoVo retShareActivitySpecificInfoVo = cloneVo(shareActivityBo, RetShareActivitySpecificInfoVo.class);
-        retShareActivitySpecificInfoVo.setShop(new ShopVo(shareActivityBo.getShopId(), shareActivityBo.getShopName()));
-        retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getCreatorId(), shareActivityBo.getCreatorName()));
-        retShareActivitySpecificInfoVo.setCreatedBy(new SimpleUserRetVo(shareActivityBo.getModifierId(), shareActivityBo.getModifierName()));
         return new ReturnObject(retShareActivitySpecificInfoVo);
     }
 
