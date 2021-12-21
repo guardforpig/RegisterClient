@@ -483,4 +483,14 @@ public class ProductDao {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
+
+    public ReturnObject updateProduct(Product product) {
+        try {
+            productMapper.updateByPrimaryKeySelective(cloneVo(product, ProductPo.class));
+            return new ReturnObject();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
 }

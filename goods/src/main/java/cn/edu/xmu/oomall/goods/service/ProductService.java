@@ -436,11 +436,13 @@ public class ProductService {
 
     @Transactional(rollbackFor= Exception.class)
     public ReturnObject changeFreightModels(Long shopId, Long id,Long fid, Long loginUser, String loginUsername) {
+        if (shopId != 0) {
+            return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+        }
         Product p = new Product();
         p.setId(id);
-        p.setShopId(shopId);
         p.setFreightId(fid);
-        ReturnObject ret = productDao.addDraftProduct(p,loginUser,loginUsername);
+        ReturnObject ret = productDao.updateProduct(p);
         return ret;
     }
 
