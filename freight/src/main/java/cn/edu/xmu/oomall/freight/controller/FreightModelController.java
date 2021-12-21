@@ -162,11 +162,11 @@ public class FreightModelController {
     })
     @Audit(departName = "shops")
     @PutMapping("shops/{shopId}/freightmodels/{id}")
-    public Object updateFreightModel(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody FreightModelInfoVo freightModelInfo,
-                                     BindingResult bindingResult, @LoginUser Long userId, @LoginName String userName) {
-        Object obj = Common.processFieldErrors(bindingResult, httpServletResponse);
-        if (obj != null) {
-            return obj;
+
+    public Object updateFreightModel(@PathVariable Long shopId, @PathVariable Long id,@RequestBody FreightModelInfoVo freightModelInfo,
+                                     @LoginUser Long userId, @LoginName String userName) {
+        if (freightModelInfo.getDefaultModel() == null) {
+            freightModelInfo.setDefaultModel((byte)0);
         }
         if (shopId != 0) {
             return new ResponseEntity(ResponseUtil.fail(ReturnNo.RESOURCE_ID_OUTSCOPE, "操作的资源id不是自己的对象"), HttpStatus.FORBIDDEN);
