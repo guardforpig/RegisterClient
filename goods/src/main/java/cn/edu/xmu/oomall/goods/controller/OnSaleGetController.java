@@ -25,7 +25,7 @@ import java.time.ZonedDateTime;
  **/
 @RestController
 @RefreshScope
-@RequestMapping(produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
 public class OnSaleGetController {
 
     @Autowired

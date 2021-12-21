@@ -146,13 +146,8 @@ public class CategoryService {
         return ret;
     }
 
-    public Object getCategoryById(Long id) {
-        ReturnObject<Category> ret = categoryDao.getCategoryById(id);
-        if(ret.getCode()!=ReturnNo.OK){
-            return ret;
-        }
-        Category vo = cloneVo(ret.getData(), Category.class);
-        return new ReturnObject<>(vo);
+    public ReturnObject getCategoryById(Long id) {
+        return categoryDao.getCategoryById(id);
     }
 
     public ReturnObject getCategoryById_1(Long id) {

@@ -35,7 +35,7 @@ import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 @Api(value = "商品类别API", tags = "商品类别API")
 @RestController
 @RefreshScope
-@RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
 public class CategoryController {
     @Autowired
     HttpServletResponse httpServletResponse;
@@ -220,7 +220,8 @@ public class CategoryController {
      */
     @GetMapping("/category/{id}")
     public Object getCategoryById(@PathVariable("id")Long id){
-        return categoryService.getCategoryById(id);
+
+        return Common.decorateReturnObject(categoryService.getCategoryById(id));
     }
 
     /**

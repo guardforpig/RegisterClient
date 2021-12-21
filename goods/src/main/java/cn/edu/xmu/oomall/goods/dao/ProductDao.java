@@ -254,13 +254,12 @@ public class ProductDao {
         }else{
             criteria.andStateEqualTo((byte)(Product.ProductState.ONSHELF.getCode()));
         }
-        List<ProductPo> productPos;
         try {
-            productPos = productMapper.selectByExample(example);
+            List<ProductPo> productPos = productMapper.selectByExample(example);
+            return new PageInfo<>(productPos);
         } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
-        return new PageInfo<>(productPos);
     }
 
     /**

@@ -1,9 +1,6 @@
 package cn.edu.xmu.oomall.goods.microservice;
 
-import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
-import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
-import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
-import cn.edu.xmu.oomall.goods.microservice.vo.CategoryDetailRetVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.*;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +22,7 @@ public interface ShopService {
      * @date 2021-12-5
      */
     @GetMapping("/category/{id}")
-    InternalReturnObject<CategoryDetailRetVo> getCategoryById(@PathVariable("id")Long id);
+    InternalReturnObject<Category> getCategoryById(@PathVariable("id")Long id);
 
     /**
      * 需要内部接口，通过cateoryId获取SimpleCategory

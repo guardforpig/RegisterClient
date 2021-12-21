@@ -32,7 +32,7 @@ import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 @Api(value = "货品销售情况", tags = "goods")
 @RestController
 @RefreshScope
-@RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
 public class OnSaleController {
 
     private final Logger logger = LoggerFactory.getLogger(OnSaleController.class);
