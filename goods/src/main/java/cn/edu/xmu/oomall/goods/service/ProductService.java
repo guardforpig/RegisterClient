@@ -66,9 +66,8 @@ public class ProductService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject publishProduct(Long shopId,Long productId)
     {
-        if(shopId!=0){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
-        }
+        try{
+
         ReturnObject<Product> ret=productDao.publishById(productId);
         if(!ret.getCode().equals(ReturnNo.OK))
         {
@@ -76,7 +75,10 @@ public class ProductService {
         }
         Product product= ret.getData();
         ProductVo productVo=cloneVo(product,ProductVo.class);
-        return new ReturnObject(productVo);
+        return new ReturnObject(productVo);}
+        catch (Exception e) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
     }
 
     @Transactional(rollbackFor=Exception.class)
@@ -203,15 +205,17 @@ public class ProductService {
      */
     @Transactional(readOnly=true)
     public ReturnObject<ProductRetVo> getProductDetails(Long productId) {
+        try{
         ReturnObject ret = productDao.getProductInfo(productId);
         if (ret.getCode() != ReturnNo.OK) {
             return ret;
         }
         Product product = (Product) ret.getData();
         OnSalePo onSalePo = productDao.getValidOnSale(productId);
+        if(onSalePo!=null){
         product.setOnSaleId(onSalePo.getId());
         product.setPrice(onSalePo.getPrice());
-        product.setQuantity(onSalePo.getQuantity());
+        product.setQuantity(onSalePo.getQuantity());}
         //查找categoryName
         InternalReturnObject object = shopService.getCategoryDetailById(product.getCategoryId());
         if (!object.getErrno().equals(0)) {
@@ -220,7 +224,10 @@ public class ProductService {
         SimpleCategoryVo categoryVo = cloneVo(object.getData(),SimpleCategoryVo.class);
         product.setCategoryName(categoryVo.getName());
         ProductRetVo vo = (ProductRetVo) cloneVo(product, ProductRetVo.class);
-        return new ReturnObject(vo);
+        return new ReturnObject(vo);}
+        catch (Exception e) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
     }
 
     /**
@@ -355,12 +362,16 @@ public class ProductService {
      */
     @Transactional(rollbackFor= Exception.class)
     public ReturnObject addDraftProduct(Long shopId, Long id, ProductChangeVo productChangeVo, Long loginUser, String loginUsername) {
+        try{
         Product product = (Product) cloneVo(productChangeVo, Product.class);
         setPoModifiedFields(product,loginUser,loginUsername);
         product.setId(id);
         product.setShopId(shopId);
         ReturnObject ret = productDao.addDraftProduct(product,loginUser,loginUsername);
-        return ret;
+        return ret;}
+        catch (Exception e){
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
     }
 
     /**

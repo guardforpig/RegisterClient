@@ -16,11 +16,13 @@ import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,7 +47,8 @@ public class GoodsController {
     GoodsService goodsService;
     @Autowired
     ProductService productService;
-
+    @Autowired
+    private HttpServletResponse httpServletResponse;
     @ApiOperation(value="查看运费模板用到的商品")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "shopId", value = "商铺id", required = true, dataType = "Long", paramType = "path"),
@@ -176,7 +179,11 @@ public class GoodsController {
     @Audit(departName = "shops")
     public Object publishProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
     {
-        return Common.decorateReturnObject(productService.publishProduct(shopId,id));
+        if(shopId!=0){
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
+        ReturnObject ret=productService.publishProduct(shopId,id);
+        return Common.decorateReturnObject(ret);
     }
 
     @ApiOperation(value="上架货品")
