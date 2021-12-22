@@ -7,9 +7,11 @@ import cn.edu.xmu.oomall.activity.model.po.GroupOnActivityPo;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
@@ -26,7 +28,13 @@ public class GroupActivityDao {
     @Autowired
     private GroupOnActivityPoMapper groupOnActivityPoMapper;
 
+    @Autowired
+    private RedisUtil redisUtil;
 
+    private static final String GROUPON_KEY = "groupon_%d";
+
+    @Value("${oomall.activity.groupon.expiretime}")
+    private long timeout;
 
     /**
      * 新增参与团购的商品
@@ -84,6 +92,7 @@ public class GroupActivityDao {
      */
     public ReturnObject modifyGroupOnActivity(GroupOnActivity groupOnActivity)
     {
+        redisUtil.del(String.format(GROUPON_KEY, groupOnActivity.getId()));
         ReturnObject retObj;
         GroupOnActivityPo groupOnActivityPo = (GroupOnActivityPo) cloneVo(groupOnActivity,GroupOnActivityPo.class);
        setPoModifiedFields(groupOnActivityPo,groupOnActivity.getModifierId(),groupOnActivity.getModifierName());
@@ -91,6 +100,8 @@ public class GroupActivityDao {
         try
         {
             ret = groupOnActivityPoMapper.updateByPrimaryKeySelective(groupOnActivityPo);
+            var newPo = groupOnActivityPoMapper.selectByPrimaryKey(groupOnActivity.getId());
+            redisUtil.set(String.format(GROUPON_KEY, groupOnActivity.getId()), cloneVo(newPo, GroupOnActivity.class), timeout);
         }
         catch(Exception e)
         {
