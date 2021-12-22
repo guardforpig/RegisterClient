@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  * @author Gao Yanfeng
  * @date 2021/11/13
  */
-@FeignClient(name = "goods-service1",configuration= OpenFeignConfig.class)
+@FeignClient(name = "goods-service",configuration= OpenFeignConfig.class)
 public interface GoodsService {
     @GetMapping("/internal/onsales")
     InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,

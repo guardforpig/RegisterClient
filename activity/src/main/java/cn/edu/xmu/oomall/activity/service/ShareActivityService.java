@@ -130,7 +130,7 @@ public class ShareActivityService {
         shareActivityBo.setState(ShareActivityStatesBo.DRAFT.getCode());
         shareActivityBo.setShopId(shopId);
         //TODO:通过商铺id弄到商铺名称
-        InternalReturnObject shop = shopService.getSimpleShopById(shopId);
+        InternalReturnObject shop = shopService.getShopInfo(shopId);
         if (shop.getErrno()!=0) {
             return new ReturnObject(ReturnNo.getByCode(shop.getErrno()));
         }
