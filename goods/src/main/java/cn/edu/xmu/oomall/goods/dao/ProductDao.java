@@ -92,6 +92,9 @@ public class ProductDao {
     public ReturnObject matchProductShop(Long productId , Long shopId) {
         try{
             ProductPo productPo=productMapper.selectByPrimaryKey(productId);
+            if (productPo == null) {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
             return new ReturnObject(shopId.equals(productPo.getShopId())) ;
         }
         catch (Exception e) {
@@ -486,8 +489,12 @@ public class ProductDao {
 
     public ReturnObject updateProduct(Product product) {
         try {
-            productMapper.updateByPrimaryKeySelective(cloneVo(product, ProductPo.class));
-            return new ReturnObject();
+            var result = productMapper.updateByPrimaryKeySelective(cloneVo(product, ProductPo.class));
+            if (result > 0) {
+                return new ReturnObject();
+            } else {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());

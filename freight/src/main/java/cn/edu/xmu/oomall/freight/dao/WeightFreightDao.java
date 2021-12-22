@@ -9,6 +9,8 @@ import cn.edu.xmu.oomall.freight.model.po.WeightFreightPoExample;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -38,6 +40,8 @@ public class WeightFreightDao {
 
     public final static String WEIGHT_FREIGHT_REGION_KEY = "weightfreight_%d_region_%d";
 
+    private static final Logger logger = LoggerFactory.getLogger(WeightFreightDao.class);
+
     /**
      * 管理员新增重量模板明细
      * @param weightFreightPo,userId,userName
@@ -51,7 +55,7 @@ public class WeightFreightDao {
             WeightFreightPoExample example = new WeightFreightPoExample();
             WeightFreightPoExample.Criteria criteria = example.createCriteria();
             criteria.andFreightModelIdEqualTo(weightFreightPo.getFreightModelId());
-            criteria.andRegionIdEqualTo(weightFreightPo.getRegionId());
+            criteria.andRegionIdEqualTo(weightFreightPo.getRegionId()).andFreightModelIdEqualTo(weightFreightPo.getFreightModelId());
             List<WeightFreightPo> list = weightFreightPoMapper.selectByExample(example);
             if (list!=null && list.size() > 0) {
                 return new ReturnObject(ReturnNo.FREIGHT_REGIONEXIST);
@@ -185,9 +189,28 @@ public class WeightFreightDao {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
-        // TODO 没有找到合适的错误码
-        return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "根据指定地区和运费模板未找到需要的运费模板明细");
+        return new ReturnObject(ReturnNo.FREIGHT_REGION_NOTREACH);
     }
+
+
+    public ReturnObject cloneWeightFreight(Long oldFreightModelId, Long newFreightModelId) {
+        try {
+            var example = new WeightFreightPoExample();
+            var criteria = example.createCriteria();
+            criteria.andFreightModelIdEqualTo(oldFreightModelId);
+            var poList = weightFreightPoMapper.selectByExample(example);
+            for (var po : poList) {
+                po.setFreightModelId(newFreightModelId);
+                weightFreightPoMapper.insert(po);
+            }
+            return new ReturnObject();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+
 }

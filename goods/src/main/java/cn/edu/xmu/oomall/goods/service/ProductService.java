@@ -427,10 +427,11 @@ public class ProductService {
             return ret;
         }
         Product p = productDao.getProduct(id);
-        if (p.getFreightId() != null) {
-            return new ReturnObject(freightService.getFreightModel(shopId,p.getFreightId()).getData());
+        var freightModelRet = freightService.getFreightModel(shopId,p.getFreightId());
+        if (freightModelRet.getErrno() == 0) {
+            return new ReturnObject(freightModelRet.getData());
         } else {
-            return new ReturnObject(freightService.getDefaultFreightModel(shopId).getData());
+            return new ReturnObject(ReturnNo.getByCode(freightModelRet.getErrno()), freightModelRet.getErrmsg());
         }
     }
 
@@ -438,6 +439,10 @@ public class ProductService {
     public ReturnObject changeFreightModels(Long shopId, Long id,Long fid, Long loginUser, String loginUsername) {
         if (shopId != 0) {
             return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+        }
+        var freightModelRet = freightService.getFreightModel(0L, fid);
+        if (freightModelRet.getErrno() != 0 || !freightModelRet.getData().getId().equals(fid)) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
         Product p = new Product();
         p.setId(id);
