@@ -181,14 +181,18 @@ public class CommentController {
     }
 
     /**
-     * 商铺管理员查看评论列表
+     * 商铺管理员查看自己审核的评论列表
      */
-    @ApiOperation(value = "商铺管理员查看评论列表")
+    @ApiOperation(value = "商铺管理员查看自己审核的评论列表")
     @Audit(departName = "shops")
     @GetMapping("/shops/{id}/comments")
-    public Object showShopCommentsByShopId( @PathVariable("id") Long id,@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize){
+    public Object showShopCommentsByShopId( @PathVariable("id") Long id,@LoginUser Long loginUser,@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize){
 
-        ReturnObject ret=commentService.selectAllPassCommentByShopId(id,page,pageSize);
+        if(id!=0)
+        {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
+        ReturnObject ret=commentService.selectAllPassCommentByShopId(id,loginUser,page,pageSize);
         return Common.decorateReturnObject(Common.getPageRetVo(ret,CommentRetVo.class));
     }
     }

@@ -61,7 +61,7 @@ public class PieceFreightController {
             @ApiResponse(code = 996, message = "该运费模板类型与内容不符"),
             @ApiResponse(code = 997, message = "运费模板中该地区已经定义")})
     @Audit(departName = "shops")
-    @PostMapping("/shops/{shopId}/freightmodels/{id}/pieceItems")
+    @PostMapping("/shops/{shopId}/freightmodels/{id}/pieceitems")
     public Object addPieceFreight(@LoginUser Long loginUserId, @LoginName String loginUserName, @PathVariable(value = "shopId", required = true) Long shopId,
                                   @PathVariable(value = "id", required = true) Long id,
                                   @Validated @RequestBody PieceFreightVo pieceFreightVo,
@@ -102,7 +102,7 @@ public class PieceFreightController {
             @ApiResponse(code = 504, message = "操作的资源id不存在")
     })
     @Audit(departName = "shops")
-    @GetMapping(value = "/shops/{shopId}/freightmodels/{id}/pieceItems")
+    @GetMapping(value = "/shops/{shopId}/freightmodels/{id}/pieceitems")
     public Object queryPieceFreight(
             @PathVariable(name = "shopId", required = true) Long shopId,
             @PathVariable(name = "id", required = true) Long id,
@@ -131,7 +131,7 @@ public class PieceFreightController {
             @ApiResponse(code = 504, message = "操作的资源id不存在"),
             @ApiResponse(code = 505, message = "操作的资源id不是自己的对象"),})
     @Audit(departName = "shops")
-    @DeleteMapping("/shops/{shopId}/pieceItems/{id}")
+    @DeleteMapping("/shops/{shopId}/pieceitems/{id}")
     public Object deletePieceFreight(@PathVariable(value = "shopId", required = true) Long shopId,
                                      @PathVariable(value = "id", required = true) Long id) {
         if (shopId != 0) {
@@ -167,7 +167,7 @@ public class PieceFreightController {
 
     })
     @Audit(departName = "shops")
-    @PutMapping("/shops/{shopId}/pieceItems/{id}")
+    @PutMapping("/shops/{shopId}/pieceitems/{id}")
     public Object updatePieceFreight(@LoginUser Long loginUserId, @LoginName String loginUserName, @PathVariable(value = "shopId", required = true) Long shopId,
                                      @PathVariable(value = "id", required = true) Long id,
                                      @Validated @RequestBody PieceFreightVo pieceFreightVo,

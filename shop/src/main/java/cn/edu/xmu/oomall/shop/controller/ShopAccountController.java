@@ -6,6 +6,10 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.model.vo.ShopAccountRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopAccountVo;
 import cn.edu.xmu.oomall.shop.service.ShopAccountService;
+import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.Depart;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
+import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -42,12 +46,15 @@ public class ShopAccountController {
      */
     @ApiOperation(value = "管理员增加店铺的账户" ,tags = "shop")
     @PostMapping(value = "/{id}/accounts")
-    public Object addShopAccount(@ApiParam(value = "店铺id", required = true) @PathVariable("id") Long shopId,
-                                 Long loginUserId,String loginUserName,
+    @Audit(departName = "shops")
+    public Object addShopAccount(@ApiParam(value = "店铺id", required = true) @PathVariable("id") Long shopId,@Depart Long departId,
+                                 @LoginUser Long loginUserId,@LoginName String loginUserName,
                                  @ApiParam(value = "账户信息", required = true) @Valid @RequestBody ShopAccountVo shopAccountVo,
                                  BindingResult bindingResult, HttpServletResponse httpServletResponse){
-        loginUserId = Long.valueOf(1);
-        loginUserName = "wangxusheng";
+        if(departId!=0L)
+        {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
         var res = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(res != null){
             return res;
@@ -65,8 +72,8 @@ public class ShopAccountController {
      */
     @ApiOperation(value = "管理员获得店铺的账户" ,tags = "shop")
     @GetMapping(value = "/{id}/accounts")
-    public ReturnObject<List<ShopAccountRetVo>> getShopAccounts(@ApiParam(value = "店铺id",required=true) @PathVariable("id") Long shopId){
-        return shopAccountService.getShopAccounts(shopId);
+    public Object getShopAccounts(@ApiParam(value = "店铺id",required=true) @PathVariable("id") Long shopId){
+        return Common.decorateReturnObject(shopAccountService.getShopAccounts(shopId));
     }
 
     /**
@@ -75,9 +82,11 @@ public class ShopAccountController {
      * @studentId 34520192201587
      */
     @ApiOperation(value = "管理员删除店铺的账户" ,tags = "shop")
-    @DeleteMapping(value = "/{shopId}/accounts/{id}")
-    public Object deleteShopAccount(@ApiParam(value = "店铺id",required=true) @PathVariable("shopId") Long shopId,
-                                    @ApiParam(value = "店铺账户id",required=true) @PathVariable("id") Long accountId){
+    @Audit(departName = "shops")
+    @DeleteMapping(value = "/{did}/accounts/{id}")
+    public Object deleteShopAccount(@ApiParam(value = "店铺id",required=true) @PathVariable("did") Long shopId,
+                                    @ApiParam(value = "店铺账户id",required=true) @PathVariable("id") Long accountId,
+                                    @Depart Long departId){
         ReturnObject ret = shopAccountService.deleteAccount(shopId,accountId);
         return Common.decorateReturnObject(ret);
     }

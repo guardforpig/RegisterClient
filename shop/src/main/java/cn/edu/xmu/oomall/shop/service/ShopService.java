@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.shop.service;
 
+import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.dao.ShopDao;
@@ -46,8 +47,8 @@ public class ShopService {
      * @Sn: 22920192204219
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<Shop> getShopByShopId(Long ShopId) {
-        return shopDao.getShopById(ShopId);
+    public ReturnObject getShopPoByShopId(Long ShopId) {
+        return shopDao.getShopPoById(ShopId);
     }
 
     /**
@@ -79,11 +80,8 @@ public class ShopService {
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject getSimpleShopByShopId(Long ShopId) {
-        ReturnObject ret = shopDao.getShopById(ShopId);
-        if(ret.getCode()!=ReturnNo.OK)
-        {
-            return ret;
-        }
+        ReturnObject ret = shopDao.getShopPoById(ShopId);
+        if(ret.getCode()!=ReturnNo.OK)return ret;
         ShopSimpleRetVo vo = (ShopSimpleRetVo) cloneVo(ret.getData(), ShopSimpleRetVo.class);
         return new ReturnObject(vo);
     }
@@ -101,8 +99,8 @@ public class ShopService {
         if (ret.getCode().equals(ReturnNo.OK)) {
             ShopSimpleRetVo vo = cloneVo(ret.getData(), ShopSimpleRetVo.class);
             //todo:还有问题
-            String adminToken=jwtHelper.createToken(1L,"13008admin",0L,0,3600);
-            privilegeService.addToDepart(loginUser,vo.getId(),adminToken);
+            String adminToken = jwtHelper.createToken(1L, "13008admin", 0L, 0, 3600);
+            privilegeService.addToDepart(loginUser, vo.getId(), adminToken);
             ret = new ReturnObject(vo);
         }
         return ret;
@@ -118,7 +116,7 @@ public class ShopService {
         Shop shop = new Shop();
         shop.setId(id);
         shop.setName(shopVo.getName());
-       setPoModifiedFields(shop, loginUser, loginUsername);
+        setPoModifiedFields(shop, loginUser, loginUsername);
 
         ReturnObject ret = shopDao.UpdateShop(shop.getId(), shop);
         return ret;
@@ -126,36 +124,44 @@ public class ShopService {
 
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject deleteShopById(Long id, Long loginUser, String loginUsername) {
-        InternalReturnObject ret = reconciliationService.isClean(id);
-        if (!ret.getErrno().equals(0)) {
-            return new ReturnObject(ReturnNo.getByCode(ret.getErrno()),ret.getErrmsg());
+        ReturnObject returnObject = getShopPoByShopId(id);
+        if (!returnObject.getCode().equals(ReturnNo.OK)) {
+            return returnObject;
         }
-
-        Boolean result = (Boolean) ret.getData();
-        if (!result) {
-            //商铺尚未完成清算
-            return new ReturnObject(ReturnNo.SHOP_NOT_RECON);
+        ShopPo shopPo = (ShopPo) returnObject.getData();
+        if (shopPo.getState() != Shop.State.OFFLINE.getCode().byteValue()) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-
-        //商铺已完成清算
-        /*****************************************/
-        //TODO:需要调用Shp[AccountDao获得
-        ShopAccountPo accountPo = new ShopAccountPo();
-        accountPo.setAccount("11111111");
-        accountPo.setType((byte) 0);
-        accountPo.setName("测试");
-        /*******************************************/
-        RefundDepositVo depositVo = (RefundDepositVo) cloneVo(accountPo, RefundDepositVo.class);
-        InternalReturnObject refundRet = paymentService.refund(depositVo);
-        if (!refundRet.getErrno().equals(0)) {
-            return new ReturnObject(ReturnNo.getByCode(refundRet.getErrno()),refundRet.getErrmsg());
-        }
+//        InternalReturnObject ret = reconciliationService.isClean(id);
+//        if (!ret.getErrno().equals(0)) {
+//            return new ReturnObject(ReturnNo.getByCode(ret.getErrno()), ret.getErrmsg());
+//        }
+//
+//        Boolean result = (Boolean) ret.getData();
+//        if (!result) {
+//            //商铺尚未完成清算
+//            return new ReturnObject(ReturnNo.SHOP_NOT_RECON);
+//        }
+//
+//        //商铺已完成清算
+//        /*****************************************/
+//        //TODO:需要调用Shp[AccountDao获得
+//        ShopAccountPo accountPo = new ShopAccountPo();
+//        accountPo.setAccount("11111111");
+//        accountPo.setType((byte) 0);
+//        accountPo.setName("测试");
+//        /*******************************************/
+//        RefundDepositVo depositVo = (RefundDepositVo) cloneVo(accountPo, RefundDepositVo.class);
+//        InternalReturnObject refundRet = paymentService.refund(depositVo);
+//        if (!refundRet.getErrno().equals(0)) {
+//            return new ReturnObject(ReturnNo.getByCode(refundRet.getErrno()), refundRet.getErrmsg());
+//        }
 
         //退还保证金
         Shop shop = new Shop();
         shop.setId(id.longValue());
         shop.setState(Shop.State.FORBID.getCode().byteValue());
-       setPoModifiedFields(shop, loginUser, loginUsername);
+        setPoModifiedFields(shop, loginUser, loginUsername);
         ReturnObject retUpdate = shopDao.updateShopState(shop);
         return retUpdate;
 
@@ -163,9 +169,17 @@ public class ShopService {
 
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject passShop(Long id, ShopConclusionVo conclusion, Long loginUser, String loginUsername) {
+        ReturnObject returnObject = getShopPoByShopId(id);
+        if (!returnObject.getCode().equals(ReturnNo.OK)) {
+            return returnObject;
+        }
+        ShopPo shopPo = (ShopPo) returnObject.getData();
+        if (shopPo.getState() != Shop.State.EXAME.getCode().byteValue()) {
+            return new ReturnObject(ReturnNo.STATENOTALLOW);
+        }
         Shop shop = new Shop();
         shop.setId(id.longValue());
-       setPoModifiedFields(shop, loginUser, loginUsername);
+        setPoModifiedFields(shop, loginUser, loginUsername);
         shop.setState(conclusion.getConclusion() == true ? Shop.State.OFFLINE.getCode().byteValue() : Shop.State.EXAME.getCode().byteValue());
         ReturnObject ret = shopDao.updateShopState(shop);
         return ret;
@@ -175,10 +189,15 @@ public class ShopService {
     public ReturnObject onShelfShop(Long id, Long loginUser, String loginUsername) {
         Shop shop = new Shop();
         shop.setId(id);
-       setPoModifiedFields(shop, loginUser, loginUsername);
+        setPoModifiedFields(shop, loginUser, loginUsername);
         shop.setState(Shop.State.ONLINE.getCode().byteValue());
-        var x = getShopByShopId(id).getData();
-        if (x.getState() == Shop.State.OFFLINE.getCode().byteValue()) {
+        ReturnObject returnObject = getShopPoByShopId(id);
+        if (!returnObject.getCode().equals(ReturnNo.OK)) {
+            return returnObject;
+        }
+        ShopPo shopPo = (ShopPo) returnObject.getData();
+
+        if (shopPo.getState() == Shop.State.OFFLINE.getCode().byteValue()) {
             ReturnObject ret = shopDao.updateShopState(shop);
             return ret;
         } else {
@@ -191,10 +210,15 @@ public class ShopService {
     public ReturnObject offShelfShop(Long id, Long loginUser, String loginUsername) {
         Shop shop = new Shop();
         shop.setId(id.longValue());
-       setPoModifiedFields(shop, loginUser, loginUsername);
+        setPoModifiedFields(shop, loginUser, loginUsername);
         shop.setState(Shop.State.OFFLINE.getCode().byteValue());
-        var x = getShopByShopId(id).getData();
-        if (x.getState() == Shop.State.ONLINE.getCode().byteValue()) {
+        ReturnObject returnObject = getShopPoByShopId(id);
+        if (!returnObject.getCode().equals(ReturnNo.OK)) {
+            return returnObject;
+        }
+        ShopPo shopPo = (ShopPo) returnObject.getData();
+
+        if (shopPo.getState() == Shop.State.ONLINE.getCode().byteValue()) {
             ReturnObject ret = shopDao.updateShopState(shop);
             return ret;
         } else {

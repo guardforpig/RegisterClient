@@ -6,10 +6,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
 import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
-import cn.edu.xmu.oomall.goods.microservice.vo.CategoryDetailRetVo;
-import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
-import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
-import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.*;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.ProductDraftPo;
@@ -69,9 +66,8 @@ public class ProductService {
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject publishProduct(Long shopId,Long productId)
     {
-        if(shopId!=0){
-            return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
-        }
+        try{
+
         ReturnObject<Product> ret=productDao.publishById(productId);
         if(!ret.getCode().equals(ReturnNo.OK))
         {
@@ -79,7 +75,10 @@ public class ProductService {
         }
         Product product= ret.getData();
         ProductVo productVo=cloneVo(product,ProductVo.class);
-        return new ReturnObject(productVo);
+        return new ReturnObject(productVo);}
+        catch (Exception e) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
     }
 
     @Transactional(rollbackFor=Exception.class)
@@ -155,17 +154,22 @@ public class ProductService {
     }
     @Transactional(readOnly = true)
     public ReturnObject<Object> getProductsOfCategories(Long did, Long cid, Integer page, Integer pageSize) {
-        InternalReturnObject<CategoryDetailRetVo> categoryReturnObj = shopService.getCategoryById(cid);
+        try{
+        InternalReturnObject<Category> categoryReturnObj = shopService.getCategoryById(cid);
         Integer errno = categoryReturnObj.getErrno();
         if (errno != 0){
             return new ReturnObject<Object>(categoryReturnObj);
         }
-        CategoryDetailRetVo categoryDetailRetVo=categoryReturnObj.getData();
+        Category categoryDetailRetVo=categoryReturnObj.getData();
         if(categoryDetailRetVo.getPid()==0)
         {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-       return new ReturnObject<>(productDao.getProductsOfCategories(did,cid,page,pageSize));
+       return new ReturnObject<>(productDao.getProductsOfCategories(did,cid,page,pageSize));}
+        catch (Exception e) {
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+
     }
 
     /**
@@ -201,15 +205,17 @@ public class ProductService {
      */
     @Transactional(readOnly=true)
     public ReturnObject<ProductRetVo> getProductDetails(Long productId) {
+        try{
         ReturnObject ret = productDao.getProductInfo(productId);
         if (ret.getCode() != ReturnNo.OK) {
             return ret;
         }
         Product product = (Product) ret.getData();
         OnSalePo onSalePo = productDao.getValidOnSale(productId);
+        if(onSalePo!=null){
         product.setOnSaleId(onSalePo.getId());
         product.setPrice(onSalePo.getPrice());
-        product.setQuantity(onSalePo.getQuantity());
+        product.setQuantity(onSalePo.getQuantity());}
         //查找categoryName
         InternalReturnObject object = shopService.getCategoryDetailById(product.getCategoryId());
         if (!object.getErrno().equals(0)) {
@@ -218,7 +224,10 @@ public class ProductService {
         SimpleCategoryVo categoryVo = cloneVo(object.getData(),SimpleCategoryVo.class);
         product.setCategoryName(categoryVo.getName());
         ProductRetVo vo = (ProductRetVo) cloneVo(product, ProductRetVo.class);
-        return new ReturnObject(vo);
+        return new ReturnObject(vo);}
+        catch (Exception e) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
     }
 
     /**
@@ -231,6 +240,7 @@ public class ProductService {
      */
     @Transactional(rollbackFor= Exception.class)
     public ReturnObject addProductToGood(Long shopId, ProductDetailVo productVo, Long loginUser, String loginUsername) {
+        try{
         ProductDraftPo po = (ProductDraftPo) cloneVo(productVo, ProductDraftPo.class);
         po.setShopId(shopId);
         setPoCreatedFields(po,loginUser,loginUsername);
@@ -238,6 +248,7 @@ public class ProductService {
         ReturnObject ret = productDao.newProduct(po);
 
         Product product = (Product) ret.getData();
+            System.out.println(product.getId());
 
         //查找shopName
         InternalReturnObject object = shopService.getSimpleShopById(product.getShopId());
@@ -247,18 +258,21 @@ public class ProductService {
         SimpleShopVo simpleShopVo = (SimpleShopVo) cloneVo(object.getData(),SimpleShopVo.class);
         product.setShopName(simpleShopVo.getName());
         //查找categoryName
-        InternalReturnObject object1 = shopService.getCategoryById(product.getCategoryId());
+        InternalReturnObject<Category> object1 = shopService.getCategoryById(product.getCategoryId());
         if(!object.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
-        SimpleCategoryVo categoryVo = (SimpleCategoryVo) object.getData();
+        Category categoryVo = (Category) object1.getData();
         product.setCategoryName(categoryVo.getName());
 
         ProductNewReturnVo vo = (ProductNewReturnVo) cloneVo(product, ProductNewReturnVo.class);
         if (ret.getCode() != ReturnNo.OK) {
             return ret;
         }
-        return new ReturnObject(vo);
+        return new ReturnObject(vo);}
+        catch (Exception e){
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
     }
 
     /**
@@ -349,12 +363,16 @@ public class ProductService {
      */
     @Transactional(rollbackFor= Exception.class)
     public ReturnObject addDraftProduct(Long shopId, Long id, ProductChangeVo productChangeVo, Long loginUser, String loginUsername) {
+        try{
         Product product = (Product) cloneVo(productChangeVo, Product.class);
         setPoModifiedFields(product,loginUser,loginUsername);
         product.setId(id);
         product.setShopId(shopId);
         ReturnObject ret = productDao.addDraftProduct(product,loginUser,loginUsername);
-        return ret;
+        return ret;}
+        catch (Exception e){
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
     }
 
     /**
@@ -436,11 +454,13 @@ public class ProductService {
 
     @Transactional(rollbackFor= Exception.class)
     public ReturnObject changeFreightModels(Long shopId, Long id,Long fid, Long loginUser, String loginUsername) {
+        if (shopId != 0) {
+            return new ReturnObject(ReturnNo.FIELD_NOTVALID);
+        }
         Product p = new Product();
         p.setId(id);
-        p.setShopId(shopId);
         p.setFreightId(fid);
-        ReturnObject ret = productDao.addDraftProduct(p,loginUser,loginUsername);
+        ReturnObject ret = productDao.updateProduct(p);
         return ret;
     }
 
