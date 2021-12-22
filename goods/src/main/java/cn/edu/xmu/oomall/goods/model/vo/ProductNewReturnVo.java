@@ -18,7 +18,8 @@ import java.util.Map;
 @NoArgsConstructor
 public class ProductNewReturnVo {
     private Long id;
-    private SimpleObject shop;
+    private UserSimpleRetVo shop;
+    private Long productId;
     private Long goodsId;
     private String name;
     private String skuSn;
@@ -28,11 +29,9 @@ public class ProductNewReturnVo {
     private String unit;
     private String barCode;
     private String originPlace;
-    private SimpleObject category;
-    private SimpleObject createBy;
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
+    private UserSimpleRetVo category;
+    private UserSimpleRetVo createBy;
     private LocalDateTime gmtCreate;
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
     private LocalDateTime gmtModified;
-    private SimpleObject modifiedBy;
+    private UserSimpleRetVo modifiedBy;
 }
