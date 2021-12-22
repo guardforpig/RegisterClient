@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.activity.microservice;
 import cn.edu.xmu.oomall.activity.microservice.vo.*;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleVo;
+import cn.edu.xmu.oomall.activity.model.vo.PageInfoVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageVo;
 import cn.edu.xmu.oomall.core.config.OpenFeignConfig;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -16,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author Gao Yanfeng
@@ -24,12 +26,11 @@ import java.time.LocalDateTime;
 @FeignClient(name = "goods-service",configuration= OpenFeignConfig.class)
 public interface GoodsService {
     @GetMapping("/internal/onsales")
-    InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,
-                                    @RequestParam("productId")Long productId,
-                                    @RequestParam("beginTime") LocalDateTime beginTime,
-                                    @RequestParam("endTime")LocalDateTime endTime,
-                                    @RequestParam("page") Integer page,
-                                    @RequestParam("pageSize") Integer pageSize);
+    InternalReturnObject<PageInfoVo<SimpleOnSaleInfoVo>> getOnSales(@RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
+                                                                    @RequestParam(value = "beginTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime beginTime,
+                                                                    @RequestParam(value = "endTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime endTime,
+                                                                    @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
+                                                                    @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize);
 
     @PutMapping("/internal/shops/{did}/activities/{id}/onsales/online")
     InternalReturnObject onlineOnsale(@PathVariable(value="did") Long shopId, @PathVariable(value="id") Long activityId);
@@ -93,4 +94,10 @@ public interface GoodsService {
                                                                        @RequestParam("endTime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
                                                                        @RequestParam("page") Integer page,
                                                                        @RequestParam("pageSize") Integer pageSize);
+
+    @GetMapping(value = "/products")
+    InternalReturnObject<PageInfoVo<SimpleProductRetVo>> getProducts(@RequestParam(value = "shopId",required = false) Long shopId,
+                              @RequestParam(value = "barCode",required = false) String barCode,
+                              @RequestParam(required = false) Integer page,
+                              @RequestParam(required = false) Integer pageSize);
 }
