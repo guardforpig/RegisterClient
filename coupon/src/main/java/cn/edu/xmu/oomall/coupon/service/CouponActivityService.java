@@ -324,7 +324,7 @@ public class CouponActivityService {
                 InternalReturnObject<PageVo<OnsaleVo>> retOnsaleVoPageInfo =
                         goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
                 if (!retOnsaleVoPageInfo.getErrno().equals(ReturnNo.OK.getCode())) {
-                    return new ReturnObject(retOnsaleVoPageInfo);
+                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
                 }
                 List<OnsaleVo> onsaleVoList = retOnsaleVoPageInfo.getData().getList();
                 for (OnsaleVo onsaleVo : onsaleVoList) {
