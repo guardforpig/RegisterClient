@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**
  * @author wyg
  */
-@FeignClient(value = "freight-service1",configuration= OpenFeignConfig.class)
+@FeignClient(value = "freight-service",configuration= OpenFeignConfig.class)
 public interface FreightService {
     @GetMapping("/shops/{shopId}/freightmodels/default")
     InternalReturnObject<FreightModelRetVo> getDefaultFreightModel(@PathVariable("shopId") Long shopId);
