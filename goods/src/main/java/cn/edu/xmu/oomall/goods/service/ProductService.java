@@ -248,7 +248,6 @@ public class ProductService {
         ReturnObject ret = productDao.newProduct(po);
 
         Product product = (Product) ret.getData();
-            System.out.println(product.getId());
 
         //查找shopName
         InternalReturnObject object = shopService.getSimpleShopById(product.getShopId());

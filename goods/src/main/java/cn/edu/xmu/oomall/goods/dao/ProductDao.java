@@ -299,19 +299,15 @@ public class ProductDao {
         if (StringUtils.isNotBlank(barCode)) {
             criteria.andBarcodeEqualTo(barCode);
         }
+        criteria.andShopIdEqualTo(shopId);
 
         List<ProductPo> productPoList = new ArrayList<>();
-        List<SimpleProductRetVo> productSimpleRetVos = new ArrayList<>();
         try {
+            PageHelper.startPage(page, pageSize);
             if (example.getOredCriteria().size() != 0) {
                 productPoList = productMapper.selectByExample(example);
             }
-            for (ProductPo po : productPoList) {
-                Product product = cloneVo(po, Product.class);
-                productSimpleRetVos.add( cloneVo(product, SimpleProductRetVo.class));
-            }
-
-            PageInfo<SimpleProductRetVo> pageInfo = PageInfo.of(productSimpleRetVos);
+            var pageInfo = PageInfo.of(productPoList);
             return Common.getPageRetVo(new ReturnObject(pageInfo), SimpleProductRetVo.class);
         } catch (Exception e) {
             logger.error("selectAllProducts: DataAccessException:" + e.getMessage());

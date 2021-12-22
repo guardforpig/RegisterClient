@@ -87,17 +87,17 @@ public class ShareActivityService {
         List<Long> shareActivityIds = new ArrayList<>();
         if (productId != null) {
             //TODO:openfeign获得分享活动id
-            InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, 10);
+            var onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, 10);
             if (onSalesByProductId.getErrno()!=0) {
                 return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
             }
-            int total = (int) onSalesByProductId.getData().get("total");
+            int total = onSalesByProductId.getData().getTotal().intValue();
             if (total != 0) {
                 onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, total > 500 ? 500 : total);
                 if (onSalesByProductId.getErrno()!=0) {
                     return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
                 }
-                List<SimpleOnSaleInfoVo> list = (List<SimpleOnSaleInfoVo>) onSalesByProductId.getData().get("list");
+                List<SimpleOnSaleInfoVo> list = (List<SimpleOnSaleInfoVo>) onSalesByProductId.getData().getList();
                 for (SimpleOnSaleInfoVo simpleSaleInfoVO : list) {
                     if (simpleSaleInfoVO.getShareActId() != null) {
                         shareActivityIds.add(simpleSaleInfoVO.getShareActId());
