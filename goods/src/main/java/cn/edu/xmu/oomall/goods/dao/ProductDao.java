@@ -194,7 +194,7 @@ public class ProductDao {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
             ProductPo productPo = (ProductPo) cloneVo(productDraftPo, ProductPo.class);
-            if (productDraftPo.getProductId() == 0) {
+            if (productDraftPo.getProductId()==null || productDraftPo.getProductId() == 0) {
                 productPo.setId(null);
                 productPo.setState((byte)Product.ProductState.OFFSHELF.getCode());
                 productMapper.insert(productPo);
@@ -254,13 +254,12 @@ public class ProductDao {
         }else{
             criteria.andStateEqualTo((byte)(Product.ProductState.ONSHELF.getCode()));
         }
-        List<ProductPo> productPos;
         try {
-            productPos = productMapper.selectByExample(example);
+            List<ProductPo> productPos = productMapper.selectByExample(example);
+            return new PageInfo<>(productPos);
         } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
-        return new PageInfo<>(productPos);
     }
 
     /**
@@ -373,24 +372,25 @@ public class ProductDao {
      */
     public ReturnObject addDraftProduct(Product product, Long loginUser, String loginUsername) {
         //复制前置空productId,因为ProductDraftPo主键自增
-        Long temp = product.getId();
-        product.setId(null);
+//        Long temp = product.getId();
+//        product.setId(null);
         ProductDraftPo productDraftPo= (ProductDraftPo) cloneVo(product, ProductDraftPo.class);
-        productDraftPo.setProductId(temp);
+//        productDraftPo.setProductId(temp);
         int ret;
         try{
             //插入更新信息
             setPoCreatedFields(productDraftPo,loginUser,loginUsername);
-            ret = productDraftPoMapper.insertSelective(productDraftPo);
+            ret = productDraftPoMapper.updateByPrimaryKey(productDraftPo);
+            if (ret == 0) {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            } else {
+                return new ReturnObject();
+            }
         }catch (Exception e){
             logger.error("updateProduct: DataAccessException:" + e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        if (ret == 0) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-        } else {
-            return new ReturnObject();
-        }
+
     }
 
     /**

@@ -15,15 +15,10 @@ import javax.validation.constraints.NotNull;
 @ApiModel(value = "修改Product视图")
 public class ProductChangeVo {
     String skuSn;
-    @NotBlank
-    @NotNull
     String name;
-    @Min(0)
     Long originalPrice;
     Long categoryId;
-    @Min(0)
     Long weight;
-    @Min(0)
     String barCode;
     String unit;
     String originPlace;
