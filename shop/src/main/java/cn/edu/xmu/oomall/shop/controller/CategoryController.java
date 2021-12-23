@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.model.bo.Category;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryDetailRetVo;
+import cn.edu.xmu.oomall.shop.model.vo.CategoryModifyVo;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryVo;
 import cn.edu.xmu.oomall.shop.service.CategoryService;
@@ -163,7 +164,7 @@ public class CategoryController {
                                    @PathVariable("shopId") Long shopId,
                                    @LoginUser Long modifyId,
                                    @LoginName String modiName,
-                                   @Valid @RequestBody CategoryVo vo) {
+                                   @RequestBody CategoryModifyVo vo) {
         // 非平台管理员
         if (shopId != 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
