@@ -3,7 +3,10 @@ package cn.edu.xmu.oomall.shop.service;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.dao.ShopAccountDao;
+import cn.edu.xmu.oomall.shop.dao.ShopDao;
+import cn.edu.xmu.oomall.shop.model.bo.Shop;
 import cn.edu.xmu.oomall.shop.model.po.ShopAccountPo;
+import cn.edu.xmu.oomall.shop.model.po.ShopPo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopAccountRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.ShopAccountVo;
 import cn.edu.xmu.oomall.shop.model.vo.SimpleAdminUserVo;
@@ -16,8 +19,8 @@ import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
 
 /**
- * @author  Xusheng Wang
- * @date  2021-11-11
+ * @author Xusheng Wang
+ * @date 2021-11-11
  * @studentId 34520192201587
  */
 
@@ -26,47 +29,56 @@ public class ShopAccountService {
 
     @Autowired
     private ShopAccountDao shopAccountDao;
+    @Autowired
+    private ShopDao shopDao;
 
     /**
-     * @author  Xusheng Wang
-     * @date  2021-11-11
+     * @author Xusheng Wang
+     * @date 2021-11-11
      * @studentId 34520192201587
      */
-    public ReturnObject<ShopAccountRetVo> addShopAccount(ShopAccountVo shopAccountVo, Long shopId,Long loginUserId,String loginUserName) {
-        ShopAccountPo shopAccountPo = cloneVo(shopAccountVo,ShopAccountPo.class);
-        if(shopAccountDao.addShopAccount(shopAccountPo,shopId,loginUserId,loginUserName)){
-            ShopAccountRetVo shopAccountVo1=cloneVo(shopAccountPo,ShopAccountRetVo.class);
-            return new ReturnObject<>(shopAccountVo1);
+    public ReturnObject<ShopAccountRetVo> addShopAccount(ShopAccountVo shopAccountVo, Long shopId, Long loginUserId, String loginUserName) {
+        ShopAccountPo shopAccountPo = cloneVo(shopAccountVo, ShopAccountPo.class);
+        ReturnObject returnObject = shopDao.getShopPoById(shopId);
+        if (!returnObject.getCode().equals(ReturnNo.OK)) {
+            return returnObject;
         }
-        else {
+        if (shopAccountDao.addShopAccount(shopAccountPo, shopId, loginUserId, loginUserName)) {
+            ShopAccountRetVo shopAccountVo1 = cloneVo(shopAccountPo, ShopAccountRetVo.class);
+            return new ReturnObject<>(shopAccountVo1);
+        } else {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, "添加失败！");
         }
     }
 
     /**
-     * @author  Xusheng Wang
-     * @date  2021-11-11
+     * @author Xusheng Wang
+     * @date 2021-11-11
      * @studentId 34520192201587
      */
     public ReturnObject<List<ShopAccountRetVo>> getShopAccounts(Long shopId) {
-        ReturnObject<List<ShopAccountRetVo>> returnObject=shopAccountDao.getShopAccounts(shopId);
-        return returnObject;
+        ReturnObject returnObject = shopDao.getShopPoById(shopId);
+        if (!returnObject.getCode().equals(ReturnNo.OK)) {
+            return returnObject;
+        }
+        ShopPo shopPo = (ShopPo) returnObject.getData();
+        if (shopPo.getState().equals(Shop.State.FORBID.getCode().byteValue()))
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+        ReturnObject<List<ShopAccountRetVo>> returnObject2 = shopAccountDao.getShopAccounts(shopId);
+        return returnObject2;
     }
 
     /**
-     * @author  Xusheng Wang
-     * @date  2021-11-11
+     * @author Xusheng Wang
+     * @date 2021-11-11
      * @studentId 34520192201587
      */
     public ReturnObject deleteAccount(Long shopId, Long accountId) {
-        if(!shopAccountDao.checkShopAccount(shopId,accountId)){
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST,"账户信息有误！");
+        if (!shopAccountDao.checkShopAccount(shopId, accountId)) {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "账户信息有误！");
         }
-        if(shopAccountDao.deleteAccount(accountId)){
-            return new ReturnObject<>();
-        }
-        else {
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, "删除失败！");
-        }
+
+        return shopAccountDao.deleteAccount(accountId);
+
     }
 }

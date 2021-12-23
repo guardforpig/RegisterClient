@@ -7,11 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -28,13 +27,11 @@ public class GroupOnActivityPostVo {
     @NotNull
     private String name;
 
-    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
-    private LocalDateTime beginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
+    private ZonedDateTime beginTime;
 
-    @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-    @JsonFormat(pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
-    private LocalDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.DATE_TIME_FORMAT, timezone = "GMT+8")
+    private ZonedDateTime  endTime;
 
     private List<@Valid GroupOnStrategyVo> strategy;
 }

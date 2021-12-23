@@ -324,7 +324,7 @@ public class CouponActivityService {
                 InternalReturnObject<PageVo<OnsaleVo>> retOnsaleVoPageInfo =
                         goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
                 if (!retOnsaleVoPageInfo.getErrno().equals(ReturnNo.OK.getCode())) {
-                    return new ReturnObject(retOnsaleVoPageInfo);
+                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
                 }
                 List<OnsaleVo> onsaleVoList = retOnsaleVoPageInfo.getData().getList();
                 for (OnsaleVo onsaleVo : onsaleVoList) {
@@ -584,7 +584,6 @@ public class CouponActivityService {
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
 
-        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转
         return new ReturnObject(cloneVo(couponActivity, CouponActivityDetailRetVo.class));
     }
 

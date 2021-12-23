@@ -73,11 +73,11 @@ public class ShareActivityControllerTest {
         //生成一个 onsale对象
         InternalReturnObject<Map<String, Object>> onSaleInfoDTO = CreateObject.createOnSaleInfoDTO(1L);
         InternalReturnObject<Map<String, Object>> onSaleInfoDTO1 = CreateObject.createOnSaleInfoDTO(-1L);
-        Mockito.when(goodsService.getOnsales(2L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
-        Mockito.when(goodsService.getOnsales(null, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
-        Mockito.when(goodsService.getOnsales(1L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
-        Mockito.when(goodsService.getOnsales(2L, -1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
-        Mockito.when(goodsService.getOnsales(11111L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
+        Mockito.when(goodsService.getonsales(2L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getonsales(null, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getonsales(1L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getonsales(2L, -1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
+        Mockito.when(goodsService.getonsales(11111L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
         //生成一个shop对象
         InternalReturnObject<SimpleShopVo> shopInfoDTO = CreateObject.createShopInfoDTO(1L);
         InternalReturnObject<SimpleShopVo> shopInfoDTO2 = CreateObject.createShopInfoDTO(2L);
@@ -360,7 +360,7 @@ public class ShareActivityControllerTest {
         onSale.setState((byte) 2);
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(1L);
-        Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
+        Mockito.when(goodsService.selectFullOnsale(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject(ReturnNo.STATENOTALLOW.getCode(),ReturnNo.STATENOTALLOW.getMessage()));
         String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
@@ -380,7 +380,7 @@ public class ShareActivityControllerTest {
         onSale.setState((byte) 1);
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(1L);
-        Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
+        Mockito.when(goodsService.selectFullOnsale(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(2L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
         String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/2").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
@@ -400,7 +400,7 @@ public class ShareActivityControllerTest {
         onSale.setState((byte) 1);
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(1L);
-        Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
+        Mockito.when(goodsService.selectFullOnsale(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(-1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
         String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/-1").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().is4xxClientError())
@@ -420,7 +420,7 @@ public class ShareActivityControllerTest {
         onSale.setState((byte) 1);
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(1L);
-        Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
+        Mockito.when(goodsService.selectFullOnsale(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
         String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
@@ -440,7 +440,7 @@ public class ShareActivityControllerTest {
         onSale.setState((byte) 1);
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(4L);
-        Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
+        Mockito.when(goodsService.selectFullOnsale(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject());
         String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/4")
                         .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
@@ -461,7 +461,7 @@ public class ShareActivityControllerTest {
         onSale.setState((byte) 1);
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(1L);
-        Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
+        Mockito.when(goodsService.selectFullOnsale(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(-1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject());
         String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/11111111")
                         .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
@@ -482,7 +482,7 @@ public class ShareActivityControllerTest {
         onSale.setState((byte) 1);
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(-1L);
-        Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
+        Mockito.when(goodsService.selectFullOnsale(1L)).thenReturn(new InternalReturnObject<>(onSale));
         Mockito.when(goodsService.modifyOnSaleShareActId(1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
         String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/4").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())

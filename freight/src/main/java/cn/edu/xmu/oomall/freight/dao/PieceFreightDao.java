@@ -57,7 +57,7 @@ public class PieceFreightDao {
             if (pieceFreight.getRegionId() != null) {
                 PieceFreightPoExample example = new PieceFreightPoExample();
                 PieceFreightPoExample.Criteria criteria = example.createCriteria();
-                criteria.andRegionIdEqualTo(pieceFreight.getRegionId());
+                criteria.andRegionIdEqualTo(pieceFreight.getRegionId()).andFreightModelIdEqualTo(pieceFreight.getFreightModelId());
                 List<PieceFreightPo> list = pieceFreightPoMapper.selectByExample(example);
                 if (list != null && list.size() > 0) {
                     return new ReturnObject(ReturnNo.FREIGHT_REGIONEXIST);
@@ -197,7 +197,22 @@ public class PieceFreightDao {
         } catch (Exception e) {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
-        // TODO 没有找到合适的错误码
-        return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "根据指定地区和运费模板未找到需要的运费模板明细");
+        return new ReturnObject(ReturnNo.FREIGHT_REGION_NOTREACH);}
+
+    public ReturnObject clonePieceFreight(Long oldFreightModelId, Long newFreightModelId) {
+        try {
+            var example = new PieceFreightPoExample();
+            var criteria = example.createCriteria();
+            criteria.andFreightModelIdEqualTo(oldFreightModelId);
+            var poList = pieceFreightPoMapper.selectByExample(example);
+            for (var po : poList) {
+                po.setFreightModelId(newFreightModelId);
+                pieceFreightPoMapper.insert(po);
+            }
+            return new ReturnObject();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
     }
 }

@@ -1,17 +1,17 @@
 package cn.edu.xmu.oomall.activity.microservice.vo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @author Gao Yanfeng
- * @date 2021/11/12
- */
+ * @author Zijun Min 22920192204257
+ * @description
+ * @createTime 2021/11/11 02:20
+ **/
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class SimpleShopVo {
+public class SimpleProductRetVo {
     private Long id;
     private String name;
+    private String imageUrl;
 }

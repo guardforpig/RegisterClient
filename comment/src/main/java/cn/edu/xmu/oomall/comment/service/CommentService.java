@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.comment.dao.CommentDao;
 import cn.edu.xmu.oomall.comment.model.bo.Comment;
 import cn.edu.xmu.oomall.comment.model.po.CommentPo;
 import cn.edu.xmu.oomall.comment.model.vo.*;
+import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import com.github.pagehelper.PageInfo;
@@ -48,7 +49,7 @@ public class CommentService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public InternalReturnObject newComment(Long productId, CommentVo commentVo, Long loginUser, String loginUsername) {
+    public ReturnObject newComment(Long productId, CommentVo commentVo, Long loginUser, String loginUsername) {
 
         Long shopId = commentVo.getShopId();
         CommentPo commentPo = new CommentPo();
@@ -62,10 +63,10 @@ public class CommentService {
         commentPo.setPostName(loginUsername);
         commentPo.setPostTime(LocalDateTime.now());
         setPoCreatedFields(commentPo, loginUser, loginUsername);
-        InternalReturnObject ret_insert = commentDao.insertComment(commentPo);
-        if (ret_insert.getErrno().equals(0)) {
+        ReturnObject ret_insert = commentDao.insertComment(commentPo);
+        if (ret_insert.getCode().equals(ReturnNo.OK)) {
             CommentRetVo commentRetVo = (CommentRetVo) cloneVo(commentPo, CommentRetVo.class);
-            return new InternalReturnObject(commentRetVo);
+            return new ReturnObject(commentRetVo);
         }
         return ret_insert;
     }
@@ -81,6 +82,10 @@ public class CommentService {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public ReturnObject<PageInfo<Object>> selectAllPassCommentByProductId(Long productId, Integer pageNum, Integer pageSize) {
         List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectAllPassCommentByProductId(productId, pageNum, pageSize).getData();
+        if(commentPos.size()==0)
+        {
+            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
         List<Object> commentRetVos = new ArrayList<>();
         for (CommentPo po : commentPos) {
             commentRetVos.add(po);
@@ -102,9 +107,9 @@ public class CommentService {
      * @return
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<PageInfo<Object>> selectAllPassCommentByShopId(Long shopId, Integer pageNum, Integer pageSize) {
+    public ReturnObject<PageInfo<Object>> selectAllPassCommentByShopId(Long shopId,Long loginUser, Integer pageNum, Integer pageSize) {
 
-        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectCommentByShopId(shopId, pageNum, pageSize).getData();
+        List<CommentPo> commentPos = (List<CommentPo>) commentDao.selectCommentByShopId(shopId,loginUser, pageNum, pageSize).getData();
         List<Object> commentRetVos = new ArrayList<>();
         for (CommentPo po : commentPos) {
             commentRetVos.add(po);

@@ -31,7 +31,7 @@ import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 @Api(value = "货品销售情况", tags = "goods")
 @RestController
 @RefreshScope
-@RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
 public class OnSaleController {
 
     private final Logger logger = LoggerFactory.getLogger(OnSaleController.class);
@@ -78,7 +78,7 @@ public class OnSaleController {
             return decorateReturnObject(returnObject1);
         }
 
-        httpServletResponse.setStatus(HttpStatus.CREATED.value());
+//        httpServletResponse.setStatus(HttpStatus.CREATED.value());
 
         return decorateReturnObject(getRetVo(returnObject1, NewOnSaleRetVo.class));
 
@@ -161,7 +161,7 @@ public class OnSaleController {
         return decorateReturnObject(returnObject1);
     }
 
-        @ApiOperation(value = "管理员新增商品价格和数量")
+    @ApiOperation(value = "管理员新增商品价格和数量")
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 902, message = "商品销售时间冲突"),
@@ -269,7 +269,6 @@ public class OnSaleController {
     @PutMapping("shops/{shopId}/onsales/{id}")
     public Object modifyOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName,
                                      BindingResult bindingResult) {
-        try{
 
             Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
             if (null != returnObject) {
@@ -284,12 +283,8 @@ public class OnSaleController {
             Onsale bo = cloneVo(onSale, Onsale.class);
             bo.setId(id);
 
-            ReturnObject returnObject1 = onsaleService.updateOnSaleNorSec(bo, shopId, loginUserId, loginUserName);
-            return decorateReturnObject(returnObject1);
-        }catch (Exception e){
-            System.out.println(e);
-            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
-        }
+        ReturnObject returnObject1 = onsaleService.updateOnSaleNorSec(bo, shopId, loginUserId, loginUserName);
+        return decorateReturnObject(returnObject1);
     }
 
     /**

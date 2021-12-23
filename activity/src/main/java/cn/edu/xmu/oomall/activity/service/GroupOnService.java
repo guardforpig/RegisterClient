@@ -4,7 +4,8 @@ import cn.edu.xmu.oomall.activity.constant.GroupOnState;
 import cn.edu.xmu.oomall.activity.dao.GroupOnActivityDao;
 import cn.edu.xmu.oomall.activity.microservice.GoodsService;
 import cn.edu.xmu.oomall.activity.microservice.ShopService;
-import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleOnSaleInfoVo;
+import cn.edu.xmu.oomall.activity.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.activity.model.bo.GroupOnActivity;
 import cn.edu.xmu.oomall.activity.model.po.GroupOnActivityPoExample;
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityPostVo;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +69,8 @@ public class GroupOnService {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, shopInfoRet.getErrmsg());
             }
             bo.setShopId(shopId);
-            bo.setShopName(shopInfoRet.getData().getName());
+            SimpleShopVo simpleShopVo=(SimpleShopVo)shopInfoRet.getData();
+            bo.setShopName(simpleShopVo.getName());
             bo.setState(GroupOnState.DRAFT);
             return dao.insertActivity(bo, createdBy, createName);
     }
@@ -85,8 +88,8 @@ public class GroupOnService {
      * @return ReturnObject
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject getGroupOnActivities(Long productId, Long shopId, LocalDateTime beginTime,
-                                             LocalDateTime endTime, GroupOnState state,
+    public ReturnObject getGroupOnActivities(Long productId, Long shopId, ZonedDateTime beginTime,
+                                             ZonedDateTime endTime, GroupOnState state,
                                              Integer page, Integer pageSize) {
         var example = new GroupOnActivityPoExample();
         var criteria = example.createCriteria();
@@ -101,10 +104,10 @@ public class GroupOnService {
             criteria.andShopIdEqualTo(shopId);
         }
         if (beginTime != null) {
-            criteria.andBeginTimeGreaterThanOrEqualTo(beginTime);
+            criteria.andBeginTimeGreaterThanOrEqualTo(beginTime.toLocalDateTime());
         }
         if (endTime != null) {
-            criteria.andEndTimeLessThanOrEqualTo(endTime);
+            criteria.andEndTimeLessThanOrEqualTo(endTime.toLocalDateTime());
         }
         if (state != null) {
             criteria.andStateEqualTo(state.getCode().byteValue());
@@ -131,7 +134,7 @@ public class GroupOnService {
         int pages = -1;
         var list = new ArrayList<Long>();
         do {
-            InternalReturnObject<PageInfoVo<SimpleOnSaleVo>> onSalesListRet = goodsService.getOnsales(null, productId, null, null, page, 10);
+            InternalReturnObject<PageInfoVo<SimpleOnSaleInfoVo>> onSalesListRet = goodsService.getOnSales(null, productId, null, null, page, 10);
             if (!onSalesListRet.getErrno().equals(ReturnNo.OK.getCode())) {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, onSalesListRet.getErrmsg());
             }

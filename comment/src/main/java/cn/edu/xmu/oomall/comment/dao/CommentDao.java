@@ -49,15 +49,15 @@ public class CommentDao {
      * @param commentPo
      * @return
      */
-    public InternalReturnObject insertComment(CommentPo commentPo){
+    public ReturnObject insertComment(CommentPo commentPo){
         try{
             int ret=commentPoMapper.insertSelective(commentPo);
             if(ret==0){
-                return new InternalReturnObject(ReturnNo.FIELD_NOTVALID);
+                return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
-            return new InternalReturnObject(commentPo);
+            return new ReturnObject(commentPo);
         }catch (Exception e){
-            return new InternalReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
     }
 
@@ -90,13 +90,13 @@ public class CommentDao {
      * 分页查询店铺评论
      * @return ReturnObject<>
      */
-    public ReturnObject selectCommentByShopId(Long shopId,Integer pageNum,Integer pageSize){
+    public ReturnObject selectCommentByShopId(Long shopId,Long loginUser,Integer pageNum,Integer pageSize){
         CommentPoExample example=new CommentPoExample();
         CommentPoExample.Criteria criteria=example.createCriteria();
         List<CommentPo> commentPos=new ArrayList<>();
         PageHelper.startPage(pageNum,pageSize);
         try{
-            criteria.andShopIdEqualTo(shopId);
+            criteria.andAuditIdEqualTo(loginUser);
             commentPos=commentPoMapper.selectByExample(example);
 
         }catch (DataAccessException e){

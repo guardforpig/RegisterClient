@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
@@ -117,7 +118,7 @@ public class OnsaleService {
     public ReturnObject onlineOrOfflineOnSale(Long shopId, Long id, Long userId, String userName, Onsale.State finalState) {
         //判断OnSale是否存在
         ReturnObject ret=onsaleDao.getOnSaleById(id);
-        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+        if(!ret.getCode().equals(ReturnNo.OK)){
             return ret;
         }
         Onsale onsale = (Onsale) ret.getData();
@@ -127,7 +128,7 @@ public class OnsaleService {
 
         //判断是否该商家的onsale
         ret=onsaleDao.onSaleShopMatch(id,shopId);
-        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+        if(!ret.getCode().equals(ReturnNo.OK)){
             return ret;
         }
         if(!(boolean)ret.getData()){
@@ -142,7 +143,7 @@ public class OnsaleService {
 
         if (finalState == Onsale.State.OFFLINE) {
             //只有上线态才能下线， 否则出507错误
-            if (onsale.getState() != Onsale.State.ONLINE) {
+            if (onsale.getState() != Onsale.State.ONLINE.getCode()) {
                 return new ReturnObject(ReturnNo.STATENOTALLOW, "非上线态无法下线");
             }
             //如果结束时间晚于当前时间且开始时间早于当前时间，修改结束时间为当前时间
@@ -151,7 +152,7 @@ public class OnsaleService {
             }
         } else if (finalState == Onsale.State.ONLINE) {
             //只有草稿态才能上线， 否则出507错误
-            if (onsale.getState() != Onsale.State.DRAFT) {
+            if (!onsale.getState().equals(Onsale.State.DRAFT.getCode())) {
                 return new ReturnObject(ReturnNo.STATENOTALLOW, "非草稿态无法上线");
             }
             //如果开始时间早于当前时间且结束时间晚于当前时间，修改开始时间为当前时间
@@ -160,6 +161,7 @@ public class OnsaleService {
             }
         }
         onsale.setState(finalState);
+        onsale.setId(id);
         return onsaleDao.onlineOrOfflineOnSale(onsale, userId, userName);
     }
 
@@ -168,6 +170,11 @@ public class OnsaleService {
 
         return onsaleDao.onlineOrOfflineOnSaleAct(actId, userId, userName, cntState, finalState);
     }
+
+
+
+
+
 
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject deleteOnSaleNorSec(Long shopId, Long id) {
@@ -199,7 +206,7 @@ public class OnsaleService {
 
 
         //只有草稿态才能删除， 否则出507错误
-        if (onsale.getState() != Onsale.State.DRAFT) {
+        if (!Objects.equals(onsale.getState(), Onsale.State.DRAFT.getCode())) {
             return new ReturnObject(ReturnNo.STATENOTALLOW, "非草稿态无法删除");
         }
 
@@ -227,8 +234,8 @@ public class OnsaleService {
         }
 
         //只有草稿态或下线态才能修改， 否则出507错误
-        if (onsale.getState() != Onsale.State.DRAFT
-                &&onsale.getState() != Onsale.State.OFFLINE) {
+        if (!onsale.getState().equals(Onsale.State.DRAFT.getCode())
+                && !onsale.getState().equals(Onsale.State.OFFLINE.getCode())) {
             return new ReturnObject(ReturnNo.STATENOTALLOW, "非草稿态或下线态无法修改");
         }
         return onsaleDao.updateOnSale(bo,userId, userName);
@@ -256,8 +263,8 @@ public class OnsaleService {
 
 
         //只有草稿态或下线态才能修改， 否则出507错误
-        if (onsale.getState() != Onsale.State.DRAFT
-                &&onsale.getState() != Onsale.State.OFFLINE) {
+        if (onsale.getState() != Onsale.State.DRAFT.getCode()
+                &&onsale.getState() != Onsale.State.OFFLINE.getCode()) {
             return new ReturnObject(ReturnNo.STATENOTALLOW, "非草稿态或下线态无法修改");
         }
 
@@ -310,7 +317,7 @@ public class OnsaleService {
         }
 
         // 判断是否online 且在销售时间内
-        if (onsale.getState() != Onsale.State.ONLINE
+        if (onsale.getState() != Onsale.State.ONLINE.getCode()
         || !(onsale.getBeginTime().isBefore(LocalDateTime.now()) && onsale.getEndTime().isAfter(LocalDateTime.now()))) {
             return new ReturnObject(ReturnNo.GOODS_ONSALE_NOTEFFECTIVE);
         }

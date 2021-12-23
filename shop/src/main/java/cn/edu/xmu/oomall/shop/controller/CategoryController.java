@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.shop.model.bo.Category;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryDetailRetVo;
+import cn.edu.xmu.oomall.shop.model.vo.CategoryModifyVo;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryRetVo;
 import cn.edu.xmu.oomall.shop.model.vo.CategoryVo;
 import cn.edu.xmu.oomall.shop.service.CategoryService;
@@ -35,7 +36,7 @@ import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 @Api(value = "商品类别API", tags = "商品类别API")
 @RestController
 @RefreshScope
-@RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
 public class CategoryController {
     @Autowired
     HttpServletResponse httpServletResponse;
@@ -163,16 +164,10 @@ public class CategoryController {
                                    @PathVariable("shopId") Long shopId,
                                    @LoginUser Long modifyId,
                                    @LoginName String modiName,
-                                   @Valid @RequestBody CategoryVo vo,
-                                   BindingResult bindingResult) {
+                                   @RequestBody CategoryModifyVo vo) {
         // 非平台管理员
         if (shopId != 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
-        }
-        // vo合法性检查
-        var res = Common.processFieldErrors(bindingResult, httpServletResponse);
-        if (res != null) {
-            return res;
         }
 
         Category cate = cloneVo(vo, Category.class);
@@ -195,6 +190,7 @@ public class CategoryController {
     @Audit(departName = "shops")
     @DeleteMapping("/shops/{shopId}/categories/{id}")
     public Object deleteCategories(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
+        System.out.println(shopId);
         // 非平台管理员
         if (shopId != 0) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
@@ -210,7 +206,7 @@ public class CategoryController {
 
     private Object selectSubCategories(Long id) {
         ReturnObject ret = categoryService.getSubCategories(id);
-
+        System.out.println(ret.getData());
         return Common.decorateReturnObject(ret);
     }
 
@@ -220,7 +216,8 @@ public class CategoryController {
      */
     @GetMapping("/category/{id}")
     public Object getCategoryById(@PathVariable("id")Long id){
-        return categoryService.getCategoryById(id);
+
+        return Common.decorateReturnObject(categoryService.getCategoryById(id));
     }
 
     /**

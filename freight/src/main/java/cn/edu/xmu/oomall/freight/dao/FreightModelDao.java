@@ -54,6 +54,9 @@ public class FreightModelDao {
                 FreightModelPoExample.Criteria criteria = freightModelPoExample.createCriteria();
                 criteria.andDefaultModelEqualTo((byte) 1);
                 List<FreightModelPo> freightModelPoList = freightModelPoMapper.selectByExample(freightModelPoExample);
+                if (freightModelPoList.size() == 0) {
+                    return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+                }
                 FreightModelPo defaultFreightModelPo = freightModelPoList.get(0);
 
                 defaultFreightModel = (FreightModel) cloneVo(defaultFreightModelPo, FreightModel.class);
@@ -61,7 +64,7 @@ public class FreightModelDao {
             }
             return new ReturnObject(defaultFreightModel);
         } catch (Exception e) {
-            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"操作的资源id不存在");
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
 

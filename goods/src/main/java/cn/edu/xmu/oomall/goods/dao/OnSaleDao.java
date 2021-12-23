@@ -72,7 +72,7 @@ public class OnSaleDao {
             OnSalePo po = (OnSalePo) cloneVo(onsale, OnSalePo.class);
             setPoModifiedFields(po, userId, userName);
             onSalePoMapper.updateByPrimaryKeySelective(po);
-            return new ReturnObject();
+            return new ReturnObject(ReturnNo.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());

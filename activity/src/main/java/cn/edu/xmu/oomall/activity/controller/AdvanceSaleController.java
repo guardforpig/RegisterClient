@@ -10,6 +10,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import cn.edu.xmu.oomall.activity.model.bo.AdvanceSale;
 import cn.edu.xmu.oomall.activity.model.vo.AdvanceSaleVo;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
@@ -155,7 +157,7 @@ public class AdvanceSaleController {
                 return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
             }
         }
-        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId, AdvanceSale.state.ONLINE.getCode(), TimeFormat.ZonedDateTime2LocalDateTime(beginTime),TimeFormat.ZonedDateTime2LocalDateTime(endTime),page,pageSize);
+        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId, AdvanceSale.state.ONLINE.getCode(), beginTime,endTime,page,pageSize);
         return Common.decorateReturnObject(ret);
     }
 
@@ -219,7 +221,7 @@ public class AdvanceSaleController {
                 return  Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
             }
         }
-        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId,state,TimeFormat.ZonedDateTime2LocalDateTime(beginTime),TimeFormat.ZonedDateTime2LocalDateTime(endTime),page,pageSize);
+        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId,state,beginTime,endTime,page,pageSize);
         return Common.decorateReturnObject(ret);
     }
 

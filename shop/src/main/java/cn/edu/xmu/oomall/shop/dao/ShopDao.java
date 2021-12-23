@@ -25,7 +25,7 @@ public class ShopDao {
     ShopPoMapper shopPoMapper;
 
 
-    public ReturnObject getShopById(Long id) {
+    public ReturnObject getShopPoById(Long id) {
         ShopPo shopPo;
         try {
             shopPo = shopPoMapper.selectByPrimaryKey(id);
@@ -35,12 +35,14 @@ public class ShopDao {
         } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
         }
-        Shop shop = (Shop) cloneVo(shopPo, Shop.class);
-        return new ReturnObject<>(shop);
+
+        return new ReturnObject<>(shopPo);
     }
 
     public ReturnObject getAllShop(Integer page, Integer pageSize) {
         ShopPoExample example = new ShopPoExample();
+        ShopPoExample.Criteria criteria=example.createCriteria();
+        criteria.andStateNotEqualTo(Shop.State.FORBID.getCode().byteValue());
         List<ShopPo> shopPos;
         try {
             PageHelper.startPage(page, pageSize);
@@ -90,6 +92,10 @@ public class ShopDao {
         int ret;
         try {
             ShopPo shopPo = shopPoMapper.selectByPrimaryKey(id);
+            if(shopPo==null)
+            {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
             shopPo.setName(shop.getName());
             if (shopPo.getState() == Shop.State.FORBID.getCode().byteValue()) {
                 return new ReturnObject(ReturnNo.STATENOTALLOW, "商铺处于关闭态");

@@ -83,13 +83,13 @@ public class ShareActivityService {
         List<Long> shareActivityIds = new ArrayList<>();
         if (productId != null) {
             //TODO:openfeign获得分享活动id
-            InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnsales(shopId, productId, null, null, 1, 10);
+            InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getonsales(shopId, productId, null, null, 1, 10);
             if (onSalesByProductId.getErrno()!=0) {
                 return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
             }
             int total = (int) onSalesByProductId.getData().get("total");
             if (total != 0) {
-                onSalesByProductId = goodsService.getOnsales(shopId, productId, null, null, 1, total > 500 ? 500 : total);
+                onSalesByProductId = goodsService.getonsales(shopId, productId, null, null, 1, total > 500 ? 500 : total);
                 if (onSalesByProductId.getErrno()!=0) {
                     return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
                 }
@@ -154,7 +154,7 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
-        if (shareActivityBo.getState()!=ShareActivityStatesBo.ONLINE.getCode()){
+        if (!shareActivityBo.getState().equals(ShareActivityStatesBo.ONLINE.getCode())){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }
         RetShareActivityInfoVo retShareActivityInfoVo = cloneVo(shareActivityBo, RetShareActivityInfoVo.class);
@@ -205,7 +205,7 @@ public class ShareActivityService {
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addShareActivityOnOnSale(Long shopId, Long id, Long sid, Long loginUser, String loginUsername){
-        InternalReturnObject onSale= goodsService.getOnSaleById(id);
+        InternalReturnObject onSale= goodsService.selectFullOnsale(id);
         ReturnObject shareActivity= getShareActivityByShareActivityId(sid);
         if(onSale.getData()==null||shareActivity.getData()==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -239,7 +239,7 @@ public class ShareActivityService {
     public ReturnObject deleteShareActivityOnOnSale(Long shopId, Long id, Long sid, Long loginUser, String loginUsername){
         InternalReturnObject onSale;
         ReturnObject shareActivity;
-        onSale= goodsService.getOnSaleById(id);
+        onSale= goodsService.selectFullOnsale(id);
         shareActivity= getShareActivityByShareActivityId(sid);
         if(onSale.getData()==null||shareActivity.getData()==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);

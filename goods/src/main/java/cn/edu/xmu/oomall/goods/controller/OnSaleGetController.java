@@ -25,7 +25,7 @@ import java.time.ZonedDateTime;
  **/
 @RestController
 @RefreshScope
-@RequestMapping(produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
 public class OnSaleGetController {
 
     @Autowired
@@ -109,7 +109,7 @@ public class OnSaleGetController {
      * 内部API- 查询特定价格浮动的详情，该方法加入redis
      * @return 所有类型都会返回
      */
-    @GetMapping( "internal/onsales/{id}")
+    @GetMapping( "/internal/onsales/{id}")
     public Object selectFullOnsale(@PathVariable("id")Long id) {
         return Common.decorateReturnObject(onSaleService.selectFullOnsale(id));
     }

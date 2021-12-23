@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.coupon.controller;
 
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
 import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.PageVo;
 import cn.edu.xmu.oomall.coupon.util.CreateObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
@@ -59,14 +60,14 @@ public class CouponControllerTest {
         Mockito.when(goodsService.getOnsaleById(3914L)).thenReturn(OnsaleVo2);
 
         // 返回OnsaleVoList
-//        InternalReturnObject<List<OnsaleVo>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
-//        Mockito.when(goodsService.listOnsale(1550L,1, 100)).thenReturn(onsaleVoList1);
-//        InternalReturnObject<List<OnsaleVo>> onsaleVoList2 = CreateObject.createOnsaleVoList2();
-//        Mockito.when(goodsService.listOnsale(10000L, 1, 100)).thenReturn(onsaleVoList2);
-//        InternalReturnObject<List<OnsaleVo>> onsaleVoList3 = CreateObject.createOnsaleVoList3();
-//        Mockito.when(goodsService.listOnsale(1549L,1, 100)).thenReturn(onsaleVoList3);
-//        InternalReturnObject<List<OnsaleVo>> onsaleVoList4 = CreateObject.createOnsaleVoList4();
-//        Mockito.when(goodsService.listOnsale(1548L, 1, 100)).thenReturn(onsaleVoList4);
+        InternalReturnObject<PageVo<OnsaleVo>> onsaleVoList1 = CreateObject.createOnsaleVoList1();
+        Mockito.when(goodsService.listOnsale(1550L,1, 100)).thenReturn(onsaleVoList1);
+        InternalReturnObject<PageVo<OnsaleVo>> onsaleVoList2 = CreateObject.createOnsaleVoList2();
+        Mockito.when(goodsService.listOnsale(10000L, 1, 100)).thenReturn(onsaleVoList2);
+        InternalReturnObject<PageVo<OnsaleVo>> onsaleVoList3 = CreateObject.createOnsaleVoList3();
+        Mockito.when(goodsService.listOnsale(1549L,1, 100)).thenReturn(onsaleVoList3);
+        InternalReturnObject<PageVo<OnsaleVo>> onsaleVoList4 = CreateObject.createOnsaleVoList4();
+        Mockito.when(goodsService.listOnsale(1548L, 1, 100)).thenReturn(onsaleVoList4);
 
         // 返回OnsaleVo
         InternalReturnObject<OnsaleVo> onsaleVo1 = CreateObject.createOnsaleVo1();
@@ -149,7 +150,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":6,\"name\":\"优惠活动6\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":3,\"name\":\"优惠活动3\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        expectString = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+08:00\",\"endTime\":\"2022-02-19T14:53:49.000+08:00\",\"couponTime\":\"2021-11-01T14:53:49.000+08:00\",\"quantity\":0,\"imageUrl\":null},{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+08:00\",\"endTime\":\"2022-02-19T14:53:49.000+08:00\",\"couponTime\":\"2021-11-01T14:53:49.000+08:00\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49.000+08:00\",\"endTime\":\"2022-02-19T14:53:49.000+08:00\",\"couponTime\":\"2021-11-01T14:53:49.000+08:00\",\"quantity\":0,\"imageUrl\":null},{\"id\":6,\"name\":\"优惠活动6\",\"beginTime\":\"2021-11-11T14:53:49.000+08:00\",\"endTime\":\"2022-02-19T14:53:49.000+08:00\",\"couponTime\":\"2021-11-01T14:53:49.000+08:00\",\"quantity\":0,\"imageUrl\":null},{\"id\":3,\"name\":\"优惠活动3\",\"beginTime\":\"2021-11-11T14:53:49.000+08:00\",\"endTime\":\"2022-02-19T14:53:49.000+08:00\",\"couponTime\":\"2021-11-01T14:53:49.000+08:00\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 正常，走redis
@@ -157,7 +158,7 @@ public class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        expectString = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":6,\"name\":\"优惠活动6\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null},{\"id\":3,\"name\":\"优惠活动3\",\"beginTime\":\"2021-11-11T14:53:49.000+0000\",\"endTime\":\"2022-02-19T14:53:49.000+0000\",\"couponTime\":\"2021-11-01T14:53:49.000+0000\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
+        expectString = "{\"errno\":0,\"data\":{\"total\":0,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+08:00\",\"endTime\":\"2022-02-19T14:53:49.000+08:00\",\"couponTime\":\"2021-11-01T14:53:49.000+08:00\",\"quantity\":0,\"imageUrl\":null},{\"id\":13,\"name\":\"优惠活动13\",\"beginTime\":\"2021-11-11T14:53:49.000+08:00\",\"endTime\":\"2022-02-19T14:53:49.000+08:00\",\"couponTime\":\"2021-11-01T14:53:49.000+08:00\",\"quantity\":0,\"imageUrl\":null},{\"id\":7,\"name\":\"优惠活动7\",\"beginTime\":\"2021-11-11T14:53:49.000+08:00\",\"endTime\":\"2022-02-19T14:53:49.000+08:00\",\"couponTime\":\"2021-11-01T14:53:49.000+08:00\",\"quantity\":0,\"imageUrl\":null},{\"id\":6,\"name\":\"优惠活动6\",\"beginTime\":\"2021-11-11T14:53:49.000+08:00\",\"endTime\":\"2022-02-19T14:53:49.000+08:00\",\"couponTime\":\"2021-11-01T14:53:49.000+08:00\",\"quantity\":0,\"imageUrl\":null},{\"id\":3,\"name\":\"优惠活动3\",\"beginTime\":\"2021-11-11T14:53:49.000+08:00\",\"endTime\":\"2022-02-19T14:53:49.000+08:00\",\"couponTime\":\"2021-11-01T14:53:49.000+08:00\",\"quantity\":0,\"imageUrl\":null}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
     }
@@ -207,7 +208,7 @@ public class CouponControllerTest {
     @Transactional(rollbackFor = Exception.class)
     public void testUpdateCouponActivity() throws Exception {
         // 正常
-        String requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000+0800\",\"endTime\": \"2021-11-11T15:40:50.000+0800\",\"couponTime\": \"2021-11-10T15:40:45.000+0800\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        String requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000+08:00\",\"endTime\": \"2021-11-11T15:40:50.000+08:00\",\"couponTime\": \"2021-11-10T15:40:45.000+08:00\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         String responseString = mvc.perform(put("/shops/1/couponactivities/12").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -216,7 +217,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 字段不合法
-        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-09T15:40:45.000+0800\",\"endTime\": \"2021-11-10T15:40:50.000+0800\",\"couponTime\": \"2021-11-01T15:40:45.000+0800\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-09T15:40:45.000+08:00\",\"endTime\": \"2021-11-10T15:40:50.000+08:00\",\"couponTime\": \"2021-11-01T15:40:45.000+08:00\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         responseString = mvc.perform(put("/shops/1/couponactivities/-3").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -225,7 +226,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 开始时间晚于结束时间
-        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000+0800\",\"endTime\": \"2021-11-10T15:40:50.000+0800\",\"couponTime\": \"2021-11-10T15:40:45.000+0800\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000+08:00\",\"endTime\": \"2021-11-10T15:40:50.000+08:00\",\"couponTime\": \"2021-11-10T15:40:45.000+08:00\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         responseString = mvc.perform(put("/shops/1/couponactivities/12").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -234,7 +235,7 @@ public class CouponControllerTest {
         JSONAssert.assertEquals(expectString, responseString, true);
 
         // 不在草稿态
-        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000+0800\",\"endTime\": \"2021-11-11T15:40:50.000+0800\",\"couponTime\": \"2021-11-10T15:40:45.000+0800\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
+        requestBody = "{\"name\": \"lalala\",\"beginTime\": \"2021-11-11T15:40:45.000+08:00\",\"endTime\": \"2021-11-11T15:40:50.000+08:00\",\"couponTime\": \"2021-11-10T15:40:45.000+08:00\",\"quantity\": 1110,\"quantityType\": 0,\"validTerm\": 0,\"strategy\": \"string\"}";
         responseString = mvc.perform(put("/shops/1/couponactivities/6").header("authorization", adminToken).contentType("application/json;charset=UTF-8").content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
