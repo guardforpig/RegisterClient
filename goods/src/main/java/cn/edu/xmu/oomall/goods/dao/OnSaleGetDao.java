@@ -66,7 +66,7 @@ public class OnSaleGetDao {
         {
             OnSalePoExample onSalePoExample=new OnSalePoExample();
             OnSalePoExample.Criteria cr=onSalePoExample.createCriteria();
-            cr.andProductIdEqualTo(id);
+            cr.andProductIdEqualTo(id).andStateEqualTo((byte)1);
             List<OnSalePo> list=onSalePoMapper.selectByExample(onSalePoExample);
             if(list.size()==0)
             {

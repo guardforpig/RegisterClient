@@ -237,7 +237,7 @@ public class ProductDao {
             String pkey=String.format(PRODUCT_ID,productPo.getId());
             redisUtil.del(key);
             redisUtil.del(pkey);
-//            productDraftPoMapper.deleteByPrimaryKey(id);
+            productDraftPoMapper.deleteByPrimaryKey(id);
             return new ReturnObject((Product) cloneVo(productPo, Product.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -322,21 +322,23 @@ public class ProductDao {
      * @Date 2021/11/12
      */
     public ReturnObject getAllProducts(Long shopId, String barCode, Integer page, Integer pageSize) {
+        try {
+            PageHelper.startPage(page, pageSize);
         ProductPoExample example = new ProductPoExample();
         ProductPoExample.Criteria criteria = example.createCriteria();
-
         if (StringUtils.isNotBlank(barCode)) {
             criteria.andBarcodeEqualTo(barCode);
         }
-        criteria.andShopIdEqualTo(shopId);
-
-        List<ProductPo> productPoList = new ArrayList<>();
-        try {
-            PageHelper.startPage(page, pageSize);
-            if (example.getOredCriteria().size() != 0) {
-                productPoList = productMapper.selectByExample(example);
+        if(shopId!=null)
+        {
+            criteria.andShopIdEqualTo(shopId);
+        }
+            List<ProductPo> productPos = productMapper.selectByExample(example);
+            if(productPos.size()==0)
+            {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            var pageInfo = PageInfo.of(productPoList);
+            PageInfo<ProductPo> pageInfo = PageInfo.of(productPos);
             return Common.getPageRetVo(new ReturnObject(pageInfo), SimpleProductRetVo.class);
         } catch (Exception e) {
             logger.error("selectAllProducts: DataAccessException:" + e.getMessage());
@@ -420,13 +422,12 @@ public class ProductDao {
                 return new ReturnObject(ReturnNo.OK);
             }
         }
-//        productDraftPo= (ProductDraftPo) cloneVo(product, ProductDraftPo.class);
-//        productDraftPo.setProductId(product.getId());
-//        productDraftPo.setId(null);
-//        setPoCreatedFields(productDraftPo,loginUser,loginUsername);
-//        productDraftPoMapper.insert(productDraftPo);
-//        productDraftPo.setProductId(temp);
-        return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+        productDraftPo= (ProductDraftPo) cloneVo(product, ProductDraftPo.class);
+        productDraftPo.setProductId(product.getId());
+        productDraftPo.setId(null);
+        setPoCreatedFields(productDraftPo,loginUser,loginUsername);
+        productDraftPoMapper.insert(productDraftPo);
+        return new ReturnObject(ReturnNo.OK);
         }catch (Exception e){
             logger.error("updateProduct: DataAccessException:" + e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
@@ -566,7 +567,11 @@ public class ProductDao {
     {
         try{
             ProductDraftPo productDraftPo=productDraftPoMapper.selectByPrimaryKey(id);
-            if(!productDraftPo.getShopId().equals(shopId))
+            if(productDraftPo==null)
+            {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            if(productDraftPo.getShopId()!=null&&!productDraftPo.getShopId().equals(shopId))
             {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
             }
