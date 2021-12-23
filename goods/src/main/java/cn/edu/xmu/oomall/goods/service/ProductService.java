@@ -410,6 +410,38 @@ public class ProductService {
         }
         product.setId(id);
         product.setShopId(shopId);
+        if(product.getName()==null&&product1.getName()!=null)
+        {
+            product.setName(product1.getName());
+        }
+        if(product.getWeight()==null&&product1.getWeight()!=null)
+        {
+            product.setWeight(product1.getWeight());
+        }
+        if(product.getSkuSn()==null&&product1.getSkuSn()!=null)
+        {
+            product.setSkuSn(product1.getSkuSn());
+        }
+        if(product.getOriginalPrice()==null&&product1.getOriginalPrice()!=null)
+        {
+            product.setOriginalPrice(product1.getOriginalPrice());
+        }
+        if(product.getCategoryId()==null&&product1.getCategoryId()!=null)
+        {
+            product.setCategoryId(product1.getCategoryId());
+        }
+        if(product.getOriginalPrice()==null&&product1.getOriginalPrice()!=null)
+        {
+            product.setOriginPlace(product1.getOriginPlace());
+        }
+        if(product.getBarcode()==null&&product1.getBarcode()!=null)
+        {
+            product.setBarcode(product1.getBarcode());
+        }
+        if(product.getUnit()==null&&product1.getUnit()!=null)
+        {
+            product.setUnit(product1.getUnit());
+        }
         ReturnObject ret = productDao.addDraftProduct(product,loginUser,loginUsername);
         return ret;
     }
