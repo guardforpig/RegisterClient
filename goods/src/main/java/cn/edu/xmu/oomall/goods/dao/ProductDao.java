@@ -7,7 +7,7 @@ import cn.edu.xmu.oomall.goods.mapper.GoodsPoMapper;
 import cn.edu.xmu.oomall.goods.mapper.OnSalePoMapper;
 import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Goods;
-import cn.edu.xmu.oomall.goods.model.bo.OnSale;
+import cn.edu.xmu.oomall.goods.model.bo.Onsale;
 import cn.edu.xmu.oomall.goods.model.po.*;
 import cn.edu.xmu.oomall.goods.model.vo.*;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -358,7 +358,7 @@ public class ProductDao {
         OnSalePoExample example = new OnSalePoExample();
         OnSalePoExample.Criteria criteria = example.createCriteria();
         criteria.andProductIdEqualTo(id);
-        criteria.andStateEqualTo(OnSale.State.ONLINE.getCode().byteValue());
+        criteria.andStateEqualTo(Onsale.State.ONLINE.getCode().byteValue());
 
         List<OnSalePo> onSalePos = onSaleMapper.selectByExample(example);
         if (onSalePos.size() != 1) {
@@ -528,8 +528,8 @@ public class ProductDao {
         OnSalePoExample.Criteria criteria = onSalePoExample.createCriteria();
         criteria.andBeginTimeGreaterThanOrEqualTo(beginTime);
         criteria.andEndTimeLessThanOrEqualTo(endTime);
-        criteria.andTypeEqualTo(OnSale.Type.SECKILL.getCode().byteValue());
-        criteria.andStateEqualTo(OnSale.State.ONLINE.getCode().byteValue());
+        criteria.andTypeEqualTo(Onsale.Type.SECKILL.getCode().byteValue());
+        criteria.andStateEqualTo(Onsale.State.ONLINE.getCode().byteValue());
 
         try {
             List<OnSalePo> onSalePos = onSaleMapper.selectByExample(onSalePoExample);

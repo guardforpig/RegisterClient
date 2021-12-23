@@ -5,10 +5,14 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.OnSaleGetDao;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
+import cn.edu.xmu.oomall.goods.microservice.ActivityService;
 import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.*;
-import cn.edu.xmu.oomall.goods.model.bo.OnSale;
+import cn.edu.xmu.oomall.goods.microservice.vo.CategoryDetailRetVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.RetShareActivitySpecificInfoVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.goods.model.bo.OnSaleGetBo;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
@@ -49,6 +53,9 @@ public class ProductService {
 
     @Autowired
     private FreightService freightService;
+
+    @Autowired
+    private ActivityService activityService;
 
     @Value("${productservice.webdav.username}")
     private String davUsername;
@@ -210,13 +217,17 @@ public class ProductService {
         if (ret.getCode() != ReturnNo.OK) {
             return ret;
         }
+            OnSalePo onSalePo=null;
         Product product = (Product) ret.getData();
-        OnSalePo onSalePo = productDao.getValidOnSale(productId);
-        if (onSalePo != null) {
-            product.setOnsaleId(onSalePo.getId());
-            product.setPrice(onSalePo.getPrice());
-            product.setQuantity(onSalePo.getQuantity());
+        if (product.getState()== Product.ProductState.ONSHELF.getCode()){
+            onSalePo = productDao.getValidOnSale(productId);
+            if (onSalePo!=null){
+                product.setOnsaleId(onSalePo.getId());
+                product.setPrice(onSalePo.getPrice());
+                product.setQuantity(onSalePo.getQuantity());
+            }
         }
+
         //查找categoryName
         InternalReturnObject object = shopService.getCategoryDetailById(product.getCategoryId());
         if (!object.getErrno().equals(0)) {
@@ -236,6 +247,20 @@ public class ProductService {
                 }
             }
         }
+            if ((onSalePo!=null)&&(onSalePo.getShareActId()!=null)){
+                InternalReturnObject<RetShareActivitySpecificInfoVo> shareActivityByShopIdAndId = activityService.getShareActivityByShopIdAndId(onSalePo.getShopId(), onSalePo.getShareActId());
+                if (shareActivityByShopIdAndId.getErrno()!=0){
+                    return new ReturnObject(shareActivityByShopIdAndId);
+                }
+                RetShareActivitySpecificInfoVo data = shareActivityByShopIdAndId.getData();
+                if (data.getState()==(byte)1){
+                    vo.setShareable(true);
+                }else {
+                    vo.setShareable(false);
+                }
+            }else {
+                vo.setShareable(false);
+            }
         return new ReturnObject(vo);}
         catch (Exception e) {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -385,6 +410,38 @@ public class ProductService {
         }
         product.setId(id);
         product.setShopId(shopId);
+        if(product.getName()==null&&product1.getName()!=null)
+        {
+            product.setName(product1.getName());
+        }
+        if(product.getWeight()==null&&product1.getWeight()!=null)
+        {
+            product.setWeight(product1.getWeight());
+        }
+        if(product.getSkuSn()==null&&product1.getSkuSn()!=null)
+        {
+            product.setSkuSn(product1.getSkuSn());
+        }
+        if(product.getOriginalPrice()==null&&product1.getOriginalPrice()!=null)
+        {
+            product.setOriginalPrice(product1.getOriginalPrice());
+        }
+        if(product.getCategoryId()==null&&product1.getCategoryId()!=null)
+        {
+            product.setCategoryId(product1.getCategoryId());
+        }
+        if(product.getOriginalPrice()==null&&product1.getOriginalPrice()!=null)
+        {
+            product.setOriginPlace(product1.getOriginPlace());
+        }
+        if(product.getBarcode()==null&&product1.getBarcode()!=null)
+        {
+            product.setBarcode(product1.getBarcode());
+        }
+        if(product.getUnit()==null&&product1.getUnit()!=null)
+        {
+            product.setUnit(product1.getUnit());
+        }
         ReturnObject ret = productDao.addDraftProduct(product,loginUser,loginUsername);
         return ret;
     }
@@ -421,7 +478,7 @@ public class ProductService {
     @Transactional(readOnly=true)
     public ReturnObject getShopProductDetails(Long shopId, Long productId, Long loginUser , String loginUsername) {
         ReturnObject ret = productDao.getProductInfo(productId);
-        if (!ret.getCode().equals(ReturnNo.OK)) {
+        if (ret.getCode() != ReturnNo.OK) {
             return ret;
         }
         Product product = (Product) ret.getData();

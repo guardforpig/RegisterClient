@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
-public class OnSale  implements   Serializable {
+public class Onsale implements   Serializable {
 
     private Long id;
     private Long shopId;
@@ -70,7 +70,7 @@ public class OnSale  implements   Serializable {
 
         private static final Map<Integer, Type> TYPE_MAP;
 
-        static { 
+        static {
             TYPE_MAP = new HashMap();
             for (Type enum1 : values()) {
                 TYPE_MAP.put(enum1.code, enum1);

@@ -91,7 +91,7 @@ public class OnSaleDao {
             Byte s1 = cntState.getCode();
             cr.andStateEqualTo(s1);
 
-            Byte s2 = finalState.getCode();
+            Byte s2 = finalState.getCode().byteValue();
             List<OnSalePo> pos = onSalePoMapper.selectByExample(oe);
 
             for (OnSalePo po : pos) {

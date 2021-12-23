@@ -11,8 +11,8 @@ public enum ShareActivityStatesBo {
      * ONLINE活动在上线状态
      */
     DRAFT((byte)0,"草稿"),
-    OFFLINE((byte)1,"下线"),
-    ONLINE((byte)2, "上线");
+    ONLINE((byte)1, "上线"),
+    OFFLINE((byte)2,"下线");
 
     private Byte code;
     private String value;

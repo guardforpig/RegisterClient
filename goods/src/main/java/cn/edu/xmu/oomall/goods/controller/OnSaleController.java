@@ -3,7 +3,7 @@ package cn.edu.xmu.oomall.goods.controller;
 
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.oomall.goods.model.bo.OnSale;
+import cn.edu.xmu.oomall.goods.model.bo.Onsale;
 import cn.edu.xmu.oomall.goods.model.vo.*;
 import cn.edu.xmu.oomall.goods.service.OnsaleService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
@@ -61,8 +61,8 @@ public class OnSaleController {
         }
 
         // 判断是否秒杀或普通
-        if (!newOnSaleVo.getType().equals(OnSale.Type.NOACTIVITY.getCode().byteValue())
-                && !newOnSaleVo.getType().equals(OnSale.Type.SECKILL.getCode().byteValue())) {
+        if (!newOnSaleVo.getType().equals(Onsale.Type.NOACTIVITY.getCode().byteValue())
+                && !newOnSaleVo.getType().equals(Onsale.Type.SECKILL.getCode().byteValue())) {
             ReturnObject<Object> returnObject2 = new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE, "限定处理普通或秒杀。");
             return decorateReturnObject(returnObject2);
         }
@@ -78,7 +78,7 @@ public class OnSaleController {
             return decorateReturnObject(returnObject1);
         }
 
-        httpServletResponse.setStatus(HttpStatus.CREATED.value());
+//        httpServletResponse.setStatus(HttpStatus.CREATED.value());
 
         return decorateReturnObject(getRetVo(returnObject1, NewOnSaleRetVo.class));
 
@@ -101,7 +101,7 @@ public class OnSaleController {
     @PutMapping("shops/{shopId}/onsales/{id}/online")
     public Object onlineOnSaleNormalSeckill(@PathVariable Long shopId, @PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
-        ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSale(shopId, id, loginUserId, loginUserName, OnSale.State.ONLINE);
+        ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSale(shopId, id, loginUserId, loginUserName, Onsale.State.ONLINE);
         return decorateReturnObject(returnObject1);
     }
 
@@ -121,7 +121,7 @@ public class OnSaleController {
     public Object offlineOnSaleNormalSeckill(@PathVariable Long shopId, @PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
 
-        ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSale(shopId, id, loginUserId, loginUserName, OnSale.State.OFFLINE);
+        ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSale(shopId, id, loginUserId, loginUserName, Onsale.State.OFFLINE);
         return decorateReturnObject(returnObject1);
     }
 
@@ -139,9 +139,10 @@ public class OnSaleController {
     @PutMapping("internal/shops/{did}/activities/{id}/onsales/online")
     public Object onlineOnSaleGroupPre(@PathVariable Long did, @PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
-            ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(did, id, loginUserId, loginUserName, OnSale.State.DRAFT, OnSale.State.ONLINE);
-            return decorateReturnObject(returnObject1);
-        }
+
+        ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(id, loginUserId, loginUserName, Onsale.State.DRAFT, Onsale.State.ONLINE);
+        return decorateReturnObject(returnObject1);
+    }
 
     @ApiOperation(value = "管理员下线团购和预售活动的商品价格浮动")
     @ApiImplicitParams({
@@ -156,7 +157,7 @@ public class OnSaleController {
     @PutMapping("internal/shops/{did}/activities/{id}/onsales/offline")
     public Object offlineOnSaleGroupPre(@PathVariable Long did, @PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
-        ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(did, id, loginUserId, loginUserName, OnSale.State.ONLINE, OnSale.State.OFFLINE);
+        ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(id, loginUserId, loginUserName, Onsale.State.ONLINE, Onsale.State.OFFLINE);
         return decorateReturnObject(returnObject1);
     }
 
@@ -252,7 +253,7 @@ public class OnSaleController {
             return decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME, "开始时间晚于结束时间。"));
         }
 
-        OnSale bo = cloneVo(onSale, OnSale.class);
+        Onsale bo = cloneVo(onSale, Onsale.class);
         bo.setId(id);
         ReturnObject returnObject1 = onsaleService.updateOnSale(bo, loginUserId, loginUserName);
         return decorateReturnObject(returnObject1);
@@ -269,24 +270,40 @@ public class OnSaleController {
     public Object modifyOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName,
                                      BindingResult bindingResult) {
 
-        System.out.println("here");
-        Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
-        if (null != returnObject) {
-            return returnObject;
-        }
-
-        // 判断开始时间是否比结束时间晚
-        if (onSale.getBeginTime() != null && onSale.getEndTime() != null && onSale.getBeginTime().isAfter(onSale.getEndTime())) {
-            return decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME, "开始时间晚于结束时间。"));
-        }
-
-        OnSale bo = cloneVo(onSale, OnSale.class);
-        bo.setId(id);
+            Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
+            if (null != returnObject) {
+                return returnObject;
+            }
+            // 判断开始时间是否比结束时间晚
+            if(onSale.getBeginTime()!=null&&onSale.getEndTime()!=null){
+                if (onSale.getBeginTime().isAfter(onSale.getEndTime())) {
+                    return decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME, "开始时间晚于结束时间。"));
+                }
+            }
+            Onsale bo = cloneVo(onSale, Onsale.class);
+            bo.setId(id);
 
         ReturnObject returnObject1 = onsaleService.updateOnSaleNorSec(bo, shopId, loginUserId, loginUserName);
         return decorateReturnObject(returnObject1);
     }
 
+    /**
+     * lxc 修改onsale的share id
+     * @param id
+     * @param userId
+     * @param userName
+     * @param modifyOnSaleVo
+     * @return
+     */
+    @Audit(departName = "shops")
+    @PutMapping("/internal/onsales/{id}")
+    public Object modifyOnSaleShareActId(@PathVariable Long id,@LoginUser Long userId,@LoginName String userName,@RequestBody ModifyOnSaleVo modifyOnSaleVo){
+        if (modifyOnSaleVo.getShareActId()==null){
+            return  new ReturnObject<>(ReturnNo.FIELD_NOTVALID);
+        }
+        ReturnObject returnObject = onsaleService.modifyOnSaleShareActId(id, modifyOnSaleVo, userId, userName);
+        return decorateReturnObject(returnObject);
+    }
 
     @Audit(departName = "shops")
     @PutMapping("internal/shops/{did}/onsales/{id}/decr")
