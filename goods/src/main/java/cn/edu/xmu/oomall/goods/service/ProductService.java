@@ -211,11 +211,12 @@ public class ProductService {
             return ret;
         }
         Product product = (Product) ret.getData();
-//        OnSalePo onSalePo = productDao.getValidOnSale(productId);
-//        if(onSalePo!=null){
-//        product.setOnSaleId(onSalePo.getId());
-//        product.setPrice(onSalePo.getPrice());
-//        product.setQuantity(onSalePo.getQuantity());}
+        OnSalePo onSalePo = productDao.getValidOnSale(productId);
+        if (onSalePo != null) {
+            product.setOnsaleId(onSalePo.getId());
+            product.setPrice(onSalePo.getPrice());
+            product.setQuantity(onSalePo.getQuantity());
+        }
         //查找categoryName
         InternalReturnObject object = shopService.getCategoryDetailById(product.getCategoryId());
         if (!object.getErrno().equals(0)) {

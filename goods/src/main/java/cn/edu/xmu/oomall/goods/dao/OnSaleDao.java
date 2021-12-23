@@ -88,10 +88,10 @@ public class OnSaleDao {
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andActivityIdEqualTo(actId);
             cr.andShopIdEqualTo(shopId);
-            Byte s1 = cntState.getCode().byteValue();
+            Byte s1 = cntState.getCode();
             cr.andStateEqualTo(s1);
 
-            Byte s2 = finalState.getCode().byteValue();
+            Byte s2 = finalState.getCode();
             List<OnSalePo> pos = onSalePoMapper.selectByExample(oe);
 
             for (OnSalePo po : pos) {

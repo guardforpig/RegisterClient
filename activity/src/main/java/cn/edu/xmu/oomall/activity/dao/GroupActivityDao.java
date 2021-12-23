@@ -66,6 +66,7 @@ public class GroupActivityDao {
      * @return
      */
     public ReturnObject deleteGroupon(long id) {
+        redisUtil.del(String.format(GROUPON_KEY, id));
         ReturnObject<Object> retObj = null;
         int ret;
         try {
