@@ -304,7 +304,6 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @GetMapping(value="categories/{id}/products")
-    @Audit(departName = "shops")
     public Object getProductOfCategory(@PathVariable("id") Long id,
                                        @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
