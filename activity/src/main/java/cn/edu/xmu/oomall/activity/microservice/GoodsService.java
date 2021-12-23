@@ -23,7 +23,7 @@ import java.time.ZonedDateTime;
  * @author Gao Yanfeng
  * @date 2021/11/13
  */
-@FeignClient(name = "goods-service",configuration= OpenFeignConfig.class)
+@FeignClient(name = "goods-service",configuration = OpenFeignConfig.class)
 public interface GoodsService {
     @GetMapping("/internal/onsales")
     InternalReturnObject<PageInfoVo<SimpleOnSaleInfoVo>> getOnSales(@RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
@@ -31,6 +31,7 @@ public interface GoodsService {
                                                                     @RequestParam(value = "endTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime endTime,
                                                                     @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                                                     @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize);
+
 
     @PutMapping("/internal/shops/{did}/activities/{id}/onsales/online")
     InternalReturnObject onlineOnsale(@PathVariable(value="did") Long shopId, @PathVariable(value="id") Long activityId);
@@ -63,11 +64,8 @@ public interface GoodsService {
     InternalReturnObject<SimpleOnSaleInfoVo> createNewOnSale(@PathVariable Long id, @Validated @RequestBody OnSaleCreatedVo newOnSaleAllVo,
                                                              @PathVariable Long did)  ;
 
-    @PutMapping("/shops/{shopId}/onsales/{id}")
-    InternalReturnObject modifyOnSaleNorSec(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody ModifyOnSaleVo onSale);
-
-//    @GetMapping("/internal/onsales/{id}")
-//    InternalReturnObject selectFullOnsale(@PathVariable("id")Long id);
+    @PutMapping("/internal/onsales/{id}")
+    InternalReturnObject<SimpleOnSaleInfoVo> modifyOnSaleShareActId(@PathVariable Long id, @RequestBody ModifyOnSaleVo onSale);
 
     @PostMapping("/internal/onSales/{id}/shareActivities/{sid}")
     ReturnObject updateAddOnSaleShareActId(@PathVariable("id") Long id,@PathVariable("sid") Long sid);
@@ -95,9 +93,21 @@ public interface GoodsService {
                                                                        @RequestParam("page") Integer page,
                                                                        @RequestParam("pageSize") Integer pageSize);
 
-    @GetMapping(value = "/products")
-    InternalReturnObject<PageInfoVo<SimpleProductRetVo>> getProducts(@RequestParam(value = "shopId",required = false) Long shopId,
-                              @RequestParam(value = "barCode",required = false) String barCode,
-                              @RequestParam(required = false) Integer page,
-                              @RequestParam(required = false) Integer pageSize);
+    /**
+     * lxc
+     * @param shopId
+     * @param productId
+     * @param beginTime
+     * @param endTime
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @GetMapping("/internal/onsales")
+    InternalReturnObject getonsales(@RequestParam(required = false) Long shopId, @RequestParam(required = false) Long productId,
+                                                                    @RequestParam(value = "beginTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime beginTime,
+                                                                    @RequestParam(value = "endTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime endTime,
+                                                                    @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
+                                                                    @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize);
+
 }

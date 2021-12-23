@@ -228,12 +228,13 @@ public class GroupOnActivityService {
 
     /**
      * 增加参与团购的商品
-     * @param id 修改的团购对象id
      * @param shopId 店铺id
+     * @param id 修改的团购对象id
+     * @param vo
      * @return 修改后是否成功
      */
     @Transactional(rollbackFor = Exception.class)
-    public ReturnObject addOnsaleToGroupOn(long shopId, long pid, long id,long loginUser,String loginUsername)
+    public ReturnObject addOnsaleToGroupOn(long shopId, long pid, long id, GroupOnOnsalePostVo vo, long loginUser, String loginUsername)
     {
         ReturnObject<GroupOnActivity> obj = groupActivityDao.getGroupOnActivity(id);
         if(!obj.getCode().equals(ReturnNo.OK))
@@ -254,15 +255,15 @@ public class GroupOnActivityService {
         if(beginTime.isAfter(nowTime)) {
             beginTime = nowTime;
         }
-        simpleOnSaleInfoVo.setPrice(5L);
-        simpleOnSaleInfoVo.setMaxQuantity(100);
-        simpleOnSaleInfoVo.setQuantity(5);
-        simpleOnSaleInfoVo.setNumKey(2);
+        simpleOnSaleInfoVo.setPrice(vo.getPrice());
+        simpleOnSaleInfoVo.setMaxQuantity(vo.getMaxQuantity());
+        simpleOnSaleInfoVo.setQuantity(vo.getQuantity());
+        simpleOnSaleInfoVo.setNumKey(vo.getNumKey());
         simpleOnSaleInfoVo.setEndTime(endTime.atZone(ZoneId.systemDefault()));
         simpleOnSaleInfoVo.setBeginTime(beginTime.atZone(ZoneId.systemDefault()));
         simpleOnSaleInfoVo.setActivityId(id);
-        simpleOnSaleInfoVo.setType((byte)2);
-        InternalReturnObject result = goodsService.createNewOnSale(pid,simpleOnSaleInfoVo,shopId);
+        simpleOnSaleInfoVo.setType((byte)0);
+        InternalReturnObject result = goodsService.createNewOnSale(pid, simpleOnSaleInfoVo, shopId);
         if(result.getErrno()!=0){
             obj=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
         }else{

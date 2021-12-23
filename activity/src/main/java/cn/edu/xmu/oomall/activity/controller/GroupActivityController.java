@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.activity.controller;
 
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityVo;
+import cn.edu.xmu.oomall.activity.model.vo.GroupOnOnsalePostVo;
 import cn.edu.xmu.oomall.activity.service.GroupOnActivityService;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ResponseUtil;
@@ -47,9 +48,10 @@ public class GroupActivityController {
     @Audit(departName = "shops")
     @PostMapping(value="/shops/{shopId}/products/{pid}/groupons/{id}/onsales")
     public Object addGrouponProduct(@PathVariable("shopId") long shopId, @PathVariable("pid") long pid,
-                                    @PathVariable("id") long id, @LoginUser Long loginUser, @LoginName String loginUsername)
+                                    @PathVariable("id") long id, @LoginUser Long loginUser, @LoginName String loginUsername,
+                                    @RequestBody GroupOnOnsalePostVo vo)
     {
-        ReturnObject<Object> returnObject = groupOnActivityService.addOnsaleToGroupOn(shopId,pid,id,loginUser,loginUsername);
+        ReturnObject<Object> returnObject = groupOnActivityService.addOnsaleToGroupOn(shopId,pid,id,vo,loginUser,loginUsername);
         return Common.decorateReturnObject(returnObject);
     }
 
@@ -103,8 +105,6 @@ public class GroupActivityController {
     @Audit(departName = "shops")
     @PutMapping("/shops/{shopId}/groupons/{id}/online")
     public Object onlineGroupOnActivity( @PathVariable("shopId") long shopId,@PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername){
-        if(shopId!=0){
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
         ReturnObject<Object> returnObject = groupOnActivityService.onlineGroupOnActivity( id, shopId,loginUser,loginUsername);
         return Common.decorateReturnObject(returnObject);
     }
@@ -119,8 +119,6 @@ public class GroupActivityController {
     @Audit(departName = "shops")
     @PutMapping("/shops/{shopId}/groupons/{id}/offline")
     public Object offlineGroupOnActivity( @PathVariable("shopId") long shopId,@PathVariable("id") long id,@LoginUser Long loginUser,@LoginName String loginUsername){
-        if(shopId!=0){
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE,"非管理员无权操作"));        }
         ReturnObject<Object> returnObject = groupOnActivityService.offlineGroupOnActivity( id, shopId,loginUser,loginUsername);
         return Common.decorateReturnObject(returnObject);
     }

@@ -102,7 +102,7 @@ public class CouponActivityControllerTest {
         ZonedDateTime couponTime = ZonedDateTime.parse("2021-11-10T11:00:00.000+08:00");
         ZonedDateTime beginTime = ZonedDateTime.parse("2021-11-10T12:00:00.000+08:00");
         ZonedDateTime endTime = ZonedDateTime.parse("2021-11-10T17:00:00.000+08:00");
-        CouponActivityVo couponActivityVo = new CouponActivityVo("双11大惠够", 100, (byte) 0, (byte) 0,couponTime,beginTime,endTime, "json");
+        CouponActivityVo couponActivityVo = new CouponActivityVo("双11大惠够", 100, (byte) 0, (byte) 0,couponTime,beginTime,endTime, "json",1);
         String json = JacksonUtil.toJson(couponActivityVo);
         String responseString;
         assert json != null;
@@ -121,7 +121,7 @@ public class CouponActivityControllerTest {
         ZonedDateTime couponTime1 = ZonedDateTime.parse("2021-11-10T12:00:00.000+08:00");
         ZonedDateTime beginTime1 = ZonedDateTime.parse("2021-11-10T11:00:00.000+08:00");
         ZonedDateTime endTime1 = ZonedDateTime.parse("2021-11-10T17:00:00.000+08:00");
-        CouponActivityVo couponActivityVo1 = new CouponActivityVo("双11大惠够", 100, (byte) 0, (byte) 0,couponTime1,beginTime1,endTime1, "json");
+        CouponActivityVo couponActivityVo1 = new CouponActivityVo("双11大惠够", 100, (byte) 0, (byte) 0,couponTime1,beginTime1,endTime1, "json", 1);
         String json1 = JacksonUtil.toJson(couponActivityVo1);
         String responseString1;
         assert json1 != null;
@@ -139,7 +139,7 @@ public class CouponActivityControllerTest {
         ZonedDateTime couponTime2 = ZonedDateTime.parse("2021-11-10T10:00:00.000+08:00");
         ZonedDateTime beginTime2 = ZonedDateTime.parse("2021-11-10T17:00:00.000+08:00");
         ZonedDateTime endTime2 = ZonedDateTime.parse("2021-11-10T13:00:00.000+08:00");
-        CouponActivityVo couponActivityVo2 = new CouponActivityVo("双11大惠够", 100, (byte) 0, (byte) 0,couponTime2,beginTime2,endTime2, "json");
+        CouponActivityVo couponActivityVo2 = new CouponActivityVo("双11大惠够", 100, (byte) 0, (byte) 0,couponTime2,beginTime2,endTime2, "json",1);
         String json2 = JacksonUtil.toJson(couponActivityVo2);
         String responseString2;
         assert json2 != null;
