@@ -4,6 +4,7 @@ import cn.edu.xmu.oomall.activity.microservice.vo.*;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageVo;
+import cn.edu.xmu.oomall.core.config.OpenFeignConfig;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,10 +17,10 @@ import java.time.LocalDateTime;
  * @author Gao Yanfeng
  * @date 2021/11/13
  */
-@FeignClient(name = "goods-service")
+@FeignClient(name = "goods-service",configuration = OpenFeignConfig.class)
 public interface GoodsService {
     @GetMapping("/internal/onsales")
-    InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,
+    InternalReturnObject getOnsales(@RequestParam("shopId") Long shopId,
                                     @RequestParam("productId")Long productId,
                                     @RequestParam("beginTime") LocalDateTime beginTime,
                                     @RequestParam("endTime")LocalDateTime endTime,
@@ -58,8 +59,8 @@ public interface GoodsService {
                                                      @PathVariable("id") Long id,
                                                      @RequestBody OnSaleCreatedVo onSaleCreatedVo);
 
-    @PutMapping("/shops/{shopId}/onsales/{id}")
-    InternalReturnObject<SimpleOnSaleInfoVo> modifyOnSaleShareActId(@PathVariable Long shopId, @PathVariable Long id, @RequestBody ModifyOnSaleVo onSale);
+    @PutMapping("/internal/onsales/{id}")
+    InternalReturnObject<SimpleOnSaleInfoVo> modifyOnSaleShareActId(@PathVariable Long id, @RequestBody ModifyOnSaleVo onSale);
 
 
     /**

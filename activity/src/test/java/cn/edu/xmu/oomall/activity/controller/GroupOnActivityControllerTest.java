@@ -97,7 +97,7 @@ public class GroupOnActivityControllerTest {
     @Test
     @Transactional
     public void getOnlineGroupOnActivitiesTest1() throws Exception {
-        Mockito.when(goodsService.getOnSales(null, 1578L, null, null, 1, 10)).thenReturn(getOnsSlesOfProductRet1);
+        Mockito.when(goodsService.getOnsales(null, 1578L, null, null, 1, 10)).thenReturn(getOnsSlesOfProductRet1);
 
         this.mvc.perform(get("/groupons")
                 .header("authorization", adminToken)
@@ -365,14 +365,14 @@ public class GroupOnActivityControllerTest {
     }
 
     /**
-     * 管理员查询商铺的所有状态团购活动（getOnSalesOfProduct出错）
+     * 管理员查询商铺的所有状态团购活动（getOnsalesOfProduct出错）
      *
      * @throws Exception
      */
     @Test
     @Transactional
     public void getOnlineGroupOnActivitiesTest2() throws Exception {
-        Mockito.when(goodsService.getOnSales(null, 1578L, null, null, 1, 10)).thenReturn(getOnsSlesOfProductRet2);
+        Mockito.when(goodsService.getOnsales(null, 1578L, null, null, 1, 10)).thenReturn(getOnsSlesOfProductRet2);
 
         this.mvc.perform(get("/groupons")
                 .header("authorization", adminToken)

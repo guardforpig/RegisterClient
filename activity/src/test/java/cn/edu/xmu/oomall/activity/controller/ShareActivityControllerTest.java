@@ -10,10 +10,10 @@ import cn.edu.xmu.oomall.activity.model.vo.ShareActivityVo;
 import cn.edu.xmu.oomall.activity.model.vo.StrategyVo;
 import cn.edu.xmu.oomall.activity.util.CreateObject;
 import cn.edu.xmu.oomall.core.util.JacksonUtil;
+import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.JwtHelper;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
-import cn.edu.xmu.privilegegateway.annotation.util.ReturnNo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -47,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest(classes = ActivityApplication.class)
 @AutoConfigureMockMvc
-@Rollback(value = true)
+@Rollback
 @Transactional
 public class ShareActivityControllerTest {
 
@@ -73,11 +73,11 @@ public class ShareActivityControllerTest {
         //生成一个 onsale对象
         InternalReturnObject<Map<String, Object>> onSaleInfoDTO = CreateObject.createOnSaleInfoDTO(1L);
         InternalReturnObject<Map<String, Object>> onSaleInfoDTO1 = CreateObject.createOnSaleInfoDTO(-1L);
-        Mockito.when(goodsService.getOnSales(2L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
-        Mockito.when(goodsService.getOnSales(null, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
-        Mockito.when(goodsService.getOnSales(1L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
-        Mockito.when(goodsService.getOnSales(2L, -1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
-        Mockito.when(goodsService.getOnSales(11111L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
+        Mockito.when(goodsService.getOnsales(2L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getOnsales(null, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getOnsales(1L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO);
+        Mockito.when(goodsService.getOnsales(2L, -1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
+        Mockito.when(goodsService.getOnsales(11111L, 1L, null, null, 1, 10)).thenReturn(onSaleInfoDTO1);
         //生成一个shop对象
         InternalReturnObject<SimpleShopVo> shopInfoDTO = CreateObject.createShopInfoDTO(1L);
         InternalReturnObject<SimpleShopVo> shopInfoDTO2 = CreateObject.createShopInfoDTO(2L);
@@ -106,7 +106,7 @@ public class ShareActivityControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString = "{\"errno\":0,\"data\":[{\"code\":0,\"name\":\"草稿\"},{\"code\":1,\"name\":\"下线\"},{\"code\":2,\"name\":\"上线\"}],\"errmsg\":\"成功\"}";
+        String expectString = "{\"errno\":0,\"data\":[{\"code\":0,\"name\":\"草稿\"},{\"code\":1,\"name\":\"上线\"},{\"code\":2,\"name\":\"下线\"}],\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
     }
 
@@ -246,7 +246,7 @@ public class ShareActivityControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"分享活动2\"},{\"id\":3,\"name\":\"分享活动3\"}]},\"errmsg\":\"成功\"}";
+        String expectString = "{\"errno\":0,\"data\":{\"total\":7,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"name\":\"分享活动1\"},{\"id\":5,\"name\":\"分享活动5\"},{\"id\":6,\"name\":\"分享活动6\"},{\"id\":7,\"name\":\"分享活动7\"},{\"id\":8,\"name\":\"分享活动8\"},{\"id\":9,\"name\":\"分享活动9\"},{\"id\":10,\"name\":\"分享活动10\"}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString, responseString, true);
 
         //有shopId
@@ -262,7 +262,7 @@ public class ShareActivityControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
-        String expectString2 = "{\"errno\":0,\"data\":{\"total\":2,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":2,\"name\":\"分享活动2\"},{\"id\":3,\"name\":\"分享活动3\"}]},\"errmsg\":\"成功\"}";
+        String expectString2 = "{\"errno\":0,\"data\":{\"total\":1,\"pages\":1,\"pageSize\":10,\"page\":1,\"list\":[{\"id\":1,\"name\":\"分享活动1\"}]},\"errmsg\":\"成功\"}";
         JSONAssert.assertEquals(expectString2, responseString2, true);
 
         //都合规
@@ -361,7 +361,7 @@ public class ShareActivityControllerTest {
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
-        Mockito.when(goodsService.modifyOnSaleShareActId(1L,1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject(ReturnNo.STATENOTALLOW.getCode(),ReturnNo.STATENOTALLOW.getMessage()));
+        Mockito.when(goodsService.modifyOnSaleShareActId(1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject(ReturnNo.STATENOTALLOW.getCode(),ReturnNo.STATENOTALLOW.getMessage()));
         String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -381,7 +381,7 @@ public class ShareActivityControllerTest {
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
-        Mockito.when(goodsService.modifyOnSaleShareActId(1L,2L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
+        Mockito.when(goodsService.modifyOnSaleShareActId(2L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
         String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/2").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -401,7 +401,7 @@ public class ShareActivityControllerTest {
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
-        Mockito.when(goodsService.modifyOnSaleShareActId(1L,-1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
+        Mockito.when(goodsService.modifyOnSaleShareActId(-1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
         String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/-1").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -421,7 +421,7 @@ public class ShareActivityControllerTest {
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
-        Mockito.when(goodsService.modifyOnSaleShareActId(1L,1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
+        Mockito.when(goodsService.modifyOnSaleShareActId(1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
         String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/1").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -441,7 +441,7 @@ public class ShareActivityControllerTest {
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(4L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
-        Mockito.when(goodsService.modifyOnSaleShareActId(1L,1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject());
+        Mockito.when(goodsService.modifyOnSaleShareActId(1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject());
         String responseString=this.mvc.perform(post("/shops/1/onSale/1/shareActivities/4")
                         .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
@@ -462,7 +462,7 @@ public class ShareActivityControllerTest {
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
-        Mockito.when(goodsService.modifyOnSaleShareActId(1L,-1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject());
+        Mockito.when(goodsService.modifyOnSaleShareActId(-1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject());
         String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/11111111")
                         .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().is4xxClientError())
@@ -483,7 +483,7 @@ public class ShareActivityControllerTest {
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(-1L);
         Mockito.when(goodsService.getOnSaleById(1L)).thenReturn(new InternalReturnObject<>(onSale));
-        Mockito.when(goodsService.modifyOnSaleShareActId(1L,1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
+        Mockito.when(goodsService.modifyOnSaleShareActId(1L,modifyOnSaleVo)).thenReturn(new InternalReturnObject<>());
         String responseString=this.mvc.perform(delete("/shops/1/onSale/1/shareActivities/4").header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))

@@ -131,7 +131,7 @@ public class GroupOnService {
         int pages = -1;
         var list = new ArrayList<Long>();
         do {
-            InternalReturnObject<PageInfoVo<SimpleOnSaleVo>> onSalesListRet = goodsService.getOnSales(null, productId, null, null, page, 10);
+            InternalReturnObject<PageInfoVo<SimpleOnSaleVo>> onSalesListRet = goodsService.getOnsales(null, productId, null, null, page, 10);
             if (!onSalesListRet.getErrno().equals(ReturnNo.OK.getCode())) {
                 return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, onSalesListRet.getErrmsg());
             }

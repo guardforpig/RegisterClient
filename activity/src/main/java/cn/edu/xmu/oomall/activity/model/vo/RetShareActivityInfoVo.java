@@ -28,7 +28,7 @@ public class RetShareActivityInfoVo implements VoObject, Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
     private ZonedDateTime endTime;
     private List<StrategyVo> strategy;
-
+    private Byte state;
     @Override
     public Object createVo() {
         return this;

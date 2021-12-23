@@ -40,7 +40,6 @@ public class ShareActivityDao {
     private long shareActivityExpireTime;
 
     private final static String SHARE_BY_ID="shareactivivybyid_%d";
-    private final static String SHARE_BY_ID_AND_SHOP_ID="shareactivivybyid_%d_shop_%d";
 
     /**
      * 显示分享活动列表
@@ -154,7 +153,7 @@ public class ShareActivityDao {
      * @return
      */
     public ReturnObject getShareActivityByShopIdAndId(Long shopId, Long id) {
-        String key = String.format(SHARE_BY_ID_AND_SHOP_ID,id,shopId);
+        String key = String.format(SHARE_BY_ID,id);
         try {
             ShareActivityBo shareActivityBo = (ShareActivityBo) redisUtil.get(key);
             if (shareActivityBo != null) {
@@ -219,6 +218,7 @@ public class ShareActivityDao {
         if(ret == 0){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }else{
+            redisUtil.del(String.format(SHARE_BY_ID,shareActivityPo.getId()));
             return new ReturnObject(ReturnNo.OK);
         }
     }
@@ -240,6 +240,7 @@ public class ShareActivityDao {
         if(ret==0){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }else{
+            redisUtil.del(String.format(SHARE_BY_ID,id));
             return new ReturnObject(ReturnNo.OK);
         }
     }

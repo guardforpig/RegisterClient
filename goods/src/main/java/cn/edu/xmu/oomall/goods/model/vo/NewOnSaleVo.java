@@ -1,17 +1,12 @@
 package cn.edu.xmu.oomall.goods.model.vo;
 
-import cn.edu.xmu.oomall.goods.constant.Constants;
-import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * @author yujie lin

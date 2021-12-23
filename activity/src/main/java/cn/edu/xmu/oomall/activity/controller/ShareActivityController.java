@@ -105,7 +105,7 @@ public class ShareActivityController {
             return obj;
         }
         if (shareActivityVo.getBeginTime().isAfter(shareActivityVo.getEndTime())) {
-            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.FIELD_NOTVALID, "开始时间不得早于结束时间"));
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME, "开始时间不得早于结束时间"));
         }
         ReturnObject returnObject = shareActivityService.addShareAct(createName, createId, shopId, shareActivityVo);
         return Common.decorateReturnObject(returnObject);
@@ -130,12 +130,6 @@ public class ShareActivityController {
                                    @RequestParam(name = "endTime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endTime,
                                    @RequestParam(name = "page", required = false) Integer page,
                                    @RequestParam(name = "pageSize", required = false) Integer pageSize) {
-        if (shopId != null && shopId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "shopId错误"));
-        }
-        if (productId != null && productId <= 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID, "productId错误"));
-        }
         if (beginTime != null && endTime != null) {
             if (beginTime.isAfter(endTime)) {
                 return new ReturnObject<>(ReturnNo.LATE_BEGINTIME);
@@ -178,6 +172,17 @@ public class ShareActivityController {
         return Common.decorateReturnObject(shareActivityService.getShareActivityByShopIdAndId(shopId, id));
     }
 
+    /**
+     * lxc
+     * @param shopId
+     * @param id
+     * @return
+     */
+    @GetMapping("/internal/shops/{shopId}/shareactivities/{id}")
+    public Object getshare(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
+        return Common.decorateReturnObject(shareActivityService.getShareActivityByShopIdAndId(shopId, id));
+    }
+
     @ApiOperation(value = "在已有销售上增加分享")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization ", value = "token", required = true, dataType = "String", paramType = "header"),
@@ -192,10 +197,15 @@ public class ShareActivityController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @Audit(departName = "shops")
-    @PostMapping("/shops/{shopId}/onSale/{id}/shareActivities/{sid}")
+    @PostMapping("/shops/{shopId}/onsales/{id}/shareactivities/{sid}")
     public Object addShareActivityOnOnSale(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @PathVariable("sid") Long sid, @LoginUser Long loginUser, @LoginName String loginUsername) {
-        ReturnObject ret = shareActivityService.addShareActivityOnOnSale(shopId, id, sid, loginUser, loginUsername);
-        return Common.decorateReturnObject(ret);
+        try {
+            ReturnObject ret = shareActivityService.addShareActivityOnOnSale(shopId, id, sid, loginUser, loginUsername);
+            return Common.decorateReturnObject(ret);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return new ReturnObject<>(e.getMessage());
+        }
     }
 
     @ApiOperation(value = "取消已有销售上的分享")
@@ -211,7 +221,7 @@ public class ShareActivityController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @Audit(departName = "shops")
-    @DeleteMapping("/shops/{shopId}/onSale/{id}/shareActivities/{sid}")
+    @DeleteMapping("/shops/{shopId}/onsales/{id}/shareactivities/{sid}")
     public Object deleteShareActivityOnOnSale(@PathVariable("shopId") Long shopId,
                                               @PathVariable("id") Long id,
                                               @PathVariable("sid") Long sid,
@@ -236,12 +246,22 @@ public class ShareActivityController {
     })
     @Audit(departName = "shops")
     @PutMapping("/shops/{shopId}/shareactivities/{id}")
-    public Object modifyShareActivity(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @RequestBody ShareActivityVo shareActivityVo, @LoginUser Long loginUser, @LoginName String loginUsername) {
-        if (shareActivityVo.getBeginTime().compareTo(shareActivityVo.getEndTime()) > 0) {
-            return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME));
+    public Object modifyShareActivity(@PathVariable("shopId") Long shopId,
+                                      @PathVariable("id") Long id,
+                                      @RequestBody ShareActivityVo shareActivityVo, @LoginUser Long loginUser, @LoginName String loginUsername) {
+        try {
+            if (shareActivityVo.getBeginTime()!=null&&shareActivityVo.getEndTime()!=null){
+                if (shareActivityVo.getBeginTime().compareTo(shareActivityVo.getEndTime()) > 0) {
+                    return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME));
+                }
+            }
+            ReturnObject ret = shareActivityService.modifyShareActivity(shopId,id, shareActivityVo, loginUser, loginUsername);
+            return Common.decorateReturnObject(ret);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return new ReturnObject<>(e.getMessage());
         }
-        ReturnObject ret = shareActivityService.modifyShareActivity(id, shareActivityVo, loginUser, loginUsername);
-        return Common.decorateReturnObject(ret);
+
     }
 
     @ApiOperation(value = "删除草稿状态的分享活动")
@@ -259,8 +279,14 @@ public class ShareActivityController {
     @Audit(departName = "shops")
     @DeleteMapping("/shops/{shopId}/shareactivities/{id}")
     public Object deleteShareActivity(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @LoginUser Long loginUser, @LoginName String loginUsername) {
-        ReturnObject ret = shareActivityService.deleteShareActivity(id, loginUser, loginUsername);
-        return Common.decorateReturnObject(ret);
+        try {
+            ReturnObject ret = shareActivityService.deleteShareActivity(id, loginUser, loginUsername);
+            return Common.decorateReturnObject(ret);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return new ReturnObject<>(e.getMessage());
+        }
+
     }
 
     @ApiOperation(value = "上线分享活动")
@@ -278,8 +304,13 @@ public class ShareActivityController {
     @Audit(departName = "shops")
     @PutMapping("/shops/{shopId}/shareactivities/{id}/online")
     public Object onlineShareActivity(@PathVariable("shopId") Long shopId, @PathVariable("id") Long id, @LoginUser Long loginUser, @LoginName String loginUsername) {
-        ReturnObject ret = shareActivityService.onlineShareActivity(id, loginUser, loginUsername);
-        return Common.decorateReturnObject(ret);
+        try {
+            ReturnObject ret = shareActivityService.onlineShareActivity(id, loginUser, loginUsername);
+            return Common.decorateReturnObject(ret);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return new ReturnObject<>(e.getMessage());
+        }
     }
 
     @ApiOperation(value = "下线分享活动")

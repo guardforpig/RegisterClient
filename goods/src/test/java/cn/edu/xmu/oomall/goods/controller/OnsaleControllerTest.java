@@ -2,8 +2,6 @@ package cn.edu.xmu.oomall.goods.controller;
 
 
 import cn.edu.xmu.oomall.goods.GoodsApplication;
-import cn.edu.xmu.oomall.goods.constant.Constants;
-import cn.edu.xmu.oomall.goods.dao.OnSaleDao;
 import cn.edu.xmu.oomall.goods.model.vo.ModifyOnSaleVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleAllVo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleVo;
@@ -26,12 +24,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -46,8 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @SpringBootTest(classes = GoodsApplication.class)
-public class OnSaleControllerTest {
-    private Logger logger = LoggerFactory.getLogger(OnSaleControllerTest.class);
+public class OnsaleControllerTest {
+    private Logger logger = LoggerFactory.getLogger(OnsaleControllerTest.class);
 
     @Autowired
     protected WebApplicationContext wac;

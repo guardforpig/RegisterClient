@@ -323,7 +323,7 @@ public class GroupOnControllerTest {
         list.add(o2);
         list.add(o3);
         PageVo<OnsaleVo> po = new PageVo<>(1,5,5,5,list);
-        Mockito.when(goodsService.getOnSales(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(),Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject(po));
+        Mockito.when(goodsService.getOnsales(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(),Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject(po));
         Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/1/groupons/4").contentType("application/json;charset=UTF-8").content(requestJson)
                 .header("authorization", adminToken))
@@ -352,7 +352,7 @@ public class GroupOnControllerTest {
         list.add(o2);
         list.add(o3);
         PageVo<OnsaleVo> po = new PageVo<>(1,5,5,5,list);
-        Mockito.when(goodsService.getOnSales(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(),Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject(po));
+        Mockito.when(goodsService.getOnsales(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(),Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(new InternalReturnObject(po));
         Mockito.when(goodsService.modifyOnsale(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(OnsaleModifyVo.class))).thenReturn(new InternalReturnObject(true));
         String responseString = this.mvc.perform(put("/shops/0/groupons/1").contentType("application/json;charset=UTF-8").content(requestJson)
                 .header("authorization", adminToken))

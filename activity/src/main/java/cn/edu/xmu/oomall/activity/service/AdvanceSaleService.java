@@ -247,10 +247,10 @@ public class AdvanceSaleService {
         List<Long> activityIdList=new ArrayList<>();
         if(productId!=null) {
             //跨模块调接口，根据shopId,productId，beginTime，endTime获取OnSale列表
-            InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1 = goodsService.getOnSales(shopId, productId, beginTime, endTime, 1, 1);
+            InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1 = goodsService.getOnsales(shopId, productId, beginTime, endTime, 1, 1);
             if (onSaleList1.getData().getList() != null) {
                 long total = onSaleList1.getData().getTotal();
-                InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList2 = goodsService.getOnSales(shopId, productId, beginTime, endTime, 1, (int) total);
+                InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList2 = goodsService.getOnsales(shopId, productId, beginTime, endTime, 1, (int) total);
                 activityIdList=onSaleList2.getData().getList().stream().map(SimpleOnSaleInfoVo::getActivityId).collect(Collectors.toList());
             }
         }
@@ -359,11 +359,11 @@ public class AdvanceSaleService {
         advanceSaleBo.setShopName(shopVoReturnObject.getData().getName());
 
         //调用goodsService，根据shopId,productId，beginTime，endTime获取OnSale列表,判断要加入的活动的时间是否和已有product的预售活动时间冲突
-        InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1=goodsService.getOnSales(shopId,id, TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getBeginTime()),TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getEndTime()),1,1);
+        InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList1=goodsService.getOnsales(shopId,id, TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getBeginTime()),TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getEndTime()),1,1);
         List<SimpleOnSaleInfoVo> list=new ArrayList<>();
         if(onSaleList1.getData().getList()!=null) {
             long total = onSaleList1.getData().getTotal();
-            InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList2 = goodsService.getOnSales(shopId, id, TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getBeginTime()), TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getEndTime()), 1, (int) total);
+            InternalReturnObject<PageInfo<SimpleOnSaleInfoVo>> onSaleList2 = goodsService.getOnsales(shopId, id, TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getBeginTime()), TimeFormat.ZonedDateTime2LocalDateTime(advanceSaleVo.getEndTime()), 1, (int) total);
             list=onSaleList2.getData().getList();
         }
         //判断是否有销售时间和预售活动时间冲突的OnSale

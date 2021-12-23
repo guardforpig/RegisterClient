@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.goods.microservice;
 
 
+import cn.edu.xmu.oomall.core.config.OpenFeignConfig;
 import cn.edu.xmu.oomall.goods.microservice.vo.FreightModelRetVo;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**
  * @author wyg
  */
-@FeignClient(value = "freight-service")
+@FeignClient(value = "freight-service",configuration = OpenFeignConfig.class)
 public interface FreightService {
     @GetMapping("/shops/{shopId}/freightmodels/default")
     InternalReturnObject<FreightModelRetVo> getDefaultFreightModel(@PathVariable("shopId") Long shopId);

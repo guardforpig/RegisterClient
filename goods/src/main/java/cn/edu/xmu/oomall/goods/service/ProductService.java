@@ -4,10 +4,11 @@ import cn.edu.xmu.oomall.core.util.ImgHelper;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.dao.ProductDao;
+import cn.edu.xmu.oomall.goods.microservice.ActivityService;
 import cn.edu.xmu.oomall.goods.microservice.FreightService;
 import cn.edu.xmu.oomall.goods.microservice.ShopService;
 import cn.edu.xmu.oomall.goods.microservice.vo.CategoryDetailRetVo;
-import cn.edu.xmu.oomall.goods.microservice.vo.CategoryVo;
+import cn.edu.xmu.oomall.goods.microservice.vo.RetShareActivitySpecificInfoVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleCategoryVo;
 import cn.edu.xmu.oomall.goods.microservice.vo.SimpleShopVo;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
@@ -23,8 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.*;
 
@@ -48,6 +47,9 @@ public class ProductService {
 
     @Autowired
     private FreightService freightService;
+
+    @Autowired
+    private ActivityService activityService;
 
     @Value("${productservice.webdav.username}")
     private String davUsername;
@@ -200,16 +202,19 @@ public class ProductService {
      * @Date 2021/11/12
      */
     @Transactional(readOnly=true)
-    public ReturnObject<ProductRetVo> getProductDetails(Long productId) {
+    public ReturnObject getProductDetails(Long productId) {
         ReturnObject ret = productDao.getProductInfo(productId);
         if (ret.getCode() != ReturnNo.OK) {
             return ret;
         }
         Product product = (Product) ret.getData();
         OnSalePo onSalePo = productDao.getValidOnSale(productId);
-        product.setOnSaleId(onSalePo.getId());
-        product.setPrice(onSalePo.getPrice());
-        product.setQuantity(onSalePo.getQuantity());
+        if (onSalePo!=null){
+            product.setOnsaleId(onSalePo.getId());
+            product.setPrice(onSalePo.getPrice());
+            product.setQuantity(onSalePo.getQuantity());
+        }
+
         //查找categoryName
         InternalReturnObject object = shopService.getCategoryDetailById(product.getCategoryId());
         if (!object.getErrno().equals(0)) {
@@ -217,7 +222,21 @@ public class ProductService {
         }
         SimpleCategoryVo categoryVo = cloneVo(object.getData(),SimpleCategoryVo.class);
         product.setCategoryName(categoryVo.getName());
-        ProductRetVo vo = (ProductRetVo) cloneVo(product, ProductRetVo.class);
+        ProductRetVo vo = cloneVo(product, ProductRetVo.class);
+        if ((onSalePo!=null)&&(onSalePo.getShareActId()!=null)){
+            InternalReturnObject<RetShareActivitySpecificInfoVo> shareActivityByShopIdAndId = activityService.getShareActivityByShopIdAndId(onSalePo.getShopId(), onSalePo.getShareActId());
+            if (shareActivityByShopIdAndId.getErrno()!=0){
+                return new ReturnObject(shareActivityByShopIdAndId);
+            }
+            RetShareActivitySpecificInfoVo data = shareActivityByShopIdAndId.getData();
+            if (data.getState()==(byte)1){
+                vo.setShareable(true);
+            }else {
+                vo.setShareable(false);
+            }
+        }else {
+            vo.setShareable(false);
+        }
         return new ReturnObject(vo);
     }
 
@@ -377,7 +396,7 @@ public class ProductService {
             return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
         OnSalePo onSalePo = productDao.getValidOnSale(productId);
-        product.setOnSaleId(onSalePo.getId());
+        product.setOnsaleId(onSalePo.getId());
         InternalReturnObject object = shopService.getCategoryById(product.getCategoryId());
         if(!object.getErrno().equals(0)){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);

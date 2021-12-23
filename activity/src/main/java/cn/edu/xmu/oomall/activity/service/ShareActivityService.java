@@ -83,13 +83,13 @@ public class ShareActivityService {
         List<Long> shareActivityIds = new ArrayList<>();
         if (productId != null) {
             //TODO:openfeign获得分享活动id
-            InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, 10);
+            InternalReturnObject<Map<String, Object>> onSalesByProductId = goodsService.getOnsales(shopId, productId, null, null, 1, 10);
             if (onSalesByProductId.getErrno()!=0) {
                 return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
             }
             int total = (int) onSalesByProductId.getData().get("total");
             if (total != 0) {
-                onSalesByProductId = goodsService.getOnSales(shopId, productId, null, null, 1, total > 500 ? 500 : total);
+                onSalesByProductId = goodsService.getOnsales(shopId, productId, null, null, 1, total > 500 ? 500 : total);
                 if (onSalesByProductId.getErrno()!=0) {
                     return new ReturnObject(ReturnNo.getByCode(onSalesByProductId.getErrno()));
                 }
@@ -100,11 +100,10 @@ public class ShareActivityService {
                     }
                 }
             }else {
-                return new ReturnObject(ReturnNo.OK,onSalesByProductId.getErrmsg(),onSalesByProductId.getData());
+                return new ReturnObject(onSalesByProductId);
             }
         }
-        ReturnObject shareByShopId = shareActivityDao.getShareByShopId(bo, shareActivityIds, page, pageSize);
-        return shareByShopId;
+        return shareActivityDao.getShareByShopId(bo, shareActivityIds, page, pageSize);
     }
 
 
@@ -155,6 +154,9 @@ public class ShareActivityService {
             return returnObject;
         }
         ShareActivityBo shareActivityBo = (ShareActivityBo) returnObject.getData();
+        if (shareActivityBo.getState()!=ShareActivityStatesBo.ONLINE.getCode()){
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+        }
         RetShareActivityInfoVo retShareActivityInfoVo = cloneVo(shareActivityBo, RetShareActivityInfoVo.class);
         return new ReturnObject(retShareActivityInfoVo);
     }
@@ -218,11 +220,11 @@ public class ShareActivityService {
         }
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(sid);
-        InternalReturnObject updateRet= goodsService.modifyOnSaleShareActId(shopId,id,modifyOnSaleVo);
+        InternalReturnObject updateRet= goodsService.modifyOnSaleShareActId(id,modifyOnSaleVo);
         if (updateRet.getErrno()!=0){
             return new ReturnObject(updateRet);
         }
-        SimpleOnSaleRetVo simpleOnSaleRetVo = (SimpleOnSaleRetVo) Common.cloneVo(onSale1,SimpleOnSaleRetVo.class);
+        SimpleOnSaleRetVo simpleOnSaleRetVo = Common.cloneVo(onSale1,SimpleOnSaleRetVo.class);
         return new ReturnObject<>(simpleOnSaleRetVo);
     }
 
@@ -244,7 +246,7 @@ public class ShareActivityService {
         }
         ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
         modifyOnSaleVo.setShareActId(-1L);
-        InternalReturnObject updateRet= goodsService.modifyOnSaleShareActId(shopId,id,modifyOnSaleVo);
+        InternalReturnObject updateRet= goodsService.modifyOnSaleShareActId(id,modifyOnSaleVo);
         if (updateRet.getErrno()!=0){
             return new ReturnObject(updateRet);
         }
@@ -259,10 +261,11 @@ public class ShareActivityService {
      * @author BingShuai Liu 22920192204245
      */
     @Transactional(rollbackFor=Exception.class)
-    public ReturnObject modifyShareActivity(Long id, ShareActivityVo shareActivityVo,Long loginUser, String loginUsername){
+    public ReturnObject modifyShareActivity(Long shopId,Long id, ShareActivityVo shareActivityVo,Long loginUser, String loginUsername){
         ShareActivityPo shareActivityPo = Common.cloneVo(shareActivityVo,ShareActivityPo.class);
         Common.setPoModifiedFields(shareActivityPo,loginUser,loginUsername);
         shareActivityPo.setId(id);
+        shareActivityPo.setShopId(shopId);
         var x = getShareActivityByShareActivityId(id).getData();
         if (x==null){
             return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
@@ -292,7 +295,6 @@ public class ShareActivityService {
         ReturnObject ret = shareActivityDao.deleteShareActivity(id);
         return ret;
     }
-
     /**
      * 根据分享活动id上线分享活动
      * @param id 分享活动id
@@ -312,6 +314,15 @@ public class ShareActivityService {
         shareActivityPo.setState((byte)1);
         Common.setPoModifiedFields(shareActivityPo,loginUser,loginUsername);
         ReturnObject ret=shareActivityDao.modifyShareActivity(shareActivityPo);
+        if(ret.getCode()!=ReturnNo.OK){
+            return ret;
+        }
+        ModifyOnSaleVo modifyOnSaleVo = new ModifyOnSaleVo();
+        modifyOnSaleVo.setShareActId(id);
+        InternalReturnObject updateRet= goodsService.modifyOnSaleShareActId(id,modifyOnSaleVo);
+        if (updateRet.getErrno()!=0){
+            return new ReturnObject(updateRet);
+        }
         return ret;
     }
 
@@ -334,6 +345,9 @@ public class ShareActivityService {
         shareActivityPo.setState((byte)2);
         Common.setPoModifiedFields(shareActivityPo,loginUser,loginUsername);
         ReturnObject ret=shareActivityDao.modifyShareActivity(shareActivityPo);
+        if(ret.getCode()!=ReturnNo.OK){
+            return ret;
+        }
         return ret;
     }
 }
