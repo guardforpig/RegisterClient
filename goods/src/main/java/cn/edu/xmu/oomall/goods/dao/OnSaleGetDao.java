@@ -72,11 +72,7 @@ public class OnSaleGetDao {
             {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            OnSaleGetBo onSaleGetBo=null;
-            for(OnSalePo onSalePo:list)
-            {
-                onSaleGetBo=cloneVo(onSalePo,OnSaleGetBo.class);
-            }
+            var onSaleGetBo = cloneVo(list.get(0), OnSaleGetBo.class);
             return new ReturnObject(onSaleGetBo);
         }catch (Exception e) {
             logger.error(e.getMessage());
