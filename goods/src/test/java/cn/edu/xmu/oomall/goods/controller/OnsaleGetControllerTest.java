@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @SpringBootTest(classes = GoodsApplication.class)
-public class OnSaleGetControllerTest {
+public class OnsaleGetControllerTest {
     private static JwtHelper jwtHelper = new JwtHelper();
     private static String adminToken = jwtHelper.createToken(1L, "admin", 0L, 1, 3600);
 

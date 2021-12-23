@@ -304,6 +304,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @GetMapping(value="categories/{id}/products")
+    @Audit(departName = "shops")
     public Object getProductOfCategory(@PathVariable("id") Long id,
                                        @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
@@ -512,7 +513,7 @@ public class GoodsController {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID,"传入的RequestBody参数格式不合法"));
         }
 
-        ReturnObject returnObject = productService.updateDraftProduct(shopId,productChangeVo,id,userId,userName);
+        ReturnObject returnObject = productService.updateDraftProduct(shopId, productChangeVo,id, userId,userName);
         return Common.decorateReturnObject(returnObject);
     }
     @GetMapping("shops/{shopId}/draftproducts/{id}")
