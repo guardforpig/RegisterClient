@@ -9,7 +9,6 @@ import cn.edu.xmu.oomall.goods.service.OnsaleService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
-import com.alibaba.druid.sql.visitor.functions.Bin;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +78,7 @@ public class OnSaleController {
             return decorateReturnObject(returnObject1);
         }
 
-//        httpServletResponse.setStatus(HttpStatus.CREATED.value());
+        httpServletResponse.setStatus(HttpStatus.CREATED.value());
 
         return decorateReturnObject(getRetVo(returnObject1, NewOnSaleRetVo.class));
 
@@ -140,10 +139,9 @@ public class OnSaleController {
     @PutMapping("internal/shops/{did}/activities/{id}/onsales/online")
     public Object onlineOnSaleGroupPre(@PathVariable Long did, @PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
-
-        ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(id, loginUserId, loginUserName, OnSale.State.DRAFT, OnSale.State.ONLINE);
-        return decorateReturnObject(returnObject1);
-    }
+            ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(did, id, loginUserId, loginUserName, OnSale.State.DRAFT, OnSale.State.ONLINE);
+            return decorateReturnObject(returnObject1);
+        }
 
     @ApiOperation(value = "管理员下线团购和预售活动的商品价格浮动")
     @ApiImplicitParams({
@@ -158,7 +156,7 @@ public class OnSaleController {
     @PutMapping("internal/shops/{did}/activities/{id}/onsales/offline")
     public Object offlineOnSaleGroupPre(@PathVariable Long did, @PathVariable Long id, @LoginUser Long loginUserId, @LoginName String loginUserName) {
 
-        ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(id, loginUserId, loginUserName, OnSale.State.ONLINE, OnSale.State.OFFLINE);
+        ReturnObject returnObject1 = onsaleService.onlineOrOfflineOnSaleGroupPre(did, id, loginUserId, loginUserName, OnSale.State.ONLINE, OnSale.State.OFFLINE);
         return decorateReturnObject(returnObject1);
     }
 

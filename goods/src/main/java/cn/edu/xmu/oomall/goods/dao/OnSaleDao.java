@@ -81,12 +81,13 @@ public class OnSaleDao {
 
     }
 
-    public ReturnObject onlineOrOfflineOnSaleAct(Long actId, Long userId, String userName, OnSale.State cntState, OnSale.State finalState) {
+    public ReturnObject onlineOrOfflineOnSaleAct(Long shopId, Long actId, Long userId, String userName, OnSale.State cntState, OnSale.State finalState) {
         try {
 
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andActivityIdEqualTo(actId);
+            cr.andShopIdEqualTo(shopId);
             Byte s1 = cntState.getCode().byteValue();
             cr.andStateEqualTo(s1);
 
