@@ -12,6 +12,12 @@ import java.time.ZonedDateTime;
  * @author:李智樑
  * @time:2021/12/10 10:51
  **/
+
+/**
+ * @modifiedBy Jiazhe Yuan
+ * @time 2021-12-23 11:20:56
+ * @info 修改时间类型、quantity和numKey类型
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
