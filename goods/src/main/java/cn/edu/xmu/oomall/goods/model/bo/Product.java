@@ -76,7 +76,7 @@ public class Product implements Serializable {
 
     private Byte state;
 
-    private Long onSaleId;
+    private Long onsaleId;
 
     private Long price;
 

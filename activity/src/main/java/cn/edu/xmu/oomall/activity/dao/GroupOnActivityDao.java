@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
@@ -91,10 +92,10 @@ public class GroupOnActivityDao {
                 bo = (GroupOnActivity) cloneVo(po, GroupOnActivity.class);
                 bo.setStrategy(JacksonUtil.parseObjectList(po.getStrategy(), GroupOnStrategyVo.class));
             }
-            if (state != null && !bo.getState().equals(state)) {
+            if (state != null && !Objects.equals(bo.getState(), state)) {
                 return new ReturnObject<>(ReturnNo.STATENOTALLOW, "团购活动未上线");
             }
-            if (shopId != null && !bo.getShopId().equals(shopId)) {
+            if (shopId != null && !Objects.equals(bo.getShopId(), shopId)) {
                 return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST, "指定店铺中不存在指定ID对应的团购活动");
             }
             return new ReturnObject(bo);

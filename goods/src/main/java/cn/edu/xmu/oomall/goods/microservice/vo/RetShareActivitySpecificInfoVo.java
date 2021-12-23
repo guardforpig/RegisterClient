@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.activity.model.vo;
+package cn.edu.xmu.oomall.goods.microservice.vo;
 
 import cn.edu.xmu.oomall.core.model.VoObject;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -22,7 +21,7 @@ import java.util.List;
 @ApiModel(value = "特定分享活动详情")
 public class RetShareActivitySpecificInfoVo implements VoObject, Serializable {
     Long id;
-    ShopVo shop;
+    SimpleShopVo shop;
     String name;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
     ZonedDateTime beginTime;

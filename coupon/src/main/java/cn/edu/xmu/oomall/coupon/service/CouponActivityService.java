@@ -6,11 +6,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.coupon.dao.CouponActivityDao;
 import cn.edu.xmu.oomall.coupon.microservice.GoodsService;
-import cn.edu.xmu.oomall.coupon.microservice.vo.OnsaleVo;
-import cn.edu.xmu.oomall.coupon.microservice.vo.PageVo;
-import cn.edu.xmu.oomall.coupon.microservice.vo.ProductRetVo;
-import cn.edu.xmu.oomall.coupon.microservice.vo.ProductVo;
-import cn.edu.xmu.oomall.coupon.microservice.vo.ShopRetVo;
+import cn.edu.xmu.oomall.coupon.microservice.vo.*;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.bo.OrderItem;
@@ -57,7 +53,7 @@ public class CouponActivityService {
 
     @Autowired
     CouponActivityDao couponActivityDao;
-    
+
     @Autowired
     private GoodsService goodsService;
 
@@ -100,7 +96,7 @@ public class CouponActivityService {
      * @return 优惠活动列表
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<PageInfo<VoObject>> showOwnCouponActivities(Long shopId, ZonedDateTime beginTime, ZonedDateTime endTime, Integer page, Integer pageSize){
+    public ReturnObject showOwnCouponActivities(Long shopId, ZonedDateTime beginTime, ZonedDateTime endTime, Integer page, Integer pageSize){
         //添加查询条件
         CouponActivityPoExample example = new CouponActivityPoExample();
         CouponActivityPoExample.Criteria criteria = example.createCriteria();
@@ -157,27 +153,20 @@ public class CouponActivityService {
      */
     @Transactional(rollbackFor=Exception.class)
     public ReturnObject addCouponActivity(Long userId, String userName, Long shopId, CouponActivityVo couponActivityVo){
-        InternalReturnObject returnObject;
+        InternalReturnObject<ShopRetVo> returnObject;
         try{
             returnObject = shopFeignService.getSimpleShopById(shopId);
         }catch(Exception e){
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
-        ShopRetVo shop = (ShopRetVo) returnObject.getData();
+        ShopRetVo shop = returnObject.getData();
         CouponActivity couponActivity = cloneVo(couponActivityVo,CouponActivity.class);
-        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转,一下几行行代码需删除
-        //将时区时间转为UTC时间并转成localdatetime
-        LocalDateTime couponTime = couponActivityVo.getCouponTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();;
-        LocalDateTime beginTime = couponActivityVo.getBeginTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-        LocalDateTime endTime = couponActivityVo.getBeginTime().withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-        couponActivity.setCouponTime(couponTime);
-        couponActivity.setBeginTime(beginTime);
-        couponActivity.setEndTime(endTime);
         couponActivity.setShopId(shopId);
         couponActivity.setShopName(shop.getName());
         // 新建优惠时默认是草稿
-        couponActivity.setState(CouponActivity.State.DRAFT.getCode().byteValue());
+        couponActivity.setState(CouponActivity.State.DRAFT.getCode());
         setPoCreatedFields(couponActivity,userId,userName);
+        setPoModifiedFields(couponActivity, userId, userName);
         return couponActivityDao.addCouponActivity(couponActivity);
     }
 
@@ -192,18 +181,16 @@ public class CouponActivityService {
      * @return 优惠活动列表
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public ReturnObject<PageInfo<VoObject>> showOwnInvalidCouponActivities(Long userId,String userName,Long shopId,Byte state,Integer page,Integer pageSize){
+    public ReturnObject showOwnInvalidCouponActivities(Long userId,String userName,Long shopId,Byte state,Integer page,Integer pageSize) {
         CouponActivityPoExample example = new CouponActivityPoExample();
         CouponActivityPoExample.Criteria criteria = example.createCriteria();
-        if(shopId !=null){
+        if (shopId != null) {
             criteria.andShopIdEqualTo(shopId);
         }
-        if(state != null){
+        if (state != null) {
             criteria.andStateEqualTo(state);
         }
-        criteria.andCreatorIdEqualTo(userId);
-        criteria.andCreatorNameEqualTo(userName);
-        return couponActivityDao.showCouponActivitiesByExample(example,page,pageSize);
+        return couponActivityDao.showCouponActivitiesByExample(example, page, pageSize);
     }
 
     /**
@@ -222,15 +209,8 @@ public class CouponActivityService {
         if(!couponActivity.getShopId().equals(shopId)){
             return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
         }
-        //下线状态不给返回
-        if(couponActivity.getState()==CouponActivity.State.OFFLINE.getCode().byteValue()){
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
-        }
-        if(!couponActivity.getCreatorId().equals(userId)){
-            return new ReturnObject<>(ReturnNo.RESOURCE_ID_OUTSCOPE);
-        }
-        // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转
         return new ReturnObject<>(cloneVo(couponActivity,CouponActivityVoInfo.class));
+
     }
 
     /**
@@ -259,10 +239,6 @@ public class CouponActivityService {
         ReturnObject<CouponActivity> retCouponActivity = couponActivityDao.getCouponActivityById(couponActivityId);
         if (!retCouponActivity.getCode().equals(ReturnNo.OK)) {
             return retCouponActivity;
-        }
-        // 判断活动是否是上线态
-        if (!retCouponActivity.getData().getState().equals(CouponActivity.State.ONLINE.getCode())) {
-            return new ReturnObject<>(ReturnNo.STATENOTALLOW);
         }
 
         String key = String.format(PRODUCTVOLISTKEY, couponActivityId);
@@ -293,7 +269,7 @@ public class CouponActivityService {
                     }
                 }
             }
-            redisUtils.expire(key, listTimeout, TimeUnit.SECONDS);
+            redisUtils.expire(key, listTimeout, TimeUnit.MILLISECONDS);
             int beginIndex = Math.min((pageNumber - 1) * pageSize, productVoList.size());
             int endIndex = Math.min(pageNumber * pageSize, productVoList.size());
             productVoList = productVoList.subList(beginIndex, endIndex);
@@ -324,7 +300,7 @@ public class CouponActivityService {
                 InternalReturnObject<PageVo<OnsaleVo>> retOnsaleVoPageInfo =
                         goodsService.listOnsale(productId, 1, ((pageNumber * pageSize) / listDefaultSize + 1) * listDefaultSize);
                 if (!retOnsaleVoPageInfo.getErrno().equals(ReturnNo.OK.getCode())) {
-                    return new ReturnObject(retOnsaleVoPageInfo);
+                    return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
                 }
                 List<OnsaleVo> onsaleVoList = retOnsaleVoPageInfo.getData().getList();
                 for (OnsaleVo onsaleVo : onsaleVoList) {
@@ -343,7 +319,7 @@ public class CouponActivityService {
                         }
                     }
                 }
-                redisUtils.expire(key, listTimeout, TimeUnit.SECONDS);
+                redisUtils.expire(key, listTimeout, TimeUnit.MILLISECONDS);
                 int beginIndex = Math.min((pageNumber - 1) * pageSize, onlineCouponActivityList.size());
                 int endIndex = Math.min(pageNumber * pageSize, onlineCouponActivityList.size());
                 onlineCouponActivityList = onlineCouponActivityList.subList(beginIndex, endIndex);
@@ -422,8 +398,8 @@ public class CouponActivityService {
             // 修改的是状态
             switch (newState) {
                 case ONLINE: {
-                    // 修改为Online，需判断状态是不是在下线态
-                    if (!formerCouponActivity.getState().equals(CouponActivity.State.OFFLINE.getCode())) {
+                    // 修改为Online，需判断状态是不是在草稿态
+                    if (!formerCouponActivity.getState().equals(CouponActivity.State.DRAFT.getCode())) {
                         return new ReturnObject<>(ReturnNo.STATENOTALLOW);
                     }
                     formerCouponActivity.setState(CouponActivity.State.ONLINE.getCode());

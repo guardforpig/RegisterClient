@@ -10,6 +10,7 @@ import cn.edu.xmu.oomall.freight.model.bo.*;
 import cn.edu.xmu.oomall.freight.model.vo.FreightCalculatingPostVo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightCalculatingRetVo;
 import cn.edu.xmu.oomall.freight.model.vo.FreightModelInfoVo;
+import cn.edu.xmu.oomall.freight.model.vo.FreightModelRetVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,10 +118,17 @@ public class FreightModelService {
         //模板名称为原加随机数
         freightModelToBeCloned.setName(freightModelToBeCloned.getName() + r.nextInt(10000000));
         //克隆的不是默认模板
-        freightModelToBeCloned.setType((byte)0);
+        freightModelToBeCloned.setDefaultModel((byte)0);
 
         //插入
-        return freightModelDao.addFreightModel(freightModelToBeCloned);
+        var ret = freightModelDao.addFreightModel(freightModelToBeCloned);
+        if (ret.getCode().equals(ReturnNo.OK)) {
+            var freightModel = (FreightModelRetVo) ret.getData();
+            var newId = freightModel.getId();
+            pieceFreightDao.clonePieceFreight(id, newId);
+            weightFreightDao.cloneWeightFreight(id, newId);
+        }
+        return ret;
     }
 
     /**
@@ -214,14 +222,12 @@ public class FreightModelService {
         var regions = (List<Region>) regionsRet.getData();
         var regionIds = regions.stream().map(Region::getId).collect(Collectors.toList());
         regionIds.add(rid);
-
         int sumQuantity = 0;
         int sumWeight = 0;
         for (var item : items) {
             sumQuantity += item.getQuantity();
             sumWeight += item.getWeight() * item.getQuantity();
         }
-
         for (var item : items) {
             Long fid = item.getFreightId();
             ReturnObject freightRet = showFreightModelById(fid);
@@ -230,14 +236,14 @@ public class FreightModelService {
             }
             var freightModel = (FreightModel) freightRet.getData();
             ReturnObject freightItemRet;
-            Integer amount;
+            int amount;
             if (freightModel.getType() == 0) {
                 freightItemRet =  weightFreightDao.getWeightItem(fid, regionIds);
                 amount = sumWeight;
             } else {
                 freightItemRet = pieceFreightDao.getPieceItem(fid, regionIds);
                 amount = sumQuantity;
-            }
+            };
             if (!freightItemRet.getCode().equals(ReturnNo.OK)) {
                 return freightItemRet;
             }
@@ -247,8 +253,11 @@ public class FreightModelService {
                 freightPrice = newPrice;
                 productId = item.getProductId();
             }
-
         }
-        return new ReturnObject(new FreightCalculatingRetVo(freightPrice, productId));
+        if (productId == 0L) {
+            return new ReturnObject(ReturnNo.FREIGHT_REGION_NOTREACH);
+        } else {
+            return new ReturnObject(new FreightCalculatingRetVo(freightPrice, productId));
+        }
     }
 }

@@ -40,6 +40,6 @@ public class PieceFreight extends FreightItem implements Serializable {
 
     @Override
     public Long calculate(Integer quantity, Integer unit) {
-        return firstItemFreight + calculatePart(firstItems, null, quantity, unit, additionalItemsPrice);
+        return firstItemFreight + calculatePart(firstItems, null, quantity, 1, additionalItemsPrice);
     }
 }

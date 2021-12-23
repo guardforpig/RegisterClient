@@ -4,6 +4,7 @@ import cn.edu.xmu.oomall.core.model.VoObject;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.vo.NewOnSaleRetVo;
 import com.alibaba.druid.support.spring.stat.annotation.Stat;
+import io.lettuce.core.StrAlgoArgs;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
-public class OnSale  implements   Serializable {
+public class Onsale implements   Serializable {
 
     private Long id;
     private Long shopId;
@@ -48,13 +49,13 @@ public class OnSale  implements   Serializable {
 
 
 
-    public State getState() {
-        return State.getStatusByCode(Integer.valueOf(state));
-    }
+//    public State getState() {
+//        return State.getStatusByCode(Integer.valueOf(state));
+//    }
 
 
     public void setState(State state) {
-        Integer code=state.getCode();
+        Byte code=state.getCode();
         Byte b=code.byteValue();
         this.state=b;
     }
@@ -69,7 +70,7 @@ public class OnSale  implements   Serializable {
 
         private static final Map<Integer, Type> TYPE_MAP;
 
-        static { 
+        static {
             TYPE_MAP = new HashMap();
             for (Type enum1 : values()) {
                 TYPE_MAP.put(enum1.code, enum1);
@@ -100,33 +101,33 @@ public class OnSale  implements   Serializable {
 
 
     public enum State {
-        DRAFT(0, "草稿"),
-        ONLINE(1, "上线"),
-        OFFLINE(2, "下线");
+        DRAFT((byte)0, "草稿"),
+        ONLINE((byte)1, "上线"),
+        OFFLINE((byte)2, "下线");
 
 
-        private static final Map<Integer, State> STATE_MAP;
+//        private static final Map<Integer, State> STATE_MAP;
 
-        static { //由类加载机制，静态块初始加载对应的枚举属性到map中，而不用每次取属性时，遍历一次所有枚举值
-            STATE_MAP = new HashMap();
-            for (State enum1 : values()) {
-                STATE_MAP.put(enum1.code, enum1);
-            }
-        }
+//        static { //由类加载机制，静态块初始加载对应的枚举属性到map中，而不用每次取属性时，遍历一次所有枚举值
+//            STATE_MAP = new HashMap();
+//            for (State enum1 : values()) {
+//                STATE_MAP.put(enum1.code, enum1);
+//            }
+//        }
 
-        private int code;
+        private Byte code;
         private String description;
 
-        State(int code, String description) {
+        State(Byte code, String description) {
             this.code=code;
             this.description=description;
         }
 
-        public static State getStatusByCode(Integer code){
-            return STATE_MAP.get(code);
-        }
+//        public static State getStatusByCode(Byte code){
+//            return STATE_MAP.get(code);
+//        }
 
-        public Integer getCode(){
+        public Byte getCode(){
             return code;
         }
 

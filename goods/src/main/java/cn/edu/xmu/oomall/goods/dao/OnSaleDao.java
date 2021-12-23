@@ -3,7 +3,8 @@ package cn.edu.xmu.oomall.goods.dao;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.OnSalePoMapper;
-import cn.edu.xmu.oomall.goods.model.bo.OnSale;
+import cn.edu.xmu.oomall.goods.model.bo.Onsale;
+import cn.edu.xmu.oomall.goods.model.bo.Onsale;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -55,12 +56,12 @@ public class OnSaleDao {
      * @param onSale 传入的Onsale对象
      * @return 返回对象ReturnObj
      */
-    public ReturnObject createOnSale(OnSale onSale, Long userId, String userName) {
+    public ReturnObject createOnSale(Onsale onSale, Long userId, String userName) {
         try {
             OnSalePo onsalePo = (OnSalePo) cloneVo(onSale, OnSalePo.class);
             setPoCreatedFields(onsalePo, userId, userName);
             onSalePoMapper.insertSelective(onsalePo);
-            return new ReturnObject((OnSale) cloneVo(onsalePo, OnSale.class));
+            return new ReturnObject((Onsale) cloneVo(onsalePo, Onsale.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -68,12 +69,12 @@ public class OnSaleDao {
     }
 
 
-    public ReturnObject onlineOrOfflineOnSale(OnSale onsale, Long userId, String userName) {
+    public ReturnObject onlineOrOfflineOnSale(Onsale onsale, Long userId, String userName) {
         try {
             OnSalePo po = (OnSalePo) cloneVo(onsale, OnSalePo.class);
             setPoModifiedFields(po, userId, userName);
             onSalePoMapper.updateByPrimaryKeySelective(po);
-            return new ReturnObject();
+            return new ReturnObject(ReturnNo.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
@@ -81,13 +82,14 @@ public class OnSaleDao {
 
     }
 
-    public ReturnObject onlineOrOfflineOnSaleAct(Long actId, Long userId, String userName, OnSale.State cntState, OnSale.State finalState) {
+    public ReturnObject onlineOrOfflineOnSaleAct(Long shopId, Long actId, Long userId, String userName, Onsale.State cntState, Onsale.State finalState) {
         try {
 
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andActivityIdEqualTo(actId);
-            Byte s1 = cntState.getCode().byteValue();
+            cr.andShopIdEqualTo(shopId);
+            Byte s1 = cntState.getCode();
             cr.andStateEqualTo(s1);
 
             Byte s2 = finalState.getCode().byteValue();
@@ -97,12 +99,12 @@ public class OnSaleDao {
                 po.setState(s2);
                 setPoModifiedFields(po, userId, userName);
 
-                if (finalState == OnSale.State.OFFLINE) {
+                if (finalState == Onsale.State.OFFLINE) {
                     //如果结束时间晚于当前时间且开始时间早于当前时间，修改结束时间为当前时间
                     if (po.getEndTime().isAfter(LocalDateTime.now()) && po.getBeginTime().isBefore(LocalDateTime.now())) {
                         po.setEndTime(LocalDateTime.now());
                     }
-                } else if (finalState == OnSale.State.ONLINE) {
+                } else if (finalState == Onsale.State.ONLINE) {
                     //如果开始时间早于当前时间且结束时间晚于当前时间，修改开始时间为当前时间
                     if (po.getBeginTime().isBefore(LocalDateTime.now()) && po.getEndTime().isAfter(LocalDateTime.now())) {
                         po.setBeginTime(LocalDateTime.now());
@@ -123,10 +125,10 @@ public class OnSaleDao {
         try {
             OnSalePo po = onSalePoMapper.selectByPrimaryKey(id);
             if (po == null) {
-                OnSale ret = null;
+                Onsale ret = null;
                 return new ReturnObject(ret);
             }
-            OnSale ret = (OnSale) cloneVo(po, OnSale.class);
+            Onsale ret = (Onsale) cloneVo(po, Onsale.class);
             return new ReturnObject(ret);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -150,7 +152,7 @@ public class OnSaleDao {
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andActivityIdEqualTo(actId);
-            cr.andStateEqualTo(OnSale.State.DRAFT.getCode().byteValue());
+            cr.andStateEqualTo(Onsale.State.DRAFT.getCode().byteValue());
             List<OnSalePo> pos = onSalePoMapper.selectByExample(oe);
             for (OnSalePo po : pos) {
                 onSalePoMapper.deleteByPrimaryKey(po.getId());
@@ -181,7 +183,7 @@ public class OnSaleDao {
     }
 
 
-    public ReturnObject timeCollided(OnSale onsale) {
+    public ReturnObject timeCollided(Onsale onsale) {
         try {
 
             OnSalePoExample oe = new OnSalePoExample();
@@ -203,7 +205,7 @@ public class OnSaleDao {
         }
 
     }
-    public ReturnObject timeCollidedByYt(OnSale onsale) {
+    public ReturnObject timeCollidedByYt(Onsale onsale) {
         try {
 
             OnSalePoExample oe = new OnSalePoExample();
@@ -228,7 +230,7 @@ public class OnSaleDao {
 
     }
 
-    public ReturnObject updateOnSale(OnSale onsale, Long userId, String userName) {
+    public ReturnObject updateOnSale(Onsale onsale, Long userId, String userName) {
         try {
             OnSalePo po = (OnSalePo) cloneVo(onsale, OnSalePo.class);
             setPoModifiedFields(po, userId, userName);

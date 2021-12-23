@@ -14,9 +14,9 @@ public abstract class FreightItem {
         if (weight <= level) {
             return 0L;
         } else if (Objects.isNull(nextLevel) || weight <= nextLevel) {
-            return (weight - level + unit - 1) / unit * price;
+            return Math.round((double)(weight - level) / unit * price);
         } else {
-            return (nextLevel - level + unit - 1) / unit * price;
+            return Math.round((double)(nextLevel - level) / unit * price);
         }
     }
 }

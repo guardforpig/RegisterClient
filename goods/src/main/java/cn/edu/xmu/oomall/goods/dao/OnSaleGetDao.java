@@ -60,6 +60,25 @@ public class OnSaleGetDao {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
     }
+    public ReturnObject selectOnSaleByProductId(Long id)
+    {
+        try
+        {
+            OnSalePoExample onSalePoExample=new OnSalePoExample();
+            OnSalePoExample.Criteria cr=onSalePoExample.createCriteria();
+            cr.andProductIdEqualTo(id).andStateEqualTo((byte)1);
+            List<OnSalePo> list=onSalePoMapper.selectByExample(onSalePoExample);
+            if(list.size()==0)
+            {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            var onSaleGetBo = cloneVo(list.get(0), OnSaleGetBo.class);
+            return new ReturnObject(onSaleGetBo);
+        }catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
 
     /**
      * 有redis的onsale查询
