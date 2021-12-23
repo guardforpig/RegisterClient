@@ -33,7 +33,7 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 @RestController
 @Slf4j
 @RefreshScope
-@RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8",consumes = "application/json;charset=UTF-8")
 public class AdvanceSaleController {
     @Autowired
     AdvanceSaleService advanceSaleService;
@@ -86,6 +86,21 @@ public class AdvanceSaleController {
                                     @RequestBody AdvanceSaleModifyVo advanceSaleModifyVo){
         adminId=1L;adminName="店铺管理员";
         ReturnObject returnObject=null;
+        //开始时间晚于结束时间
+        if(advanceSaleModifyVo.getBeginTime()!=null&&advanceSaleModifyVo.getEndTime()!=null){
+        if (advanceSaleModifyVo.getBeginTime().isAfter(advanceSaleModifyVo.getEndTime())) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME,"开始时间不能晚于结束时间"));
+        }}
+        //支付尾款时间晚于活动结束时间
+        if(advanceSaleModifyVo.getPayTime()!=null&&advanceSaleModifyVo.getEndTime()!=null){
+        if (advanceSaleModifyVo.getPayTime().isAfter(advanceSaleModifyVo.getEndTime())) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_LATE_PAYTIME,"尾款支付时间晚于活动结束时间"));
+        }}
+        //支付尾款时间早于活动开始时间
+        if(advanceSaleModifyVo.getBeginTime()!=null&&advanceSaleModifyVo.getPayTime()!=null){
+        if (advanceSaleModifyVo.getBeginTime().isAfter(advanceSaleModifyVo.getPayTime())) {
+            return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_EARLY_PAYTIME,"尾款支付时间早于于活动开始时间"));
+        }}
         returnObject= advanceSaleService.modifyAdvancesale(adminId,shopId,adminName,advancesaleId,advanceSaleModifyVo);
         return Common.decorateReturnObject(returnObject);
     }
@@ -152,12 +167,16 @@ public class AdvanceSaleController {
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
         //输入参数合法性检查
+        LocalDateTime begin=null;
+        LocalDateTime end=null;
         if(beginTime!=null&&endTime!=null) {
+            begin=beginTime.toLocalDateTime();
+            end=endTime.toLocalDateTime();
             if(beginTime.isAfter(endTime)) {
                 return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
             }
         }
-        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId, AdvanceSale.state.ONLINE.getCode(), beginTime,endTime,page,pageSize);
+        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId, AdvanceSale.state.ONLINE.getCode(), begin,end,page,pageSize);
         return Common.decorateReturnObject(ret);
     }
 
@@ -215,13 +234,17 @@ public class AdvanceSaleController {
             @RequestParam(required = false) @DateTimeFormat(pattern = TimeFormat.INPUT_DATE_TIME_FORMAT) ZonedDateTime endTime,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
+        LocalDateTime begin=null;
+        LocalDateTime end=null;
         //输入参数合法性检查
         if(beginTime!=null&&endTime!=null) {
+            begin=beginTime.toLocalDateTime();
+            end=endTime.toLocalDateTime();
             if(beginTime.isAfter(endTime)) {
                 return  Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
             }
         }
-        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId,state,beginTime,endTime,page,pageSize);
+        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId,state,begin,end,page,pageSize);
         return Common.decorateReturnObject(ret);
     }
 
@@ -249,7 +272,7 @@ public class AdvanceSaleController {
             @ApiResponse(code = 948, message = "尾款支付时间晚于活动结束时间"),
             @ApiResponse(code = 949, message = "尾款支付时间早于于活动开始时间")
     })
-    @PostMapping(value = "/shops/{shopId}/products/{id}/advanceSale")
+    @PostMapping(value = "/shops/{shopId}/products/{id}/advancesales")
     @Audit(departName = "shops")
     public Object addAdvanceSale(
             @LoginUser Long loginUserId,
@@ -258,6 +281,7 @@ public class AdvanceSaleController {
             @PathVariable("id") Long id,
             @Valid @RequestBody AdvanceSaleVo advanceSaleVo,
             BindingResult bindingResult) {
+        try{
         Object fieldErrors = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (fieldErrors!=null) {
             return fieldErrors;
@@ -275,7 +299,9 @@ public class AdvanceSaleController {
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.ACT_EARLY_PAYTIME,"尾款支付时间早于于活动开始时间"));
         }
         ReturnObject ret = advanceSaleService.addAdvanceSale(loginUserId,loginUserName, shopId,id, advanceSaleVo);
-        return Common.decorateReturnObject(ret);
+        return Common.decorateReturnObject(ret);}
+        catch(Exception e){ return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
     }
 
     /**

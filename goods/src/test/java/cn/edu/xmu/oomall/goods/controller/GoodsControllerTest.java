@@ -269,8 +269,10 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void PUB_testProduct01() throws Exception {
-        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,0);
-        String responseString = this.mockMvc.perform(put("/shops/0/draftproducts/70/publish").header("authorization", adminToken))
+        adminToken =jwtHelper.createToken(1L,"admin",0L, 3600,10000);
+        String responseString = this.mockMvc.perform(put("/shops/0/draftproducts/598656/publish")
+                .header("authorization", adminToken)
+                .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -482,7 +484,7 @@ class GoodsControllerTest {
     @Transactional(readOnly = true)
     public void secondProducts1() throws Exception {
         String contentAsString = this.mockMvc.perform(get("/categories/266/products")
-                        .header("authorization", adminToken))
+                        .header("authorization", adminToken).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -644,23 +646,23 @@ class GoodsControllerTest {
     public void addProductToGoods() throws Exception {
         adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
         //正常 由于返回的Json中有创建时间，这一项不测试返回的字符串
-        String requestJson = "{" +
-                "\"skuSn\": \"string\"," +
-                "\"name\": \"string\"," +
-                "\"originalPrice\": 1," +
-                "\"weight\": 1," +
-                "\"categoryId\": 0," +
-                "\"goodsId\": 1," +
-                "\"barCode\": \"9024254673572\"," +
-                "\"unit\": \"string\"," +
-                "\"originPlace\": \"string\"" +
-                "}";
+        String json = "{\"skuSn\": \"test11\"," +
+                "\"name\": \"测试商品1\"," +
+                "\"originalPrice\": 100000," +
+                "\"weight\": 1000," +
+                "\"categoryId\": 275," +
+                "  \"goodsId\": 92}";
         String responseString = this.mockMvc.perform(post("/shops/10/draftproducts")
                 .header("authorization", adminToken)
-                .content(requestJson)
+                .content(json)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
+        String expected = "{" +
+                "    \"errno\": 0," +
+                "    \"errmsg\": \"成功\"" +
+                "}";
+        JSONAssert.assertEquals(expected, responseString, true);
     }
 
     /**
@@ -730,20 +732,11 @@ class GoodsControllerTest {
     @Test
     @Transactional
     public void changeDraftProduct() throws Exception {
-        adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 0);
-        String requestJson = "{" +
-                "\"skuSn\": \"string\"," +
-                "\"name\": \"string\"," +
-                "\"originalPrice\": 1," +
-                "\"categoryId\": 0," +
-                "\"weight\": 1," +
-                "\"barCode\": \"123456\"," +
-                "\"unit\": \"string\"," +
-                "\"originPlace\": \"string\"" +
-                "}";
-        String responseString = this.mockMvc.perform(put("/shops/10/draftproducts/60")
+        adminToken = jwtHelper.createToken(1L, "admin", 0L, 3600, 100000);
+        String json = "{\"skuSn\": \"2222222\"}";
+        String responseString = this.mockMvc.perform(put("/shops/1/draftproducts/71")
                 .header("authorization", adminToken)
-                .content(requestJson)
+                .content(json)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))

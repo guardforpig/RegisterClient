@@ -166,9 +166,9 @@ public class OnsaleService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ReturnObject onlineOrOfflineOnSaleGroupPre(Long actId, Long userId, String userName, Onsale.State cntState, Onsale.State finalState) {
+    public ReturnObject onlineOrOfflineOnSaleGroupPre(Long did,Long actId, Long userId, String userName, Onsale.State cntState, Onsale.State finalState) {
 
-        return onsaleDao.onlineOrOfflineOnSaleAct(actId, userId, userName, cntState, finalState);
+        return onsaleDao.onlineOrOfflineOnSaleAct(did,actId, userId, userName, cntState, finalState);
     }
 
 
@@ -241,7 +241,39 @@ public class OnsaleService {
         return onsaleDao.updateOnSale(bo,userId, userName);
 
     }
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject updateOnSaleByYt(Onsale bo,Long userId,String userName) {
+        try{
 
+        //判断OnSale是否存在
+        ReturnObject ret=onsaleDao.getOnSaleById(bo.getId());
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        Onsale onsale = (Onsale) ret.getData();
+        bo.setProductId(onsale.getProductId());
+        if (null == onsale) {
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST, "不存在该价格浮动");
+        }
+
+        //只有草稿态或下线态才能修改， 否则出507错误
+        if (onsale.getState() != Onsale.State.DRAFT.getCode()
+                &&onsale.getState() != Onsale.State.OFFLINE.getCode()) {
+            return new ReturnObject(ReturnNo.STATENOTALLOW, "非草稿态或下线态无法修改");
+        }
+        ret= onsaleDao.timeCollidedByYt(bo);
+        if(ret.getCode()==ReturnNo.INTERNAL_SERVER_ERR){
+            return ret;
+        }
+        if ((boolean)ret.getData()) {
+            return new ReturnObject(ReturnNo.GOODS_PRICE_CONFLICT, "商品销售时间冲突。");
+        }
+        return onsaleDao.updateOnSale(bo,userId, userName);}
+        catch (Exception e) {
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+
+    }
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject updateOnSaleNorSec(Onsale bo, Long shopId, Long userId, String userName) {
 
