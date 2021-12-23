@@ -18,7 +18,6 @@ import java.time.ZonedDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class CouponActivityVo implements VoObject {
     @Length(max = 100,message = "name字符串最大长度为100")
     private String name;
@@ -36,8 +35,10 @@ public class CouponActivityVo implements VoObject {
     private ZonedDateTime beginTime;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
     private ZonedDateTime endTime;
-    @Length(max = 100,message = "strategy字符串最大长度为100")
+
     private String strategy;
+
+    private Integer numKey;
 
     @Override
     public Object createVo() {
