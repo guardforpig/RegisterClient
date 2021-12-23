@@ -45,7 +45,7 @@ public class GroupActivityController {
             @ApiResponse(code = 507, message = "当前状态禁止此操作"),
             @ApiResponse(code = 902, message = "商品销售时间冲突")})
     @Audit(departName = "shops")
-    @PutMapping(value="/shops/{shopId}/products/{pid}/groupons/{id}/onsale")
+    @PostMapping(value="/shops/{shopId}/products/{pid}/groupons/{id}/onsales")
     public Object addGrouponProduct(@PathVariable("shopId") long shopId, @PathVariable("pid") long pid,
                                     @PathVariable("id") long id, @LoginUser Long loginUser, @LoginName String loginUsername)
     {

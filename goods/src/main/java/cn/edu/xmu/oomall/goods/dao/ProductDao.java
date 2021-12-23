@@ -9,16 +9,15 @@ import cn.edu.xmu.oomall.goods.mapper.ProductDraftPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Goods;
 import cn.edu.xmu.oomall.goods.model.bo.OnSale;
 import cn.edu.xmu.oomall.goods.model.po.*;
-import cn.edu.xmu.oomall.goods.model.vo.GoodsRetVo;
-import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
+import cn.edu.xmu.oomall.goods.model.vo.*;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import cn.edu.xmu.oomall.goods.mapper.ProductPoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Product;
-import cn.edu.xmu.oomall.goods.model.vo.ProductVo;
 import com.alibaba.cloud.commons.lang.StringUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +28,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
-import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
+import static cn.edu.xmu.privilegegateway.annotation.util.Common.*;
 
 /**
  * @author yujie lin
@@ -131,6 +129,31 @@ public class ProductDao {
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR);
         }
     }
+    public ReturnObject getDraftByShopId(Long shopId, Integer page,Integer pageSize)
+    {
+        try
+        {
+            PageHelper.startPage(page, pageSize, true, true, true);
+            ProductDraftPoExample productDraftPoExample=new ProductDraftPoExample();
+            ProductDraftPoExample.Criteria cr=productDraftPoExample.createCriteria();
+            cr.andShopIdEqualTo(shopId);
+            List<ProductDraftPo> list=productDraftPoMapper.selectByExample(productDraftPoExample);
+//            List<ProductDraftPo> plist=new ArrayList<>();
+//            for(ProductDraftPo p:list)
+//            {
+//                if(p.getProductId()==null||p.getProductId().equals(0L))
+//                {
+//                    plist.add(p);
+//                }
+//            }
+            PageInfo<ProductDraftPo> pageInfo = PageInfo.of(list);
+            return Common.getPageRetVo(new ReturnObject(pageInfo), ProductNewReturnVo.class);
+        }catch(Exception e)
+        {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
+    }
     /**
      * @author 黄添悦
      * @date 2021/11/25
@@ -173,6 +196,8 @@ public class ProductDao {
             }if(ifValid){
                 productPo.setState(targetState);
                 productMapper.updateByPrimaryKeySelective(productPo);
+                String pkey=String.format(PRODUCT_ID,productPo.getId());
+                redisUtil.del(pkey);
                 return new ReturnObject(productPo);
             }else{
                 return new ReturnObject(ReturnNo.STATENOTALLOW,"当前货品状态不支持进行该操作");
@@ -201,14 +226,18 @@ public class ProductDao {
                 productPo.setId(null);
                 productPo.setState((byte)Product.ProductState.OFFSHELF.getCode());
                 productMapper.insert(productPo);
+                productDraftPo.setProductId(productPo.getId());
+                productDraftPoMapper.updateByPrimaryKeySelective(productDraftPo);
             } else {
                 productPo.setId(productDraftPo.getProductId());
                 productPo.setState((byte)Product.ProductState.OFFSHELF.getCode());
-                productMapper.updateByPrimaryKey(productPo);
+                productMapper.updateByPrimaryKeySelective(productPo);
             }
             String key = String.format(GOODSKEY, productPo.getGoodsId());
+            String pkey=String.format(PRODUCT_ID,productPo.getId());
             redisUtil.del(key);
-            productDraftPoMapper.deleteByPrimaryKey(id);
+            redisUtil.del(pkey);
+//            productDraftPoMapper.deleteByPrimaryKey(id);
             return new ReturnObject((Product) cloneVo(productPo, Product.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -299,19 +328,15 @@ public class ProductDao {
         if (StringUtils.isNotBlank(barCode)) {
             criteria.andBarcodeEqualTo(barCode);
         }
+        criteria.andShopIdEqualTo(shopId);
 
         List<ProductPo> productPoList = new ArrayList<>();
-        List<SimpleProductRetVo> productSimpleRetVos = new ArrayList<>();
         try {
+            PageHelper.startPage(page, pageSize);
             if (example.getOredCriteria().size() != 0) {
                 productPoList = productMapper.selectByExample(example);
             }
-            for (ProductPo po : productPoList) {
-                Product product = cloneVo(po, Product.class);
-                productSimpleRetVos.add( cloneVo(product, SimpleProductRetVo.class));
-            }
-
-            PageInfo<SimpleProductRetVo> pageInfo = PageInfo.of(productSimpleRetVos);
+            var pageInfo = PageInfo.of(productPoList);
             return Common.getPageRetVo(new ReturnObject(pageInfo), SimpleProductRetVo.class);
         } catch (Exception e) {
             logger.error("selectAllProducts: DataAccessException:" + e.getMessage());
@@ -353,7 +378,7 @@ public class ProductDao {
     public ReturnObject newProduct(ProductDraftPo po){
         try{
             int ret;
-            ret = productDraftPoMapper.insertSelective(po);
+            ret = productDraftPoMapper.insert(po);
             if(ret==0){
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
@@ -377,23 +402,60 @@ public class ProductDao {
         //复制前置空productId,因为ProductDraftPo主键自增
 //        Long temp = product.getId();
 //        product.setId(null);
-        ProductDraftPo productDraftPo= (ProductDraftPo) cloneVo(product, ProductDraftPo.class);
-//        productDraftPo.setProductId(temp);
-        int ret;
         try{
-            //插入更新信息
-            setPoCreatedFields(productDraftPo,loginUser,loginUsername);
-            ret = productDraftPoMapper.updateByPrimaryKey(productDraftPo);
-            if (ret == 0) {
-                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
-            } else {
-                return new ReturnObject();
+        ProductDraftPoExample productDraftPoExample=new ProductDraftPoExample();
+        ProductDraftPoExample.Criteria cr=productDraftPoExample.createCriteria();
+        cr.andProductIdEqualTo(product.getId());
+        List<ProductDraftPo> list=productDraftPoMapper.selectByExample(productDraftPoExample);
+        ProductDraftPo productDraftPo=null;
+        if(list.size()>0)
+        {
+            for(ProductDraftPo productDraftPo1:list)
+            {
+                productDraftPo=cloneVo(product,ProductDraftPo.class);
+                productDraftPo.setProductId(product.getId());
+                productDraftPo.setId(productDraftPo1.getId());
+                setPoModifiedFields(productDraftPo,loginUser,loginUsername);
+                productDraftPoMapper.updateByPrimaryKeySelective(productDraftPo);
+                return new ReturnObject(ReturnNo.OK);
             }
+        }
+//        productDraftPo= (ProductDraftPo) cloneVo(product, ProductDraftPo.class);
+//        productDraftPo.setProductId(product.getId());
+//        productDraftPo.setId(null);
+//        setPoCreatedFields(productDraftPo,loginUser,loginUsername);
+//        productDraftPoMapper.insert(productDraftPo);
+//        productDraftPo.setProductId(temp);
+        return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
         }catch (Exception e){
             logger.error("updateProduct: DataAccessException:" + e.getMessage());
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
         }
 
+    }
+
+
+    public ReturnObject updateDraftById(Product p,Long id)
+    {
+        try
+        {
+            ProductDraftPo productDraftPo=productDraftPoMapper.selectByPrimaryKey(id);
+            if(productDraftPo==null)
+            {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
+            }
+            if(!productDraftPo.getShopId().equals(p.getShopId()))
+            {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
+            }
+            p.setId(id);
+            ProductDraftPo po=cloneVo(p,ProductDraftPo.class);
+            productDraftPoMapper.updateByPrimaryKeySelective(po);
+            return new ReturnObject(ReturnNo.OK);
+        }catch (Exception e){
+            logger.error("updateProduct: DataAccessException:" + e.getMessage());
+            return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
     }
 
     /**
@@ -496,6 +558,20 @@ public class ProductDao {
                 return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
         } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+    public ReturnObject getDraftById(Long shopId,Long id)
+    {
+        try{
+            ProductDraftPo productDraftPo=productDraftPoMapper.selectByPrimaryKey(id);
+            if(!productDraftPo.getShopId().equals(shopId))
+            {
+                return new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE);
+            }
+            return new ReturnObject(cloneVo(productDraftPo,ProductNewReturnVo.class));
+        }catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
