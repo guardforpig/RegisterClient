@@ -19,7 +19,7 @@ public class CouponActivityDetailRetVo {
     private LocalDateTime couponTime;
     private LocalDateTime beginTime;
     private LocalDateTime endTime;
-    private Long quantity;
+    private Integer quantity;
     private Byte quantityType;
     private Byte validTerm;
     private String imageUrl;
