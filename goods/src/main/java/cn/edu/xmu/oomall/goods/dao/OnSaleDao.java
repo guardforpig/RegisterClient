@@ -47,7 +47,7 @@ public class OnSaleDao {
     private OnSalePoMapper onSalePoMapper;
     @Autowired
     private RedisUtil redis;
-
+    private final static String ONSALE_ID = "o_%d";
 
     /**
      * 创建Onsale对象
@@ -187,20 +187,46 @@ public class OnSaleDao {
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andProductIdEqualTo(onsale.getProductId());
-            cr.andEndTimeGreaterThan(onsale.getBeginTime());
-            cr.andBeginTimeLessThan(onsale.getEndTime());
             List<OnSalePo> l1 = onSalePoMapper.selectByExample(oe);
-            if (l1.size() > 0) {
-                return new ReturnObject(true);
+            for(OnSalePo onSalePo:l1){
+                if(!((onSalePo.getEndTime().isBefore(onsale.getBeginTime()))||(onSalePo.getBeginTime().isAfter(onsale.getEndTime())))){
+                    return new ReturnObject(true);
+                }
             }
-            return new ReturnObject(false);
+
+                return new ReturnObject(false);
+
+
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
 
     }
+    public ReturnObject timeCollidedByYt(OnSale onsale) {
+        try {
 
+            OnSalePoExample oe = new OnSalePoExample();
+            OnSalePoExample.Criteria cr = oe.createCriteria();
+            cr.andProductIdEqualTo(onsale.getProductId());
+            cr.andStateNotEqualTo((byte)2);
+            List<OnSalePo> l1 = onSalePoMapper.selectByExample(oe);
+            if(onsale.getBeginTime()!=null&&onsale.getEndTime()!=null){
+            for(OnSalePo onSalePo:l1){
+                if(!((onSalePo.getEndTime().isBefore(onsale.getBeginTime()))||(onSalePo.getBeginTime().isAfter(onsale.getEndTime())))){
+                    return new ReturnObject(true);
+                }
+            }}
+
+            return new ReturnObject(false);
+
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+
+    }
 
     public ReturnObject updateOnSale(OnSale onsale, Long userId, String userName) {
         try {
@@ -213,6 +239,8 @@ public class OnSaleDao {
                 newPo.setShareActId(null);
                 onSalePoMapper.updateByPrimaryKey(newPo);
             }
+            String key = String.format(ONSALE_ID, po.getId());
+            redis.del(key);
             return new ReturnObject(ReturnNo.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());

@@ -2,26 +2,22 @@ package cn.edu.xmu.oomall.activity.microservice;
 
 import cn.edu.xmu.oomall.activity.microservice.vo.*;
 import cn.edu.xmu.oomall.activity.model.vo.OnsaleModifyVo;
-import cn.edu.xmu.oomall.activity.model.vo.OnsaleVo;
 import cn.edu.xmu.oomall.activity.model.vo.PageVo;
 import cn.edu.xmu.oomall.core.config.OpenFeignConfig;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
-import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
-import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-
+import java.time.ZonedDateTime;
 /**
  * @author Gao Yanfeng
  * @date 2021/11/13
  */
-@FeignClient(name = "goods-service1",configuration= OpenFeignConfig.class)
+@FeignClient(name = "goods-service",configuration= OpenFeignConfig.class)
 public interface GoodsService {
     @GetMapping("/internal/onsales")
     InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,
@@ -30,7 +26,21 @@ public interface GoodsService {
                                     @RequestParam("endTime")LocalDateTime endTime,
                                     @RequestParam("page") Integer page,
                                     @RequestParam("pageSize") Integer pageSize);
-
+    @GetMapping("/internal/onsales")
+    InternalReturnObject<PageVo<OnSaleRetVo>> getOnSalesByYT(@RequestParam("shopId") Long shopId,
+                                    @RequestParam("productId")Long productId,
+                                    @RequestParam("beginTime") @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime beginTime,
+                                    @RequestParam("endTime")@DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime endTime,
+                                    @RequestParam("page") Integer page,
+                                    @RequestParam("pageSize") Integer pageSize);
+    @GetMapping("/internal/shops/{did}/activities/{id}/onsales")
+    InternalReturnObject<PageVo<OnSaleRetVo>> getActivityOnsales(@PathVariable("did")Long did,
+                                                                 @PathVariable("id")Long id,
+                                                                 @RequestParam(required = false) Byte state,
+                                                                 @RequestParam(value = "beginTime",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime beginTime,
+                                                                 @RequestParam(value = "endTime",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endTime,
+                                                                 @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
+                                                                 @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize);
     @PutMapping("/internal/shops/{did}/activities/{id}/onsales/online")
     InternalReturnObject onlineOnsale(@PathVariable(value="did") Long shopId, @PathVariable(value="id") Long activityId);
 
@@ -39,6 +49,11 @@ public interface GoodsService {
 
     @PutMapping("/internal/shops/{did}/onsales/{id}")
     InternalReturnObject modifyOnsale(@PathVariable(value="did") Long shopId, @PathVariable(value="id")Long onsaleId, @RequestBody OnsaleModifyVo vo);
+
+    @PutMapping("/internal/shops/{did}/onsales/{id}/yt")
+    InternalReturnObject modifyOnsaleByYt(@PathVariable(value="did") Long shopId,
+                                          @PathVariable(value="id")Long onsaleId,
+                                          @RequestBody OnsaleModifyVo vo);
 
     @DeleteMapping("/internal/shops/{did}/activities/{id}/onsales")
     InternalReturnObject deleteOnsale(@PathVariable(value="did") Long shopId, @PathVariable(value="id") Long activityId);
@@ -93,4 +108,7 @@ public interface GoodsService {
                                                                        @RequestParam("endTime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS") LocalDateTime endTime,
                                                                        @RequestParam("page") Integer page,
                                                                        @RequestParam("pageSize") Integer pageSize);
+
+    class HystrixClientFallbackFactory {
+    }
 }

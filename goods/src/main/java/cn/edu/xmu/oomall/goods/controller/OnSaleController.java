@@ -260,6 +260,35 @@ public class OnSaleController {
         return decorateReturnObject(returnObject1);
     }
 
+    @Audit(departName = "shops")
+    @PutMapping("internal/shops/{did}/onsales/{id}/yt")
+    public Object modifyOnSaleByYt(@PathVariable Long did,
+                                   @Validated @PathVariable Long id,
+                                   @RequestBody ModifyOnSaleVo onSale, @LoginUser Long loginUserId, @LoginName String loginUserName,
+                                   BindingResult bindingResult) {
+        try {
+            Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
+            if (null != returnObject) {
+                return returnObject;
+            }
+
+            if (onSale.getBeginTime() != null && onSale.getEndTime() != null) {
+                // 判断开始时间是否比结束时间晚
+                if (onSale.getBeginTime().isAfter(onSale.getEndTime())) {
+                    return decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME, "开始时间晚于结束时间。"));
+                }
+            }
+
+            OnSale bo = cloneVo(onSale, OnSale.class);
+            bo.setId(id);
+            ReturnObject returnObject1 = onsaleService.updateOnSaleByYt(bo, loginUserId, loginUserName);
+            return decorateReturnObject(returnObject1);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+
+    }
 
     @ApiOperation(value = "修改普通和秒杀价格和数量")
     @ApiResponses({

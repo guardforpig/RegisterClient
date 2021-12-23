@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @author Gao Yanfeng
  * @date 2021/11/12
  */
-@FeignClient(name = "shop-service1",configuration= OpenFeignConfig.class)
+@FeignClient(name = "shop-service",configuration= OpenFeignConfig.class)
 public interface ShopService {
     @GetMapping("/shops/{id}")
     InternalReturnObject<SimpleShopVo> getSimpleShopById(@PathVariable Long id);
