@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.goods.controller;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductChangeVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductDetailVo;
@@ -246,9 +247,16 @@ public class GoodsController {
     })
     @PutMapping(value="shops/{shopId}/products/{id}/allow")
     @Audit(departName = "shops")
-    public Object allowProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
+    public Object allowProduct(@PathVariable("shopId")Long shopId,
+                               @PathVariable("id") Long id,
+                               @LoginUser Long loginUserId,
+                               @LoginName String loginUserName,
+                               @Depart Long departId)
     {
-        return Common.decorateReturnObject(productService.allowProduct(shopId,id));
+        if(shopId!=0&&departId!=0){
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
+        return Common.decorateReturnObject(productService.allowProduct(id));
     }
 
     @ApiOperation(value="禁售货品")
@@ -266,9 +274,16 @@ public class GoodsController {
     })
     @PutMapping(value="shops/{shopId}/products/{id}/prohibit")
     @Audit(departName = "shops")
-    public Object prohibitProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
+    public Object prohibitProduct(@PathVariable("shopId")Long shopId,
+                                  @PathVariable("id") Long id,
+                                  @LoginUser Long loginUserId,
+                                  @LoginName String loginUserName,
+                                  @Depart Long departId)
     {
-        return Common.decorateReturnObject(productService.prohibitProduct(shopId,id));
+        if(shopId!=0&&departId!=0){
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
+        return Common.decorateReturnObject(productService.prohibitProduct(id));
     }
 
     /**
@@ -289,7 +304,7 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @GetMapping(value="categories/{id}/products")
- //   @Audit(departName = "shops")
+    @Audit(departName = "shops")
     public Object getProductOfCategory(@PathVariable("id") Long id,
                                        @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
@@ -498,7 +513,7 @@ public class GoodsController {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID,"传入的RequestBody参数格式不合法"));
         }
 
-        ReturnObject returnObject = productService.updateDraftProduct(shopId,productChangeVo,id,userId,userName);
+        ReturnObject returnObject = productService.updateDraftProduct(shopId, productChangeVo,id, userId,userName);
         return Common.decorateReturnObject(returnObject);
     }
     @GetMapping("shops/{shopId}/draftproducts/{id}")

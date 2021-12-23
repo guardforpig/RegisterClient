@@ -53,7 +53,7 @@ public class CouponActivityService {
 
     @Autowired
     CouponActivityDao couponActivityDao;
-    
+
     @Autowired
     private GoodsService goodsService;
 
