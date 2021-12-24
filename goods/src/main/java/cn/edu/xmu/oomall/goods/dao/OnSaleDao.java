@@ -4,8 +4,10 @@ import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.goods.mapper.OnSalePoMapper;
 import cn.edu.xmu.oomall.goods.model.bo.Onsale;
+import cn.edu.xmu.oomall.goods.model.bo.Onsale;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePo;
 import cn.edu.xmu.oomall.goods.model.po.OnSalePoExample;
+import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +48,7 @@ public class OnSaleDao {
     private OnSalePoMapper onSalePoMapper;
     @Autowired
     private RedisUtil redis;
-
+    private final static String ONSALE_ID = "o_%d";
 
     /**
      * 创建Onsale对象
@@ -80,13 +82,14 @@ public class OnSaleDao {
 
     }
 
-    public ReturnObject onlineOrOfflineOnSaleAct(Long actId, Long userId, String userName, Onsale.State cntState, Onsale.State finalState) {
+    public ReturnObject onlineOrOfflineOnSaleAct(Long shopId, Long actId, Long userId, String userName, Onsale.State cntState, Onsale.State finalState) {
         try {
 
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andActivityIdEqualTo(actId);
-            Byte s1 = cntState.getCode().byteValue();
+            cr.andShopIdEqualTo(shopId);
+            Byte s1 = cntState.getCode();
             cr.andStateEqualTo(s1);
 
             Byte s2 = finalState.getCode().byteValue();
@@ -125,7 +128,7 @@ public class OnSaleDao {
                 Onsale ret = null;
                 return new ReturnObject(ret);
             }
-            Onsale ret = cloneVo(po, Onsale.class);
+            Onsale ret = (Onsale) cloneVo(po, Onsale.class);
             return new ReturnObject(ret);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -186,20 +189,46 @@ public class OnSaleDao {
             OnSalePoExample oe = new OnSalePoExample();
             OnSalePoExample.Criteria cr = oe.createCriteria();
             cr.andProductIdEqualTo(onsale.getProductId());
-            cr.andEndTimeGreaterThan(onsale.getBeginTime());
-            cr.andBeginTimeLessThan(onsale.getEndTime());
             List<OnSalePo> l1 = onSalePoMapper.selectByExample(oe);
-            if (l1.size() > 0) {
-                return new ReturnObject(true);
+            for(OnSalePo onSalePo:l1){
+                if(!((onSalePo.getEndTime().isBefore(onsale.getBeginTime()))||(onSalePo.getBeginTime().isAfter(onsale.getEndTime())))){
+                    return new ReturnObject(true);
+                }
             }
-            return new ReturnObject(false);
+
+                return new ReturnObject(false);
+
+
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
         }
 
     }
+    public ReturnObject timeCollidedByYt(Onsale onsale) {
+        try {
 
+            OnSalePoExample oe = new OnSalePoExample();
+            OnSalePoExample.Criteria cr = oe.createCriteria();
+            cr.andProductIdEqualTo(onsale.getProductId());
+            cr.andStateNotEqualTo((byte)2);
+            List<OnSalePo> l1 = onSalePoMapper.selectByExample(oe);
+            if(onsale.getBeginTime()!=null&&onsale.getEndTime()!=null){
+            for(OnSalePo onSalePo:l1){
+                if(!((onSalePo.getEndTime().isBefore(onsale.getBeginTime()))||(onSalePo.getBeginTime().isAfter(onsale.getEndTime())))){
+                    return new ReturnObject(true);
+                }
+            }}
+
+            return new ReturnObject(false);
+
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+
+    }
 
     public ReturnObject updateOnSale(Onsale onsale, Long userId, String userName) {
         try {
@@ -212,7 +241,8 @@ public class OnSaleDao {
                 newPo.setShareActId(null);
                 onSalePoMapper.updateByPrimaryKey(newPo);
             }
-
+            String key = String.format(ONSALE_ID, po.getId());
+            redis.del(key);
             return new ReturnObject(ReturnNo.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());

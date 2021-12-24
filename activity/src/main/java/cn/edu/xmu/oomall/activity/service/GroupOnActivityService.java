@@ -175,7 +175,7 @@ public class GroupOnActivityService {
             return obj;
         }
 
-        InternalReturnObject result = goodsService.onlineOnsale(id,shopId);
+        InternalReturnObject result = goodsService.onlineOnsale(shopId, id);
         if(result.getErrno()!=0){
             obj=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
         }else{
@@ -216,7 +216,7 @@ public class GroupOnActivityService {
             return obj;
         }
 
-        InternalReturnObject result = goodsService.offlineOnsale(id,shopId);
+        InternalReturnObject result = goodsService.offlineOnsale(shopId, id);
         if(result.getErrno()!=0){
             obj=new ReturnObject(ReturnNo.getByCode(result.getErrno()),result.getErrmsg());
         }else{

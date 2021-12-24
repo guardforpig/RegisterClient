@@ -49,17 +49,13 @@ public class AdvanceSaleDao {
         ReturnObject returnObject=null;
         try{
             AdvanceSalePo po=null;
-            AdvanceSale bo=(AdvanceSale) redisUtil.get(String.format(ADVANCESALE_KEY,id));
-            if(bo!=null) {
-                po=(AdvanceSalePo) cloneVo(bo,AdvanceSalePo.class);
-            }
-            else {
+
                 po=advanceSalePoMapper.selectByPrimaryKey(id);
                 if(po!=null){
-                    bo=(AdvanceSale) cloneVo(po,AdvanceSale.class);
+                    AdvanceSale bo=(AdvanceSale) cloneVo(po,AdvanceSale.class);
                     redisUtil.set(String.format(ADVANCESALE_KEY,id),bo,categoryTimeout);
                 }
-            }
+
             returnObject=new ReturnObject(po);
         }catch(Exception e){
             logger.error(e.toString());
@@ -75,7 +71,7 @@ public class AdvanceSaleDao {
     public ReturnObject updateAdvanceSale(AdvanceSalePo po){
         ReturnObject returnObject=null;
         try{
-            redisUtil.del("AdvanceSaleId"+po.getId());
+            redisUtil.del(String.format(ADVANCESALE_KEY,po.getId()));
             advanceSalePoMapper.updateByPrimaryKeySelective(po);
             returnObject=new ReturnObject();
         }catch(Exception e){
@@ -92,7 +88,7 @@ public class AdvanceSaleDao {
     public ReturnObject deleteAdvanceSale(Long id){
         ReturnObject returnObject=null;
         try{
-            redisUtil.del("AdvanceSaleId"+id);
+            redisUtil.del(String.format(ADVANCESALE_KEY,id));
             advanceSalePoMapper.deleteByPrimaryKey(id);
             returnObject=new ReturnObject();
         }catch(Exception e){

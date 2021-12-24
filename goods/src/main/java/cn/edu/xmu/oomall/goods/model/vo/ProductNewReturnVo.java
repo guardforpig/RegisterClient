@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 /**
@@ -31,7 +33,11 @@ public class ProductNewReturnVo {
     private String originPlace;
     private UserSimpleRetVo category;
     private UserSimpleRetVo createBy;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    private ZonedDateTime gmtCreate;
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
+    private ZonedDateTime gmtModified;
     private UserSimpleRetVo modifiedBy;
 }

@@ -25,38 +25,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdvanceSaleVo{
-    @ApiModelProperty(value = "价格")
-    @Min(0)
-    @NotNull(message = "价格不能为空")
     private Long price;
-
-    @ApiModelProperty(value = "开始时间")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
-    @NotNull(message = "开始时间不能为空")
     private ZonedDateTime beginTime;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
-    @ApiModelProperty(value = "结束时间")
-    @NotNull(message = "结束时间不能为空")
     private ZonedDateTime endTime;
 
-    @ApiModelProperty(value = "数量")
-    @Min(0)
-    @NotNull(message = "数量不能为空")
-    private Long quantity;
+    private Integer quantity;
 
-    @ApiModelProperty(value = "预售活动名称")
-    @NotBlank(message = "预售活动名称不能为空")
     private String name;
-
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
-    @NotNull(message = "尾款支付时间不能为空")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
     private ZonedDateTime payTime;
-
-    @ApiModelProperty(value = "订金")
-    @DecimalMin("0")
-    @Min(0)
-    @NotNull(message = "订金不能为空")
     private Long advancePayPrice;
 }

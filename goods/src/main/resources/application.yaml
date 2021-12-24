@@ -50,9 +50,7 @@ spring:
 
   redis:
     database: 0
-    host: 101.132.164.244
-    port: 6889
-    password: 123456
+    host: 127.0.0.1
     lettuce:
       pool:
         max-active: 100
