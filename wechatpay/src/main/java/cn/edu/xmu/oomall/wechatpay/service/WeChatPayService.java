@@ -10,6 +10,7 @@ import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayRefundNotifyRetVo;
 import cn.edu.xmu.oomall.wechatpay.model.vo.WeChatPayPrepayRetVo;
 import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnNo;
 import cn.edu.xmu.oomall.wechatpay.util.WeChatPayReturnObject;
+import cn.edu.xmu.privilegegateway.annotation.util.JacksonUtil;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
@@ -57,13 +58,16 @@ public class WeChatPayService {
         }
 
         int random = (int)(Math.random()*4);
+        // random = 1;
         switch (random)
         {
             case 0:
             {
                 WeChatPayReturnObject returnObject = paySuccess(weChatPayTransaction);
                 if(returnObject.getData()!=null) {
-                    rocketMQTemplate.sendOneWay("wechatpaypayment-topic", MessageBuilder.withPayload( new WeChatPayPaymentNotifyRetVo((WeChatPayTransaction)returnObject.getData()) ).build());
+                    String json = JacksonUtil.toJson(new WeChatPayPaymentNotifyRetVo((WeChatPayTransaction)returnObject.getData()));
+
+                    rocketMQTemplate.sendOneWay("wechat-payment-notify-topic", MessageBuilder.withPayload(json).build());
                 }
                 break;
             }
@@ -76,7 +80,8 @@ public class WeChatPayService {
             {
                 WeChatPayReturnObject returnObject = payFail(weChatPayTransaction);
                 if(returnObject.getData()!=null) {
-                    rocketMQTemplate.sendOneWay("wechatpaypayment-topic", MessageBuilder.withPayload( new WeChatPayPaymentNotifyRetVo((WeChatPayTransaction)returnObject.getData()) ).build());
+                    String json = JacksonUtil.toJson( new WeChatPayPaymentNotifyRetVo((WeChatPayTransaction)returnObject.getData()));
+                    rocketMQTemplate.sendOneWay("wechat-refund-notify-topic", MessageBuilder.withPayload(json).build());
                 }
                 break;
             }
@@ -143,13 +148,15 @@ public class WeChatPayService {
 
         WeChatPayReturnObject returnObject = null;
         int random = (int)(Math.random()*4);
+        //     random = 2;
         switch (random)
         {
             case 0:
             {
                 returnObject = refundSuccess(weChatPayRefund);
                 if(returnObject.getData()!=null) {
-                    rocketMQTemplate.sendOneWay("wechatpayrefund-topic", MessageBuilder.withPayload( new WeChatPayRefundNotifyRetVo((WeChatPayRefund)returnObject.getData()) ).build());
+                    String json = JacksonUtil.toJson(new WeChatPayRefundNotifyRetVo((WeChatPayRefund)returnObject.getData()));
+                    rocketMQTemplate.sendOneWay("wechat-refund-notify-topic", MessageBuilder.withPayload(json).build());
                 }
                 break;
             }
@@ -162,7 +169,8 @@ public class WeChatPayService {
             {
                 returnObject = refundFail(weChatPayRefund);
                 if(returnObject.getData()!=null) {
-                    rocketMQTemplate.sendOneWay("wechatpayrefund-topic", MessageBuilder.withPayload( new WeChatPayRefundNotifyRetVo((WeChatPayRefund)returnObject.getData()) ).build());
+                    String json = JacksonUtil.toJson(new WeChatPayRefundNotifyRetVo((WeChatPayRefund)returnObject.getData()));
+                    rocketMQTemplate.sendOneWay("wechat-refund-notify-topic", MessageBuilder.withPayload(json).build());
                 }
                 break;
             }

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class NotifyBody {
     /**
      * 回调时间

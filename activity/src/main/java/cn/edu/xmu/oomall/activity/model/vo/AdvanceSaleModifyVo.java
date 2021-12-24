@@ -8,6 +8,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 
 @Data
@@ -15,14 +16,12 @@ public class AdvanceSaleModifyVo {
 
     @ApiModelProperty(value = "活动名")
     private String name;
-    @JsonFormat(pattern = "YY-MM-dd hh:mm:ss")
-    @ApiModelProperty(value = "开始时间")
-    private LocalDateTime beginTime;
-    @JsonFormat(pattern = "YY-MM-dd hh:mm:ss")
-    @ApiModelProperty(value = "结束时间")
-    private LocalDateTime endTime;
-    @ApiModelProperty(value = "支付首款时间")
-    private LocalDateTime payTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime beginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime payTime;
     @ApiModelProperty(value = "首款金额")
     private Long advancePayPrice;
     @ApiModelProperty(value = "数量")
