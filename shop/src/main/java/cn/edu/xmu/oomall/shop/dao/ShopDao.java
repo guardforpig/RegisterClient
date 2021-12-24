@@ -42,7 +42,7 @@ public class ShopDao {
     public ReturnObject getAllShop(Integer page, Integer pageSize) {
         ShopPoExample example = new ShopPoExample();
         ShopPoExample.Criteria criteria=example.createCriteria();
-        criteria.andStateNotEqualTo(Shop.State.FORBID.getCode().byteValue());
+
         List<ShopPo> shopPos;
         try {
             PageHelper.startPage(page, pageSize);

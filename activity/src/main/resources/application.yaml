@@ -18,7 +18,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 10.30.82.244:8848
+        server-addr: 121.36.53.115
 #        username: nacos
 #        password: ooad_javaee201
 
@@ -46,7 +46,9 @@ spring:
 
   redis:
     database: 0
-    host: 127.0.0.1
+    host: 121.36.53.115
+    port: 6379
+    password: 123456
     lettuce:
       pool:
         max-active: 100
