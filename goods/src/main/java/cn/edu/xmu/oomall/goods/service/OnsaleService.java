@@ -394,8 +394,8 @@ public class OnsaleService {
 
     }
     @Transactional(rollbackFor = Exception.class)
-    public ReturnObject updateOnsaleQuantity(Long id, Integer quantity, Long userId, String userName){
-        return onsaleDao.updateOnsaleQuantity(id,quantity,userId,userName);
+    public ReturnObject updateOnsaleQuantity(Long id, Integer quantity){
+        return onsaleDao.updateOnsaleQuantity(id,quantity);
     }
 
 }
