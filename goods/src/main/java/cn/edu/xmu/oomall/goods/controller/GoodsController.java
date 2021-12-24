@@ -376,7 +376,7 @@ public class GoodsController {
     @ApiResponses({@ApiResponse(code = 0, message = "成功"),})
     @GetMapping(value = "/products")
     public Object getProducts(@RequestParam(value = "shopId",required = false) Long shopId,
-                              @RequestParam(value = "barCode",required = false) String barCode,
+                              @RequestParam(value = "barcode",required = false) String barCode,
                               @RequestParam(required = false) Integer page,
                               @RequestParam(required = false) Integer pageSize) {
 
