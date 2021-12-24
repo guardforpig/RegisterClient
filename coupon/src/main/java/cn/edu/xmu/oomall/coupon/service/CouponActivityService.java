@@ -10,7 +10,6 @@ import cn.edu.xmu.oomall.coupon.microservice.vo.*;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponActivity;
 import cn.edu.xmu.oomall.coupon.model.bo.CouponOnsale;
 import cn.edu.xmu.oomall.coupon.model.bo.OrderItem;
-import cn.edu.xmu.oomall.coupon.model.bo.Shop;
 import cn.edu.xmu.oomall.coupon.model.bo.strategy.BaseCouponDiscount;
 import cn.edu.xmu.oomall.coupon.model.po.CouponActivityPoExample;
 import cn.edu.xmu.oomall.coupon.model.vo.CouponActivityDetailRetVo;
