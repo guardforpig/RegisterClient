@@ -17,11 +17,11 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 121.36.53.115
+        server-addr: 10.30.82.244:8848
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://101.132.164.244:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
+    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
     username: dbuser
     password: 12345678
     type: com.alibaba.druid.pool.DruidDataSource
@@ -44,9 +44,7 @@ spring:
 
   redis:
     database: 0
-    host: 101.132.164.244
-    port: 6889
-    password: 123456
+    host: 127.0.0.1
 
     lettuce:
       pool:
