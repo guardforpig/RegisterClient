@@ -78,7 +78,7 @@ public class OnSaleController {
             return decorateReturnObject(returnObject1);
         }
 
-//        httpServletResponse.setStatus(HttpStatus.CREATED.value());
+        httpServletResponse.setStatus(HttpStatus.CREATED.value());
 
         return decorateReturnObject(getRetVo(returnObject1, NewOnSaleRetVo.class));
 
