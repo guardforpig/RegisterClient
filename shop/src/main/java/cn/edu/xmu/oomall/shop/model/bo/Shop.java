@@ -19,7 +19,7 @@ public class Shop {
         EXAME(0,"未审核"),
         OFFLINE(1,"下线"),
         ONLINE(2, "上线"),
-        FORBID(3, "关闭");
+        FORBID(4, "关闭");
 
         private static final Map<Integer, State> stateMap;
         static { //由类加载机制，静态块初始加载对应的枚举属性到map中，而不用每次取属性时，遍历一次所有枚举值
