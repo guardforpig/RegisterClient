@@ -166,17 +166,10 @@ public class AdvanceSaleController {
             @RequestParam(required = false) @DateTimeFormat(pattern = TimeFormat.INPUT_DATE_TIME_FORMAT) ZonedDateTime endTime,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
-        //输入参数合法性检查
-        LocalDateTime begin=null;
-        LocalDateTime end=null;
-        if(beginTime!=null&&endTime!=null) {
-            begin=beginTime.toLocalDateTime();
-            end=endTime.toLocalDateTime();
-            if(beginTime.isAfter(endTime)) {
-                return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
-            }
+        if(beginTime.isAfter(endTime)) {
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
         }
-        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId, AdvanceSale.state.ONLINE.getCode(), begin,end,page,pageSize);
+        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId, productId, AdvanceSale.state.ONLINE.getCode(), beginTime, endTime, page, pageSize);
         return Common.decorateReturnObject(ret);
     }
 
@@ -234,17 +227,11 @@ public class AdvanceSaleController {
             @RequestParam(required = false) @DateTimeFormat(pattern = TimeFormat.INPUT_DATE_TIME_FORMAT) ZonedDateTime endTime,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
-        LocalDateTime begin=null;
-        LocalDateTime end=null;
         //输入参数合法性检查
-        if(beginTime!=null&&endTime!=null) {
-            begin=beginTime.toLocalDateTime();
-            end=endTime.toLocalDateTime();
-            if(beginTime.isAfter(endTime)) {
-                return  Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
-            }
+        if(beginTime.isAfter(endTime)) {
+            return  Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
         }
-        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId,productId,state,begin,end,page,pageSize);
+        ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId, productId, state, beginTime, endTime, page, pageSize);
         return Common.decorateReturnObject(ret);
     }
 

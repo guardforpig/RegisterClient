@@ -242,7 +242,7 @@ public class AdvanceSaleService {
      * @return
      */
     @Transactional(readOnly = true,rollbackFor = Exception.class)
-    public ReturnObject getAllAdvanceSale(Long shopId, Long productId, Byte state, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize) {
+    public ReturnObject getAllAdvanceSale(Long shopId, Long productId, Byte state, ZonedDateTime beginTime, ZonedDateTime endTime, Integer page, Integer pageSize) {
         try{
         //判断shop是否存在
         if (shopId != null) {

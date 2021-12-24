@@ -26,8 +26,8 @@ public interface GoodsService {
     @GetMapping("/internal/onsales")
     InternalReturnObject getOnSales(@RequestParam("shopId") Long shopId,
                                     @RequestParam("productId")Long productId,
-                                    @RequestParam("beginTime") LocalDateTime beginTime,
-                                    @RequestParam("endTime")LocalDateTime endTime,
+                                    @RequestParam("beginTime") @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime beginTime,
+                                    @RequestParam("endTime")@DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime endTime,
                                     @RequestParam("page") Integer page,
                                     @RequestParam("pageSize") Integer pageSize);
     @GetMapping("/internal/onsales")
