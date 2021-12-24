@@ -81,7 +81,7 @@ public class WeChatPayService {
                 WeChatPayReturnObject returnObject = payFail(weChatPayTransaction);
                 if(returnObject.getData()!=null) {
                     String json = JacksonUtil.toJson( new WeChatPayPaymentNotifyRetVo((WeChatPayTransaction)returnObject.getData()));
-                    rocketMQTemplate.sendOneWay("wechat-refund-notify-topic", MessageBuilder.withPayload(json).build());
+                    rocketMQTemplate.sendOneWay("wechat-payment-notify-topic", MessageBuilder.withPayload(json).build());
                 }
                 break;
             }
@@ -202,7 +202,7 @@ public class WeChatPayService {
     }
 
     private WeChatPayReturnObject payFail(WeChatPayTransaction weChatPayTransaction){
-        weChatPayTransaction.setTradeState(TRADE_STATE_FAIL);
+        weChatPayTransaction.setTradeState(TRADE_STATE_CLOSED);
         return weChatPayDao.createTransaction( cloneVo(weChatPayTransaction,WeChatPayTransactionPo.class) );
     }
 
