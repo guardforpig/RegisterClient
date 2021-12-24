@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core", "cn.edu.xmu.oomall.wechatpay", "cn.edu.xmu.privilegegateway"})
+@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.oomall.core.util", "cn.edu.xmu.oomall.core.model","cn.edu.xmu.oomall.wechatpay", "cn.edu.xmu.privilegegateway"})
 @EnableConfigurationProperties
 @MapperScan("cn.edu.xmu.oomall.wechatpay.mapper")
 @EnableFeignClients(basePackages = "cn.edu.xmu.oomall.wechatpay.microservice")
