@@ -58,7 +58,7 @@ public class AlipayService {
 
     private void payFailed(Payment payment)
     {
-        payment.setTradeStatus(Payment.TradeStatus.WAIT_BUYER_PAY);
+        payment.setTradeStatus(Payment.TradeStatus.TRADE_CLOSED);
         //默认插入成功，因为支付宝没有服务器错误的状态码
         paymentDao.insertPayment(payment);
     }
@@ -90,7 +90,7 @@ public class AlipayService {
         Random r = new Random();
         //生成随机数，4种情况
         Integer integer = r.nextInt(4);
-        //  integer = 1;
+     //   integer = 1;
         switch (integer)
         {
             //支付成功回调

@@ -632,7 +632,7 @@ public class CouponActivityService {
             }
             ProductRetVo productRetVo=(ProductRetVo) objProduct.getData();
             //product中对应的onsaleId和传入参数的onSaleId不一致
-            if(productRetVo.getOnSaleId()==null||!productRetVo.getOnSaleId().equals(item.getOnsaleId())){
+            if(productRetVo.getOnsaleId()==null||!productRetVo.getOnsaleId().equals(item.getOnsaleId())) {
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
             orderItem.setCategoryId(productRetVo.getCategory().getId());
@@ -640,7 +640,8 @@ public class CouponActivityService {
             //没有优惠活动的商品，直接放入返回值DiscountRetVo的列表中
             if(item.getActivityId()==null){
                 DiscountRetVo discountRetVo=cloneVo(item,DiscountRetVo.class);
-                discountRetVo.setDiscountPrice(item.getOriginalPrice());
+              //  discountRetVo.setDiscountPrice(item.getOriginalPrice());
+                discountRetVo.setDiscountPrice(0L);
                 discountRetVos.add(discountRetVo);
             }
             //有优惠活动的商品，放入map
@@ -738,7 +739,7 @@ public class CouponActivityService {
             }
             ProductRetVo productRetVo = (ProductRetVo) objProduct.getData();
             //product中对应的onsaleId和传入参数的onSaleId不一致
-            if (!productRetVo.getOnSaleId().equals(item.getOnsaleId())) {
+            if (!productRetVo.getOnsaleId().equals(item.getOnsaleId())) {
                 return new ReturnObject(ReturnNo.FIELD_NOTVALID);
             }
             orderItem.setCategoryId(productRetVo.getCategory().getId());

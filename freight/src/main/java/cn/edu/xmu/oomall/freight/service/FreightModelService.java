@@ -243,7 +243,7 @@ public class FreightModelService {
             } else {
                 freightItemRet = pieceFreightDao.getPieceItem(fid, regionIds);
                 amount = sumQuantity;
-            };
+            }
             if (!freightItemRet.getCode().equals(ReturnNo.OK)) {
                 return freightItemRet;
             }
