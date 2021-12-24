@@ -287,6 +287,7 @@ public class OnSaleController {
         return decorateReturnObject(returnObject1);
     }
 
+
     /**
      * lxc 修改onsale的share id
      * @param id
@@ -341,24 +342,13 @@ public class OnSaleController {
      * gyt
      * @param id
      * @param vo
-     * @param loginUserId
-     * @param loginUserName
-     * @param bindingResult
      * @return
      */
-    @Audit(departName = "shops")
     @PutMapping("internal/onsales/{id}/stock")
     public Object updateOnsaleQuantity(@PathVariable Long id,
-                                       @Validated @RequestBody QuantityVo vo,
-                                       @LoginUser Long loginUserId,
-                                       @LoginName String loginUserName,
-                                       BindingResult bindingResult){
-        Object returnObject = processFieldErrors(bindingResult, httpServletResponse);
-        if (null != returnObject) {
-            return returnObject;
-        }
+                                       @RequestBody QuantityVo vo){
         Integer quantity = vo.getQuantity();
-        return decorateReturnObject(onsaleService.updateOnsaleQuantity(id, quantity, loginUserId, loginUserName));
+        return decorateReturnObject(onsaleService.updateOnsaleQuantity(id, quantity));
     }
 
 

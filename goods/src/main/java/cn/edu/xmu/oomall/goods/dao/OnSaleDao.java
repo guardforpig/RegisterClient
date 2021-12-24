@@ -306,7 +306,7 @@ public class OnSaleDao {
                     Stream.of(setKey,String.format(ONSALE_STOCK_GROUP_KEY, id, i)).collect(Collectors.toList()), incr[i]);
         }
     }
-    public ReturnObject updateOnsaleQuantity(Long id,Integer quantity, Long userId, String userName){
+    public ReturnObject updateOnsaleQuantity(Long id,Integer quantity){
         try{
             OnSalePo onSalePo=onSalePoMapper.selectByPrimaryKey(id);
             if (onSalePo == null) {
