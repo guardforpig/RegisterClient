@@ -39,7 +39,7 @@ import java.util.List;
  */
 @RestController
 @RefreshScope
-@RequestMapping(value = "/",produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+@RequestMapping(value = "/",produces = "application/json;charset=UTF-8")
 public class CouponActivityController {
     @Autowired
     CouponActivityService couponActivityService;
