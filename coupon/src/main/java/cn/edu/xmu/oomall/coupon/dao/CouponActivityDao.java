@@ -40,10 +40,10 @@ import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 @Repository
 public class CouponActivityDao {
     @Autowired
-    CouponActivityPoMapper couponActivityPoMapper;
+    private CouponActivityPoMapper couponActivityPoMapper;
 
     @Autowired
-    CouponOnsalePoMapper couponOnsalePoMapper;
+    private CouponOnsalePoMapper couponOnsalePoMapper;
 
     @Autowired
     private RedisUtil redisUtils;
@@ -92,19 +92,16 @@ public class CouponActivityDao {
      * @param pageSize 页大小
      * @return 优惠活动列表 List<CouponActivityRetVo>
      */
-    public ReturnObject<PageInfo<VoObject>> showCouponActivitiesByExample(CouponActivityPoExample example,Integer page, Integer pageSize){
-        try{
-            PageHelper.startPage(page,pageSize);
-            List<CouponActivityPo>list = couponActivityPoMapper.selectByExample(example);
-            List<VoObject>list1 = new ArrayList<>();
-            for(CouponActivityPo couponActivityPo:list){
-                // TODO: 2021/12/11 改进cloneVo,localDateTime和zonedDateTime互转
-                CouponActivityRetVo couponActivityRetVo = cloneVo(couponActivityPo,CouponActivityRetVo.class);
-                list1.add(couponActivityRetVo);
+    public ReturnObject showCouponActivitiesByExample(CouponActivityPoExample example,Integer page, Integer pageSize) {
+        try {
+            PageHelper.startPage(page, pageSize);
+            List<CouponActivityPo> poList = couponActivityPoMapper.selectByExample(example);
+            if (poList.size() == 0) {
+                return new ReturnObject<>(ReturnNo.RESOURCE_ID_NOTEXIST);
             }
-            PageInfo<VoObject> pageInfo = new PageInfo<>(list1);
-            return new ReturnObject<>(pageInfo);
-        }catch (Exception e){
+            ReturnObject ret = new ReturnObject<>(new PageInfo<>(poList));
+            return Common.getPageRetVo(ret, CouponActivity.class);
+        } catch (Exception e) {
             return new ReturnObject<>(ReturnNo.INTERNAL_SERVER_ERR);
         }
 

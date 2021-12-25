@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -23,12 +23,12 @@ public class RetShareActivityInfoVo implements VoObject, Serializable {
     private Long id;
     private ShopVo shop;
     private String name;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
-    private LocalDateTime beginTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
-    private LocalDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime beginTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
+    private ZonedDateTime endTime;
     private List<StrategyVo> strategy;
-
+    private Byte state;
     @Override
     public Object createVo() {
         return this;

@@ -237,18 +237,23 @@ public class FreightModelService {
             var freightModel = (FreightModel) freightRet.getData();
             ReturnObject freightItemRet;
             int amount;
+            int unit = 0;
             if (freightModel.getType() == 0) {
                 freightItemRet =  weightFreightDao.getWeightItem(fid, regionIds);
                 amount = sumWeight;
+                unit = freightModel.getUnit();
             } else {
                 freightItemRet = pieceFreightDao.getPieceItem(fid, regionIds);
                 amount = sumQuantity;
-            };
+            }
             if (!freightItemRet.getCode().equals(ReturnNo.OK)) {
                 return freightItemRet;
             }
             var freightItem = (FreightItem)freightItemRet.getData();
-            Long newPrice = freightItem.calculate(amount, freightModel.getUnit());
+            if (unit == 0) {
+                unit =  ((PieceFreight)freightItem).getAdditionalItems();
+            }
+            Long newPrice = freightItem.calculate(amount, unit);
             if (newPrice > freightPrice) {
                 freightPrice = newPrice;
                 productId = item.getProductId();

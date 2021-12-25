@@ -89,11 +89,16 @@ public class GroupOnActivityController {
     })
     @GetMapping(value = "/groupons/{id}")
     public Object getOnlineGroupOnActivity(@PathVariable Long id) {
-        var ret = groupOnService.getGroupOnActivity(id, GroupOnState.ONLINE, null);
-        if (ret.getCode().equals(ReturnNo.OK)) {
-            ret = new ReturnObject(cloneVo(ret.getData(), GroupOnActivityVo.class));
+        try {
+            var ret = groupOnService.getGroupOnActivity(id, GroupOnState.ONLINE, null);
+            if (ret.getCode().equals(ReturnNo.OK)) {
+                ret = new ReturnObject(cloneVo(ret.getData(), GroupOnActivityVo.class));
+            }
+            return Common.decorateReturnObject(ret);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return Common.decorateReturnObject(ret);
     }
 
 

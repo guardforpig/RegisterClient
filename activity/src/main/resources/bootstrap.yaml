@@ -2,7 +2,7 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: 101.132.164.244:8888
+        server-addr: 10.30.82.244:8848
   application:
     name: activity-service
   profiles:

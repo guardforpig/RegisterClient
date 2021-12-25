@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.goods.controller;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
+import cn.edu.xmu.oomall.goods.model.bo.Product;
 import cn.edu.xmu.oomall.goods.model.vo.GoodsVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductChangeVo;
 import cn.edu.xmu.oomall.goods.model.vo.ProductDetailVo;
@@ -10,6 +11,7 @@ import cn.edu.xmu.oomall.goods.model.vo.SimpleProductRetVo;
 import cn.edu.xmu.oomall.goods.service.GoodsService;
 import cn.edu.xmu.oomall.goods.service.ProductService;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
+import cn.edu.xmu.privilegegateway.annotation.aop.Depart;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
 import cn.edu.xmu.privilegegateway.annotation.util.InternalReturnObject;
@@ -177,9 +179,13 @@ public class GoodsController {
     })
     @PutMapping(value="shops/{shopId}/draftproducts/{id}/publish")
     @Audit(departName = "shops")
-    public Object publishProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
+    public Object publishProduct(@PathVariable("shopId")Long shopId,
+                                 @PathVariable("id") Long id,
+                                 @LoginUser Long loginUserId,
+                                 @LoginName String loginUserName,
+                                 @Depart Long departId)
     {
-        if(shopId!=0){
+        if(shopId!=0&&departId!=0){
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
         }
         ReturnObject ret=productService.publishProduct(shopId,id);
@@ -241,9 +247,16 @@ public class GoodsController {
     })
     @PutMapping(value="shops/{shopId}/products/{id}/allow")
     @Audit(departName = "shops")
-    public Object allowProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
+    public Object allowProduct(@PathVariable("shopId")Long shopId,
+                               @PathVariable("id") Long id,
+                               @LoginUser Long loginUserId,
+                               @LoginName String loginUserName,
+                               @Depart Long departId)
     {
-        return Common.decorateReturnObject(productService.allowProduct(shopId,id));
+        if(shopId!=0&&departId!=0){
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
+        return Common.decorateReturnObject(productService.allowProduct(id));
     }
 
     @ApiOperation(value="禁售货品")
@@ -261,9 +274,16 @@ public class GoodsController {
     })
     @PutMapping(value="shops/{shopId}/products/{id}/prohibit")
     @Audit(departName = "shops")
-    public Object prohibitProduct(@PathVariable("shopId")Long shopId,@PathVariable("id") Long id,@LoginUser Long loginUserId,@LoginName String loginUserName)
+    public Object prohibitProduct(@PathVariable("shopId")Long shopId,
+                                  @PathVariable("id") Long id,
+                                  @LoginUser Long loginUserId,
+                                  @LoginName String loginUserName,
+                                  @Depart Long departId)
     {
-        return Common.decorateReturnObject(productService.prohibitProduct(shopId,id));
+        if(shopId!=0&&departId!=0){
+            return Common.decorateReturnObject(new ReturnObject(ReturnNo.RESOURCE_ID_OUTSCOPE));
+        }
+        return Common.decorateReturnObject(productService.prohibitProduct(id));
     }
 
     /**
@@ -284,7 +304,6 @@ public class GoodsController {
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
     @GetMapping(value="categories/{id}/products")
-    @Audit(departName = "shops")
     public Object getProductOfCategory(@PathVariable("id") Long id,
                                        @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
@@ -357,7 +376,7 @@ public class GoodsController {
     @ApiResponses({@ApiResponse(code = 0, message = "成功"),})
     @GetMapping(value = "/products")
     public Object getProducts(@RequestParam(value = "shopId",required = false) Long shopId,
-                              @RequestParam(value = "barCode",required = false) String barCode,
+                              @RequestParam(value = "barcode",required = false) String barCode,
                               @RequestParam(required = false) Integer page,
                               @RequestParam(required = false) Integer pageSize) {
 
@@ -404,8 +423,7 @@ public class GoodsController {
     })
     @PostMapping("/shops/{shopId}/draftproducts")
     @Audit(departName = "shops")
-    public Object addProductToGood(@RequestHeader("authorization") String authorization,
-                                   @PathVariable Long shopId,
+    public Object addProductToGood(@PathVariable Long shopId,
                                    @Validated @RequestBody ProductDetailVo productVo,
                                    BindingResult bindingResult,@LoginUser Long userId, @LoginName String userName) {
         if(bindingResult.hasErrors()){
@@ -487,16 +505,32 @@ public class GoodsController {
     })
     @PutMapping("/shops/{shopId}/draftproducts/{id}")
     @Audit(departName = "shops")
-    public Object changeDraftProduct(@RequestHeader("authorization") String authorization,
-                                     @PathVariable Long shopId, @PathVariable Long id,
+    public Object changeDraftProduct(@PathVariable Long shopId, @PathVariable Long id,
                                      @Validated @RequestBody ProductChangeVo productChangeVo,
                                      BindingResult bindingResult,@LoginUser Long userId, @LoginName String userName) {
         if(bindingResult.hasErrors()){
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.FIELD_NOTVALID,"传入的RequestBody参数格式不合法"));
         }
 
-        ReturnObject returnObject = productService.addDraftProduct(shopId, id, productChangeVo, userId,userName);
+        ReturnObject returnObject = productService.updateDraftProduct(shopId, productChangeVo,id, userId,userName);
         return Common.decorateReturnObject(returnObject);
+    }
+    @GetMapping("shops/{shopId}/draftproducts/{id}")
+    @Audit(departName = "shops")
+    public Object getDraftById(@PathVariable("shopId")Long shopId,
+                               @PathVariable("id")Long id)
+    {
+        return Common.decorateReturnObject(productService.getDraftById(shopId,id));
+    }
+
+
+    @GetMapping("/shops/{shopId}/draftproducts")
+    @Audit(departName = "shops")
+    public Object getDraftProduct(@PathVariable("shopId") Long shopId,
+                                  @RequestParam(value="page",required = false) Integer page,
+                                  @RequestParam(value = "pageSize",required = false) Integer pageSize)
+    {
+        return Common.decorateReturnObject(productService.getDraftProduct(shopId,page,pageSize));
     }
 
     /**
@@ -542,8 +576,7 @@ public class GoodsController {
     })
     @PutMapping("/shops/{shopId}/products/{id}")
     @Audit(departName = "shops")
-    public Object changeProduct(@RequestHeader("authorization") String authorization,
-                                @PathVariable Long shopId, @PathVariable Long id,
+    public Object changeProduct(@PathVariable Long shopId, @PathVariable Long id,
                                 @Validated @RequestBody ProductChangeVo productChangeVo,
                                 BindingResult bindingResult,@LoginUser Long userId, @LoginName String userName) {
         if(bindingResult.hasErrors()){

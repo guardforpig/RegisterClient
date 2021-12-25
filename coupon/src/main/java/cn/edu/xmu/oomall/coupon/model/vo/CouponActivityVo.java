@@ -18,7 +18,6 @@ import java.time.ZonedDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class CouponActivityVo implements VoObject {
     @Length(max = 100,message = "name字符串最大长度为100")
     private String name;
@@ -30,17 +29,16 @@ public class CouponActivityVo implements VoObject {
     @Min(value = 0,message = "validTerm最小值为0")
     @Max(value = 1,message = "validTerm最大值为1")
     private Byte validTerm;
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
     private ZonedDateTime couponTime;
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
     private ZonedDateTime beginTime;
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", timezone = "GMT+8")
     private ZonedDateTime endTime;
-    @Length(max = 100,message = "strategy字符串最大长度为100")
+
     private String strategy;
+
+    private Integer numKey;
 
     @Override
     public Object createVo() {

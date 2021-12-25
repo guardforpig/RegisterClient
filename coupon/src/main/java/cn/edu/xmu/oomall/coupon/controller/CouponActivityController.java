@@ -63,31 +63,31 @@ public class CouponActivityController {
      * @param couponActivityVo 优惠券信息
      * @return 插入结果
      */
-    @Audit
+    @Audit(departName = "shops")
     @PostMapping("shops/{shopId}/couponactivities")
     public Object addCouponActivity(@PathVariable Long shopId,
                                     @LoginUser Long userId, @LoginName String userName,
                                     @Valid @RequestBody CouponActivityVo couponActivityVo,
                                     HttpServletResponse httpServletResponse, BindingResult bindingResult
-                                    ){
+                                    ) {
         Object returnObject = Common.processFieldErrors(bindingResult, httpServletResponse);
         if (null != returnObject) {
             return returnObject;
         }
         //对输入数据进行合法性判断
         // 如果开始时间晚于结束时间
-        if(couponActivityVo.getBeginTime()!=null&&couponActivityVo.getEndTime()!=null){
-            if(couponActivityVo.getBeginTime().compareTo(couponActivityVo.getEndTime()) > 0){
+        if (couponActivityVo.getBeginTime() != null && couponActivityVo.getEndTime() != null) {
+            if (couponActivityVo.getBeginTime().isAfter(couponActivityVo.getEndTime())) {
                 return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME));
             }
         }
         // 优惠卷领卷时间晚于活动开始时间
-        if(couponActivityVo.getCouponTime()!=null&&couponActivityVo.getBeginTime()!=null){
-            if(couponActivityVo.getCouponTime().compareTo(couponActivityVo.getBeginTime()) > 0){
+        if (couponActivityVo.getCouponTime() != null  && couponActivityVo.getBeginTime() != null) {
+            if (couponActivityVo.getCouponTime().isAfter(couponActivityVo.getBeginTime())) {
                 return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.COUPON_LATE_COUPONTIME));
             }
         }
-        return Common.decorateReturnObject(couponActivityService.addCouponActivity(userId,userName,shopId,couponActivityVo));
+        return Common.decorateReturnObject(couponActivityService.addCouponActivity(userId, userName, shopId, couponActivityVo));
     }
     /**
      * 查看店铺所有状态的优惠活动列表
@@ -97,15 +97,15 @@ public class CouponActivityController {
      * @param pageSize 页大小
      * @return 优惠活动列表
      */
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("shops/{shopId}/couponactivities")
     public Object showOwnInvalidCouponActivities(@PathVariable Long shopId,
                                                  @LoginUser Long userId, @LoginName String userName,
                                                  @RequestParam(required = false) Byte state,
                                                  @RequestParam(required = false,defaultValue = "1") Integer page,
-                                                 @RequestParam(required = false,defaultValue = "5") Integer pageSize
-                                                 ){
-        return Common.getPageRetObject(couponActivityService.showOwnInvalidCouponActivities(userId,userName,shopId,state,page,pageSize));
+                                                 @RequestParam(required = false,defaultValue = "10") Integer pageSize
+                                                 ) {
+        return Common.decorateReturnObject(couponActivityService.showOwnInvalidCouponActivities(userId, userName, shopId, state, page, pageSize));
     }
 
     /**
@@ -115,7 +115,7 @@ public class CouponActivityController {
      * @param request 请求
      * @return 上传结果
      */
-    @Audit
+    @Audit(departName = "shops")
     @PostMapping("shops/{shopId}/couponactivities/{id}/uploadImg")
     public Object addCouponActivityImageUrl(@PathVariable Long shopId,
                                             @PathVariable Long id,
@@ -151,14 +151,14 @@ public class CouponActivityController {
                                           @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX") @RequestParam(required = false) ZonedDateTime beginTime,
                                           @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX") @RequestParam(required = false) ZonedDateTime endTime,
                                           @RequestParam(required = false,defaultValue = "1") Integer page,
-                                          @RequestParam(required = false,defaultValue = "5") Integer pageSize
+                                          @RequestParam(required = false,defaultValue = "10") Integer pageSize
                                           ){
         //对输入数据进行合法性判断
         // 如果开始时间晚于结束时间
         if(beginTime != null && beginTime.compareTo(endTime) > 0){
             return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.LATE_BEGINTIME));
         }
-        return Common.getPageRetObject(couponActivityService.showOwnCouponActivities(shopId,beginTime,endTime,page,pageSize));
+        return Common.decorateReturnObject(couponActivityService.showOwnCouponActivities(shopId,beginTime,endTime,page,pageSize));
 
     }
 
@@ -172,6 +172,7 @@ public class CouponActivityController {
      * @param pageSize 页大小
      * @return 优惠活动列表 List<CouponActivityRetVo>
      */
+    @Audit(departName = "shops")
     @GetMapping("shop/{shopId}/couponactivities")
     public Object showOwnCouponaAtivities1(@PathVariable Long shopId,
                                           @RequestParam(required = false) Byte state,
@@ -193,7 +194,7 @@ public class CouponActivityController {
      * @param shopId 店铺id
      * @return 优惠活动信息
      */
-    @Audit
+    @Audit(departName = "shops")
     @GetMapping("shops/{shopId}/couponactivities/{id}")
     public Object showOwnCouponActivityInfo(@PathVariable Long shopId,
                                             @PathVariable Long id,

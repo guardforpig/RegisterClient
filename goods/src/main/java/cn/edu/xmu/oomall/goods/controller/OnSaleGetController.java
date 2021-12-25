@@ -63,8 +63,8 @@ public class OnSaleGetController {
     @GetMapping("internal/shops/{did}/activities/{id}/onsales")
     public Object selectActivities(@LoginUser Long loginUser, @LoginName String loginUsername,
                                    @PathVariable("did")Long did, @PathVariable("id")Long id, @RequestParam(required = false) Byte state,
-                                   @RequestParam(value = "beginTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime beginTime,
-                                   @RequestParam(value = "endTime",required = false) @DateTimeFormat(pattern="uuuu-MM-dd'T'HH:mm:ss.SSSXXX") ZonedDateTime endTime,
+                                   @RequestParam(value = "beginTime",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime beginTime,
+                                   @RequestParam(value = "endTime",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endTime,
                                    @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
                                    @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize){
         if(state!=null){
@@ -79,8 +79,8 @@ public class OnSaleGetController {
                 ReturnObject returnObjectNotValid=new ReturnObject(ReturnNo.LATE_BEGINTIME);
                 return Common.decorateReturnObject(returnObjectNotValid);
             }
-            begin = beginTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-            end = endTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+            begin = beginTime.toLocalDateTime();
+            end = endTime.toLocalDateTime();
         }
         ReturnObject returnObject= onSaleService.selectActivities(id,did,state,begin,end,page,pageSize);
         return Common.decorateReturnObject(returnObject);

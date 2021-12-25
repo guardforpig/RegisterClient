@@ -19,7 +19,7 @@ public class ProductRetVo {
     private Long id;
     private ShopVo shop;
     private Long goodsId;
-    private Long onSaleId;
+    private Long onsaleId;
     private String name;
     private String skuSn;
     private String imageUrl;
