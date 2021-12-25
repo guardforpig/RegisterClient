@@ -99,14 +99,11 @@ public class ShopController {
         if (null != obj) {
             return obj;
         }
-        ReturnObject ret;
+        ReturnObject ret=new ReturnObject();
         if (shopid.equals(-1L)) {
             ret = shopService.newShop(shopvo, loginUser, loginUsername);
 
 
-        } else {
-            ret = new ReturnObject(ReturnNo.SHOP_USER_HASSHOP, "您已经拥有店铺，无法重新申请");
-            httpServletResponse.setStatus(HttpStatus.CREATED.value());
         }
         if (ret.getCode().equals(ReturnNo.OK))
             httpServletResponse.setStatus(HttpStatus.CREATED.value());

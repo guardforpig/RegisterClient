@@ -232,6 +232,7 @@ public class Common {
 
             case AUTH_INVALID_JWT:
             case AUTH_JWT_EXPIRED:
+            case CUSTOMER_INVALID_ACCOUNT:
                 // 401
                 return new ResponseEntity(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
@@ -257,6 +258,7 @@ public class Common {
 
             case RESOURCE_ID_OUTSCOPE:
             case  FILE_NO_WRITE_PERMISSION:
+            case CUSTOMER_FORBIDDEN:
                 // 403
                 return new ResponseEntity(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
