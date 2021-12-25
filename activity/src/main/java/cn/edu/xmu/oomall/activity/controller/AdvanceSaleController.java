@@ -166,7 +166,7 @@ public class AdvanceSaleController {
             @RequestParam(required = false) @DateTimeFormat(pattern = TimeFormat.INPUT_DATE_TIME_FORMAT) ZonedDateTime endTime,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
-        if(beginTime.isAfter(endTime)) {
+        if(beginTime != null && endTime != null && beginTime.isAfter(endTime)) {
             return Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
         }
         ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId, productId, AdvanceSale.state.ONLINE.getCode(), beginTime, endTime, page, pageSize);
@@ -228,7 +228,7 @@ public class AdvanceSaleController {
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "pageSize",  required = false) Integer pageSize) {
         //输入参数合法性检查
-        if(beginTime.isAfter(endTime)) {
+        if(beginTime != null && endTime != null && beginTime.isAfter(endTime)) {
             return  Common.decorateReturnObject(new ReturnObject(ReturnNo.LATE_BEGINTIME, "开始时间不能晚于结束时间"));
         }
         ReturnObject ret = advanceSaleService.getAllAdvanceSale(shopId, productId, state, beginTime, endTime, page, pageSize);
