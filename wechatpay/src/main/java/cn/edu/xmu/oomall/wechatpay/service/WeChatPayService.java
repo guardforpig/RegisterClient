@@ -148,7 +148,7 @@ public class WeChatPayService {
 
         WeChatPayReturnObject returnObject = null;
         int random = (int)(Math.random()*4);
-        //     random = 2;
+    //    random = 1;
         switch (random)
         {
             case 0:
@@ -167,7 +167,13 @@ public class WeChatPayService {
             }
             case 2:
             {
-                returnObject = refundFail(weChatPayRefund);
+//                returnObject = refundFail(weChatPayRefund);
+//                if(returnObject.getData()!=null) {
+//                    String json = JacksonUtil.toJson(new WeChatPayRefundNotifyRetVo((WeChatPayRefund)returnObject.getData()));
+//                    rocketMQTemplate.sendOneWay("wechat-refund-notify-topic", MessageBuilder.withPayload(json).build());
+//                }
+//                break;
+                returnObject = refundSuccess(weChatPayRefund);
                 if(returnObject.getData()!=null) {
                     String json = JacksonUtil.toJson(new WeChatPayRefundNotifyRetVo((WeChatPayRefund)returnObject.getData()));
                     rocketMQTemplate.sendOneWay("wechat-refund-notify-topic", MessageBuilder.withPayload(json).build());
@@ -176,7 +182,9 @@ public class WeChatPayService {
             }
             case 3:
             {
-                returnObject = refundFail(weChatPayRefund);
+//                returnObject = refundFail(weChatPayRefund);
+//                break;
+                returnObject = refundSuccess(weChatPayRefund);
                 break;
             }
             default:
