@@ -279,6 +279,7 @@ public class ProductService {
     public ReturnObject addProductToGood(Long shopId, ProductDetailVo productVo, Long loginUser, String loginUsername) {
         try{
         ProductDraftPo po = (ProductDraftPo) cloneVo(productVo, ProductDraftPo.class);
+        po.setProductId(0L);
         po.setShopId(shopId);
         setPoCreatedFields(po,loginUser,loginUsername);
 
