@@ -87,7 +87,11 @@ public class CouponActivityController {
                 return Common.decorateReturnObject(new ReturnObject<>(ReturnNo.COUPON_LATE_COUPONTIME));
             }
         }
-        return Common.decorateReturnObject(couponActivityService.addCouponActivity(userId, userName, shopId, couponActivityVo));
+        ReturnObject returnObject1=couponActivityService.addCouponActivity(userId, userName, shopId, couponActivityVo);
+        if (returnObject1.getCode() == ReturnNo.OK) {
+            httpServletResponse.setStatus(HttpStatus.CREATED.value());
+        }
+        return Common.decorateReturnObject(returnObject1);
     }
     /**
      * 查看店铺所有状态的优惠活动列表
