@@ -148,7 +148,7 @@ public class WeChatPayService {
 
         WeChatPayReturnObject returnObject = null;
         int random = (int)(Math.random()*4);
-    //    random = 1;
+       // random = 0;
         switch (random)
         {
             case 0:
