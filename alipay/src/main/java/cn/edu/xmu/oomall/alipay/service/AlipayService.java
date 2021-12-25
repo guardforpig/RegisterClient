@@ -252,18 +252,31 @@ public class AlipayService {
                     break;
                 //失败回调
                 case 2:
-                    NotifyBody notifyBody2=new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"TRADE_SUCCESS",refund.getOutRequestNo());
-                    notifyBody2.setBuyer_pay_amount(payment.getBuyerPayAmount());
-                    notifyBody2.setTotal_amount(payment.getTotalAmount());
-                    notifyBody2.setGmt_payment(payment.getSendPayDate());
-                    refundFailed(refund);
-                    String json2 = JacksonUtil.toJson(notifyBody2);
-                    Message message2 = MessageBuilder.withPayload(json2).build();
-                    rocketMQTemplate.sendOneWay("alipay-notify-topic", message2);
+//                    NotifyBody notifyBody2=new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"TRADE_SUCCESS",refund.getOutRequestNo());
+//                    notifyBody2.setBuyer_pay_amount(payment.getBuyerPayAmount());
+//                    notifyBody2.setTotal_amount(payment.getTotalAmount());
+//                    notifyBody2.setGmt_payment(payment.getSendPayDate());
+//                    refundFailed(refund);
+//                    String json2 = JacksonUtil.toJson(notifyBody2);
+//                    Message message2 = MessageBuilder.withPayload(json2).build();
+//                    rocketMQTemplate.sendOneWay("alipay-notify-topic", message2);
+//                    break;
+                    refundSuccess(refund);
+                    notifyBody1 =new NotifyBody(LocalDateTime.now(),payment.getOutTradeNo(),"TRADE_SUCCESS",refund.getOutRequestNo());
+                    notifyBody1.setBuyer_pay_amount(payment.getBuyerPayAmount());
+                    notifyBody1.setTotal_amount(payment.getTotalAmount());
+                    notifyBody1.setGmt_payment(payment.getSendPayDate());
+                    notifyBody1.setGmt_refund(LocalDateTime.now());
+                    notifyBody1.setRefund_fee(totalRefund);
+                    json1 = JacksonUtil.toJson(notifyBody1);
+                    message1 = MessageBuilder.withPayload(json1).build();
+                    rocketMQTemplate.sendOneWay("alipay-notify-topic",message1);
                     break;
                 //失败不回调
                 case 3:
-                    refundFailed(refund);
+//                    refundFailed(refund);
+//                    break;
+                    refundSuccess(refund);
                     break;
                 default:
                     break;
