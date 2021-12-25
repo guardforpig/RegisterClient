@@ -99,7 +99,7 @@ public class ShopController {
         if (null != obj) {
             return obj;
         }
-        ReturnObject ret;
+        ReturnObject ret=new ReturnObject();
         if (shopid.equals(-1L)) {
             ret = shopService.newShop(shopvo, loginUser, loginUsername);
         } else {
