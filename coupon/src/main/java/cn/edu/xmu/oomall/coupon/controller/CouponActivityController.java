@@ -291,7 +291,11 @@ public class CouponActivityController {
                                      @LoginUser Long userId, @LoginName String userName) {
 
         ReturnObject returnObject = couponActivityService.insertCouponOnsale(userId, userName, shopId, couponActivityId, onsaleId);
+        if (returnObject.getCode() == ReturnNo.OK) {
+            httpServletResponse.setStatus(HttpStatus.CREATED.value());
+        }
         return Common.decorateReturnObject(returnObject);
+
     }
 
 
