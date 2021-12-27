@@ -19,7 +19,16 @@
             <groupId>cn.edu.xmu.privilegegateway</groupId>
             <artifactId>annotation</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>cn.edu.xmu.oomall</groupId>
+            <artifactId>annotation</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <version>2.1.1</version>
+        </dependency>
         <dependency>
             <groupId>cn.edu.xmu.oomall</groupId>
             <artifactId>core</artifactId>
@@ -174,10 +183,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
                 <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                    <!--                    <skip>true</skip>-->
+                    <!--                    <includes>-->
+                    <!--                        <include>**/*Test.java</include>-->
+                    <!--                    </includes>-->
+                    <skip>true</skip>
                 </configuration>
             </plugin>
 

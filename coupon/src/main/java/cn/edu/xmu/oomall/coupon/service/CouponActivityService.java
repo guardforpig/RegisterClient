@@ -775,4 +775,51 @@ public class CouponActivityService {
         Map<Long,List<OrderItem>>chooseMap=(Map<Long, List<OrderItem>>) objBest.getData();
         return calculateDiscount(chooseMap,discountRetVos);
     }
+    /**
+     * 预扣优惠券
+     * @param couponActivityId
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject decreaseCoupon(Long couponActivityId){
+        ReturnObject<CouponActivity> couponRet=couponActivityDao.getCouponActivityById(couponActivityId);
+        CouponActivity couponActivity=couponRet.getData();
+        if(couponActivity.getQuantity().equals(-1L)){
+            return new ReturnObject(ReturnNo.RESOURCE_ID_NOTEXIST,"活动不需要优惠券");
+        }
+        LocalDateTime now=LocalDateTime.now();
+        if(couponActivity.getBeginTime().isAfter(now)||couponActivity.getCouponTime().isAfter(now)||couponActivity.getState().equals(0)){
+            return new ReturnObject(ReturnNo.COUPON_NOTBEGIN);
+        }
+        if(couponActivity.getEndTime().isBefore(now)||couponActivity.getEndTime().isEqual(now)||couponActivity.getState().equals(2L)){
+            return new ReturnObject(ReturnNo.COUPON_END);
+        }
+        if(couponActivity.getQuantityType().equals(1)&&couponActivity.getQuantity().equals(0L)){
+            return new ReturnObject(ReturnNo.COUPON_FINISH);
+        }
+        CouponInternalRetVo couponInternalRetVo=cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo(couponActivity,CouponInternalRetVo.class);
+        if(couponActivity.getQuantityType()==1){
+            ReturnObject ret=couponActivityDao.decrCouponQuantity(couponActivity.getId(),1,couponActivity.getNumKey(),couponActivity.getQuantity());
+            if(ret.getCode()!= ReturnNo.OK){
+                return ret;
+            }
+        }
+        return new ReturnObject(couponInternalRetVo);
+    }
+
+    /**
+     * 根据ID查看优惠活动信息
+     * @param activityId
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject getCouponById(Long activityId) {
+        ReturnObject<CouponActivity> returnObject=couponActivityDao.getCouponActivityById(activityId);
+        if(returnObject.getCode()!=ReturnNo.OK){
+            return returnObject;
+        }
+        CouponActivity couponActivity=returnObject.getData();
+        CouponInternalRetVo couponInternalRetVo=cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo(couponActivity,CouponInternalRetVo.class);
+        return new ReturnObject(couponInternalRetVo);
+    }
 }

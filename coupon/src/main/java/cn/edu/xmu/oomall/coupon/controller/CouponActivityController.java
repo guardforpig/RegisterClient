@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.coupon.controller;
 
 
+import cn.edu.xmu.oomall.annotation.aop.Verify;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -392,5 +393,26 @@ public class CouponActivityController {
             throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
         ReturnObject returnObject=couponActivityService.calculateDiscountBest(items);
         return Common.decorateReturnObject(returnObject);
+    }
+    /**
+     * @Author GXC
+     * 用户领取优惠券
+     * @param activityId
+     * @return
+     */
+    @PutMapping("/internal/coupon/{id}/decr")
+    public Object decrCoupon(@PathVariable(value="id") Long activityId){
+        return Common.decorateReturnObject(couponActivityService.decreaseCoupon(activityId));
+    }
+    /**
+     * @Author GXC
+     * 查看优惠活动信息
+     * @param activityId
+     * @return
+     */
+    @Verify
+    @GetMapping("/internal/coupon/{id}")
+    public Object getCouponByActivityId(@PathVariable(value="id") Long activityId){
+        return Common.decorateReturnObject(couponActivityService.getCouponById(activityId));
     }
 }

@@ -18,15 +18,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import cn.edu.xmu.privilegegateway.annotation.util.RedisUtil;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
 
@@ -68,7 +70,10 @@ public class CouponActivityDao {
 
     // 主键是onsaleId，存CouponActivity
     public final static String COUPONACTIVITY_ONSALEID_KEY = "coupon_activity_onsale_id_%d";
+    public final static String COUPON_STOCK_GROUP_KEY = "coupon_%d_stockgroup_%d";
 
+    public final static String DECREASE_PATH = "stock/decrease.lua";
+    public final static String LOAD_PATH = "stock/load.lua";
 
     /**
      * 查看优惠活动模块的所有活动
@@ -400,4 +405,87 @@ public class CouponActivityDao {
         }
     }
 
+    /**
+     * @author GXC
+     * @param id
+     * @param quantity
+     * @param groupNum
+     * @param wholeQuantity
+     * @return
+     * 扣库存
+     */
+    public ReturnObject decrCouponQuantity(Long id, Integer quantity, Integer groupNum, Integer wholeQuantity) {
+        try {
+            Random r=new Random();
+            int pos= r.nextInt(groupNum);
+            //只需要判断某个在不在就行了
+            String key=String.format(COUPON_STOCK_GROUP_KEY,id,pos);
+            if(!redisUtils.hasKey(key)){
+                loadQuantity(id,groupNum, wholeQuantity);
+            }
+
+            DefaultRedisScript<Long> script = new DefaultRedisScript<>();
+            script.setScriptSource(new ResourceScriptSource(new ClassPathResource(DECREASE_PATH)));
+            script.setResultType(Long.class);
+            List<String> keys = Stream.of(key).collect(Collectors.toList());
+            Long res = (Long) redisUtils.executeScript(script, keys, quantity);
+            if (res >= 0) {
+                return new ReturnObject(ReturnNo.OK);
+            }
+            return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE, "扣库存失败");
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());
+        }
+    }
+    /**
+     * 加载到redis
+     * @param id
+     * @param groupNum
+     * @param wholeQuantity
+     */
+    private void loadQuantity(Long id, Integer groupNum, Integer wholeQuantity) {
+        int[] avg = avgAllocate(groupNum, wholeQuantity);
+        DefaultRedisScript script = new DefaultRedisScript<>();
+        script.setScriptSource(new ResourceScriptSource(new ClassPathResource(LOAD_PATH)));
+        List<String> keys=new ArrayList<String>();
+        for(int i=0;i<groupNum;i++){
+            keys.add(String.format(COUPON_STOCK_GROUP_KEY,id,i));
+        }
+        for(int i=0;i<groupNum;i++){
+            redisUtils.executeScript(script, Stream.of(String.format(COUPON_STOCK_GROUP_KEY, id, i)).collect(Collectors.toList()), avg[i]);
+        }
+    }
+    /**
+     * 平均分配
+     * @param bucketNum
+     * @param quantity
+     * @return
+     */
+    public static int[] avgAllocate(Integer bucketNum, Integer quantity){
+        Random r=new Random();
+        Integer start=r.nextInt(bucketNum);
+        int []addNum=new int[bucketNum];
+        Integer times=quantity/bucketNum;
+        Integer remainder=quantity%bucketNum;
+        for(int i=0;i<bucketNum;i++){
+            int pos=(i+start)%bucketNum;
+            addNum[pos]=times;
+            if(remainder>0){
+                addNum[pos]++;
+                remainder--;
+            }
+        }
+        return addNum;
+    }
+    public ReturnObject decrInDataBase(Long id){
+        try{
+            CouponActivityPo couponActivityPo=couponActivityPoMapper.selectByPrimaryKey(id);
+            couponActivityPo.setQuantity(couponActivityPo.getQuantity()-1);
+            couponActivityPoMapper.updateByPrimaryKeySelective(couponActivityPo);
+            return new ReturnObject();
+        }catch (Exception e){
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
+    }
 }
