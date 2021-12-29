@@ -42,7 +42,7 @@ import java.util.List;
  */
 @Api(value = "商品", tags = "goods")
 @RestController
-@RequestMapping(value = "/", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+@RequestMapping(value = "/", produces = "application/json;charset=UTF-8")
 public class GoodsController {
 
     @Autowired

@@ -312,4 +312,17 @@ public class RegionDao {
         return new ReturnObject<>(simpleRegionRetVo);
     }
 
+    /**
+     * GXC
+     * @param regionId
+     * @return
+     */
+    public ReturnObject getRegionById(Long regionId) {
+        try{
+            RegionPo po=regionPoMapper.selectByPrimaryKey(regionId);
+            return new ReturnObject(po);
+        }catch (Exception e){
+            return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR,e.getMessage());
+        }
+    }
 }

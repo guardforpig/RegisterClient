@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.freight.controller;
 
+import cn.edu.xmu.oomall.annotation.aop.Verify;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ResponseUtil;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
@@ -206,7 +207,7 @@ public class FreightModelController {
             @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 500, message = "服务器内部错误")
     })
-    @Audit
+    @Verify
     @PostMapping("/regions/{rid}/price")
     public Object calculateFreight(@PathVariable Long rid, @Validated @RequestBody ValidList<FreightCalculatingPostVo> items,
                                    BindingResult bindingResult) {

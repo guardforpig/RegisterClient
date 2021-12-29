@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.activity.controller;
 import cn.edu.xmu.oomall.activity.model.bo.ShareActivityStatesBo;
 import cn.edu.xmu.oomall.activity.model.vo.ShareActivityVo;
 import cn.edu.xmu.oomall.activity.service.ShareActivityService;
+import cn.edu.xmu.oomall.annotation.aop.Verify;
 import cn.edu.xmu.oomall.core.util.*;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
@@ -122,7 +123,7 @@ public class ShareActivityController {
      * @param pageSize  每页数目
      * @return
      */
-    @Audit(departName = "shops")
+    @Verify
     @GetMapping("/shareactivities")
     public Object getShareActivity(@RequestParam(name = "shopId", required = false) Long shopId,
                                    @RequestParam(name = "productId", required = false) Long productId,
@@ -153,7 +154,7 @@ public class ShareActivityController {
      * @param id 分享活动Id
      * @return
      */
-    @Audit(departName = "shops")
+    @Verify
     @GetMapping("/shareactivities/{id}")
     public Object getShareActivityById(@PathVariable(value = "id", required = true) Long id) {
         return Common.decorateReturnObject(shareActivityService.getShareActivityById(id));

@@ -5,7 +5,7 @@ management:
         include: "*"
 
 server:
-  port: 8091
+  port: 8082
   tomcat:
     threads:
       max: 500
@@ -15,29 +15,35 @@ spring:
     allow-bean-definition-overriding: true
   application:
     name: activity-service
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 10.30.82.244:8848
-#        username: nacos
-#        password: ooad_javaee201
-
   servlet:
     multipart:
       enabled: true
       max-request-size: 10MB
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 123.60.215.184:8848
+        group: GXC
+#        namespace: 4355ea68-f396-48a4-855a-f92d3d24a737
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF8
+    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
     username: dbuser
     password: 12345678
+    type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 3
       min-idle: 3
       max-active: 10
       max-wait: 60000
+
+      stat-view-servlet:
+        login-username: admin
+        login-password: 123456
+        enabled: true
+        url-pattern: /druid/*
+
       filter:
         stat:
           log-slow-sql: true
@@ -45,8 +51,10 @@ spring:
       validation-query: select 1
 
   redis:
+    host: 81.68.173.165
     database: 0
-    host: 127.0.0.1
+    password: 123456
+    port: 6379
     lettuce:
       pool:
         max-active: 100
@@ -55,16 +63,15 @@ spring:
         max-wait: -1
     timeout: 5000
 
-
 mybatis:
-  type-aliases-package: cn.edu.xmu.oomall.activity.model.po
-  mapper-locations: classpath*:cn.edu.xmu.oomall.activity.mapper/*.xml
+  type-aliases-package: cn.edu.xmu.oomall.freight.model.po
+  mapper-locations: classpath*:cn.edu.xmu.oomall.freight.mapper/*.xml
   configuration:
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 
 pagehelper:
   helper-dialect: mysql
-
 
 oomall:
   activity:

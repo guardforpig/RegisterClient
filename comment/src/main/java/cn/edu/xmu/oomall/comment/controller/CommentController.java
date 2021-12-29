@@ -1,4 +1,7 @@
 package cn.edu.xmu.oomall.comment.controller;
+import cn.edu.xmu.oomall.annotation.aop.CustomerId;
+import cn.edu.xmu.oomall.annotation.aop.Verify;
+import cn.edu.xmu.oomall.annotation.util.JwtHelper;
 import cn.edu.xmu.oomall.comment.model.vo.CommentConclusionVo;
 import cn.edu.xmu.oomall.comment.model.vo.CommentRetVo;
 import cn.edu.xmu.oomall.comment.model.vo.CommentVo;
@@ -10,6 +13,7 @@ import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.privilegegateway.annotation.aop.Audit;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginName;
 import cn.edu.xmu.privilegegateway.annotation.aop.LoginUser;
+import cn.edu.xmu.privilegegateway.annotation.util.ResponseUtil;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +22,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -143,12 +150,24 @@ public class CommentController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
     })
-    @Audit
+    @Verify
     @GetMapping("/comments")
     public Object getOwnComments(
-            @LoginUser Long loginUser,
+            @CustomerId Long loginUser,
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer pageSize){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+        String token = request.getHeader(JwtHelper.LOGIN_TOKEN_KEY);
+        if (token == null){
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ResponseUtil.fail(cn.edu.xmu.privilegegateway.annotation.util.ReturnNo.AUTH_NEED_LOGIN);
+        }
+
+        JwtHelper.UserAndDepart userAndDepart = new JwtHelper().verifyTokenAndGetClaims(token);
+        if (null != userAndDepart){
+            loginUser = userAndDepart.getUserId();
+        }
 
         ReturnObject<PageInfo<Object>> ret=commentService.selectAllCommentsOfUser(loginUser,page,pageSize);
         return Common.decorateReturnObject(Common.getPageRetVo(ret, CommentRetVo.class));

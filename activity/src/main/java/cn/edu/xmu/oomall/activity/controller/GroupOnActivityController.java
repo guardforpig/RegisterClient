@@ -6,6 +6,7 @@ import cn.edu.xmu.oomall.activity.model.vo.FullGroupOnActivityVo;
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityPostVo;
 import cn.edu.xmu.oomall.activity.model.vo.GroupOnActivityVo;
 import cn.edu.xmu.oomall.activity.service.GroupOnService;
+import cn.edu.xmu.oomall.annotation.aop.Verify;
 import cn.edu.xmu.oomall.core.util.Common;
 import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
@@ -54,7 +55,6 @@ public class GroupOnActivityController {
     }
 
 
-    @Audit(departName = "shops")
     @ApiOperation(value = "查询所有上线态团购活动", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token",
@@ -69,6 +69,7 @@ public class GroupOnActivityController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
     })
+    @Verify
     @GetMapping(value = "/groupons")
     public Object getOnlineGroupOnActivities(@RequestParam(required = false) Long productId, @RequestParam(required = false) Long shopId,
                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime beginTime,
@@ -77,7 +78,6 @@ public class GroupOnActivityController {
     }
 
 
-    @Audit(departName = "shops")
     @ApiOperation(value = "查询上线态团购活动详情", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户Token",
@@ -87,6 +87,7 @@ public class GroupOnActivityController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
     })
+    @Verify
     @GetMapping(value = "/groupons/{id}")
     public Object getOnlineGroupOnActivity(@PathVariable Long id) {
         try {

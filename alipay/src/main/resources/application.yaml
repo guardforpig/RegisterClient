@@ -5,7 +5,7 @@ management:
         include: "*"
 
 server:
-  port: 8089
+  port: 8083
   tomcat:
     threads:
       max: 500
@@ -22,13 +22,13 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 101.132.164.244:8888
-        username: nacos
-        password: ooad_javaee201
+        server-addr: 123.60.215.184:8848
+        group: GXC
+#        namespace: 4355ea68-f396-48a4-855a-f92d3d24a737
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://101.132.164.244:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
+    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
     username: dbuser
     password: 12345678
     type: com.alibaba.druid.pool.DruidDataSource
@@ -65,7 +65,7 @@ oomall:
     downloadurl: https://dwbillcenter.alipay.com/downloadBillFile
 rocketmq:
   # 指定namesrv地址
-  name-server: 121.36.76.162:9876
+  name-server: 81.68.173.165:9876
   producer:
     #生产者group名称
     group: producer

@@ -5,7 +5,7 @@ management:
         include: "*"
 
 server:
-  port: 8086
+  port: 8087
   tomcat:
     threads:
       max: 500
@@ -22,19 +22,22 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 121.36.53.115
+        server-addr: 123.60.215.184:8848
+        group: GXC
+#        namespace: 4355ea68-f396-48a4-855a-f92d3d24a737
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://101.132.164.244:3306/oomall?serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8&useSSL=false
     username: dbuser
     password: 12345678
+    type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 3
       min-idle: 3
-      max-active: 100
+      max-active: 10
       max-wait: 60000
+
       stat-view-servlet:
         login-username: admin
         login-password: 123456
@@ -46,11 +49,12 @@ spring:
           log-slow-sql: true
           slow-sql-millis: 100
       validation-query: select 1
-    sql-script-encoding: UTF-8
 
   redis:
+    host: 81.68.173.165
     database: 0
-    host: 127.0.0.1
+    password: 123456
+    port: 6379
     lettuce:
       pool:
         max-active: 100
@@ -60,8 +64,8 @@ spring:
     timeout: 5000
 
 mybatis:
-  type-aliases-package: cn.edu.xmu.oomall.goods.model.po
-  mapper-locations: classpath*:cn.edu.xmu.oomall.goods.mapper/*.xml
+  type-aliases-package: cn.edu.xmu.oomall.freight.model.po
+  mapper-locations: classpath*:cn.edu.xmu.oomall.freight.mapper/*.xml
   configuration:
     #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
@@ -75,7 +79,6 @@ oomall:
       expiretime: 10000
     product:
       expiretime: 10000
-
 productservice:
   webdav:
     username: ooad_javaee

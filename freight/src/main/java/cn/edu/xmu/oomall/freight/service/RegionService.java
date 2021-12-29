@@ -1,10 +1,12 @@
 package cn.edu.xmu.oomall.freight.service;
 
 import cn.edu.xmu.oomall.core.util.Common;
+import cn.edu.xmu.oomall.core.util.ReturnNo;
 import cn.edu.xmu.oomall.core.util.ReturnObject;
 import cn.edu.xmu.oomall.freight.dao.RegionDao;
 import cn.edu.xmu.oomall.freight.model.bo.Region;
 import cn.edu.xmu.oomall.freight.model.po.RegionPo;
+import cn.edu.xmu.oomall.freight.model.vo.RegionInternalVo;
 import cn.edu.xmu.oomall.freight.model.vo.RegionRetVo;
 import cn.edu.xmu.oomall.freight.model.vo.RegionVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,5 +148,13 @@ public class RegionService {
         return regionDao.getSimpleRegionById(id);
     }
 
-
+    @Transactional(rollbackFor=Exception.class)
+    public ReturnObject getRegionById(Long regionId) {
+        ReturnObject<RegionPo> returnObject=regionDao.getRegionById(regionId);
+        if(returnObject.getCode()!= ReturnNo.OK){
+            return returnObject;
+        }
+        RegionInternalVo regionInternalVo=cloneVo(returnObject.getData(), RegionInternalVo.class);
+        return new ReturnObject(regionInternalVo);
+    }
 }
