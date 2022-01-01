@@ -17,12 +17,12 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 123.60.215.184:8848
+        server-addr: localhost:8848
         group: GXC
-#        namespace: 4355ea68-f396-48a4-855a-f92d3d24a737
+        namespace: GXC
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/oomall?serverTimezone=GMT%2B8
+    url: jdbc:mysql://81.68.173.165:3306/oomall?serverTimezone=GMT%2B8
     username: dbuser
     password: 12345678
     type: com.alibaba.druid.pool.DruidDataSource
@@ -88,3 +88,11 @@ oomall:
       expiretime: 50
       # list对象默认的长度
       defaultsize: 100
+ribbon:
+  # 值的是建立连接所用的时间，使用与网络状态正常的情况，两端连接所用的时间
+  ReadTimeout: 5000
+  # 指的是建立连接后从服务器读取到可用资源所用的时间
+  ConnectionTimeout: 5000
+
+  eager-load:
+    enabled: true

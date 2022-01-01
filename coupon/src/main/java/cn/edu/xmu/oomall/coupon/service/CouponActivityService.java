@@ -822,4 +822,8 @@ public class CouponActivityService {
         CouponInternalRetVo couponInternalRetVo=cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo(couponActivity,CouponInternalRetVo.class);
         return new ReturnObject(couponInternalRetVo);
     }
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnObject decrInDataBase(Long id){
+        return couponActivityDao.decrInDataBase(id);
+    }
 }

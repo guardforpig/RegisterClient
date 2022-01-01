@@ -432,7 +432,7 @@ public class CouponActivityDao {
             if (res >= 0) {
                 return new ReturnObject(ReturnNo.OK);
             }
-            return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE, "扣库存失败");
+            return new ReturnObject(ReturnNo.GOODS_STOCK_SHORTAGE, "库存不足");
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ReturnObject(ReturnNo.INTERNAL_SERVER_ERR, e.getMessage());

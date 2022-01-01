@@ -415,4 +415,8 @@ public class CouponActivityController {
     public Object getCouponByActivityId(@PathVariable(value="id") Long activityId){
         return Common.decorateReturnObject(couponActivityService.getCouponById(activityId));
     }
+    @PutMapping("/internal/coupon/{id}/database/decr")
+    public Object decrCouponInDatabase(@PathVariable(value="id") Long activityId){
+        return Common.decorateReturnObject(couponActivityService.decrInDataBase(activityId));
+    }
 }

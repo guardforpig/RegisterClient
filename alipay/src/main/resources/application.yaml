@@ -22,7 +22,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 123.60.215.184:8848
+        server-addr: localhost:8848
         group: GXC
 #        namespace: 4355ea68-f396-48a4-855a-f92d3d24a737
 
@@ -77,3 +77,6 @@ rocketmq:
     retry-times-when-send-async-failed: 2
   consumer:
     group: consumer
+ribbon:
+  eager-load:
+    enabled: true
