@@ -18,8 +18,8 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848
-        group: GXC
-        namespace: GXC
+#        group: GXC
+#        namespace: GXC
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://81.68.173.165:3306/oomall?serverTimezone=GMT%2B8
@@ -66,12 +66,12 @@ mybatis:
 pagehelper:
   helper-dialect: mysql
 
-apache:
-  name-server: 81.68.173.165:9876
-  rocketmq:
-    #消费者的配置
-    consumer:
-      pushConsumer: coupon-consumer
+#apache:
+#  name-server: 81.68.173.165:9876
+#  rocketmq:
+#    #消费者的配置
+#    consumer:
+#      pushConsumer: coupon-consumer
 
 oomall:
   coupon:
@@ -93,6 +93,9 @@ ribbon:
   ReadTimeout: 5000
   # 指的是建立连接后从服务器读取到可用资源所用的时间
   ConnectionTimeout: 5000
-
-  eager-load:
+#
+#  eager-load:
+#    enabled: true
+feign:
+  hystrix:
     enabled: true
