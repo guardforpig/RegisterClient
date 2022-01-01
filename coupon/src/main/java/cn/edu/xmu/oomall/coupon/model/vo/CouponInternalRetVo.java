@@ -3,7 +3,9 @@ package cn.edu.xmu.oomall.coupon.model.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplierBuilder;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -11,7 +13,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-public class CouponInternalRetVo {
+public class CouponInternalRetVo implements Serializable {
     private Long id;
     private String name;
     private String imageUrl;
