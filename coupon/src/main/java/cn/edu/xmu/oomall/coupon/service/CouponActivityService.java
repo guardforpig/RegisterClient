@@ -832,6 +832,7 @@ public class CouponActivityService {
             if(!redisUtils.hasKey(key)){
                 couponActivityDao.loadQuantity(activityId,couponActivity.getNumKey(), couponActivity.getQuantity());
             }
+            redisUtils.set("CouponAcNum"+activityId,couponActivity.getQuantity(),3600);
         }
         return new ReturnObject(couponInternalRetVo);
     }
