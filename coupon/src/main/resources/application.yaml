@@ -18,8 +18,8 @@ spring:
     nacos:
       discovery:
         server-addr: 172.16.2.175:8888
-#        group: GXC
-#        namespace: GXC
+        group: GXC
+        namespace: GXC
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://172.16.2.142:3306/oomall?serverTimezone=GMT%2B8
