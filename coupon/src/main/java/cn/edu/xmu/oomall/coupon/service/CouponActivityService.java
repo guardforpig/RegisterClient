@@ -25,6 +25,9 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +40,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static cn.edu.xmu.oomall.core.util.Common.getAvgArray;
 import static cn.edu.xmu.oomall.coupon.dao.CouponActivityDao.COUPON_STOCK_GROUP_KEY;
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
@@ -75,7 +81,9 @@ public class CouponActivityService {
 
     // 商品查couponActivityList的key，key是productId
     public final static String COUPONACTIVITYLISTKEY = "couponactivitylist_%d";
-
+    private final static String ONSALE_STOCK_GROUP_KEY = "coupon_%d_stockgroup_%d";
+    private final static String ONSALE_SET_KEY="coupon_%d_set";
+    private final static String LOAD_PATH = "stock/load.lua";
 
     /**
      * 查看优惠活动模块的所有活动
@@ -833,9 +841,21 @@ public class CouponActivityService {
 //            if(!redisUtils.hasKey(key)){
 //                couponActivityDao.loadQuantity(activityId,couponActivity.getNumKey(), couponActivity.getQuantity());
 //            }
+            String setKey=String.format(ONSALE_SET_KEY,activityId);
+            loadQuantity(setKey,activityId,couponActivity.getNumKey(), couponActivity.getQuantity());
             redisUtils.set("CouponAcNum"+activityId,couponActivity.getQuantity(),3600);
         }
         return new ReturnObject(couponInternalRetVo);
+    }
+    private void loadQuantity(String setKey,Long id, Integer groupNum, Integer wholeQuantity) {
+
+        int[] incr = getAvgArray(groupNum, wholeQuantity);
+        DefaultRedisScript script = new DefaultRedisScript<>();
+        script.setScriptSource(new ResourceScriptSource(new ClassPathResource(LOAD_PATH)));
+        for (int i = 0; i < groupNum; i++) {
+            redisUtils.executeScript(script,
+                    Stream.of(setKey,String.format(ONSALE_STOCK_GROUP_KEY, id, i)).collect(Collectors.toList()), incr[i]);
+        }
     }
     @Transactional(rollbackFor = Exception.class)
     public ReturnObject decrInDataBase(Long id){
