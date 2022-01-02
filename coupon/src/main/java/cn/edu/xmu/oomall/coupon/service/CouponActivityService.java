@@ -821,17 +821,18 @@ public class CouponActivityService {
             return returnObject;
         }
         CouponActivity couponActivity=returnObject.getData();
+        System.out.println(couponActivity.getNumKey());
         CouponInternalRetVo couponInternalRetVo=cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo(couponActivity,CouponInternalRetVo.class);
         //load
-        if(couponActivity.getQuantityType()==(byte)1&&couponActivity.getQuantity()>0){
+        if(couponActivity.getQuantityType()==1&&couponActivity.getQuantity()>0){
 //            Random r=new Random();
 //            int pos= r.nextInt(couponActivity.getNumKey());
             couponInternalRetVo.setPos(couponActivity.getNumKey());
             //只需要判断某个在不在就行了
-            String key=String.format(COUPON_STOCK_GROUP_KEY,activityId,0);
-            if(!redisUtils.hasKey(key)){
-                couponActivityDao.loadQuantity(activityId,couponActivity.getNumKey(), couponActivity.getQuantity());
-            }
+//            String key=String.format(COUPON_STOCK_GROUP_KEY,activityId,0);
+//            if(!redisUtils.hasKey(key)){
+//                couponActivityDao.loadQuantity(activityId,couponActivity.getNumKey(), couponActivity.getQuantity());
+//            }
             redisUtils.set("CouponAcNum"+activityId,couponActivity.getQuantity(),3600);
         }
         return new ReturnObject(couponInternalRetVo);
