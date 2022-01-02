@@ -444,7 +444,7 @@ public class CouponActivityDao {
      * @param groupNum
      * @param wholeQuantity
      */
-    private void loadQuantity(Long id, Integer groupNum, Integer wholeQuantity) {
+    public void loadQuantity(Long id, Integer groupNum, Integer wholeQuantity) {
         int[] avg = avgAllocate(groupNum, wholeQuantity);
         DefaultRedisScript script = new DefaultRedisScript<>();
         script.setScriptSource(new ResourceScriptSource(new ClassPathResource(LOAD_PATH)));

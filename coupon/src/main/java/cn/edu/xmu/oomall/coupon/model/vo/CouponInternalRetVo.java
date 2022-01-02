@@ -39,4 +39,5 @@ public class CouponInternalRetVo implements Serializable {
      * 活动状态，012草稿上线下线
      */
     private Byte state;
+    private Integer pos;
 }

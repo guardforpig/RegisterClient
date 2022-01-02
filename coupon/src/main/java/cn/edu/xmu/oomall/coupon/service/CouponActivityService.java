@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +38,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static cn.edu.xmu.oomall.coupon.dao.CouponActivityDao.COUPON_STOCK_GROUP_KEY;
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoCreatedFields;
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.setPoModifiedFields;
 import static cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo;
@@ -794,7 +796,7 @@ public class CouponActivityService {
         if(couponActivity.getEndTime().isBefore(now)||couponActivity.getEndTime().isEqual(now)||couponActivity.getState().equals(2L)){
             return new ReturnObject(ReturnNo.COUPON_END);
         }
-        if(couponActivity.getQuantityType().equals(1)&&couponActivity.getQuantity().equals(0L)){
+        if(couponActivity.getQuantityType()==1&&couponActivity.getQuantity()==0L){
             return new ReturnObject(ReturnNo.COUPON_FINISH);
         }
         CouponInternalRetVo couponInternalRetVo=cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo(couponActivity,CouponInternalRetVo.class);
@@ -820,6 +822,17 @@ public class CouponActivityService {
         }
         CouponActivity couponActivity=returnObject.getData();
         CouponInternalRetVo couponInternalRetVo=cn.edu.xmu.privilegegateway.annotation.util.Common.cloneVo(couponActivity,CouponInternalRetVo.class);
+        //load
+        if(couponActivity.getQuantityType()==(byte)1&&couponActivity.getQuantity()>0){
+            Random r=new Random();
+            int pos= r.nextInt(couponActivity.getNumKey());
+            couponInternalRetVo.setPos(pos);
+            //只需要判断某个在不在就行了
+            String key=String.format(COUPON_STOCK_GROUP_KEY,activityId,pos);
+            if(!redisUtils.hasKey(key)){
+                couponActivityDao.loadQuantity(activityId,couponActivity.getNumKey(), couponActivity.getQuantity());
+            }
+        }
         return new ReturnObject(couponInternalRetVo);
     }
     @Transactional(rollbackFor = Exception.class)
